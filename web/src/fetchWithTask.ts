@@ -2,6 +2,7 @@ export async function fetchEda(
     input: string | URL | Request,
     init?: RequestInit
 ) {
+    console.log('fetchEda', input, init);
     if (!("eda" in window)) return fetch(input, init);
 
     const url = typeof input === 'string'
@@ -43,8 +44,13 @@ export async function fetchWithTask({
 }: { url: string, body: string, fetchOptions: RequestInit, pollIntervalMs: number, timeoutMs: number, onProgress: ((s: string) => any) | undefined }) {
     const startRes = await fetchEda(url + '/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...fetchOptions.headers },
-        body: body ? JSON.stringify(body) : undefined,
+        headers: {
+            'Content-Type': 'application/json',
+            ...fetchOptions.headers,
+            'Authorization': authorization,
+        },
+        body: body,
+        // mode: 'no-cors',
         ...fetchOptions,
     });
 
@@ -134,3 +140,8 @@ export async function fetchWithTask({
         }
     }
 }
+
+// export const apiUrl = 'http://localhost:5120';
+
+export const apiUrl = 'https://circuit.tech.ru.net';
+export const authorization = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';

@@ -55,7 +55,7 @@ import { ref, computed, onMounted, nextTick, provide } from 'vue';
 import { useAppStore } from '../stores/appStore';
 import { useChatHistoryStore } from '../stores/chatHistoryStore';
 import Icon from './Icon.vue';
-import { fetchWithTask } from '../fetchWithTask';
+import { apiUrl, authorization, fetchWithTask } from '../fetchWithTask';
 import ChatMessageContent from './ChatMessageContent.vue';
 import { getSchematic } from '../eda/getSchematic';
 import { isEasyEda } from '../utils';
@@ -174,7 +174,16 @@ const sendMessage = async () => {
     newMessage.value = '';
     nextTick(() => adjustTextareaHeight());
 
-    const response = await fetchWithTask({ url: `http://localhost:5120/chat`, body: JSON.stringify(body), fetchOptions: { signal: currentController.value?.signal } });
+    const response = await fetchWithTask({
+      url: `${apiUrl}/chat`,
+      body: JSON.stringify(body),
+      fetchOptions: {
+        signal: currentController.value?.signal,
+        headers: {
+          'Authorization': authorization,
+        }
+      }
+    });
 
     // validate response
     if (!response || !response.returnMessages?.length) {

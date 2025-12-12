@@ -39,8 +39,6 @@ const props = defineProps({
         required: true
     }
 })
-
-console.log(props.result)
 </script>
 
 <style scoped>

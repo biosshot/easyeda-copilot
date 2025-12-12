@@ -56,7 +56,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAppStore } from '../stores/appStore';
 import Icon from '@/components/Icon.vue';
-import { fetchWithTask } from '../fetchWithTask.ts';
+import { apiUrl, authorization, fetchWithTask } from '../fetchWithTask.ts';
 
 // ======================
 // Состояния (локальные, не из store)
@@ -161,8 +161,11 @@ async function startGeneration() {
     }
 
     const response = await fetchWithTask({
-      url: `http://localhost:5120/make-circuit`,
+      url: `${apiUrl}/make-circuit`,
       body: JSON.stringify(body),
+      headers: {
+        'Authorization': authorization,
+      }
     });
 
     const circuit = response.circuit;
@@ -176,7 +179,7 @@ async function startGeneration() {
     let functionalHtml = '';
 
     if (response.blockDiagram) {
-      functionalHtml += `<img src="http://localhost:5120/${response.blockDiagram}" style="width: 98%; margin: auto; display: block; margin-bottom: 24px;">`;
+      functionalHtml += `<img src="${apiUrl}/${response.blockDiagram}" style="width: 98%; margin: auto; display: block; margin-bottom: 24px;">`;
     }
 
     if (circuit.blocks) {
