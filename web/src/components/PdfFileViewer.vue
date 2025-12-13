@@ -91,7 +91,7 @@ async function loadWithNoCors() {
         }
 
         if (!isPdf) {
-            error.value = 'Загруженный файл не является PDF или повреждён.'
+            error.value = 'The downloaded file is not a PDF or is corrupted.'
             finalSrc.value = ''
             return finalSrc.value
         }
@@ -101,7 +101,7 @@ async function loadWithNoCors() {
         error.value = ''
     } catch (e) {
         // Ошибка при загрузке
-        error.value = 'Не удалось загрузить файл.'
+        error.value = 'Failed to upload file.'
         finalSrc.value = '';
     }
 

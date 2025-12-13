@@ -3,7 +3,7 @@
 	"uuid": "d4e8704645c241dcadfa57ef58b7ed33",
 	"displayName": "CircuitAI",
 	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"publisher": "echosystem",
 	"engines": {
 		"eda": "^2.3.0"
