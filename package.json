@@ -1,10 +1,10 @@
 {
-	"name": "ScMake",
-	"version": "1.1.1",
-	"description": "嘉立创EDA & EasyEDA 专业版扩展 API 开发工具",
-	"author": "JLCEDA <support@lceda.cn>",
+	"name": "circuit-ai",
+	"version": "1.0.0",
+	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
+	"author": "echosystem",
 	"license": "Apache-2.0",
-	"homepage": "https://pro.lceda.cn/",
+	"homepage": "https://echosystem.ru/",
 	"scripts": {
 		"dev": "vite",
 		"build:vite": "vite build",

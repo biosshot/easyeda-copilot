@@ -1,75 +1,43 @@
 {
-	"name": "sc-maker",
-	"uuid": "b65baa01e4b94d6aa7c8920e4b9c4d9a",
-	"displayName": "ScMake",
-	"description": "嘉立创EDA & EasyEDA 专业版扩展 API 开发工具",
+	"name": "circuit-ai",
+	"uuid": "d4e8704645c241dcadfa57ef58b7ed33",
+	"displayName": "CircuitAI",
+	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
 	"version": "1.0.0",
-	"publisher": "JLCEDA <support@lceda.cn>",
+	"publisher": "echosystem",
 	"engines": {
 		"eda": "^2.3.0"
 	},
 	"license": "Apache-2.0",
 	"repository": {
-		"type": "extension-store",
+		"type": "",
 		"url": ""
 	},
-	"categories": "Other",
+	"categories": [
+		"Other",
+		"AI",
+		"Tools"
+	],
 	"keywords": [
-		"SDK"
+		"AI",
+		"EDA",
+		"EasyEDA",
+		"circuit",
+		"LCSC"
 	],
 	"images": {
 		"logo": "./images/logo.png"
 	},
-	"homepage": "https://pro.lceda.cn",
-	"bugs": "https://lceda.cn/page/feedback?originPage=other",
-	"activationEvents": {},
+	"homepage": "https://echosystem.ru/",
+	"bugs": "https://echosystem.ru/#contact",
 	"entry": "./dist/index",
-	"dependentExtensions": {},
+	"dependentExtensions": [],
 	"headerMenus": {
-		"home": [
-			{
-				"id": "ScMake",
-				"title": "ScMake",
-				"menuItems": [
-					{
-						"id": "Interface",
-						"title": "Interface",
-						"registerFn": "openInterface"
-					},
-					{
-						"id": "Export",
-						"title": "Export",
-						"menuItems": [
-							{
-								"id": "ExportBomGOST",
-								"title": "Elements List GOST",
-								"registerFn": "exportBomGOST"
-							}
-						]
-					},
-					{
-						"id": "Import",
-						"title": "Import",
-						"menuItems": [
-							{
-								"id": "ImportCircuit",
-								"title": "Import circuit",
-								"registerFn": "importCircuit"
-							}
-						]
-					},
-					{
-						"id": "About",
-						"title": "About...",
-						"registerFn": "about"
-					}
-				]
-			}
-		],
+		"home": [],
 		"sch": [
 			{
-				"id": "ScMake",
-				"title": "ScMake",
+				"id": "CircuitAI",
+				"title": "CircuitAI",
 				"menuItems": [
 					{
 						"id": "Interface",
@@ -108,8 +76,8 @@
 		],
 		"pcb": [
 			{
-				"id": "ScMake",
-				"title": "ScMake",
+				"id": "CircuitAI",
+				"title": "CircuitAI",
 				"menuItems": [
 					{
 						"id": "About",
