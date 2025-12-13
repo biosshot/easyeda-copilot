@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import { fetchEda } from '../fetchWithTask.ts'
+import { apiUrl, authorization, fetchEda } from '../fetchWithTask.ts'
 import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue'
 
 const props = defineProps({
@@ -35,8 +35,8 @@ const props = defineProps({
 // Поддерживаем несколько форматов: строка (url) или объект { url, name }
 const url = computed(() => {
     if (!props.result) return ''
-    if (typeof props.result === 'string') return 'http://127.0.0.1:5120' + props.result
-    return 'http://127.0.0.1:5120' + (props.result.url || props.result.file || '');
+    if (typeof props.result === 'string') return apiUrl + props.result
+    return apiUrl + (props.result.url || props.result.file || '');
 })
 
 const filename = computed(() => {
@@ -67,7 +67,11 @@ async function loadWithNoCors() {
 
     try {
         // Попытка загрузить ресурс (fetchEda инкапсулирует поведение запросов)
-        const resp = await fetchEda(src)
+        const resp = await fetchEda(src, {
+            headers: {
+                "Authorization": authorization
+            }
+        })
         const blob = await resp.blob()
 
         // Простая проверка MIME. Если MIME не явно application/pdf,
