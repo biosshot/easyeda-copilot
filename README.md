@@ -13,6 +13,10 @@ EasyEDA Circuit AI is an AI-powered extension for EasyEDA that enhances your cir
 - **Diagnostic Tools**: Generate diagnostic algorithms for circuit analysis
 - **Structural Diagrams**: Create comprehensive structural diagrams for complex circuits
 
+## Installation
+
+To install the extension, download the latest release. In EasyEDA Pro, go to Settings → Extensions → Extensions Manager → Import Extensions, select the *.eext file, and be sure to check the External Interactions box.
+
 ## Usage
 
 ### Opening the Interface
@@ -27,7 +31,7 @@ EasyEDA Circuit AI is an AI-powered extension for EasyEDA that enhances your cir
 3. The AI will generate a schematic based on your description
 4. Review and modify the generated circuit as needed
 
-![Circuit Generation](https://imgur.com/qNkuywS)
+![Circuit Generation](https://imgur.com/qNkuywS.jpeg)
 *Example of AI-generated circuit for a 12V to 3.3V DC-DC converter with detailed implementation instructions*
 
 ### Component Selection
@@ -36,10 +40,10 @@ EasyEDA Circuit AI is an AI-powered extension for EasyEDA that enhances your cir
 - Search by description
 - Add selected components to your design
 
-![Component Selection](https://imgur.com/2sSWl3A)
+![Component Selection](https://imgur.com/2sSWl3A.jpeg)
 *Component search interface showing detailed specifications for a 100Ω 10W resistor*
 
-![Component Selection](https://imgur.com/SyG8Gvr)
+![Component Selection](https://imgur.com/SyG8Gvr.jpeg)
 *Component search interface showing detailed specifications for a Find a low-noise op-amp, cheap. Frequency doesn't matter.*
 
 ### Generating Documentation
@@ -48,10 +52,10 @@ EasyEDA Circuit AI is an AI-powered extension for EasyEDA that enhances your cir
 2. Use the chat interface to request documentation
 3. The system will generate appropriate documentation formats
 
-![Structural Diagram](https://imgur.com/o2eIiTt)
+![Structural Diagram](https://imgur.com/o2eIiTt.jpeg)
 *Structural diagram generation for a complex circuit, showing both the schematic and the generated PDF output*
 
-![Diagnostic Algorithm](https://imgur.com/ucYhxQE)
+![Diagnostic Algorithm](https://imgur.com/ucYhxQE.jpeg)
 *Diagnostic algorithm generation for circuit analysis, with visual flowchart representation*
 
 ### Exporting BOM
