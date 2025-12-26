@@ -141,7 +141,7 @@ export async function fetchWithTask({
     }
 }
 
-export const apiUrl = 'http://localhost:5120';
+// export const apiUrl = 'http://localhost:5120';
 
-// export const apiUrl = 'https://circuit.tech.ru.net';
+export const apiUrl = 'https://circuit.tech.ru.net';
 export const authorization = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';
