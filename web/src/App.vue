@@ -76,7 +76,7 @@ body {
 #app>main {
   flex: 1;
   /* занимает всё оставшееся пространство */
-  overflow: hidden;
+  overflow: auto;
   /* прокрутка только внутри main, если нужно */
 }
 
