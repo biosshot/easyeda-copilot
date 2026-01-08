@@ -12,7 +12,7 @@ function chunkArray(arr: any[], size: number) {
 
 async function createComponet(component: CircuitWithPos['components'][0], offset = { x: 0, y: 0 }) {
     let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
-    const { partUuid, designator, pos } = component;
+    const { part_uuid: partUuid, designator, pos } = component;
     if (!partUuid) throw new Error("createComponet partUuid not found");
 
     const create = async (data: { libraryUuid: string, uuid: string }) => {
@@ -62,7 +62,7 @@ async function createComponet(component: CircuitWithPos['components'][0], offset
 
 async function placeComponents(components: CircuitWithPos['components'], offset = { x: 0, y: 0 }) {
     const placedComponentsP = components.map(async (component) => {
-        const { partUuid, designator } = component;
+        const { part_uuid: partUuid, designator } = component;
         if (!partUuid) return;
 
         try {
@@ -92,6 +92,27 @@ async function placeComponents(components: CircuitWithPos['components'], offset 
 
     // @ts-ignore
     return Object.fromEntries(placedComponents.filter(Boolean).map((component) => [component.designator, component]));
+}
+
+function filterUniqueCoordinatePairs(arr: number[]) {
+    const seen = new Set();
+    const result = [];
+
+    for (let i = 0; i < arr.length; i += 2) {
+        const x = arr[i];
+        const y = arr[i + 1];
+
+        // Проверяем, что пара существует (защита от нечётной длины)
+        if (y === undefined) break;
+
+        const key = `${x},${y}`;
+        if (!seen.has(key)) {
+            seen.add(key);
+            result.push(x, y);
+        }
+    }
+
+    return result;
 }
 
 async function drawEdges(edges: CircuitWithPos['edges'], components: CircuitWithPos['components'], placeComponents: any, offset = { x: 0, y: 0 }) {
@@ -129,7 +150,7 @@ async function drawEdges(edges: CircuitWithPos['edges'], components: CircuitWith
             const trgpx = trgpin.getState_X();
             const trgpy = trgpin.getState_Y();
 
-            let values = [srcpx, srcpy];
+            let values: number[] = [srcpx, srcpy];
 
             if ("bendPoints" in section) {
                 for (const bend of section.bendPoints) {
@@ -157,6 +178,8 @@ async function drawEdges(edges: CircuitWithPos['edges'], components: CircuitWith
                 }
             }
 
+            values = filterUniqueCoordinatePairs(values);
+
             try {
                 await eda.sch_PrimitiveWire.create(values, netName);
             } catch (err) {
@@ -182,7 +205,7 @@ const getPageSize = async () => {
 export async function assembleCircuit(circuit: CircuitWithPos) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
     const pageSize = await getPageSize();
-    const root = (circuit.blocksRect ?? []).find(block => block.name === 'block___v_root__');
+    const root = (circuit.blocks_rect ?? []).find(block => block.name === 'block___v_root__');
 
     const offset = { x: 0, y: 0 };
 
@@ -195,7 +218,7 @@ export async function assembleCircuit(circuit: CircuitWithPos) {
 
     await drawEdges(circuit.edges, circuit.components, placedComp, offset);
 
-    for (const block of circuit.blocksRect ?? []) {
+    for (const block of circuit.blocks_rect ?? []) {
         if (block.name === 'block___v_root__') continue;
         const padding = 5;
 

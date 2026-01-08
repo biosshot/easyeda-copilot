@@ -1,42 +1,29 @@
 <!-- ComponentCard.vue -->
 <template>
   <div class="component-card">
-    <h4>{{ component.name }}</h4>
-    <p><strong>Производитель:</strong> {{ component.manufacturer }}</p>
-    <p><strong>Цена:</strong> {{ component.price.toFixed(2) }} $</p>
-    <p>{{ component.description }}</p>
-
-    <div v-if="component.datasheet" class="datasheet-link">
-      <a :href="component.datasheet" target="_blank" rel="noopener">Документация (datasheet)</a>
+    <div class="header">
+      <h4>{{ component.name }}</h4>
+      <div v-if="component.datasheet" class="datasheet-link">
+        <a :href="component.datasheet" target="_blank" rel="noopener">datasheet</a>
+      </div>
     </div>
 
-    <details class="pins-details">
-      <summary>Выводы ({{ component.pins.length }})</summary>
-      <ul class="pins-list">
-        <li v-for="(pin, i) in component.pins" :key="i" class="pin-item">
-          <strong>{{ pin.pin_number }} ({{ pin.name }})</strong> — {{ pin.type }}<br />
-          <em>{{ pin.description }}</em>
-        </li>
-      </ul>
-    </details>
+    <p><strong>Manufacturer:</strong> {{ component.manufacturer }}</p>
+    <p><strong>Price:</strong> {{ component.price }} $</p>
 
-    <button v-if="isEasyEdaActive" @click="placeComponent" class="place-button">Place</button>
+    <p>{{ component.description }}</p>
+
+    <IconButton v-if="isEasyEdaActive" @click="placeComponent" class="place-button" icon="Replace">Place</IconButton>
   </div>
 </template>
 
-<script setup>
-import { defineProps, computed } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import { isEasyEda } from '../utils'
+import type { Component } from '../types/component'
+import IconButton from './IconButton.vue'
 
-const props = defineProps({
-  component: {
-    type: Object,
-    required: true,
-    validator: (obj) => {
-      return ['name', 'manufacturer', 'price', 'description', 'pins', 'partUuid'].every(k => k in obj)
-    }
-  }
-})
+const props = defineProps<{ component: Component }>();
 
 const isEasyEdaActive = computed(() => isEasyEda())
 
@@ -44,7 +31,7 @@ const placeComponent = async () => {
   try {
     await eda.sch_PrimitiveComponent.placeComponentWithMouse({
       libraryUuid: 'lcsc',
-      uuid: props.component.partUuid
+      uuid: props.component.part_uuid
     })
   } catch (error) {
     console.error('Error placing component:', error)
@@ -53,6 +40,19 @@ const placeComponent = async () => {
 </script>
 
 <style scoped>
+.header {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.header h4 {
+  max-width: 80%;
+}
+
+.header .datasheet-link {
+  margin-left: auto;
+}
+
 .component-card {
   background-color: var(--color-background-secondary);
   border: 1px solid var(--color-border);
@@ -78,10 +78,6 @@ const placeComponent = async () => {
   line-height: 1.4;
 }
 
-.datasheet-link {
-  margin-top: 12px;
-}
-
 .datasheet-link a {
   color: var(--color-primary);
   text-decoration: none;
@@ -92,54 +88,11 @@ const placeComponent = async () => {
   text-decoration: underline;
 }
 
-.pins-details summary {
-  cursor: pointer;
-  margin-top: 12px;
-  padding: 8px;
-  background-color: var(--color-surface-hover);
-  border-radius: 4px;
-  color: var(--color-text);
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.pins-details summary:hover {
-  background-color: var(--color-surface-active);
-}
-
-.pins-list {
-  list-style: none;
-  padding-left: 0;
-  margin-top: 8px;
-  background-color: var(--color-background-secondary);
-  border-radius: 4px;
-  padding: 8px;
-}
-
-.pin-item {
-  margin-bottom: 8px;
-  padding: 8px;
-  border-left: 3px solid var(--color-primary);
-  background-color: var(--color-surface-hover);
-  border-radius: 4px;
-}
-
-.pin-item strong {
-  color: var(--color-text);
-}
-
-.pin-item em {
-  display: block;
-  margin-top: 4px;
-  font-size: 0.9em;
-  color: var(--color-text-tertiary);
-}
-
 .place-button {
   margin-top: 12px;
   width: 100%;
-  padding: 10px;
-  background-color: var(--color-success);
+  padding: 4px;
+  background: var(--color-primary);
   color: var(--color-text-on-primary);
   border: none;
   border-radius: 4px;

@@ -1,29 +1,12 @@
-import * as api from '@jlceda/pro-api-types';
-import { z } from 'zod';
+// @ts-ignore
+import type _ from '@jlceda/pro-api-types';
+import type { ExplainCircuit } from '../types/circuit';
 
 // Безопасное извлечение чисел из строк
 function safeParseInt(str: string, fallback = 0): number {
     const num = parseInt(str, 10);
     return isNaN(num) ? fallback : num;
 }
-
-// Схемы остаются без изменений
-const ExplainPinSchema = () => z.object({
-    pin_number: z.number().describe('Pin number.'),
-    name: z.string().describe('Pin name (e.g., "VCC").'),
-    signal_name: z.string().describe('The name of the signal to which the pin is connected. (Only name)'),
-});
-
-const ExplainComponentSchema = () => z.object({
-    designator: z.string().describe('Component identifier (e.g., "U1", "R5", "J1", "X1").'),
-    value: z.string().describe('Minimum description: for simple components — only the nominal value; for microcircuits — only the name. Only ASCII symbols (e.g., "LM358", "10nF", "100k").'),
-    pins: z.array(ExplainPinSchema()).describe('Pin details.'),
-    partUuid: z.string().describe('Unique component identifier.'),
-});
-
-export const ExplainCircuitStruct = () => z.object({
-    components: z.array(ExplainComponentSchema()).describe('Components'),
-});
 
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {
@@ -74,9 +57,9 @@ export async function getSchematic(primitiveIds?: string[]) {
         // 1. Получаем нетлист как строку
         const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
         const pinToSignal = parseAllegroNetlist(netlistText);
-        console.log("[getSchematic] Parsed netlist, total pins:", pinToSignal);
+        console.log("[getSchematic] Parsed netlist, total pins:", pinToSignal.entries());
 
-        const components = [];
+        const explainCircuit: ExplainCircuit = { components: [] };
 
         if (!primitiveIds) {
             primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
@@ -105,7 +88,7 @@ export async function getSchematic(primitiveIds?: string[]) {
             else if (prim.name.includes("Value")) {
                 value = prim.otherProperty.Value;
             }
-            else if (prim.name[0] != '=') {
+            else if (prim.name[0] !== '=') {
                 value = prim.name;
             }
 
@@ -137,15 +120,15 @@ export async function getSchematic(primitiveIds?: string[]) {
                 }
             }
 
-            components.push({
+            explainCircuit.components.push({
                 designator,
-                value,
+                value: value ?? 'none',
                 pins,
-                partUuid: await eda.lib_Device.search(prim.supplierId).then(devices => devices?.[0].uuid).catch(_ => null) ?? null,
+                part_uuid: await eda.lib_Device.search(prim.supplierId).then(devices => devices?.[0].uuid).catch(() => null) ?? null,
             });
         }
 
-        return { components };
+        return explainCircuit;
     } catch (error) {
         console.error('[extractSchematicData] Error:', error);
         throw error;

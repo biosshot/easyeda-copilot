@@ -5,9 +5,9 @@
             <div class="circuit-info">
                 <div class="project-header">
                     <div class="project-header-top">
-                        <button @click="assembleCircuitHandler" class="assemble-button">
+                        <IconButton class="assemble-button" @click="assembleCircuitHandler" icon="Play">
                             Assebmle circuit
-                        </button>
+                        </IconButton>
 
                         <div style="word-wrap: break-word;">
                             <h3 class="project-name">{{ result?.circuit?.metadata?.project_name || 'Untitled Project' }}
@@ -27,10 +27,10 @@
                                 <span class="block-name">{{ block.name }}</span>
                             </div>
                             <pre class="block-description">{{ block.description }}</pre>
-                            <div v-if="block.nextBlocks?.length" class="next-blocks">
+                            <div v-if="block.next_block_names?.length" class="next-blocks">
                                 <span class="label">Related blocks:</span>
                                 <div class="tags">
-                                    <span v-for="nextBlock in block.nextBlocks" :key="nextBlock" class="tag">
+                                    <span v-for="nextBlock in block.next_block_names" :key="nextBlock" class="tag">
                                         {{ nextBlock }}
                                     </span>
                                 </div>
@@ -53,25 +53,33 @@
                                     <span class="label">Block:</span>
                                     <span class="value">{{ component.block_name }}</span>
                                 </div>
-                                <div v-if="component.searchQuery" class="detail-row">
+                                <div v-if="component.search_query" class="detail-row">
                                     <span class="label">Request:</span>
-                                    <span class="value">{{ component.searchQuery }}</span>
+                                    <span class="value">{{ component.search_query }}</span>
                                 </div>
-                                <div v-if="component.partUuid" class="detail-row">
+                                <div v-if="component.part_uuid" class="detail-row">
                                     <span class="label">UUID:</span>
-                                    <span class="value uuid">{{ component.partUuid }}</span>
+                                    <span class="value uuid">{{ component.part_uuid }}</span>
                                 </div>
                             </div>
                             <div v-if="component.pins?.length" class="pins-section">
-                                <span class="pins-label">Pins:</span>
-                                <div class="pins-grid">
-                                    <div v-for="pin in component.pins"
-                                        :key="`${component.designator}-${pin.pin_number}`" class="pin">
-                                        <span class="pin-number">{{ pin.pin_number }}</span>
-                                        <span class="pin-name">{{ pin.name }}</span>
-                                        <span class="pin-signal">{{ pin.signal_name }}</span>
-                                    </div>
-                                </div>
+                                <table class="pins-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Pin</th>
+                                            <th>Name</th>
+                                            <th>Signal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="pin in component.pins"
+                                            :key="`${component.designator}-${pin.pin_number}`">
+                                            <td class="pin-number">{{ pin.pin_number }}</td>
+                                            <td class="pin-name">{{ pin.name }}</td>
+                                            <td class="pin-signal">{{ pin.signal_name }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -83,6 +91,12 @@
                 <h3>Block diagram</h3>
                 <PdfFileViewer :result="result.blockDiagram" />
             </div>
+
+            <div class="project-footer">
+                <IconButton class="assemble-button" @click="assembleCircuitHandler" icon="Play">
+                    Assebmle circuit
+                </IconButton>
+            </div>
         </div>
     </div>
 </template>
@@ -90,6 +104,8 @@
 <script setup>
 import { defineProps } from 'vue'
 import PdfFileViewer from './PdfFileViewer.vue'
+import Icon from './Icon.vue'
+import IconButton from './IconButton.vue'
 
 const props = defineProps({
     result: {
@@ -98,7 +114,7 @@ const props = defineProps({
     }
 })
 
-const components = props.result?.circuit?.components?.filter?.(comp => !['GND', 'VCC'].includes(comp.partUuid)) || [];
+const components = props.result?.circuit?.components?.filter?.(comp => !['GND', 'VCC'].includes(comp.part_uuid)) || [];
 
 const assembleCircuitHandler = async () => {
     if (typeof window.eda !== 'undefined') {
@@ -109,10 +125,10 @@ const assembleCircuitHandler = async () => {
 
 <style scoped>
 .circuit-agent-result {
-    padding: 1.5rem;
-    background: var(--color-background-secondary);
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border);
+    /* padding: 1.5rem; */
+    /* background: var(--color-background-secondary); */
+    /* border-radius: 0.5rem; */
+    /* border: 1px solid var(--color-border); */
 }
 
 .circuit-result-container {
@@ -128,6 +144,11 @@ const assembleCircuitHandler = async () => {
     min-width: 0;
 }
 
+.project-footer {
+    padding-top: 1rem;
+}
+
+
 .project-header {
     border-bottom: 1px solid var(--color-border);
     padding-bottom: 1rem;
@@ -142,16 +163,20 @@ const assembleCircuitHandler = async () => {
 }
 
 .assemble-button {
-    padding: 0.5rem 1rem;
     background: var(--color-primary);
-    color: white;
+    color: #fff;
     border: none;
-    border-radius: 0.375rem;
+    border-radius: .375rem;
     cursor: pointer;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: .9rem;
     white-space: nowrap;
-    transition: background-color 0.2s;
+    transition: background-color .2s;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0.5rem;
+    padding-right: 1rem;
 }
 
 .assemble-button:hover {
@@ -174,6 +199,10 @@ const assembleCircuitHandler = async () => {
     margin: 0;
     font-size: 0.9rem;
     color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
 }
 
 /* === Блоки === */
@@ -189,6 +218,8 @@ const assembleCircuitHandler = async () => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 .block-card {
@@ -217,9 +248,10 @@ const assembleCircuitHandler = async () => {
 }
 
 .block-description {
-    margin: 0.5rem 0;
-    font-size: 0.85rem;
-    color: var(--color-text-secondary);
+    background: transparent;
+    border: none;
+    margin: 0;
+    padding: 0;
 }
 
 .next-blocks {
@@ -252,10 +284,10 @@ const assembleCircuitHandler = async () => {
 
 /* === Компоненты === */
 .components-list {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
-    max-height: 600px;
+    max-height: 250px;
     overflow-y: auto;
     padding-right: 0.5rem;
 }
@@ -337,35 +369,39 @@ const assembleCircuitHandler = async () => {
     font-weight: 500;
 }
 
-.pins-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 0.25rem;
+.pins-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
 }
 
-.pin {
-    background: var(--color-background-secondary);
+.pins-table th,
+.pins-table td {
     border: 1px solid var(--color-border);
-    border-radius: 0.25rem;
-    padding: 0.25rem 0.375rem;
-    font-size: 0.7rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
+    padding: 0.25rem 0.5rem;
+    text-align: left;
 }
 
-.pin-number {
+.pins-table th {
+    background: var(--color-background-secondary);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.75rem;
+}
+
+.pins-table td.pin-number {
     font-weight: 600;
     color: var(--color-primary);
 }
 
-.pin-name {
+.pins-table td.pin-name {
     color: var(--color-text-primary);
 }
 
-.pin-signal {
+.pins-table td.pin-signal {
     color: var(--color-text-tertiary);
-    font-size: 0.65rem;
+    font-size: 0.75rem;
 }
 
 /* === PDF секция === */

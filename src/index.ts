@@ -17,6 +17,7 @@ import { PDFDocument, rgb } from 'pdf-lib';
 import * as fontkit from 'fontkit';
 import Papa from 'papaparse';
 import { assembleCircuit } from './assembleCircuit';
+import extension from '../extension.json';
 
 (eda as any).assembleCircuit = assembleCircuit;
 
@@ -25,6 +26,7 @@ export function activate(status?: 'onStartupFinished', arg?: string) { }
 
 export async function about() {
 	// const json = await fetch("http://[::1]:3000/make-scheme/ddd").then(res => res.json());
+	eda.sys_Dialog.showInformationMessage(`${extension.displayName} Extension\nVersion ${extension.version}\n\nRepository ${extension.repository.url}\n\nDeveloped by ${extension.publisher}`);
 }
 
 export async function openInterface() {
@@ -268,7 +270,7 @@ export async function exportBomGOST() {
 		const [_, type] = getElementLabel(line.startDesignator);
 
 		if (!type) {
-			eda.sys_Message.showToastMessage("Not found label for line: " + JSON.stringify(line, null, 2), "error")
+			eda.sys_Message.showToastMessage("Not found label for line: " + JSON.stringify(line, null, 2), ESYS_ToastMessageType.ERROR)
 			continue;
 		}
 
@@ -307,16 +309,16 @@ export async function exportBomGOST() {
 	}
 
 	const firstPageBytes = await fetchResource('/templates/gost/gostLE_fp.pdf');
-	if (!firstPageBytes) return eda.sys_Message.showToastMessage('Cannot load first page template PDF file', 'error');
+	if (!firstPageBytes) return eda.sys_Message.showToastMessage('Cannot load first page template PDF file', ESYS_ToastMessageType.ERROR);
 
 	const nextPageBytes = await fetchResource('/templates/gost/gostLE_np.pdf');
-	if (!nextPageBytes) return eda.sys_Message.showToastMessage('Cannot load next page template PDF file', 'error');
+	if (!nextPageBytes) return eda.sys_Message.showToastMessage('Cannot load next page template PDF file', ESYS_ToastMessageType.ERROR);
 
 	const pdfDoc = await PDFDocument.load(firstPageBytes);
 	const pdfNpDoc = await PDFDocument.load(nextPageBytes);
 
 	const fontBytes = await fetchResource('/templates/gost/GOST_B.TTF')
-	if (!fontBytes) return eda.sys_Message.showToastMessage('Cannot load font file', 'error');
+	if (!fontBytes) return eda.sys_Message.showToastMessage('Cannot load font file', ESYS_ToastMessageType.ERROR);
 
 	pdfDoc.registerFontkit(fontkit as any);
 	const customFont = await pdfDoc.embedFont(fontBytes);
@@ -489,6 +491,8 @@ export async function exportBomGOST() {
 			currentLine += subDes.length;
 		}
 	}
+
+	eda.sys_Message.showToastMessage('Export completed successfully', ESYS_ToastMessageType.SUCCESS);
 
 	// Сохраняем изменённый PDF
 	const modifiedPdfBytes: Uint8Array = await pdfDoc.save();

@@ -12,7 +12,7 @@
                         :result="parsedMessage.result" />
                     <CircuitAgentResultViewer v-else-if="parsedMessage?.type === 'circuit_agent_result'"
                         :result="parsedMessage.result" />
-                    <PdfFileViewer v-else-if="parsedMessage?.type === 'pdf-file'" :result="parsedMessage.result" />
+                    <PdfFileViewer v-else-if="parsedMessage?.type === 'pdf_file'" :result="parsedMessage.result" />
                     <div v-else ref="markdownElement" v-html="safeHtml"></div>
                 </template>
             </div>
@@ -25,22 +25,17 @@
     </div>
 </template>
 
-<script setup>
-import { computed, ref, watch, nextTick, onMounted } from 'vue'
+<script setup lang="ts">
+import { computed } from 'vue'
 import DOMPurify from 'dompurify'
-import { marked } from '../utils.ts'
+import { markdown } from '../utils.ts'
 import ComponentViewer from './ComponentViewer.vue'
 import CircuitExplainViewer from './CircuitExplainViewer.vue'
 import CircuitAgentResultViewer from './CircuitAgentResultViewer.vue'
 import PdfFileViewer from './PdfFileViewer.vue'
-import katex from 'katex'
+import type { Message } from '../types/message.ts'
 
-const props = defineProps({
-    message: {
-        type: Object,
-        required: true
-    }
-})
+const props = defineProps<{ message: Message }>()
 
 // Парсим сообщение от ассистента один раз
 const parsedMessage = computed(() => {
@@ -53,25 +48,8 @@ const parsedMessage = computed(() => {
     }
 })
 
-const markdownElement = ref(null);
-
 const safeHtml = computed(() => {
-    let content = props.message.content.replace(
-        /\\\[(.*?)\\\]|\\\(([^)]*?[\\_^{}].*?)\\\)/gms,
-        (match, displayFormula, inlineFormula) => {
-            if (displayFormula !== undefined && displayFormula.includes('\\')) {
-                return `\n$$${displayFormula}$$\n`;
-            }
-            if (inlineFormula !== undefined) {
-                return `$${inlineFormula}$`;
-            }
-            return match; // не содержит LaTeX — оставляем без изменений
-        }
-    );
-
-
-    let html = marked.parse(content, { async: false });
-
+    const html = markdown(props.message.content)
     return DOMPurify.sanitize(html, {
         ADD_ATTR: ['target'],
         FORBID_TAGS: ['script', 'style', 'iframe'],
@@ -84,7 +62,7 @@ const safeHtml = computed(() => {
 .container {
     display: flex;
     flex-direction: column;
-    max-width: 95%;
+    /* max-width: 95%; */
 }
 
 .content {

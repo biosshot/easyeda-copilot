@@ -6,7 +6,7 @@ export type Circuit = {
     blocks: {
         name: string;
         description: string;
-        nextBlocks: string[];
+        next_block_names: string[];
     }[];
     components: {
         pins: {
@@ -15,10 +15,10 @@ export type Circuit = {
             signal_name: string;
         }[];
         value: string;
-        partUuid: string | null;
+        part_uuid: string | null;
         designator: string;
         block_name: string;
-        searchQuery: string;
+        search_query: string;
     }[];
 };
 
@@ -33,6 +33,6 @@ export type CircuitAgentResult = {
 export type ParsedMessage =
     | { type: 'component_search_result'; result: any }
     | { type: 'circuit_explain_result'; result: any }
-    | { type: 'pdf-file'; result: any }
+    | { type: 'pdf_file'; result: any }
     | CircuitAgentResult
     | string;

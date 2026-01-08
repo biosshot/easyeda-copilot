@@ -1,11 +1,17 @@
 <template>
   <div class="chat-view">
     <div class="messages" v-if="chatMessages?.length" ref="messagesContainer" @scroll="onScroll">
-      <div v-for="msg in chatMessages" :class="['message', msg.role]">
+      <div v-for="(msg, idx) in chatMessages" :class="['message', msg.role]">
         <div v-if="msg.role === 'ai'" class="avatar">
           <Icon name="Cpu" size="20" />
         </div>
-        <ChatMessageContent :message="msg" />
+
+        <div>
+          <ChatMessageContent :message="msg" />
+          <div v-if="msg.role === 'ai'">
+            <MessageBottomControls @retry-send="retrySend(idx)" />
+          </div>
+        </div>
         <div v-if="msg.role === 'human'" class="avatar">
           <Icon name="User" size="20" />
         </div>
@@ -20,8 +26,20 @@
             <span class="dot"></span>
             <span class="dot"></span>
           </div>
+          <p v-if="progressStatus" class="progress-text">{{ progressStatus }}</p>
         </div>
       </div>
+      <div v-if="errorMessage" class="error-container">
+        <div class="error-banner">
+          <div class="error-content">
+            <Icon style="color: red;" name="CircleAlert" size="20" />
+            <div class="error-text">{{ errorMessage }}</div>
+          </div>
+
+        </div>
+        <MessageBottomControls @retry-send="retrySend(-1)" />
+      </div>
+
     </div>
 
     <!-- Empty placeholder shown when there are no chat messages -->
@@ -75,6 +93,7 @@ import ChatMessageContent from './ChatMessageContent.vue';
 import { getSchematic } from '../eda/getSchematic';
 import { isEasyEda, showToastMessage } from '../utils';
 import { useSettingsStore } from '../stores/settingsStore';
+import MessageBottomControls from './MessageBottomControls.vue';
 
 const store = useAppStore();
 const settingsStore = useSettingsStore();
@@ -82,21 +101,22 @@ const historyStore = useChatHistoryStore();
 
 const chatMessages = computed(() => historyStore.getCurrentChat()?.messages || []);
 const newMessage = ref('');
-
-// ref to the textarea element for autosize
 const messageTextarea = ref(null);
-
-// ref to the messages container for scrolling
 const messagesContainer = ref(null);
-
-// ref for scroll to bottom button visibility
 const showScrollButton = ref(false);
-
-// Loading and error states for requests
 const isLoading = ref(false);
-
-// Controller for cancellation of in-flight chat request
+const progressStatus = ref('');
+const errorMessage = ref('');
 const currentController = ref(null);
+
+const getUserAuth = () => {
+  const userInfo = eda.sys_Environment.getUserInfo();
+
+  return btoa(JSON.stringify({
+    username: userInfo.username,
+    uuid: userInfo.uuid
+  }))
+}
 
 onMounted(() => {
   nextTick(() => {
@@ -109,6 +129,7 @@ onMounted(() => {
 
 // Watch for changes in chatMessages to update scroll button visibility
 watch(chatMessages, () => {
+  errorMessage.value = '';
   nextTick(() => {
     onScroll();
   });
@@ -159,26 +180,26 @@ const options = ref([
   { value: true, label: 'Upload selected', icon: 'BoxSelect', id: 'Selected circuit' },
 ]);
 
-const sendMessage = async () => {
-  if (!newMessage.value.trim() || isLoading.value) return;
+const sendMessage = async (retry = false, retryMesIdx = 0) => {
+  if ((!newMessage.value.trim() && !retry) || isLoading.value) return;
 
-  // prepare message and options
+  errorMessage.value = '';
+
   const message = newMessage.value;
   const userOptions = {};
 
-  try {
-    isLoading.value = true;
+  isLoading.value = true;
+  progressStatus.value = '';
 
-    // create abort controller for this request and store it so it can be cancelled
-    const controller = new AbortController();
-    currentController.value = controller;
+  const controller = new AbortController();
+  currentController.value = controller;
 
-
+  if (!retry) {
     for (const opt of options.value) {
       if (!opt.value) continue;
 
       if (opt.id === 'Selected circuit' && isEasyEda()) {
-        const primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
+        const primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId().catch(e => []);
         if (primitiveIds.length) {
           userOptions[opt.id] = await getSchematic(primitiveIds);
           console.log('[ChatView] get sel schematic:', primitiveIds, userOptions[opt.id]);
@@ -188,35 +209,41 @@ const sendMessage = async () => {
       }
     }
 
-    // add user message to chat immediately
-    // store.addChatMessage({
-    //   role: 'human',
-    //   content: message,
-    //   options: userOptions,
-    // });
-
     // Save to chat history
     historyStore.addMessageToCurrentChat({
       role: 'human',
       content: message,
       options: userOptions,
     });
-
-    nextTick(() => scrollToBottom());
-
-    const body = {
-      context: chatMessages.value,
-      llmSettings: {
-        provider: settingsStore.getSetting('apiProvider'),
-        apiKey: settingsStore.getSetting('apiKey'),
-      }
-    };
-
-    // console.log(body)
-
-    if (!body.llmSettings.apiKey) {
-      throw new Error('API Key is not set. Please set it in Settings.');
+  }
+  else {
+    // On retry, we resend the previous message at retryMesIdx
+    if (chatMessages.value.length > retryMesIdx) {
+      if (retryMesIdx !== -1)
+        historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, retryMesIdx));
     }
+    else {
+      isLoading.value = false;
+      console.log('Retry failed: original message not found.', chatMessages.value.length, retryMesIdx);
+      showToastMessage('Retry failed: original message not found.', 'error');
+      return;
+    }
+  }
+
+  nextTick(() => scrollToBottom());
+
+  const body = {
+    context: chatMessages.value,
+    llmSettings: {
+      provider: settingsStore.getSetting('apiProvider'),
+      apiKey: settingsStore.getSetting('apiKey'),
+    }
+  };
+
+  try {
+    // if (!body.llmSettings.apiKey) {
+    //   throw new Error('API Key is not set. Please set it in Settings.');
+    // }
 
     if (!body.llmSettings.provider) {
       throw new Error('API Provider is not set. Please set it in Settings.');
@@ -229,36 +256,55 @@ const sendMessage = async () => {
     nextTick(() => adjustTextareaHeight());
 
     const response = await fetchWithTask({
-      url: `${apiUrl}/chat`,
+      url: `${apiUrl}/v2/chat`,
       body: JSON.stringify(body),
       fetchOptions: {
         signal: currentController.value?.signal,
         headers: {
           'Authorization': authorization,
+          'x-eda-user': getUserAuth(),
+        }
+      },
+      onProgress: (status) => {
+        console.log('[ChatView] Chat progress:', status);
+
+        let newValue = null;
+
+        if (typeof status === 'string') {
+          newValue = status;
+        }
+        else if (status?.type === 'current_action' && status?.action) {
+          newValue = status.action;
+        }
+
+        if (typeof newValue === 'string') {
+          if (newValue.length > 320) {
+            newValue = newValue.slice(0, 320) + '...';
+          }
+          else {
+            progressStatus.value = newValue;
+          }
         }
       }
     });
 
     // validate response
     if (!response || !response.returnMessages?.length) {
-      // sometimes server may return single ai message in response.messages
       if (response?.messages?.at?.(-1)?.role === 'ai') {
         if (response.messages.at(-1).content) {
-          // store.addChatMessage(response.messages.at(-1));
           historyStore.addMessageToCurrentChat(response.messages.at(-1));
           return;
         }
       }
 
-      const err = 'Failed to get response from chat API.';
+      const err = response.error ?? 'Failed to get response from chat API.';
       console.error(err, response);
-
+      errorMessage.value = err;
       showToastMessage(err, 'error');
       return;
     }
 
     for (const msg of response.returnMessages) {
-      // store.addChatMessage(msg);
       historyStore.addMessageToCurrentChat(msg);
     }
 
@@ -268,9 +314,10 @@ const sendMessage = async () => {
     const errMsg = isAbort ? 'Request cancelled by user.' : (e?.message ? `Request failed: ${e.message}` : 'Request failed');
     console.error('[ChatView] Chat request error:', e);
     showToastMessage(isAbort ? e.message : errMsg, 'error');
+    errorMessage.value = errMsg;
   } finally {
     isLoading.value = false;
-    // clear controller
+    progressStatus.value = '';
     currentController.value = null;
   }
 };
@@ -286,8 +333,13 @@ function cancelRequest() {
   }
   // set UI state immediately
   isLoading.value = false;
+  progressStatus.value = '';
   showToastMessage('Request cancelled by user.', 'info');
   currentController.value = null;
+}
+
+function retrySend(messageIdx) {
+  sendMessage(true, messageIdx);
 }
 
 // Expose isLoading for parent component
@@ -373,6 +425,17 @@ defineExpose({
 .typing-bubble p {
   margin: 0;
   font-weight: 500;
+}
+
+.progress-text {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  white-space: pre-line;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 .typing-dots {
@@ -522,13 +585,55 @@ defineExpose({
   border-radius: 5px;
 }
 
-.error-banner {
-  background: var(--color-error);
+.message.error .avatar {
+  background-color: var(--color-error);
+  border-radius: 50%;
+  min-width: 32px;
+  max-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: var(--color-text-on-primary);
+}
+
+.message.error {
+  justify-content: center;
+}
+
+.error-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-on-surface);
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  margin: 8px 0;
   font-size: 0.95rem;
+  width: 95%;
+  max-width: 600px;
+  gap: 0.5rem;
+}
+
+.error-content {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  max-width: 100%;
+}
+
+.error-text {
+  margin-left: 0.5rem;
+  max-width: 90%;
+  word-wrap: break-word;
+}
+
+.retry-btn:hover {}
+
+.retry-btn:disabled {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-on-surface);
+  cursor: not-allowed;
 }
 
 /* Disabled controls when loading */
@@ -647,5 +752,9 @@ textarea[disabled] {
 
 .scroll-to-bottom-btn:hover {
   background-color: var(--color-surface-hover);
+}
+
+.error-container {
+  margin: 8px 0;
 }
 </style>

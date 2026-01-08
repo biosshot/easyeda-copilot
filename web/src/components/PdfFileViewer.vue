@@ -21,10 +21,9 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { apiUrl, authorization, fetchEda } from '../fetchWithTask.ts'
 import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue'
-import { isEasyEda } from '../utils.ts'
 import { useChatHistoryStore } from '../stores/chatHistoryStore'
 
 const chatStore = useChatHistoryStore()
@@ -36,99 +35,80 @@ const props = defineProps({
     }
 })
 
-// Поддерживаем несколько форматов: строка (url) или объект { url, name }
 const url = computed(() => {
-    if (!props.result) return ''
-    if (typeof props.result === 'string') return apiUrl + props.result
+    if (!props.result) return '';
+    if (typeof props.result === 'string') return apiUrl + props.result;
     return apiUrl + (props.result.url || props.result.file || '');
 })
 
 const filename = computed(() => {
-    if (props.result && typeof props.result === 'object' && props.result.name) return props.result.name
+    if (props.result && typeof props.result === 'object' && props.result.name) return props.result.name;
     try {
-        const u = new URL(url.value)
-        return u.pathname.split('/').pop() || 'file.pdf'
+        const u = new URL(url.value);
+        return u.pathname.split('/').pop() || 'file.pdf';
     } catch (e) {
-        return 'file.pdf'
+        return 'file.pdf';
     }
 })
 
-const finalSrc = ref('')
-const error = ref('')
+const finalSrc = ref('');
+const error = ref('');
 
 async function loadPdf() {
     const src = url.value;
 
-    // Очистим предыдущий object URL
     if (finalSrc.value) {
-        URL.revokeObjectURL(finalSrc.value)
-        finalSrc.value = ''
+        URL.revokeObjectURL(finalSrc.value);
+        finalSrc.value = '';
     }
 
     if (!src) return;
 
-    // Try to load from cache if isEasyEda
-    if (isEasyEda()) {
-        try {
-            const blob = await (window).eda.sys_FileSystem.readFileFromFileSystem(filename.value);
-            if (!blob) throw new Error('Not cached')
-            finalSrc.value = URL.createObjectURL(blob);
-            error.value = '';
-            return;
-        } catch (e) {
-            // Not cached, proceed to load
-        }
+    let blob = await chatStore.readCachedFile(filename.value);
+    if (blob) {
+        finalSrc.value = URL.createObjectURL(blob);
+        error.value = '';
+        return;
     }
 
     try {
-        // Попытка загрузить ресурс (fetchEda инкапсулирует поведение запросов)
         const resp = await fetchEda(src, {
             headers: {
                 "Authorization": authorization
             }
-        })
-        const blob = await resp.blob()
+        });
 
-        // Простая проверка MIME. Если MIME не явно application/pdf,
-        // дополнительно проверим сигнатуру файла "%PDF-" в первых байтах.
-        let isPdf = false
-        if (blob && blob.type === 'application/pdf') {
-            isPdf = true
-        } else if (blob) {
-            try {
-                const headerBuf = await blob.slice(0, 5).arrayBuffer()
-                const headerArr = new Uint8Array(headerBuf)
-                const sig = String.fromCharCode(...headerArr)
-                if (sig === '%PDF-') isPdf = true
-            } catch (inner) {
-                // Если чтение не удалось, оставим isPdf=false
-            }
-        }
-
-        if (!isPdf) {
-            error.value = 'The downloaded file is not a PDF or is corrupted.'
-            finalSrc.value = ''
-            return
-        }
-
-        // Создаём object URL
-        finalSrc.value = URL.createObjectURL(blob)
-        error.value = ''
-
-        // Cache if isEasyEda
-        if (isEasyEda()) {
-            try {
-                await (window).eda.sys_FileSystem.saveFileToFileSystem(filename.value, blob);
-                chatStore.addCachedPdf(filename.value);
-            } catch (cacheError) {
-                console.error('Failed to cache PDF:', cacheError);
-            }
-        }
+        blob = await resp.blob();
     } catch (e) {
-        // Ошибка при загрузке
         error.value = 'Failed to upload file.'
         finalSrc.value = '';
+        return;
     }
+
+    let isPdf = false;
+    if (blob && blob.type === 'application/pdf') {
+        isPdf = true
+    } else if (blob) {
+        try {
+            const headerBuf = await blob.slice(0, 5).arrayBuffer()
+            const headerArr = new Uint8Array(headerBuf)
+            const sig = String.fromCharCode(...headerArr)
+            if (sig === '%PDF-') isPdf = true
+        } catch (inner) {
+            // Если чтение не удалось, оставим isPdf=false
+        }
+    }
+
+    if (!isPdf) {
+        error.value = 'The downloaded file is not a PDF or is corrupted.'
+        finalSrc.value = ''
+        return
+    }
+
+    finalSrc.value = URL.createObjectURL(blob);
+    error.value = '';
+
+    chatStore.addCachedFile(filename.value, blob);
 }
 
 // Следим за изменением URL и перезагружаем PDF
@@ -138,8 +118,8 @@ watch(url, () => {
 
 onBeforeUnmount(() => {
     if (finalSrc.value) {
-        URL.revokeObjectURL(finalSrc.value)
-        finalSrc.value = ''
+        URL.revokeObjectURL(finalSrc.value);
+        finalSrc.value = '';
     }
 })
 </script>
@@ -171,26 +151,11 @@ onBeforeUnmount(() => {
     color: var(--color-text-secondary);
 }
 
-.download {
-    background: var(--color-secondary);
-    color: var(--color-text-on-primary);
-    padding: 0.35rem 0.6rem;
-    border-radius: 6px;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
 .preview {
     min-height: 200px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 6px;
+    /* border: 1px solid rgba(255, 255, 255, 0.06); */
+    /* border-radius: 6px; */
     overflow: hidden;
-}
-
-.preview iframe {
-    width: 100%;
-    height: 480px;
-    border: none;
 }
 
 .no-url {

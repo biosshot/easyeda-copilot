@@ -38,10 +38,10 @@ export async function fetchWithTask({
     url,
     body,
     fetchOptions = {},
-    pollIntervalMs = 5000,
+    pollIntervalMs = 2000,
     timeoutMs = Infinity,
     onProgress = undefined,
-}: { url: string, body: string, fetchOptions: RequestInit, pollIntervalMs: number, timeoutMs: number, onProgress: ((s: string) => any) | undefined }) {
+}: { url: string, body: string, fetchOptions: RequestInit, pollIntervalMs: number, timeoutMs: number, onProgress: ((s: unknown) => any) | undefined }) {
     const startRes = await fetchEda(url + '/start', {
         method: 'POST',
         headers: {
@@ -65,7 +65,7 @@ export async function fetchWithTask({
     const statusUrl = `${url}/status/${encodeURIComponent(operationId)}`;
     const cancelUrl = `${url}/cancel/${encodeURIComponent(operationId)}`;
     const startTime = Date.now();
-    onProgress?.('pending');
+    onProgress?.('connecting...');
 
     // support cancellation via AbortSignal passed in fetchOptions.signal
     const signal: AbortSignal | null | undefined = fetchOptions?.signal;
@@ -117,7 +117,7 @@ export async function fetchWithTask({
             }
 
             const op = await statusRes.json();
-            onProgress?.(op.status);
+            onProgress?.(op.intermediateResult || 'Processing...');
 
             if (signal?.aborted) {
                 throw new Error('Operation aborted');
@@ -141,7 +141,7 @@ export async function fetchWithTask({
     }
 }
 
-// export const apiUrl = 'http://localhost:5120';
+export const apiUrl = 'http://localhost:5120';
 
-export const apiUrl = 'https://circuit.tech.ru.net';
+// export const apiUrl = 'https://circuit.tech.ru.net';
 export const authorization = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';

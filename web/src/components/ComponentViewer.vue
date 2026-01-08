@@ -7,11 +7,11 @@
 
         <template v-else>
             <div class="result-item">
-                <div v-for="(result, idx) in result" :key="idx">
-                    <!-- Отображаем bestComponent, если он есть -->
-                    <div v-if="result.bestComponent" class="best-component">
+                <div v-for="(result, idx) in props.result" :key="idx">
+                    <!-- Отображаем best_component, если он есть -->
+                    <div v-if="result.best_component" class="best-component">
                         <h3>Best component</h3>
-                        <ComponentCard :component="result.bestComponent" />
+                        <ComponentCard :component="result.best_component" />
                     </div>
 
                     <!-- Отображаем список components, если onlyBest = false и они есть -->
@@ -28,26 +28,26 @@
     </div>
 </template>
 
-<script setup>
-import { defineProps, computed } from 'vue'
+<script setup lang="ts">
+import type { Component } from '../types/component';
 import ComponentCard from './ComponentCard.vue' // Предполагается, что ты создашь этот компонент
-import { isEasyEda } from '../utils';
 
-const props = defineProps({
+const props = defineProps<{
     result: {
-        type: Object,
-        required: true
-    }
-})
+        components: Component[],
+        best_component?: Component
+    }[]
+}>();
+
 </script>
 
 <style scoped>
 .component-viewer {
-    padding: 16px;
+    /* padding: 16px;
     background-color: var(--color-surface);
     border-radius: 8px;
     border: 1px solid var(--color-border);
-    color: var(--color-text);
+    color: var(--color-text); */
 }
 
 .empty-message {

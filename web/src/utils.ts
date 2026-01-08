@@ -121,6 +121,24 @@ marked.use({
     pedantic: false
 })
 
-export { marked };
+export const markdown = (content: string) => {
+    content = content.replace(
+        /\\\[(.*?)\\\]|\\\((.*?)\\\)|\((.*?)\)/gms,
+        (match, displayFormula, inlineFormula, inlineFormula_2) => {
+            if (displayFormula !== undefined && displayFormula.includes('\\')) {
+                return `\n$$${displayFormula}$$\n`;
+            }
+            if (inlineFormula !== undefined) {
+                return `$${inlineFormula}$`;
+            }
+            if (inlineFormula_2 !== undefined && inlineFormula_2.length < 16 && inlineFormula_2.includes('{') && inlineFormula_2.includes('}')) {
+                return `$${inlineFormula_2}$`;
+            }
+            return match; // не содержит LaTeX — оставляем без изменений
+        }
+    );
+
+    return marked.parse(content, { async: false });
+};
 
 export const showToastMessage = (mes: string, type: "error" | "warn" | "info" | "success" | "question") => isEasyEda() ? eda.sys_Message.showToastMessage(mes, type as ESYS_ToastMessageType) : null

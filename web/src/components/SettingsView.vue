@@ -1,46 +1,42 @@
 <template>
-    <div class="settings-view">
-        <h1>Settings</h1>
+    <div class="settings-view-container">
+        <div class="settings-view">
+            <h1>Settings</h1>
 
-        <!-- Dynamically generated sections -->
-        <div v-for="section in settingsSections" :key="section.title" class="settings-section">
-            <h2>{{ section.title }}</h2>
-            <p v-if="section.description" class="section-description">{{ section.description }}</p>
+            <!-- Dynamically generated sections -->
+            <div v-for="section in settingsSections" :key="section.title" class="settings-section">
+                <h2>{{ section.title }}</h2>
+                <p v-if="section.description" class="section-description">{{ section.description }}</p>
 
-            <!-- Dynamically generated settings -->
-            <div v-for="setting in section.settings" :key="setting.key" class="setting-group">
-                <label :for="setting.key">{{ setting.label }}</label>
+                <!-- Dynamically generated settings -->
+                <div v-for="setting in section.settings" :key="setting.key" class="setting-group">
+                    <label :for="setting.key">{{ setting.label }}</label>
 
-                <!-- Text Input -->
-                <input v-if="setting.type === 'text' || setting.type === 'password'" :id="setting.key"
-                    :value="settings[setting.key]" :type="setting.type" :placeholder="setting.placeholder"
-                    @input="onSettingChange(setting.key, $event.target.value)" />
+                    <!-- Text Input -->
+                    <input v-if="setting.type === 'text' || setting.type === 'password'" :id="setting.key"
+                        :value="settings[setting.key]" :type="setting.type" :placeholder="setting.placeholder"
+                        @change="onSettingChange(setting.key, ($event.target as any).value as string)" />
 
-                <!-- Select Input -->
-                <CustomSelect v-else-if="setting.type === 'select'" :id="setting.key"
-                    :model-value="settings[setting.key]" :options="setting.options"
-                    @update:model-value="onSettingChange(setting.key, $event)" />
+                    <!-- Select Input -->
+                    <CustomSelect v-else-if="setting.type === 'select'" :id="setting.key"
+                        :model-value="settings[setting.key] as string" :options="setting.options"
+                        @update:model-value="onSettingChange(setting.key, $event)" />
 
-                <!-- Number Input -->
-                <input v-else-if="setting.type === 'number'" :id="setting.key" type="number"
-                    :value="settings[setting.key]"
-                    @input="onSettingChange(setting.key, parseFloat($event.target.value))" />
+                    <!-- Checkbox Input -->
+                    <input v-else-if="setting.type === 'checkbox'" :id="setting.key" type="checkbox"
+                        :checked="settings[setting.key] as boolean"
+                        @change="onSettingChange(setting.key, ($event.target as any).checked as boolean)" />
 
-                <!-- Checkbox Input -->
-                <input v-else-if="setting.type === 'checkbox'" :id="setting.key" type="checkbox"
-                    :checked="settings[setting.key]" @change="onSettingChange(setting.key, $event.target.checked)" />
-
-                <p v-if="setting.hint" class="hint">{{ setting.hint }}</p>
+                    <p v-if="setting.hint" class="hint">{{ setting.hint }}</p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useSettingsStore } from '../stores/settingsStore';
-import { setTheme } from '../composables/useTheme';
-import Icon from './Icon.vue';
 import CustomSelect from './CustomSelect.vue';
 import { showToastMessage } from '../utils';
 
@@ -56,13 +52,23 @@ onMounted(() => {
     Object.assign(settings, settingsStore.getAllSettings);
 });
 
-const onSettingChange = (key, value) => {
+const onSettingChange = (key: string, value: string | number | boolean) => {
     settingsStore.setSetting(key, value);
     showToastMessage('Settings saved', 'success');
 };
 </script>
 
 <style scoped>
+.settings-view-container {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: auto;
+}
+
 .settings-view {
     padding: 2rem;
 }

@@ -1,19 +1,13 @@
 <template>
     <div class="chat-controls-wrapper">
-        <button class="chat-control-btn" :disabled="newChatDisabled" @click="createNewChat" title="New chat">
-            <Icon name="Plus" size="14" />
-        </button>
-        <button class="chat-control-btn" @click="toggleChatHistory" title="Chat history">
-            <Icon name="History" size="14" />
-        </button>
+        <IconButton :disabled="newChatDisabled" @click="createNewChat" title="New chat" icon="Plus" />
+        <IconButton @click="toggleChatHistory" title="Chat history" icon="History" />
 
         <!-- Context menu for chat history -->
         <div v-if="showChatHistory" class="chat-history-menu">
             <div class="history-header">
                 <h3>Chat History</h3>
-                <button class="close-btn" @click="showChatHistory = false">
-                    <Icon name="X" size="12" />
-                </button>
+                <IconButton @click="showChatHistory = false" icon="X" />
             </div>
 
             <div class="history-list">
@@ -26,9 +20,7 @@
                         <span class="history-item-title">{{ chat.title }}</span>
                         <span class="history-item-count">{{ chat.messages.length }}</span>
                     </button>
-                    <button class="delete-btn" @click="deleteChat(chat.id)" :disabled="isLoading">
-                        <Icon name="Trash2" size="11" />
-                    </button>
+                    <IconButton @click="deleteChat(chat.id)" :disabled="isLoading" icon="Trash2" />
                 </div>
             </div>
 
@@ -39,22 +31,15 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useAppStore } from '../stores/appStore';
 import { useChatHistoryStore } from '../stores/chatHistoryStore';
-import Icon from './Icon.vue';
+import IconButton from './IconButton.vue';
 
-const store = useAppStore();
 const historyStore = useChatHistoryStore();
 const allChats = computed(() => historyStore.getAllChats());
 
-const props = defineProps({
-    isLoading: {
-        type: Boolean,
-        default: false
-    }
-});
+const props = defineProps<{ isLoading: boolean }>();
 
 const newChatDisabled = computed(() => {
     return props.isLoading || historyStore.isCurrentChatEmpty();
@@ -68,16 +53,13 @@ function toggleChatHistory() {
 
 function createNewChat() {
     if (props.isLoading) return;
-    // console.log(historyStore.isCurrentChatEmpty());
-
     if (historyStore.isCurrentChatEmpty() && historyStore.getCurrentChat()) return;
 
     historyStore.createNewChat();
-    // store.setChatMessages([]);
     showChatHistory.value = false;
 }
 
-function switchToChat(chatId) {
+function switchToChat(chatId: string) {
     if (props.isLoading) return;
 
     const success = historyStore.switchToChat(chatId);
@@ -86,7 +68,7 @@ function switchToChat(chatId) {
     }
 }
 
-async function deleteChat(chatId) {
+async function deleteChat(chatId: string) {
     if (props.isLoading) return;
 
     try {
@@ -105,19 +87,10 @@ async function clearAllChats() {
         } catch (e) {
             console.error('Failed to clear all chats:', e);
         }
-        // store.setChatMessages([]);
+
         showChatHistory.value = false;
     }
 }
-
-// defineExpose({
-//     toggleChatHistory,
-//     createNewChat,
-//     switchToChat,
-//     deleteChat,
-//     clearAllChats,
-//     showChatHistory
-// });
 </script>
 
 <style scoped>
@@ -126,32 +99,6 @@ async function clearAllChats() {
     gap: 0.25rem;
     align-items: center;
     position: relative;
-}
-
-.chat-control-btn {
-    /* padding: 0.35rem 0.4rem; */
-    background-color: transparent;
-    border: none;
-    color: var(--color-text-on-surface);
-    border-radius: 0.3rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    min-width: 25px;
-    /* max-width: 22px; */
-    height: 25px;
-}
-
-.chat-control-btn:hover:not(:disabled) {
-    background-color: var(--color-surface-active);
-    border-color: var(--color-text-tertiary);
-}
-
-.chat-control-btn:disabled {
-    opacity: 0.4;
-    /* cursor: not-allowed; */
 }
 
 .chat-history-menu {
@@ -181,22 +128,6 @@ async function clearAllChats() {
 .history-header h3 {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--color-text);
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: var(--color-text-tertiary);
-    cursor: pointer;
-    padding: 0.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease;
-}
-
-.close-btn:hover {
     color: var(--color-text);
 }
 
@@ -266,30 +197,6 @@ async function clearAllChats() {
     color: inherit;
     opacity: 0.7;
     flex-shrink: 0;
-}
-
-.delete-btn {
-    padding: 0.2rem;
-    background-color: transparent;
-    border: none;
-    color: var(--color-text-tertiary);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.delete-btn:hover:not(:disabled) {
-    background-color: var(--color-error);
-    color: var(--color-text-on-primary);
-}
-
-.delete-btn:disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
 }
 
 .history-footer {
