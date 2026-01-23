@@ -65,7 +65,7 @@ export async function getSchematic(primitiveIds?: string[]) {
     }
 
     for (const id of primitiveIds) {
-        const component = await eda.sch_PrimitiveComponent.get(id).catch(_ => null);
+        const component = await eda.sch_PrimitiveComponent.get(id).catch(err => null);
 
         if (!component || component.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) {
             console.error(`[getSchematic] Error Processing component`, component);
@@ -132,28 +132,34 @@ export async function getSchematic(primitiveIds?: string[]) {
         //     }
         // });
 
-        components.push(new Promise((resolve) => {
-            const supplierId = component.getState_SupplierId()?.toString();
-            const query = supplierId ?? component.getState_SubPartName()?.toString() ?? component.getState_ManufacturerId()?.toString();
+        // eslint-disable-next-line no-async-promise-executor
+        components.push(new Promise(async (resolve) => {
+            const query = component.getState_SupplierId()?.toString()
+                || component.getState_SubPartName()?.toString()
+                || component.getState_ManufacturerId()?.toString();
+
+            let part_uuid: string | null = null;
+
             if (!query) {
                 eda.sys_Message.showToastMessage(`Fail get component ${designator}`, ESYS_ToastMessageType.ERROR);
-                return;
+                part_uuid = null;
+            }
+            else {
+                part_uuid = await eda.lib_Device.search(query).then(devices => {
+                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
+                }).catch(() => null);
             }
 
-            const part_uuid = eda.lib_Device.search(query).then(devices => devices.find(d => d.supplierId === supplierId)?.uuid ?? null).catch(() => null);
-
-            part_uuid.then(part_uuid => {
-                resolve({
-                    designator,
-                    value: value ?? 'none',
-                    pins,
-                    part_uuid,
-                    pos: {
-                        x: component.getState_X(),
-                        y: component.getState_Y()
-                    }
-                });
-            })
+            resolve({
+                designator,
+                value: value ?? 'none',
+                pins,
+                part_uuid,
+                pos: {
+                    x: component.getState_X(),
+                    y: component.getState_Y()
+                }
+            });
         }))
     }
 
