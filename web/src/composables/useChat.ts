@@ -4,7 +4,7 @@ import { fetchWithTask } from '../api/fetch-with-task';
 import { useChatHistoryStore } from '../stores/chat-history-store';
 import { useSettingsStore } from '../stores/settings-store';
 import { getSchematic } from '../eda/schematic';
-import { isEasyEda, showToastMessage } from '../utils/eda';
+import { isEasyEda, showToastMessage } from '../eda/utils';
 import type { InlineButton } from '../types/inline-button';
 import { formatError } from '../utils/error';
 

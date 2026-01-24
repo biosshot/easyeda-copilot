@@ -97,7 +97,8 @@ function saveEdit() {
 }
 
 defineExpose({
-    startEditing
+    startEditing,
+    toggleEdit: () => isEditing.value ? cancelEdit() : startEditing()
 })
 
 </script>

@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { isEasyEda } from '../../../utils/eda'
+import { isEasyEda } from '../../../eda/utils'
 import type { Component } from '../../../types/component'
 import IconButton from '../../shared/IconButton.vue'
 

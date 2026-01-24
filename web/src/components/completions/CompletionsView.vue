@@ -76,13 +76,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
 import { useCompletions } from '../../composables/useCompletions';
 import Icon from '../shared/Icon.vue';
 import TypingDots from '../shared/TypingDots.vue';
 import IconButton from '../shared/IconButton.vue';
 import Timer from '../shared/Timer.vue';
-import { showToastMessage } from '../../utils/eda';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 
 const {

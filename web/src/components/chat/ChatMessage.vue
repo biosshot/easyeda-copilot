@@ -8,7 +8,7 @@
             <ChatMessageContent :message="msg" :idx="idx" @inline-buttons="onInlineButtons"
                 @edit-message="onEditMessage" ref="content" />
             <div v-if="msg.role === 'human'">
-                <MessageBottomControls @retry="emit('retry-send')" @edit="content?.startEditing()"
+                <MessageBottomControls @retry="emit('retry-send')" @edit="content?.toggleEdit()"
                     :show="['edit', 'retry']" />
             </div>
             <div v-if="msg.role === 'ai'">
@@ -17,7 +17,7 @@
         </div>
 
         <div v-if="msg.role === 'human'" class="avatar">
-            <Icon name="User" size="20" />
+            <Icon :name="getUserInfo()?.avatar ?? 'User'" fail-name="User" size="20" />
         </div>
     </div>
 </template>
@@ -29,6 +29,7 @@ import { InlineButtonsIdx } from '../../types/inline-button';
 import ChatMessageContent from './ChatMessageContent.vue';
 import MessageBottomControls from './MessageBottomControls.vue';
 import Icon from '../shared/Icon.vue';
+import { getUserInfo } from '../../eda/user';
 
 const props = defineProps<{ msg: ChatMessage, idx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);

@@ -3,7 +3,7 @@ import { fetchWithTask } from '../api/fetch-with-task';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { useSettingsStore } from '../stores/settings-store';
 import type { ExplainCircuit } from '../types/circuit';
-import { isEasyEda, showToastMessage } from '../utils/eda';
+import { isEasyEda, showToastMessage } from '../eda/utils';
 import { formatError } from '../utils/error';
 import { assembleCircuit } from '../eda/assemble-circuit';
 

@@ -38,7 +38,7 @@
 import { ref, reactive, onMounted, computed } from 'vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import CustomSelect from '../shared/CustomSelect.vue';
-import { showToastMessage } from '../../utils/eda';
+import { showToastMessage } from '../../eda/utils';
 
 const settingsStore = useSettingsStore();
 const settingsSections = settingsStore.getSettingsSections;

@@ -1,5 +1,5 @@
 import { ExplainCircuit } from "../types/circuit";
-import { isEasyEda } from "../utils/eda";
+import { isEasyEda } from "./utils";
 // @ts-ignore
 import type _ from '@jlceda/pro-api-types';
 

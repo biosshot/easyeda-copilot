@@ -1,5 +1,6 @@
 import { __MODE__ } from "../mode";
-import { getUserAuth, isEasyEda } from "../utils/eda";
+import { isEasyEda } from "../eda/utils";
+import { getUserAuth } from "../eda/user";
 
 type FetchWithTaskInput = {
     url: string,
