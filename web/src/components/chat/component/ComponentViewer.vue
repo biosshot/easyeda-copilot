@@ -109,10 +109,6 @@ watchEffect(() => {
     color: var(--color-text);
 }
 
-.best-component h3 {
-    color: var(--color-success);
-}
-
 .other-components h3 {
     color: var(--color-secondary);
 }

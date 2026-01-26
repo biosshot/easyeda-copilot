@@ -1,75 +1,52 @@
-# EasyEDA Circuit AI Extension
+# EasyEda Copilot - Your AI peer circuit design
 
-## Overview
+EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit design workflow with intelligent assistance. This extension provides AI-powered schematic creation tools and interactive chat features to assist you with your electronic design projects.
 
-EasyEDA Circuit AI is an AI-powered extension for EasyEDA that enhances your circuit design workflow with intelligent assistance. This extension provides tools for generating circuit schematics using AI, and interactive chat features to help with your electronic design projects.
+![](https://github.com/biosshot/easyeda-copilot/docs/i1.png)
 
-## Features
+<!-- ## Features
 
 - **AI Circuit Generation**: Generate circuit schematics based on natural language descriptions
+- **AI Circuit Completions**: Generate circuit completions schematics based on natural language descriptions
 - **Interactive Chat**: Chat with AI assistant for circuit design guidance and troubleshooting
 - **Component Searcher**: Browse and select electronic components from LCSC database
-- **Export**:  Export BOM (Bill of Materials) in various formats including GOST standard
 - **Diagnostic Tools**: Generate diagnostic algorithms for circuit analysis
-- **Structural Diagrams**: Create comprehensive structural diagrams for complex circuits
+- **Structural Diagrams**: Create comprehensive structural diagrams for complex circuits -->
 
 ## Installation
 
 To install the extension, download the latest release. In EasyEDA Pro, go to Settings → Extensions → Extensions Manager → Import Extensions, select the *.eext file, and be sure to check the External Interactions box.
 
-## Usage
+## Generating Circuits
 
-### Opening the Interface
+Generate сircuits from descriptions
 
-1. Click on **CircuitAI** in the main menu
-2. Select **Interface** to open the AI assistant panel
-   
-### Generating Circuits
+![](https://github.com/biosshot/easyeda-copilot/docs/video-make.mp4)
 
-1. Open the extension interface
-2. Use the chat feature to describe your circuit requirements
-3. The AI will generate a schematic based on your description
-4. Review and modify the generated circuit as needed
+## Circuits Completions
 
-![Circuit Generation](https://imgur.com/qNkuywS.jpeg)
-*Example of AI-generated circuit for a 12V to 3.3V DC-DC converter with detailed implementation instructions*
+Complete your svemas with completions
 
-### Component Selection
+![](https://github.com/biosshot/easyeda-copilot/docs/video-compl.mp4)
 
-- Use the Component Searcher in the interface to browse LCSC components
-- Search by description
-- Add selected components to your design
+## Component Selection
 
-![Component Selection](https://imgur.com/2sSWl3A.jpeg)
-*Component search interface showing detailed specifications for a 100Ω 10W resistor*
+Search for components in LCSC by description or characteristics
 
-![Component Selection](https://imgur.com/SyG8Gvr.jpeg)
-*Component search interface showing detailed specifications for a Find a low-noise op-amp, cheap. Frequency doesn't matter.*
+![](https://imgur.com/2sSWl3A.jpeg)
+*100Ω 10W resistor*
 
-### Generating Documentation
+![](https://github.com/biosshot/easyeda-copilot/docs/i2.png)
+*10 MHz low-noise operational amplifier.*
 
-1. Select your circuit or specific components
-2. Use the chat interface to request documentation
-3. The system will generate appropriate documentation formats
+## Generating Documentation
 
-![Structural Diagram](https://imgur.com/o2eIiTt.jpeg)
+![Structural Diagram](https://github.com/biosshot/easyeda-copilot/docs/3.png)
 *Structural diagram generation for a complex circuit, showing both the schematic and the generated PDF output*
 
 ![Diagnostic Algorithm](https://imgur.com/ucYhxQE.jpeg)
 *Diagnostic algorithm generation for circuit analysis, with visual flowchart representation*
 
-### Exporting BOM
-
-1. Go to **CircuitAI** > **Export** > **Elements List GOST**
-2. The BOM will be generated according to GOST standards
-
 ## Support
 
-For technical support, please contact [Support](https://echosystem.ru/#contact).
-
 We welcome your feedback.
----
-
-**Version**: 1.0.0  
-**Publisher**: echosystem.ru  
-**Homepage**: [https://echosystem.ru/](https://echosystem.ru/)  
