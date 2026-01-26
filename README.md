@@ -33,11 +33,15 @@ Complete your svemas with completions
 
 Search for components in LCSC by description or characteristics
 
-![](https://imgur.com/2sSWl3A.jpeg)
-*100Ω 10W resistor*
+<div align="center">
+  <img src="https://imgur.com/2sSWl3A.jpeg" alt="100Ω 10W resistor" width="300">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i2.png" alt="10 MHz low-noise op-amp" width="300">
+</div>
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i2.png)
-*10 MHz low-noise operational amplifier.*
+<div align="center">
+  <em>100Ω 10W resistor</em>&nbsp;&nbsp;&nbsp;&nbsp;
+  <em>10 MHz low-noise operational amplifier</em>
+</div>
 
 ## Generating Documentation
 
