@@ -2,7 +2,7 @@
 
 EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit design workflow with intelligent assistance. This extension provides AI-powered schematic creation tools and interactive chat features to assist you with your electronic design projects.
 
-![](https://github.com/biosshot/easyeda-copilot/docs/i1.png)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i1.png)
 
 <!-- ## Features
 
@@ -21,13 +21,13 @@ To install the extension, download the latest release. In EasyEDA Pro, go to Set
 
 Generate сircuits from descriptions
 
-![](https://github.com/biosshot/easyeda-copilot/docs/video-make.mp4)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-make.mp4)
 
 ## Circuits Completions
 
 Complete your svemas with completions
 
-![](https://github.com/biosshot/easyeda-copilot/docs/video-compl.mp4)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-compl.mp4)
 
 ## Component Selection
 
@@ -36,12 +36,12 @@ Search for components in LCSC by description or characteristics
 ![](https://imgur.com/2sSWl3A.jpeg)
 *100Ω 10W resistor*
 
-![](https://github.com/biosshot/easyeda-copilot/docs/i2.png)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i2.png)
 *10 MHz low-noise operational amplifier.*
 
 ## Generating Documentation
 
-![Structural Diagram](https://github.com/biosshot/easyeda-copilot/docs/3.png)
+![Structural Diagram](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i3.png)
 *Structural diagram generation for a complex circuit, showing both the schematic and the generated PDF output*
 
 ![Diagnostic Algorithm](https://imgur.com/ucYhxQE.jpeg)
