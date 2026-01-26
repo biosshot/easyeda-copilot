@@ -1,7 +1,7 @@
 {
-	"name": "circuit-ai",
+	"name": "easyeda-copilot",
 	"uuid": "d4e8704645c241dcadfa57ef58b7ed33",
-	"displayName": "CircuitAI",
+	"displayName": "EasyEda Copilot",
 	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
 	"version": "1.0.7",
 	"publisher": "echosystem",
@@ -11,7 +11,7 @@
 	"license": "Apache-2.0",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/biosshot/EasyEdaCircuitAI"
+		"url": "https://github.com/biosshot/easyeda-copilot"
 	},
 	"categories": [
 		"Other",
@@ -36,8 +36,8 @@
 		"home": [],
 		"sch": [
 			{
-				"id": "CircuitAI",
-				"title": "CircuitAI",
+				"id": "Copilot",
+				"title": "Copilot",
 				"menuItems": [
 					{
 						"id": "Interface",
@@ -76,8 +76,8 @@
 		],
 		"pcb": [
 			{
-				"id": "CircuitAI",
-				"title": "CircuitAI",
+				"id": "Copilot",
+				"title": "Copilot",
 				"menuItems": [
 					{
 						"id": "About",

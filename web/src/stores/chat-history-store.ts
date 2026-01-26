@@ -28,7 +28,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
     let cachedFilesStore: Promise<Cache | null>;
 
     try {
-        cachedFilesStore = caches.open('circuit-ai-files').catch(_ => null);
+        cachedFilesStore = caches.open('easyeda-copilot-files').catch(_ => null);
     } catch (error) {
         cachedFilesStore = Promise.resolve(null);
     }
