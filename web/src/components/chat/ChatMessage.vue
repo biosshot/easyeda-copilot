@@ -8,11 +8,11 @@
             <ChatMessageContent :message="msg" :idx="idx" @inline-buttons="onInlineButtons"
                 @edit-message="onEditMessage" ref="content" />
             <div v-if="msg.role === 'human'">
-                <MessageBottomControls @retry="emit('retry-send')" @edit="content?.toggleEdit()"
-                    :show="['edit', 'retry']" />
+                <MessageBottomControls class="bottom-cnt" @retry="emit('retry-send', idx)" @edit="content?.toggleEdit()"
+                    @delete="emit('delete-message', idx)" :show="['edit', 'retry', 'delete']" />
             </div>
             <div v-if="msg.role === 'ai'">
-                <MessageBottomControls @retry="emit('retry-send')" :show="['retry']" />
+                <MessageBottomControls class="bottom-cnt" @retry="emit('retry-send', idx)" :show="['retry']" />
             </div>
         </div>
 
@@ -37,7 +37,8 @@ const content = ref<typeof ChatMessageContent | null>(null);
 const emit = defineEmits<{
     'inline-buttons': [InlineButtonsIdx],
     'edit-message': [number, string],
-    'retry-send': [],
+    'retry-send': [number],
+    'delete-message': [number]
 }>()
 
 const onInlineButtons = (btns: InlineButtonsIdx) => {
@@ -56,6 +57,16 @@ const onEditMessage = (newContent: string) => {
     align-items: flex-start;
     gap: 0.5rem;
     max-width: 100%;
+
+    .bottom-cnt {
+        visibility: hidden;
+    }
+}
+
+.message:hover {
+    .bottom-cnt {
+        visibility: visible;
+    }
 }
 
 .message.human {

@@ -47,9 +47,10 @@ export default function useChat() {
                         progressStatus.value = 'Upload selected...';
                         userOptions[opt.id] = await getSchematic(primitiveIds);
                     }
-                } catch (e: any) {
+                } catch (e: unknown) {
+                    const eMes = e instanceof Error ? e.message : 'Error';
                     console.warn('Failed to load selected circuit', e);
-                    showToastMessage('Failed to load selected circuit: ' + e.message, 'error');
+                    showToastMessage('Failed to load selected circuit: ' + eMes, 'error');
                 }
             }
             else if (opt.label === 'Upload all' && isEasyEda()) {
@@ -59,9 +60,10 @@ export default function useChat() {
                         progressStatus.value = 'Upload all...';
                         userOptions[opt.id] = await getSchematic(primitiveIds);
                     }
-                } catch (e: any) {
+                } catch (e: unknown) {
+                    const eMes = e instanceof Error ? e.message : 'Error';
                     console.warn('Failed to load all circuit', e);
-                    showToastMessage('Failed to load all circuit: ' + e.message, 'error');
+                    showToastMessage('Failed to load all circuit: ' + eMes, 'error');
                 }
             }
             else {
@@ -166,6 +168,11 @@ export default function useChat() {
         sendMessage(true, messageIdx);
     }
 
+    function deleteMessage(messageIdx: number) {
+        if (chatMessages.value[messageIdx]?.role === 'human')
+            historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, messageIdx));
+    }
+
     return {
         // State
         chatMessages,
@@ -182,5 +189,6 @@ export default function useChat() {
         sendMessage,
         cancelRequest,
         retrySend,
+        deleteMessage,
     };
 }

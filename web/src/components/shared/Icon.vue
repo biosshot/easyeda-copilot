@@ -12,7 +12,7 @@ import {
   MessageSquare, BoxSelect, AudioWaveform, Settings, PauseCircle, Plus, History,
   X, Trash2, SendHorizonal, ListRestart, ChevronUp, ChevronDown, Check, Replace,
   CircleCheckBig, Pencil,
-  Bookmark,
+  Bookmark, Trash,
   Square,
   Pause
 } from 'lucide-vue-next';
@@ -22,7 +22,7 @@ const icons: Record<string, FunctionalComponent> = {
   BoxSelect, AudioWaveform, Settings, PauseCircle, Plus,
   History, X, Trash2, SendHorizonal, CircleStop, ListRestart,
   ChevronUp, ChevronDown, Check, Play, CircleAlert, RotateCw, Replace,
-  CircleCheckBig, Pencil, Bookmark, Square, Pause
+  CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash
 };
 
 const props = defineProps<{

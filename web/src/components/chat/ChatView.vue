@@ -1,8 +1,8 @@
 <template>
   <div class="chat-view">
     <div class="messages" v-if="chatMessages?.length" ref="messagesContainer" @scroll="onScroll">
-      <ChatMessage v-for="(msg, idx) in chatMessages" :msg="msg" :idx="idx" @retry-send="retrySend(idx)"
-        @edit-message="onEditMessage" @inline-buttons="onInlineButtons" />
+      <ChatMessage v-for="(msg, idx) in chatMessages" :msg="msg" :idx="idx" @retry-send="retrySend"
+        @edit-message="onEditMessage" @inline-buttons="onInlineButtons" @delete-message="deleteMessage" />
 
       <div v-if="isLoading" class="message ai typing-indicator">
         <div class="avatar">
@@ -93,6 +93,7 @@ const {
   sendMessage,
   cancelRequest,
   retrySend,
+  deleteMessage
 } = useChat();
 
 const messagesContainer = ref<HTMLElement | null>(null);
