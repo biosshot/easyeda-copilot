@@ -21,13 +21,17 @@ To install the extension, download the latest release. In EasyEDA Pro, go to Set
 
 Generate сircuits from descriptions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-make.mp4)
+<video controls src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-make.mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Circuits Completions
 
 Complete your svemas with completions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-compl.mp4)
+<video controls src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-compl.mp4">
+  Your browser does not support the video tag.
+</video>
 
 ## Component Selection
 
