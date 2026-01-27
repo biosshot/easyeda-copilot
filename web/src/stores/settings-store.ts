@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { defaultStorage } from './storage';
-import { fetchEda, apiUrl, authorization } from '../api/fetch-with-task';
+import { fetchEda, apiUrl, authorization } from '../api';
 
 type SettingType = 'text' | 'password' | 'select' | 'checkbox';
 

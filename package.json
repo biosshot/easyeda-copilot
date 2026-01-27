@@ -41,6 +41,7 @@
 		"node": ">=20.5.0"
 	},
 	"dependencies": {
+		"@microsoft/fetch-event-source": "^2.0.1",
 		"dompurify": "^3.3.0",
 		"fontkit": "^2.0.4",
 		"highlight.js": "^11.11.1",

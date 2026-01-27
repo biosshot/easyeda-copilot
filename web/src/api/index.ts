@@ -1,16 +1,28 @@
 import { __MODE__ } from "../mode";
 import { isEasyEda } from "../eda/utils";
 import { getUserAuth } from "../eda/user";
+import { type EventSourceMessage, fetchEventSource } from '@microsoft/fetch-event-source';
 
 type MyRequestInit = Omit<RequestInit, 'body'> & { body?: string | Blob | FormData | URLSearchParams | undefined };
 
 type FetchWithTaskInput = {
-    url: string,
-    body: object | string,
-    fetchOptions: MyRequestInit,
-    pollIntervalMs?: number,
-    timeoutMs?: number,
-    onProgress?: ((s: string) => void)
+    url: string;
+    body: object | string;
+    fetchOptions: MyRequestInit;
+    pollIntervalMs?: number;
+    timeoutMs?: number;
+    onProgress?: ((s: string) => void);
+}
+
+type FetchWithSSE = {
+    url: string;
+    body: object | string;
+    signal?: AbortSignal;
+
+    onopen?: (response: Response) => Promise<void>;
+    onmessage?: (ev: EventSourceMessage) => void;
+    onclose?: () => void;
+    onerror?: (err: unknown) => number | null | undefined | void;
 }
 
 export async function fetchEda(
@@ -173,6 +185,29 @@ export async function fetchWithTask({
             signal.removeEventListener('abort', abortHandler);
         }
     }
+}
+
+export async function fetchSSE({
+    url, body,
+    signal, onclose, onerror, onmessage, onopen
+}: FetchWithSSE) {
+
+    return fetchEventSource(apiUrl + url, {
+        method: 'POST',
+        fetch: fetchEda as never,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': authorization,
+            'x-eda-user': getUserAuth(),
+        },
+        body: typeof body === 'string' ? body : JSON.stringify(body),
+        signal: signal,
+
+        onclose,
+        onerror,
+        onmessage,
+        onopen
+    });
 }
 
 // @ts-ignore

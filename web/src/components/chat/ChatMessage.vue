@@ -12,7 +12,9 @@
                     @delete="emit('delete-message', idx)" :show="['edit', 'retry', 'delete']" />
             </div>
             <div v-if="msg.role === 'ai'">
-                <MessageBottomControls class="bottom-cnt" @retry="emit('retry-send', idx)" :show="['retry']" />
+                <!-- for showing only if msg.isReady === false -->
+                <MessageBottomControls v-if="!(msg.isReady === false)" class="bottom-cnt"
+                    @retry="emit('retry-send', idx)" :show="['retry']" />
             </div>
         </div>
 

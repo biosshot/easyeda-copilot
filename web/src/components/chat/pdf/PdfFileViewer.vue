@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { apiUrl, authorization, fetchEda } from '../../../api/fetch-with-task.ts'
+import { apiUrl, authorization, fetchEda } from '../../../api/index.ts'
 import { computed, ref, watch, onBeforeUnmount, onMounted } from 'vue'
 import { useChatHistoryStore } from '../../../stores/chat-history-store.ts'
 

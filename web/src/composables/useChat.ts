@@ -1,6 +1,6 @@
 // composables/useChat.ts
 import { ref, computed, onScopeDispose, nextTick } from 'vue';
-import { fetchWithTask } from '../api/fetch-with-task';
+import { fetchSSE, fetchWithTask } from '../api';
 import { useChatHistoryStore } from '../stores/chat-history-store';
 import { useSettingsStore } from '../stores/settings-store';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
@@ -75,6 +75,90 @@ export default function useChat() {
         return userOptions;
     }
 
+    async function request(body: object, controller: AbortController) {
+        const response = await fetchWithTask({
+            url: '/v2/chat',
+            body: body,
+            fetchOptions: { signal: controller.signal },
+            onProgress: (status) => {
+                progressStatus.value = status as string;
+            },
+        });
+
+        // Handle response
+        if (!response || !response.returnMessages?.length) {
+            // Fallback: check if AI message was returned directly
+            const lastMsg = response?.messages?.at?.(-1);
+            if (lastMsg?.role === 'ai' && lastMsg.content) {
+                historyStore.addMessageToCurrentChat({ ...lastMsg, isReady: true });
+                return;
+            }
+
+            const err = response?.error ?? 'Failed to get response from chat API.';
+            throw new Error(err);
+        }
+
+        for (const msg of response.returnMessages) {
+            historyStore.addMessageToCurrentChat({ ...msg, isReady: true });
+        }
+    }
+
+    async function requestStream(body: object, controller: AbortController) {
+        let writeToLastMessage = false;
+
+        await fetchSSE({
+            url: '/v2/chat/stream',
+            body: body,
+            signal: controller.signal,
+            onmessage(ev) {
+                switch (ev.event) {
+                    case 'mes_chunk': {
+                        let message;
+                        if (writeToLastMessage) message = chatMessages.value.at(-1);
+                        else {
+                            historyStore.addMessageToCurrentChat({
+                                content: '',
+                                role: 'ai',
+                                options: {},
+                                isReady: false
+                            });
+
+                            message = chatMessages.value.at(-1);
+                            writeToLastMessage = true;
+                            isLoading.value = false;
+                        }
+
+                        if (message) message.content += ev.data;
+                        break;
+                    }
+                    case 'message':
+                        historyStore.addMessageToCurrentChat(JSON.parse(ev.data));
+                        writeToLastMessage = false;
+                        isLoading.value = false;
+                        break;
+                    case 'status':
+                        progressStatus.value = ev.data;
+                        break;
+                    default:
+
+                        break;
+                }
+                
+            },
+
+            onerror(err) {
+                throw err;
+            },
+
+            onclose() {
+                if (writeToLastMessage) {
+                    const message = chatMessages.value.at(-1);
+                    if (message) message.isReady = true;
+                }
+            },
+        });
+    }
+
     async function sendMessage(retry = false, retryMesIdx = 0) {
         if ((!newMessage.value.trim() && !retry) || isLoading.value) return;
 
@@ -92,6 +176,7 @@ export default function useChat() {
                     role: 'human',
                     content: newMessage.value,
                     options: userOptions,
+                    isReady: true
                 });
             } else {
                 if (retryMesIdx !== -1)
@@ -113,42 +198,19 @@ export default function useChat() {
             newMessage.value = '';
             progressStatus.value = 'Sending...';
 
-            const response = await fetchWithTask({
-                url: '/v2/chat',
-                body: body,
-                fetchOptions: { signal: controller.signal },
-                onProgress: (status) => {
-                    progressStatus.value = status as string;
-                },
-            });
-
-            // Handle response
-            if (!response || !response.returnMessages?.length) {
-                // Fallback: check if AI message was returned directly
-                const lastMsg = response?.messages?.at?.(-1);
-                if (lastMsg?.role === 'ai' && lastMsg.content) {
-                    historyStore.addMessageToCurrentChat(lastMsg);
-                    return;
-                }
-
-                const err = response?.error ?? 'Failed to get response from chat API.';
-                throw new Error(err);
-            }
-
-            for (const msg of response.returnMessages) {
-                historyStore.addMessageToCurrentChat(msg);
-            }
+            //   await  request(body, controller);
+            await requestStream(body, controller);
 
             // Auto-scroll after update
             await nextTick();
         } catch (e) {
             errorMessage.value = formatError(e);
             showToastMessage(errorMessage.value, 'error');
-        } finally {
-            isLoading.value = false;
-            progressStatus.value = '';
-            currentController.value = null;
         }
+
+        isLoading.value = false;
+        progressStatus.value = '';
+        currentController.value = null;
     }
 
     function cancelRequest() {

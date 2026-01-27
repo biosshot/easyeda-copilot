@@ -1,5 +1,5 @@
 import { ref, computed, Ref } from 'vue';
-import { fetchWithTask } from '../api/fetch-with-task';
+import { fetchWithTask } from '../api';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { useSettingsStore } from '../stores/settings-store';
 import type { ExplainCircuit } from '../types/circuit';
