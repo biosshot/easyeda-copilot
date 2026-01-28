@@ -110,6 +110,7 @@ export default function useChat() {
             url: '/v2/chat/stream',
             body: body,
             signal: controller.signal,
+
             onmessage(ev) {
                 switch (ev.event) {
                     case 'mes_chunk': {
@@ -143,19 +144,19 @@ export default function useChat() {
 
                         break;
                 }
-                
+
             },
 
             onerror(err) {
-                throw err;
+                console.error(err)
             },
+        }).finally(() => {
+            if (writeToLastMessage) {
+                const message = chatMessages.value.at(-1);
+                if (message) message.isReady = true;
+            }
 
-            onclose() {
-                if (writeToLastMessage) {
-                    const message = chatMessages.value.at(-1);
-                    if (message) message.isReady = true;
-                }
-            },
+            historyStore.saveToStorage();
         });
     }
 

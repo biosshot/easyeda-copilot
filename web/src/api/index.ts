@@ -1,7 +1,7 @@
 import { __MODE__ } from "../mode";
 import { isEasyEda } from "../eda/utils";
 import { getUserAuth } from "../eda/user";
-import { type EventSourceMessage, fetchEventSource } from '@microsoft/fetch-event-source';
+import { type EventSourceMessage, EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
 
 type MyRequestInit = Omit<RequestInit, 'body'> & { body?: string | Blob | FormData | URLSearchParams | undefined };
 
@@ -201,12 +201,48 @@ export async function fetchSSE({
             'x-eda-user': getUserAuth(),
         },
         body: typeof body === 'string' ? body : JSON.stringify(body),
+        openWhenHidden: true,
         signal: signal,
 
-        onclose,
-        onerror,
-        onmessage,
-        onopen
+        onclose: () => {
+            onclose?.();
+        },
+
+        onerror: (e) => {
+            onerror?.(e);
+            throw new Error(e);
+        },
+
+        onmessage: (msg) => {
+            if (msg.event === 'FatalError' || msg.event === 'error') {
+                let errMes: string;
+                try {
+                    errMes = JSON.parse(msg.data).error || "Server error";
+                }
+                catch (e) {
+                    errMes = "Server error";
+                }
+
+                throw new Error(errMes);
+            }
+
+            onmessage?.(msg)
+        },
+
+        async onopen(response) {
+            if (response.ok && response.headers.get('content-type')?.includes(EventStreamContentType)) {
+                await onopen?.(response)
+                return;
+            } else if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+                throw new Error('Fail to connect');
+            }
+            else if (response.status === 500) {
+                const json = await response.json();
+                throw new Error(json.error || 'Operation failed');
+            } else {
+                throw new Error('Fail to connect');
+            }
+        },
     });
 }
 
