@@ -83,7 +83,7 @@ const chatViewRef = ref<typeof ChatView | null>(null);
 
 // Инициализировать тему при загрузке приложения
 onMounted(() => {
-  settingsStore.initSettings();
+  settingsStore.loadSettings();
   setTheme((settingsStore.getSetting('theme') || 'light') as ThemeName);
 
   watchEffect(() => {

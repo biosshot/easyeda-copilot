@@ -1,189 +1,99 @@
 import { defineStore } from 'pinia';
 import { defaultStorage } from './storage';
-import { fetchEda, apiUrl, authorization } from '../api';
-
-type SettingType = 'text' | 'password' | 'select' | 'checkbox';
-
-interface SettingOption {
-    label: string;
-    value: string | number | boolean;
-}
-
-interface SettingBase {
-    type: SettingType;
-    key: string;
-    label: string;
-    hint?: string;
-    required?: boolean;
-    defaultValue: string | number | boolean;
-}
-
-export interface SettingText extends SettingBase {
-    type: 'text' | 'password';
-    placeholder: string;
-    defaultValue: string;
-}
-
-export interface SettingSelect extends SettingBase {
-    type: 'select';
-    placeholder: string;
-    defaultValue: string;
-    options: SettingOption[];
-}
-
-export interface SettingCheckbox extends SettingBase {
-    type: 'checkbox';
-    defaultValue: boolean;
-}
-
-type SettingDefinition = SettingText | SettingSelect | SettingCheckbox;
-
-export interface SettingsSection {
-    title: string;
-    description?: string;
-    settings: SettingDefinition[];
-}
 
 export interface AllSettings {
     [key: string]: string | number | boolean;
 }
 
+// Явные значения по умолчанию
+const DEFAULT_SETTINGS: AllSettings = {
+    // API Configuration
+    apiProvider: 'openai',
+    apiKey: '',
+    llmBaseUrl: '',
+
+    // UI Preferences
+    theme: 'light',
+    showInlineButtons: true,
+
+    // Agent Models - Base
+    agentBaseModel: 'gpt-5-mini',
+
+    // Agent Models - Specialized
+    agentBlockDiagramModel: 'gpt-5.2',
+    agentChatModel: 'gpt-5-mini',
+    agentCircuitExplainerModel: 'gpt-5.2',
+    agentCircuitMakerModel: 'gpt-5.2',
+    agentCompletionsModel: 'gpt-5.2',
+    agentListCompletionsModel: 'gpt-5-mini',
+    agentDiagnosticAlgorithmModel: 'gpt-5.2',
+    agentPinDescriptionModel: 'gpt-5.2',
+    agentLcscSearchModel: 'gpt-5-mini',
+    agentLcscCatalogModel: 'gpt-5-mini',
+
+    agentBaseReasoning: 'medium',
+
+    agentBlockDiagramReasoning: 'medium',
+    agentChatReasoning: 'low',
+    agentCircuitExplainerReasoning: 'medium',
+    agentCircuitMakerReasoning: 'medium',
+    agentCompletionsReasoning: 'low',
+    agentListCompletionsReasoning: 'low',
+    agentDiagnosticAlgorithmReasoning: 'medium',
+    agentPinDescriptionReasoning: 'low',
+    agentLcscSearchReasoning: 'low',
+    agentLcscCatalogReasoning: 'minimal',
+
+    tavilyApiKey: '',
+};
+
 const SETTINGS_STORAGE_KEY = 'app_settings';
-
-export const settingsSections: SettingsSection[] = [
-    {
-        title: 'LLM API Configuration',
-        description: 'Configure your LLM API provider and credentials',
-        settings: [
-            {
-                key: 'apiProvider',
-                label: 'API Provider',
-                type: 'select',
-                hint: 'Select your preferred LLM provider',
-                options: [
-                    { label: 'OpenAI', value: 'openai' },
-                ],
-                required: true,
-                defaultValue: 'openai',
-            } as SettingSelect,
-            {
-                key: 'apiKey',
-                label: 'API Key',
-                type: 'password',
-                placeholder: 'Enter your API key',
-                hint: 'Your API key will be saved locally in browser storage',
-                required: true,
-                defaultValue: '',
-            } as SettingText,
-            // {
-            //     key: 'llmModel',
-            //     label: 'LLM Model',
-            //     type: 'select',
-            //     options: [] as SettingOption[],
-            //     hint: 'Your API key will be saved locally in browser storage',
-            //     required: true,
-            //     defaultValue: '',
-            // } as SettingSelect,
-        ],
-    },
-    {
-        title: 'Theme',
-        description: 'Customize the appearance',
-        settings: [
-            {
-                key: 'theme',
-                label: 'Theme',
-                type: 'select',
-                hint: 'Select your preferred theme',
-                options: [
-                    { label: 'Dark', value: 'dark' },
-                    { label: 'Light', value: 'light' },
-                ],
-                defaultValue: 'light',
-            } as SettingSelect,
-            {
-                key: 'showInlineButtons',
-                label: 'Show Inline Buttons',
-                type: 'checkbox',
-                hint: 'Display action buttons above the input area for the latest AI messages',
-                defaultValue: true,
-            } as SettingCheckbox,
-        ],
-    },
-];
-
-const defaultSettings: AllSettings = settingsSections.reduce((acc, section) => {
-    section.settings.forEach((setting) => {
-        acc[setting.key] = setting.defaultValue;
-    });
-    return acc;
-}, {} as AllSettings);
 
 export const useSettingsStore = defineStore('settings', {
     state: () => ({
-        settings: { ...defaultSettings } as AllSettings,
-        modelsOptions: [] as SettingOption[],
+        settings: { ...DEFAULT_SETTINGS } as AllSettings,
     }),
 
     getters: {
         getAllSettings: (state) => state.settings,
         getSetting: (state) => (key: string) => state.settings[key],
-        getSettingsSections: (state) => {
-            const sections = structuredClone(settingsSections); // deep clone
-            // const llmSection = sections[0]; // LLM API Configuration
-            // const llmModelSetting = llmSection.settings.find((s: SettingDefinition) => s.key === 'llmModel');
-            // if (llmModelSetting) {
-            //     (llmModelSetting as SettingSelect).options = state.modelsOptions;
-            // }
-            return sections;
-        },
     },
 
     actions: {
-        async fetchModels() {
-            // const provider = this.settings.apiProvider as string;
-            // try {
-            //     const response = await fetchEda(`${apiUrl}/models/${provider}`, {
-            //         headers: { 'Authorization': authorization }
-            //     });
-            //     if (!response.ok) throw new Error('Failed to fetch models');
-            //     const data = await response.json();
-            //     this.modelsOptions = data.models.map((m: string) => ({ label: m, value: m }));
-            //     // If no model selected or invalid, set to first available
-            //     if (!this.modelsOptions.find(opt => opt.value === this.settings.llmModel)) {
-            //         this.settings.llmModel = this.modelsOptions[0]?.value || '';
-            //     }
-            // } catch (e) {
-            //     console.error('Failed to fetch models:', e);
-            //     this.modelsOptions = [];
-            // }
-        },
+        loadSettings(stored?: string | { [key: string]: unknown }) {
+            if (!stored) stored = defaultStorage.getItem(SETTINGS_STORAGE_KEY) ?? undefined;
 
-        initSettings() {
-            const stored = defaultStorage.getItem(SETTINGS_STORAGE_KEY);
             if (stored) {
                 try {
-                    this.settings = { ...defaultSettings, ...JSON.parse(stored) };
+                    let parsed;
+
+                    if (typeof stored === 'string') parsed = JSON.parse(stored);
+                    else parsed = stored;
+
+                    this.settings = Object.keys(DEFAULT_SETTINGS).reduce((acc, key) => {
+                        acc[key] = key in parsed ? parsed[key] : DEFAULT_SETTINGS[key];
+                        return acc;
+                    }, {} as AllSettings);
                 } catch (e) {
                     console.error('Failed to parse settings from storage:', e);
-                    this.settings = { ...defaultSettings };
+                    this.settings = { ...DEFAULT_SETTINGS };
                 }
             } else {
-                this.settings = { ...defaultSettings };
+                this.settings = { ...DEFAULT_SETTINGS };
             }
-            this.fetchModels();
         },
 
-        updateSettings(newSettings: Partial<AllSettings>) {
-            this.settings = { ...this.settings, ...(newSettings as AllSettings) };
+        updateSettings(newSettings: AllSettings) {
+            this.settings = { ...this.settings, ...newSettings };
             this.saveSettings();
         },
 
         setSetting(key: string, value: string | number | boolean) {
-            this.settings[key] = value;
-            this.saveSettings();
-            if (key === 'apiProvider') {
-                this.fetchModels();
+            if (key in DEFAULT_SETTINGS) {
+                this.settings[key] = value;
+                this.saveSettings();
+            } else {
+                console.warn(`Unknown setting key: ${key}`);
             }
         },
 
@@ -196,7 +106,7 @@ export const useSettingsStore = defineStore('settings', {
         },
 
         resetSettings() {
-            this.settings = { ...defaultSettings };
+            this.settings = { ...DEFAULT_SETTINGS };
             this.saveSettings();
         },
     },

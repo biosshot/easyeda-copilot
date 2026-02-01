@@ -6,6 +6,7 @@ import type { ExplainCircuit } from '../types/circuit';
 import { isEasyEda, showToastMessage } from '../eda/utils';
 import { formatError } from '../utils/error';
 import { assembleCircuit } from '../eda/assemble-circuit';
+import { makeLLmSettings } from '../utils/llm-settings';
 
 export interface Suggestion {
     title: string;
@@ -45,10 +46,7 @@ export function useCompletions() {
                 url: '/v1/completions/list',
                 body: {
                     circuit,
-                    llmSettings: {
-                        provider: settingsStore.getSetting('apiProvider'),
-                        apiKey: settingsStore.getSetting('apiKey'),
-                    },
+                    llmSettings: makeLLmSettings(settingsStore),
                 },
                 fetchOptions: { signal: currentAbortController.value.signal },
                 onProgress: handleProgress,
@@ -101,10 +99,7 @@ export function useCompletions() {
                 body: {
                     circuit,
                     promt: actionToApply, // Note: likely typo; should be "prompt"
-                    llmSettings: {
-                        provider: settingsStore.getSetting('apiProvider'),
-                        apiKey: settingsStore.getSetting('apiKey'),
-                    },
+                    llmSettings: makeLLmSettings(settingsStore),
                 },
                 fetchOptions: { signal: currentAbortController.value.signal },
                 onProgress: handleProgress,

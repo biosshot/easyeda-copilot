@@ -1,0 +1,78 @@
+
+h1 {
+    margin: 0 0 2rem 0;
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    text-align: center;
+}
+
+h2 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.2rem;
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.75rem;
+}
+
+.section-description {
+    margin: 0 0 1.5rem 0;
+    font-size: 0.9rem;
+    color: var(--color-text-tertiary);
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+}
+
+.setting-group {
+    margin-bottom: 1.5rem;
+}
+
+.setting-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.setting-group input[type="text"],
+.setting-group input[type="password"],
+.setting-group select {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+}
+
+.setting-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.setting-group select {
+    cursor: pointer;
+}
+
+.setting-group input:focus,
+.setting-group select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+}
+
+.setting-group input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.hint {
+    margin: 0.5rem 0 0 0;
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+}

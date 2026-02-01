@@ -11,10 +11,8 @@ import {
   CircleAlert, RotateCw, Play, Zap, Cpu, CircleStop, User, Send, FileText, Search,
   MessageSquare, BoxSelect, AudioWaveform, Settings, PauseCircle, Plus, History,
   X, Trash2, SendHorizonal, ListRestart, ChevronUp, ChevronDown, Check, Replace,
-  CircleCheckBig, Pencil,
-  Bookmark, Trash,
-  Square,
-  Pause
+  CircleCheckBig, Pencil, Bookmark, Trash, Square, Pause, CodeXml, Image, Wrench, Save,
+  FileDown
 } from 'lucide-vue-next';
 
 const icons: Record<string, FunctionalComponent> = {
@@ -22,7 +20,8 @@ const icons: Record<string, FunctionalComponent> = {
   BoxSelect, AudioWaveform, Settings, PauseCircle, Plus,
   History, X, Trash2, SendHorizonal, CircleStop, ListRestart,
   ChevronUp, ChevronDown, Check, Play, CircleAlert, RotateCw, Replace,
-  CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash
+  CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash, CodeXml, Image, Wrench, Save,
+  FileDown
 };
 
 const props = defineProps<{

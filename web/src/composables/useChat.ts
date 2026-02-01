@@ -7,6 +7,7 @@ import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { isEasyEda, showToastMessage } from '../eda/utils';
 import type { InlineButton } from '../types/inline-button';
 import { formatError } from '../utils/error';
+import { makeLLmSettings } from '../utils/llm-settings';
 
 export default function useChat() {
     const historyStore = useChatHistoryStore();
@@ -126,7 +127,6 @@ export default function useChat() {
 
                             message = chatMessages.value.at(-1);
                             writeToLastMessage = true;
-                            isLoading.value = false;
                         }
 
                         if (message) message.content += ev.data;
@@ -135,7 +135,6 @@ export default function useChat() {
                     case 'message':
                         historyStore.addMessageToCurrentChat(JSON.parse(ev.data));
                         writeToLastMessage = false;
-                        isLoading.value = false;
                         break;
                     case 'status':
                         progressStatus.value = ev.data;
@@ -157,6 +156,7 @@ export default function useChat() {
             }
 
             historyStore.saveToStorage();
+            isLoading.value = false;
         });
     }
 
@@ -186,10 +186,7 @@ export default function useChat() {
 
             const body = {
                 context: historyStore.getCurrentChat()?.messages || [],
-                llmSettings: {
-                    provider: settingsStore.getSetting('apiProvider'),
-                    apiKey: settingsStore.getSetting('apiKey'),
-                },
+                llmSettings: makeLLmSettings(settingsStore),
             };
 
             if (!body.llmSettings.provider) {
@@ -199,7 +196,7 @@ export default function useChat() {
             newMessage.value = '';
             progressStatus.value = 'Sending...';
 
-            //   await  request(body, controller);
+            // await request(body, controller);
             await requestStream(body, controller);
 
             // Auto-scroll after update
