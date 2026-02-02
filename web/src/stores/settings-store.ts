@@ -6,7 +6,7 @@ export interface AllSettings {
 }
 
 // Явные значения по умолчанию
-const DEFAULT_SETTINGS: AllSettings = {
+const DEFAULT_SETTINGS = {
     // API Configuration
     apiProvider: 'openai',
     apiKey: '',
@@ -15,6 +15,8 @@ const DEFAULT_SETTINGS: AllSettings = {
     // UI Preferences
     theme: 'light',
     showInlineButtons: true,
+
+    useStreamApi: true,
 
     // Agent Models - Base
     agentBaseModel: 'gpt-5-mini',
@@ -47,6 +49,8 @@ const DEFAULT_SETTINGS: AllSettings = {
     tavilyApiKey: '',
 };
 
+type SettingsKey = keyof typeof DEFAULT_SETTINGS | (string & {});
+
 const SETTINGS_STORAGE_KEY = 'app_settings';
 
 export const useSettingsStore = defineStore('settings', {
@@ -56,7 +60,7 @@ export const useSettingsStore = defineStore('settings', {
 
     getters: {
         getAllSettings: (state) => state.settings,
-        getSetting: (state) => (key: string) => state.settings[key],
+        getSetting: (state) => (key: SettingsKey) => state.settings[key],
     },
 
     actions: {
@@ -71,6 +75,7 @@ export const useSettingsStore = defineStore('settings', {
                     else parsed = stored;
 
                     this.settings = Object.keys(DEFAULT_SETTINGS).reduce((acc, key) => {
+                        // @ts-ignore
                         acc[key] = key in parsed ? parsed[key] : DEFAULT_SETTINGS[key];
                         return acc;
                     }, {} as AllSettings);
@@ -88,7 +93,7 @@ export const useSettingsStore = defineStore('settings', {
             this.saveSettings();
         },
 
-        setSetting(key: string, value: string | number | boolean) {
+        setSetting(key: SettingsKey, value: string | number | boolean) {
             if (key in DEFAULT_SETTINGS) {
                 this.settings[key] = value;
                 this.saveSettings();

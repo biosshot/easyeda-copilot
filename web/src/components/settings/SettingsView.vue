@@ -193,6 +193,19 @@
                     <p class="hint">Display action buttons above the input area for the latest AI messages</p>
                 </div>
             </div>
+
+            <div class="settings-section">
+                <h2>Other</h2>
+
+                <!-- Show Inline Buttons -->
+                <div class="setting-group">
+                    <label for="useStreamApi">
+                        <input id="useStreamApi" type="checkbox" :checked="settings.useStreamApi"
+                            @change="onSettingChange('useStreamApi', ($event.target as HTMLInputElement).checked)" />
+                        Use streaming api
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 </template>

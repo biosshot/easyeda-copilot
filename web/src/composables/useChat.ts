@@ -196,8 +196,10 @@ export default function useChat() {
             newMessage.value = '';
             progressStatus.value = 'Sending...';
 
-            // await request(body, controller);
-            await requestStream(body, controller);
+            if (settingsStore.getSetting('useStreamApi'))
+                await requestStream(body, controller);
+            else
+                await request(body, controller);
 
             // Auto-scroll after update
             await nextTick();
