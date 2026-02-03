@@ -1,8 +1,11 @@
 <template>
     <div class="settings-view-container">
         <div class="settings-view">
-            <h1>Settings</h1>
-
+            <div style="margin-bottom: 1rem;">
+                <ErrorBanner v-if="showWebSearchWarn" type="warn"
+                    message='Web search may not work because the "Tavily API Key" is not specified and the provider does not support native web search.'>
+                </ErrorBanner>
+            </div>
             <!-- LLM API Configuration Section -->
             <div class="settings-section">
                 <h2>LLM API Configuration</h2>
@@ -175,11 +178,12 @@
                 <!-- Theme Select -->
                 <div class="setting-group">
                     <label for="theme">Theme</label>
-                    <select id="theme" :value="settings.theme"
-                        @change="onSettingChange('theme', ($event.target as HTMLSelectElement).value)">
-                        <option value="dark">Dark</option>
-                        <option value="light">Light</option>
-                    </select>
+
+                    <CustomSelect id="theme" :value="settings.theme" :model-value="String(settings['theme'])" :options="[
+                        { label: 'Dark', value: 'dark' },
+                        { label: 'Light', value: 'light' },
+                    ]" @update:model-value="onSettingChange('theme', $event)" />
+
                     <p class="hint">Select your preferred theme</p>
                 </div>
 
@@ -217,9 +221,15 @@ import { showToastMessage } from '../../eda/utils';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Collapsible from './Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
+import ErrorBanner from '../shared/ErrorBanner.vue';
 
 const settingsStore = useSettingsStore();
 const settings = computed(() => settingsStore.getAllSettings);
+
+const showWebSearchWarn = computed(() =>
+    !settingsStore.getSetting('tavilyApiKey') &&
+    !(((settingsStore.getSetting('apiProvider') as string) === 'openai' || (settingsStore.getSetting('apiProvider') as string) === 'anthropic') && !settingsStore.getSetting('llmBaseUrl'))
+)
 
 // Дебаунс для текстовых полей
 let saveTimeout: number | null = null;
