@@ -1,4 +1,9 @@
 # EasyEda Copilot - Your AI peer circuit design
+<p align="center">
+  <a href="https://discord.gg/AXCGjTDYkq">
+    <img src="https://img.shields.io/badge/Discord-7289DA?logo=discord&logoColor=white" alt="Discord">
+  </a>
+</p>
 
 EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit design workflow with intelligent assistance. This extension provides AI-powered schematic creation tools and interactive chat features to assist you with your electronic design projects.
 
