@@ -22,7 +22,7 @@
     <div class="setting-group">
         <label>Reasoning effort</label>
         <CustomSelect :model-value="reasoning" @update:model-value="emits('reasoningChange', $event)" :options="[{ label: 'Minimal', value: 'minimal' }, { label: 'Low', value: 'low' },
-        { label: 'Medium', value: 'medium' }, { label: 'Hight', value: 'hight' }]" />
+        { label: 'Medium', value: 'medium' }, { label: 'High', value: 'high' }]" />
     </div>
 </template>
 
