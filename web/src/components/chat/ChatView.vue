@@ -1,5 +1,5 @@
 <template>
-  <div class="chat-view">
+  <div v-if="!showEditor" class="chat-view">
     <div class="messages" v-if="chatMessages?.length" ref="messagesContainer" @scroll="onScroll">
       <ChatMessage v-for="(msg, idx) in chatMessages" :key="cyrb53(msg.content)" :msg="msg" :idx="idx"
         @retry-send="retrySend" @edit-message="onEditMessage" @inline-buttons="onInlineButtons"
@@ -9,7 +9,7 @@
         <div class="avatar">
           <Icon name="Cpu" size="20" />
         </div>
-        <TypingDots :status="progressStatus" />
+        <TypingDots dots-position="left" :status="progressStatus" />
         <Timer style="margin-left: auto;" />
       </div>
 
@@ -30,7 +30,6 @@
     </div>
 
     <div class="input">
-
       <div v-if="settingsStore.getSetting('showInlineButtons') && inlineButtons.length" class="inline-buttons">
         <IconButton :size="10" class="inline-button" v-for="btn in inlineButtons" :key="btn.text" :icon="btn.icon"
           @click="btn.handler()">
@@ -43,30 +42,48 @@
 
       <div class="input-container">
         <div class="input-options">
-          <IconButton class="input-option" v-for="opt in options" :key="opt.label" :icon="opt.icon" :size="10"
-            :class="['option-btn', { active: opt.value }]" @click="opt.value = !opt.value" :disabled="isLoading">
+          <IconButton class="input-option" v-for="opt in options.filter(o => o.showIfValue ? o.value : true)"
+            :key="opt.label" :icon="opt.icon" :size="10" :class="['option-btn', { active: opt.value }]"
+            @click="opt.value = !opt.value" :disabled="isLoading">
             <label>{{ opt.label }}</label>
           </IconButton>
         </div>
 
         <div class="input-area">
+          <IconButton :size="16" icon="Paperclip" class="attach-btn" @click="handleAttachClick"></IconButton>
+
           <AdjTextarea v-model="newMessage" placeholder="Ask about components, specifications, or circuits..."
             @enter="sendMessage" />
 
-          <button @click="isLoading ? cancelRequest() : sendMessage()"
-            :disabled="newMessage.trim() === '' && !isLoading">
-            <Icon :name="isLoading ? 'Square' : 'SendHorizonal'" size="20" :class="{ spin: isLoading }" />
-          </button>
+          <IconButton class="send-btn" @click="isLoading ? cancelRequest() : sendMessage()"
+            :disabled="newMessage.trim() === '' && !isLoading" :size="20"
+            :icon="isLoading ? 'Square' : 'SendHorizonal'" />
         </div>
+
+        <ContextMenu :show="attachMenu.show" :x="attachMenu.x" :y="attachMenu.y" :items="attachMenuItems"
+          @close="attachMenu.show = false" />
       </div>
     </div>
-
   </div>
 
+  <div v-else class="editor-overlay">
+    <div class="editor-container">
+      <div class="editor-main">
+        <BlockDiagramEditor ref="blockDiagramEditor">
+          <IconButton class="editor-btn" @click="toggleHistoryPanel" icon="History" :size="18" />
+          <IconButton class="editor-btn" @click="attachBlockDiagram" icon="Check" :size="18" />
+          <IconButton class="editor-btn" @click="showEditor = false" icon="X" :size="18" />
+          <div v-if="showHistoryPanel" class="editor-history-panel">
+            <BlockDiagramHistory ref="historyPanel" @load="loadDiagramFromHistory" @close="showHistoryPanel = false" />
+          </div>
+        </BlockDiagramEditor>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch, onActivated } from 'vue';
+import { ref, onMounted, nextTick, watch, onActivated, onUnmounted } from 'vue';
 import useChat from '../../composables/useChat';
 import Icon from '../shared/Icon.vue';
 import IconButton from '../shared/IconButton.vue';
@@ -79,8 +96,14 @@ import ErrorBanner from '../shared/ErrorBanner.vue';
 import Timer from '../shared/Timer.vue';
 import ChatMessage from './ChatMessage.vue';
 import { cyrb53 } from '../../utils/hash';
+import BlockDiagramEditor from '../block-diagram/BlockDiagramEditor.vue';
+import BlockDiagramHistory from '../block-diagram/BlockDiagramHistory.vue';
+import ContextMenu from '../shared/ContextMenu.vue';
+import { showToastMessage } from '../../eda/utils';
+import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-store';
 
 const settingsStore = useSettingsStore();
+const blockDiagramHistoryStore = useBlockDiagramHistoryStore();
 
 const {
   chatMessages,
@@ -100,6 +123,11 @@ const {
 
 const messagesContainer = ref<HTMLElement | null>(null);
 const showScrollButton = ref(false);
+const showEditor = ref(false);
+const showHistoryPanel = ref(false);
+const blockDiagramEditor = ref<InstanceType<typeof BlockDiagramEditor> | null>(null);
+const historyPanel = ref<InstanceType<typeof BlockDiagramHistory> | null>(null);
+const attachMenu = ref({ show: false, x: 0, y: 0 });
 
 onActivated(() => {
   nextTick(() => {
@@ -115,6 +143,46 @@ watch(chatMessages, () => {
   lastInlineBtnIdx.value = -1;
   nextTick(() => { scrollToBottom(); onScroll(); });
 });
+
+function attachBlockDiagram() {
+  if (!blockDiagramEditor.value) {
+    showToastMessage("BlockDiagramEditor not found", 'error');
+    return;
+  }
+
+  const data = blockDiagramEditor.value.getData();
+  if (!data || !data.nodes.length) {
+    showToastMessage("Block diagram is empty", 'error');
+    return;
+  }
+
+  // Save to history with default name
+  const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const defaultName = `Diagram - ${timestamp}`;
+  blockDiagramHistoryStore.addOrUpdateEntry(defaultName, data);
+  showToastMessage("Diagram saved to history", 'success');
+
+  showEditor.value = false;
+  showHistoryPanel.value = false;
+  const opt = options.value.find(o => o.attachId === 'Block diagram')!;
+  opt.value = data;
+  console.log("blockDiagramEditor", data)
+}
+
+function loadDiagramFromHistory(data: any) {
+  if (!blockDiagramEditor.value) {
+    showToastMessage("BlockDiagramEditor not found", 'error');
+    return;
+  }
+
+  blockDiagramEditor.value.setData(data);
+  showHistoryPanel.value = false;
+  showToastMessage("Diagram loaded from history", 'success');
+}
+
+function toggleHistoryPanel() {
+  showHistoryPanel.value = !showHistoryPanel.value;
+}
 
 function scrollToBottom() {
   const container = messagesContainer.value;
@@ -137,6 +205,42 @@ function onScroll() {
   }
 }
 
+function handleAttachClick(event: MouseEvent) {
+  event.preventDefault();
+  event.stopPropagation();
+
+  const target = event.currentTarget as HTMLElement;
+  const rect = target.getBoundingClientRect();
+  attachMenu.value = {
+    show: true,
+    x: rect.left,
+    y: rect.top - 40
+  };
+}
+
+const attachMenuItems = [
+  {
+    icon: 'Cuboid',
+    label: 'Draw Block Diagram',
+    click: () => {
+      showEditor.value = true;
+      attachMenu.value.show = false;
+    }
+  }
+];
+
+function closeAttachMenu(event: MouseEvent) {
+  attachMenu.value.show = false;
+}
+
+onMounted(() => {
+  window.addEventListener('click', closeAttachMenu);
+  blockDiagramHistoryStore.initializeHistory();
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', closeAttachMenu);
+})
 
 function onEditMessage(originalIdx: number, newContent: string) {
   // Update the message content and send as retry
@@ -227,12 +331,10 @@ defineExpose({
   border-color: var(--color-primary);
 }
 
-.input-area button {
+.input-area .send-btn {
   padding: 0.75rem;
   color: var(--color-primary);
   background-color: transparent;
-  /* background-color: var(--color-primary); */
-  /* color: var(--color-text-on-primary); */
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -240,15 +342,18 @@ defineExpose({
   max-height: 54px;
 }
 
-.input-area button:disabled {
-  color: var(--color-border-dark);
-  /* background-color: var(--color-surface-hover); */
-  /* color: var(--color-text-on-surface); */
+.input-area .attach-btn {
+  padding: 0;
+  color: var(--color-text-on-surface);
+  align-items: flex-start;
 }
 
-.input-area button:hover {
+.input-area .send-btn:disabled {
+  color: var(--color-border-dark);
+}
+
+.input-area .send-btn:hover {
   color: var(--color-primary-dark);
-  /* background-color: var(--color-primary-dark); */
 }
 
 .input-container {
@@ -356,5 +461,58 @@ button[disabled],
   align-items: center;
   justify-content: center;
   color: var(--color-text-on-primary);
+}
+
+.open-editor-btn {
+  position: absolute;
+  right: 12%;
+  margin-top: -75px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 11;
+}
+
+.editor-overlay {
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-container {
+  display: flex;
+  flex: 1;
+  gap: 0;
+}
+
+.editor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.editor-history-panel {
+  position: absolute;
+  top: 70px;
+  right: 10px;
+  width: 280px;
+  max-height: calc(100vh - 150px);
+  margin-top: 0.25rem;
+  z-index: 200;
+}
+
+.editor-overlay-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
 }
 </style>

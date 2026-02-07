@@ -1,13 +1,63 @@
 // composables/useChat.ts
 import { ref, computed, onScopeDispose, nextTick } from 'vue';
 import { fetchSSE, fetchWithTask } from '../api';
-import { useChatHistoryStore } from '../stores/chat-history-store';
+import { ChatMessage, useChatHistoryStore } from '../stores/chat-history-store';
 import { useSettingsStore } from '../stores/settings-store';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { isEasyEda, showToastMessage } from '../eda/utils';
 import type { InlineButton } from '../types/inline-button';
 import { formatError } from '../utils/error';
 import { makeLLmSettings } from '../utils/llm-settings';
+import { FlowExportObject } from '@vue-flow/core';
+import { CircuitBlocks } from '../types/circuit';
+
+function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['blocks'] {
+    const { nodes, edges } = flowData;
+
+    // Создаем маппинг: id узла -> его данные
+    const nodeMap = new Map<string, typeof nodes[0]>();
+    nodes.forEach(node => {
+        nodeMap.set(node.id, node);
+    });
+
+    // Создаем маппинг: исходный узел -> массив целевых узлов
+    const adjacencyMap = new Map<string, string[]>();
+
+    edges.forEach(edge => {
+        const sourceId = edge.source;
+        const targetId = edge.target;
+
+        if (!adjacencyMap.has(sourceId)) {
+            adjacencyMap.set(sourceId, []);
+        }
+
+        const targets = adjacencyMap.get(sourceId)!;
+        if (!targets.includes(targetId)) {
+            targets.push(targetId);
+        }
+    });
+
+    // Преобразуем узлы в блоки
+    const blocks: CircuitBlocks['blocks'][0][] = nodes.map(node => {
+        const nextNodeIds = adjacencyMap.get(node.id) || [];
+
+        const nextBlockNames = nextNodeIds
+            .map(targetId => {
+                const targetNode = nodeMap.get(targetId);
+                return targetNode ? targetNode.data.label : null;
+            })
+            .filter((name): name is string => name !== null);
+
+        return {
+            name: node.data.label,
+            description: node.data.description,
+            next_block_names: nextBlockNames
+        };
+    });
+
+    return blocks;
+}
+
 
 export default function useChat() {
     const historyStore = useChatHistoryStore();
@@ -22,9 +72,16 @@ export default function useChat() {
     const currentController = ref<AbortController | null>(null);
     const lastInlineBtnIdx = ref(-1);
 
-    const options = ref([
-        { value: true, label: 'Upload selected', icon: 'BoxSelect', id: 'Selected circuit' },
-        { value: false, label: 'Upload all', icon: 'BoxSelect', id: 'Selected circuit' },
+    const options = ref<{
+        value: unknown;
+        showIfValue: boolean;
+        label: string;
+        icon: string;
+        attachId: 'Selected circuit' | 'Block diagram';
+    }[]>([
+        { value: true, showIfValue: false, label: 'Upload selected', icon: 'BoxSelect', attachId: 'Selected circuit' },
+        { value: false, showIfValue: false, label: 'Upload all', icon: 'BoxSelect', attachId: 'Selected circuit' },
+        { value: undefined, showIfValue: true, label: 'Block diagram', icon: 'Cuboid', attachId: 'Block diagram' },
     ]);
 
     function onInlineButtons(data: { idx: number; buttons: InlineButton[] }) {
@@ -46,7 +103,7 @@ export default function useChat() {
                     const primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId().catch(() => []);
                     if (primitiveIds.length) {
                         progressStatus.value = 'Upload selected...';
-                        userOptions[opt.id] = await getSchematic(primitiveIds);
+                        userOptions[opt.attachId] = await getSchematic(primitiveIds);
                     }
                 } catch (e: unknown) {
                     const eMes = e instanceof Error ? e.message : 'Error';
@@ -59,12 +116,19 @@ export default function useChat() {
                     const primitiveIds = await getAllPrimitiveId();
                     if (primitiveIds.length) {
                         progressStatus.value = 'Upload all...';
-                        userOptions[opt.id] = await getSchematic(primitiveIds);
+                        userOptions[opt.attachId] = await getSchematic(primitiveIds);
                     }
                 } catch (e: unknown) {
                     const eMes = e instanceof Error ? e.message : 'Error';
                     console.warn('Failed to load all circuit', e);
                     showToastMessage('Failed to load all circuit: ' + eMes, 'error');
+                }
+            }
+            else if (opt.attachId === 'Block diagram' && opt.value && typeof opt.value === 'object') {
+                const blocks = transformFlowToBlocks(opt.value as FlowExportObject);
+                if (blocks.length) {
+                    progressStatus.value = 'Upload block diagram...';
+                    userOptions[opt.attachId] = blocks;
                 }
             }
             else {
@@ -160,6 +224,15 @@ export default function useChat() {
         });
     }
 
+    const prepareContext = (messages: ChatMessage[]) => {
+        if (messages.length > 30) {
+            showToastMessage('The context is too large and will therefore be truncated to 30 messages (we will add more efficient context optimization soon)', 'warn');
+            return messages.filter((_, i) => i > messages.length - 15 || i % 5 === 0).slice(-30);
+        }
+
+        return messages;
+    }
+
     async function sendMessage(retry = false, retryMesIdx = 0) {
         if ((!newMessage.value.trim() && !retry) || isLoading.value) return;
 
@@ -185,7 +258,7 @@ export default function useChat() {
             }
 
             const body = {
-                context: historyStore.getCurrentChat()?.messages || [],
+                context: prepareContext(historyStore.getCurrentChat()?.messages || []),
                 llmSettings: makeLLmSettings(settingsStore),
             };
 

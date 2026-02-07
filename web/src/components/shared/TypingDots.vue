@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="typing-dots">
+        <div class="typing-dots" :style="{ marginLeft: dotsPosition === 'left' ? 0 : undefined }">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps<{ status: string }>();
+const props = defineProps<{ status: string, dotsPosition?: 'left' }>();
 
 const status = computed(() => {
     const MAX = 320;
@@ -30,24 +30,17 @@ const status = computed(() => {
     padding: 0.6rem 0.8rem;
     color: var(--color-text);
     font-size: 0.9rem;
+    max-width: 60%;
 }
 
 .progress-text {
     font-size: 0.85rem;
     color: var(--color-text-muted);
     font-weight: 400;
-    white-space: pre-line;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    max-width: 90%;
-    min-width: 100px;
+
+    white-space: nowrap;
     overflow: hidden;
-    /* 
-    line-clamp: 8;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 8;
-    display: -webkit-box;
-    -webkit-box-orient: vertical; */
 }
 
 .typing-dots {

@@ -42,6 +42,9 @@
 	},
 	"dependencies": {
 		"@microsoft/fetch-event-source": "^2.0.1",
+		"@vue-flow/core": "^1.48.2",
+		"@vue-flow/node-resizer": "^1.5.1",
+		"@vue-flow/node-toolbar": "^1.1.1",
 		"dompurify": "^3.3.0",
 		"fontkit": "^2.0.4",
 		"highlight.js": "^11.11.1",
@@ -51,6 +54,7 @@
 		"papaparse": "^5.5.3",
 		"pdf-lib": "^1.17.1",
 		"pinia": "^3.0.3",
+		"uuid": "^13.0.0",
 		"vue": "^3.5.22",
 		"zod": "^4.3.5"
 	}

@@ -104,7 +104,7 @@ export async function fetchWithTask({
     if (signal) {
         abortHandler = async () => {
             try {
-                await fetchEda(cancelUrl, { method: 'DELETE', headers: { 'Authorization': authorization } });
+                await fetchEda(cancelUrl, { headers: { 'Authorization': authorization } });
             } catch (err) {
                 console.error('Failed to cancel operation:', err);
             }
