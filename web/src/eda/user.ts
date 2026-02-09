@@ -1,7 +1,8 @@
 import { isEasyEda } from "./utils";
 
 export const getUserInfo = () => {
-    if (!isEasyEda()) return null;
+    if (!isEasyEda() || typeof eda.sys_Environment.getUserInfo !== 'function') return null;
+
     const info = eda.sys_Environment.getUserInfo();
     return {
         ...info,

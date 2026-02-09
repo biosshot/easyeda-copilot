@@ -11,7 +11,10 @@
 </template>
 
 <script setup lang="ts">
+import { onUnmounted, ref } from 'vue'
 import Icon from './Icon.vue'
+import { onMounted } from 'vue'
+import { MouseTouchEvent } from '@vue-flow/core'
 
 export interface ContextMenuItem {
     label?: string
@@ -22,13 +25,14 @@ export interface ContextMenuItem {
 }
 
 interface Props {
-    show: boolean
-    x: number
-    y: number
     items: ContextMenuItem[]
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const show = ref<boolean>(false);
+const x = ref<number>(0);
+const y = ref<number>(0);
 
 const emit = defineEmits<{
     close: []
@@ -38,6 +42,36 @@ const handleClick = (item: ContextMenuItem) => {
     item.click?.()
     emit('close')
 }
+
+const close = () => {
+    show.value = false;
+}
+
+defineExpose({
+    open: (event: any) => {
+        const height = props.items.length * 23;
+
+        let y_ = event.clientY;
+
+        if (y_ + height > window.innerHeight) {
+            y_ -= height;
+        }
+
+        x.value = event.clientX;
+        y.value = y_;
+        show.value = true;
+    },
+
+    close
+})
+
+onMounted(() => {
+    window.addEventListener('click', close);
+})
+
+onUnmounted(() => {
+    window.removeEventListener('click', close);
+})
 </script>
 
 <style scoped>
@@ -60,6 +94,7 @@ const handleClick = (item: ContextMenuItem) => {
     color: var(--color-text);
     transition: all 0.2s;
     border-radius: 4px;
+    height: 25px;
 }
 
 .context-menu-item:hover {

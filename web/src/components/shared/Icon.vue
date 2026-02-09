@@ -13,7 +13,7 @@ import {
   X, Trash2, SendHorizonal, ListRestart, ChevronUp, ChevronDown, Check, Replace,
   CircleCheckBig, Pencil, Bookmark, Trash, Square, Pause, CodeXml, Image, Wrench, Save,
   FileDown, TriangleAlert, ClipboardPaste, ClipboardCopy, Scissors,
-  Undo, Redo, Scaling, Minus, Paperclip, Cuboid
+  Undo, Redo, Scaling, Minus, Paperclip, Cuboid, Upload
 } from 'lucide-vue-next';
 
 const icons: Record<string, FunctionalComponent> = {
@@ -23,7 +23,7 @@ const icons: Record<string, FunctionalComponent> = {
   ChevronUp, ChevronDown, Check, Play, CircleAlert, RotateCw, Replace,
   CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash, CodeXml, Image, Wrench, Save,
   FileDown, TriangleAlert, ClipboardCopy, ClipboardPaste, Scissors, Undo, Redo, Scaling,
-  Minus, Paperclip, Cuboid
+  Minus, Paperclip, Cuboid, Upload
 };
 
 const props = defineProps<{
@@ -51,7 +51,7 @@ const isAvatar = computed(() => {
 const iconComponent = computed(() => {
   if (icons[name.value]) return icons[name.value];
   console.warn('Icon not found:', name.value, icons);
-  return icons.Zap;
+  return icons[props.failName ?? 'Zap'] ?? icons.Zap;
 });
 
 function handleImageError() {

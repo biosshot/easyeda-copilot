@@ -14,16 +14,25 @@
             <IconButton @click="zoomIn" icon="Plus" />
             <IconButton @click="zoomOut" icon="Minus" />
             <div class="spacer"></div>
+            <IconButton @click="triggerFileSelect" icon="Upload" />
             <slot></slot>
         </div>
 
         <VueFlow class="flow-container" @node-double-click="handleNodeDoubleClick" :delete-key-code="['Delete']"
-            @pane-context-menu="handlePaneContextMenu" @node-context-menu="handleNodeContextMenu"
-            @edge-context-menu="handleEdgeContextMenu">
+            @pane-context-menu="onPaneMenu" @node-context-menu="onNodeMenu" @edge-context-menu="onEdgeMenu"
+            @drop.prevent="onDrop" @dragover.prevent>
         </VueFlow>
 
-        <ContextMenu :show="contextMenu.show" :x="contextMenu.x" :y="contextMenu.y" :items="contextMenuItems"
-            @close="hideContextMenu" />
+        <ContextMenu ref="contextMenuComponent" :items="contextMenuItems" />
+
+        <div v-if="isDigitizing" class="loading-overlay" @click.stop>
+            <div class="loading-content">
+                <TypingDots :status="progressText || 'Processing image…'" />
+                <IconButton class="cancel-button" @click="cancelDigitization" :size="16" icon="CircleStop">
+                    Cancel
+                </IconButton>
+            </div>
+        </div>
 
         <div v-if="showEditModal" class="modal-overlay">
             <div class="modal-content" @click.stop>
@@ -56,453 +65,61 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
-import { VueFlow, useVueFlow, type Connection, type Edge, type Node, type XYPosition, Position, NodeMouseEvent, EdgeMouseEvent, FlowImportObject } from '@vue-flow/core'
-import { v4 as uuidv4 } from 'uuid'
+import { ref } from 'vue'
+import { EdgeMouseEvent, NodeMouseEvent, VueFlow } from '@vue-flow/core'
 import IconButton from '../shared/IconButton.vue'
-import Icon from '../shared/Icon.vue'
-import ContextMenu, { type ContextMenuItem } from '../shared/ContextMenu.vue'
-import { useMouse, useRefHistory } from '@vueuse/core';
+import ContextMenu from '../shared/ContextMenu.vue'
+import TypingDots from '../shared/TypingDots.vue'
+import { useBlockDiagramEditor } from '../../composables/useBlockDiagramEditor'
 
-type BlockNode = Node<{ label: string; description: string }>;
-type ClipboardState = { nodes: BlockNode[]; edges: Edge[] }
-
-type ContextMenuType = 'pane' | 'node' | 'edge' | null
-type ContextMenuState = {
-    show: boolean
-    type: ContextMenuType
-    x: number
-    y: number
-    nodeId: string | null
-    edgeId: string | null
-}
-type EditingBlock = { id: string; label: string; description: string }
+const contextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null)
 
 const {
-    onConnect,
-    addEdges,
-    setEdges,
-    setNodes,
-    addNodes,
-    getNodes,
-    getEdges,
-    getSelectedNodes,
-    getSelectedElements,
-    getSelectedEdges,
-    updateNodeData,
+    showEditModal,
+    editingBlock,
+    contextMenuItems,
+    isDigitizing,
+    progressText,
+
+    addBlock,
+    deleteSelected,
+    editSelected,
+    saveBlock,
+    closeEditModal,
+    undo,
+    redo,
     fitView,
     zoomIn,
     zoomOut,
-    screenToFlowCoordinate,
-    setMinZoom,
-    setMaxZoom,
-    nodes,
-    edges,
-    onNodesChange,
-    onEdgesChange,
-    toObject,
-    fromObject,
-} = useVueFlow({});
+    handleNodeDoubleClick,
+    handlePaneContextMenu,
+    handleNodeContextMenu,
+    handleEdgeContextMenu,
+    triggerFileSelect,
+    onDrop,
+    pasteAt,
+    cancelDigitization,
 
-const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
-const flowState = ref({ nodes: clone([...nodes.value]), edges: clone([...edges.value]) });
-const mouse = useMouse();
-const showEditModal = ref(false)
-const editingBlock = ref<EditingBlock>({ id: '', label: '', description: '' })
-const clipboard = ref<ClipboardState | null>(null)
-const contextMenu = ref<ContextMenuState>({
-    show: false,
-    type: null,
-    x: 0,
-    y: 0,
-    nodeId: null,
-    edgeId: null
-})
+    getData,
+    setData
+} = useBlockDiagramEditor()
 
-const getFlowMousePos = () => screenToFlowCoordinate({ x: mouse.x.value, y: mouse.y.value })
+// Expose for parent
+defineExpose({ getData: getData, setData: setData })
 
-const contextMenuItems = computed<ContextMenuItem[]>(() => {
-    if (contextMenu.value.type === 'pane') {
-        return [
-            {
-                icon: 'Plus',
-                label: 'Add Block Here',
-                click: () => addBlock(getFlowMousePos())
-            },
-            { divider: true },
-            {
-                icon: 'ClipboardCopy',
-                label: 'Copy',
-                click: copySelected
-            },
-            {
-                icon: 'ClipboardPaste',
-                label: 'Paste',
-                click: () => pasteAt(getFlowMousePos())
-            },
-            { divider: true },
-            {
-                icon: 'Scaling',
-                label: 'Fit to View',
-                click: () => fitView({ padding: 0.2 })
-            },
-            {
-                icon: 'Undo',
-                label: 'Undo',
-                click: undo
-            },
-            {
-                icon: 'Redo',
-                label: 'Redo',
-                click: redo
-            }
-        ]
-    }
-
-    if (contextMenu.value.type === 'node') {
-        return [
-            {
-                icon: 'Pencil',
-                label: 'Edit Block',
-                click: editSelected
-            },
-            {
-                icon: 'ClipboardCopy',
-                label: 'Copy',
-                click: copySelected
-            },
-            {
-                icon: 'Scissors',
-                label: 'Cut',
-                click: cutSelected
-            },
-            { divider: true },
-            {
-                icon: 'Trash2',
-                label: 'Delete',
-                danger: true,
-                click: deleteSelected
-            }
-        ]
-    }
-
-    if (contextMenu.value.type === 'edge') {
-        return [
-            {
-                icon: 'Trash2',
-                label: 'Delete Connection',
-                danger: true,
-                click: deleteEdge
-            }
-        ]
-    }
-
-    return []
-})
-
-onEdgesChange((changes) => {
-    if (!changes.length) return
-
-    flowState.value = {
-        nodes: clone([...nodes.value]),
-        edges: clone([...edges.value])
-    }
-})
-
-// Синхронизируем flowState с актуальными nodes/edges
-onNodesChange((changes) => {
-    if (!changes.length) return
-
-    if (changes[0].type === 'position' && changes[0].dragging) {
-        return
-    }
-    if (changes[0].type === 'dimensions' || changes[0].type === 'select') {
-        return
-    }
-
-    flowState.value = {
-        nodes: clone([...nodes.value]),
-        edges: clone([...edges.value])
-    }
-})
-
-const history = useRefHistory(flowState, {
-    capacity: 25,
-});
-
-const undo = () => {
-    if (!history.canUndo.value) return;
-    history.undo()
-    setNodes([...flowState.value.nodes])
-    setEdges([...flowState.value.edges])
+// Context menu wrappers to pass opener function
+function onPaneMenu(event: MouseEvent) {
+    handlePaneContextMenu(event);
+    contextMenuComponent.value?.open(event);
 }
-
-const redo = () => {
-    if (!history.canRedo.value) return;
-    history.redo()
-    setNodes([...flowState.value.nodes])
-    setEdges([...flowState.value.edges])
+function onNodeMenu(event: NodeMouseEvent) {
+    handleNodeContextMenu(event);
+    contextMenuComponent.value?.open(event.event)
 }
-
-const generateBlockId = () => `block-${uuidv4()}`
-const getCenterPosition = (): XYPosition =>
-    screenToFlowCoordinate({ x: window.innerWidth / 2, y: window.innerHeight / 2 })
-const makeEdgeStyle = () => ({
-    stroke: 'var(--color-primary)',
-    strokeWidth: 2
-})
-
-const deleteSelected = () => {
-    setEdges(edges.value.filter(n => !getSelectedEdges.value.some(sn => sn.id === n.id)))
-    setNodes(nodes.value.filter(n => !getSelectedNodes.value.some(sn => sn.id === n.id)))
+function onEdgeMenu(event: EdgeMouseEvent) {
+    handleEdgeContextMenu(event)
+    contextMenuComponent.value?.open(event.event)
 }
-
-const addBlock = (position?: XYPosition) => {
-    const resolvedPosition = position ?? getCenterPosition()
-    hideContextMenu()
-
-    const newNode = {
-        id: generateBlockId(),
-        position: { x: resolvedPosition.x, y: resolvedPosition.y },
-        data: {
-            label: 'New Block',
-            description: ''
-        },
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
-        selectable: true
-    }
-
-    addNodes([newNode])
-}
-
-const buildIdMap = (nodes: BlockNode[], newNodes: BlockNode[]) => {
-    const idMap: Record<string, string> = {}
-    nodes.forEach((node, index) => {
-        idMap[node.id] = newNodes[index].id
-    })
-    return idMap
-}
-
-const remapEdges = (edges: Edge[], idMap: Record<string, string>): Edge[] =>
-    edges.map((edge) => ({
-        ...edge,
-        id: generateBlockId(),
-        source: idMap[edge.source],
-        target: idMap[edge.target]
-    }))
-
-const pasteAt = (position: XYPosition) => {
-    if (!clipboard.value) {
-        hideContextMenu()
-        return
-    }
-
-    hideContextMenu()
-
-    const { nodes, edges } = clipboard.value
-
-    const newNodes = nodes.map((node) => ({
-        ...node,
-        id: generateBlockId(),
-        position: {
-            x: position.x + (nodes[0].position.x - node.position.x),
-            y: position.y + (nodes[0].position.y - node.position.y),
-        }
-    }))
-
-    const idMap = buildIdMap(nodes, newNodes)
-    const newEdges = remapEdges(edges, idMap)
-
-    addNodes(newNodes)
-    addEdges(newEdges)
-}
-
-const deleteEdge = () => {
-    if (!contextMenu.value.edgeId) return
-
-    const edges = getEdges.value.filter((edge) => edge.id !== contextMenu.value.edgeId)
-    setEdges(edges)
-    hideContextMenu()
-}
-
-const editSelected = () => {
-    if (!getSelectedNodes.value.length) return
-
-    const node = getSelectedNodes.value[0];
-
-    editingBlock.value = {
-        id: node.id,
-        label: node.data.label,
-        description: node.data.description
-    }
-    showEditModal.value = true
-}
-
-const saveBlock = () => {
-    if (!editingBlock.value.id) return
-
-    updateNodeData(editingBlock.value.id, {
-        label: editingBlock.value.label,
-        description: editingBlock.value.description
-    })
-
-    closeEditModal()
-}
-
-const closeEditModal = () => {
-    showEditModal.value = false
-    editingBlock.value = { id: '', label: '', description: '' }
-}
-
-const copySelected = () => {
-    if (!getSelectedNodes.value.length) return
-
-    const selectedNodeIds = [...getSelectedNodes.value.map(e => e.id)];
-    const nodesToCopy = new Set([...selectedNodeIds])
-
-    const selectedNodes = getNodes.value.filter(node => nodesToCopy.has(node.id))
-
-    const idMap: Record<string, string> = {}
-    selectedNodes.forEach(node => {
-        idMap[node.id] = generateBlockId()
-    })
-
-    const copiedNodes = selectedNodes.map(node => ({
-        ...node,
-        id: idMap[node.id],
-        position: { ...node.position },
-        data: { ...node.data }
-    }))
-
-    const copiedEdges = getEdges.value.filter(edge =>
-        nodesToCopy.has(edge.source) && nodesToCopy.has(edge.target)
-    ).map(edge => ({
-        ...edge,
-        id: generateBlockId(),
-        source: idMap[edge.source],
-        target: idMap[edge.target]
-    }))
-
-
-    clipboard.value = {
-        nodes: copiedNodes,
-        edges: copiedEdges
-    }
-}
-
-const cutSelected = () => {
-    copySelected()
-    deleteSelected();
-}
-
-const handleNodeDoubleClick = ({ event, node }: NodeMouseEvent) => {
-    event.stopPropagation()
-    editSelected()
-}
-
-const handlePaneContextMenu = (event: MouseEvent) => {
-    event.preventDefault()
-    const target = event.target as Element | null
-    if (!target) return
-
-    contextMenu.value = {
-        show: true,
-        type: 'pane',
-        x: event.clientX,
-        y: event.clientY,
-        nodeId: null,
-        edgeId: null
-    }
-}
-
-const handleNodeContextMenu = ({ event, node }: NodeMouseEvent) => {
-    event.preventDefault()
-
-    contextMenu.value = {
-        show: true,
-        type: 'node',
-        x: (event as any).clientX,
-        y: (event as any).clientY,
-        nodeId: node.id,
-        edgeId: null
-    }
-}
-
-const handleEdgeContextMenu = ({ event, edge }: EdgeMouseEvent) => {
-    event.preventDefault()
-
-    contextMenu.value = {
-        show: true,
-        type: 'edge',
-        x: (event as any).clientX,
-        y: (event as any).clientY,
-        nodeId: null,
-        edgeId: edge.id
-    }
-}
-
-onConnect((params: Connection) => {
-    addEdges([{
-        id: generateBlockId(),
-        ...params,
-        style: makeEdgeStyle()
-    }])
-})
-
-const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.code === 'KeyC' && getSelectedNodes.value.length) {
-        event.preventDefault()
-        copySelected()
-    }
-
-    if (event.ctrlKey && event.code === 'KeyX' && getSelectedNodes.value.length) {
-        event.preventDefault()
-        cutSelected()
-    }
-
-    if (event.ctrlKey && event.code === 'KeyV' && clipboard.value) {
-        event.preventDefault()
-        pasteAt(getFlowMousePos())
-    }
-
-    if (event.ctrlKey && event.code === 'KeyZ' && history.canUndo.value) {
-        event.preventDefault()
-        undo()
-    }
-
-    if (event.ctrlKey && event.code === 'KeyY' && history.canRedo.value) {
-        event.preventDefault()
-        redo()
-    }
-}
-
-onMounted(() => {
-    window.addEventListener('keydown', handleKeyDown)
-    window.addEventListener('click', hideContextMenu)
-
-    setMinZoom(0.1);
-    setMaxZoom(4);
-})
-
-onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown);
-    window.removeEventListener('click', hideContextMenu);
-})
-
-const hideContextMenu = () => {
-    contextMenu.value.show = false;
-}
-
-defineExpose({
-    getData: () => {
-        return toObject();
-    },
-
-    setData: (data: FlowImportObject) => {
-        fromObject(data)
-    }
-})
 
 </script>
 
@@ -512,6 +129,7 @@ defineExpose({
     flex-direction: column;
     height: 100vh;
     width: 100%;
+    position: relative;
     background: var(--color-background);
     color: var(--color-text);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -521,9 +139,7 @@ defineExpose({
     display: flex;
     gap: 8px;
     padding: 12px 16px;
-    background: var(--color-surface);
     border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     z-index: 10;
     align-items: center;
 }
@@ -541,17 +157,39 @@ defineExpose({
 
 .flow-container {
     flex: 1;
-    background: var(--color-background-secondary);
     position: relative;
 }
 
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1100;
+}
+
+.loading-content {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border-light);
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.loading-actions {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
+}
+
 .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -705,6 +343,30 @@ defineExpose({
         min-width: 90%;
         margin: 20px;
     }
+}
+
+.cancel-button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cancel-button {
+    background: var(--color-error);
+    color: white;
+    padding: 5px 6px;
+}
+
+.cancel-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
 }
 </style>
 <style>

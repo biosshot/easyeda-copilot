@@ -60,8 +60,7 @@
             :icon="isLoading ? 'Square' : 'SendHorizonal'" />
         </div>
 
-        <ContextMenu :show="attachMenu.show" :x="attachMenu.x" :y="attachMenu.y" :items="attachMenuItems"
-          @close="attachMenu.show = false" />
+        <ContextMenu ref="attachCtxMenu" :items="attachMenuItems" />
       </div>
     </div>
   </div>
@@ -118,7 +117,8 @@ const {
   sendMessage,
   cancelRequest,
   retrySend,
-  deleteMessage
+  deleteMessage,
+  onEditMessage
 } = useChat();
 
 const messagesContainer = ref<HTMLElement | null>(null);
@@ -126,8 +126,7 @@ const showScrollButton = ref(false);
 const showEditor = ref(false);
 const showHistoryPanel = ref(false);
 const blockDiagramEditor = ref<InstanceType<typeof BlockDiagramEditor> | null>(null);
-const historyPanel = ref<InstanceType<typeof BlockDiagramHistory> | null>(null);
-const attachMenu = ref({ show: false, x: 0, y: 0 });
+const attachCtxMenu = ref<InstanceType<typeof ContextMenu> | null>(null);
 
 onActivated(() => {
   nextTick(() => {
@@ -156,7 +155,6 @@ function attachBlockDiagram() {
     return;
   }
 
-  // Save to history with default name
   const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const defaultName = `Diagram - ${timestamp}`;
   blockDiagramHistoryStore.addOrUpdateEntry(defaultName, data);
@@ -209,13 +207,7 @@ function handleAttachClick(event: MouseEvent) {
   event.preventDefault();
   event.stopPropagation();
 
-  const target = event.currentTarget as HTMLElement;
-  const rect = target.getBoundingClientRect();
-  attachMenu.value = {
-    show: true,
-    x: rect.left,
-    y: rect.top - 40
-  };
+  attachCtxMenu.value?.open(event);
 }
 
 const attachMenuItems = [
@@ -224,36 +216,13 @@ const attachMenuItems = [
     label: 'Draw Block Diagram',
     click: () => {
       showEditor.value = true;
-      attachMenu.value.show = false;
     }
   }
 ];
 
-function closeAttachMenu(event: MouseEvent) {
-  attachMenu.value.show = false;
-}
-
 onMounted(() => {
-  window.addEventListener('click', closeAttachMenu);
   blockDiagramHistoryStore.initializeHistory();
 })
-
-onUnmounted(() => {
-  window.removeEventListener('click', closeAttachMenu);
-})
-
-function onEditMessage(originalIdx: number, newContent: string) {
-  // Update the message content and send as retry
-  if (chatMessages.value.length > originalIdx) {
-    // Replace the message content with edited version
-    const message = chatMessages.value[originalIdx];
-    if (message.role === 'human') {
-      message.content = newContent;
-      // Send as retry to the originalIdx (which will send from that message onwards)
-      retrySend(originalIdx);
-    }
-  }
-}
 
 // Expose for parent
 defineExpose({

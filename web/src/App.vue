@@ -126,12 +126,13 @@ body {
 
 #app>main {
   flex: 1;
-  /* занимает всё оставшееся пространство */
   overflow: hidden;
-  /* прокрутка только внутри main, если нужно */
+  max-width: 900px;
+  margin: 0 auto;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Placeholder styles when there are no messages */
 .placeholder {
   align-items: center;
   justify-content: center;

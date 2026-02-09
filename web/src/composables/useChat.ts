@@ -308,6 +308,16 @@ export default function useChat() {
             historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, messageIdx));
     }
 
+    function onEditMessage(originalIdx: number, newContent: string) {
+        if (chatMessages.value.length > originalIdx) {
+            const message = chatMessages.value[originalIdx];
+            if (message.role === 'human') {
+                message.content = newContent;
+                retrySend(originalIdx);
+            }
+        }
+    }
+
     return {
         // State
         chatMessages,
@@ -325,5 +335,6 @@ export default function useChat() {
         cancelRequest,
         retrySend,
         deleteMessage,
+        onEditMessage
     };
 }
