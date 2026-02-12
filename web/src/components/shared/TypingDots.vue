@@ -30,7 +30,7 @@ const status = computed(() => {
     padding: 0.6rem 0.8rem;
     color: var(--color-text);
     font-size: 0.9rem;
-    max-width: 60%;
+    max-width: 90%;
 }
 
 .progress-text {
@@ -41,6 +41,19 @@ const status = computed(() => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    position: relative;
+}
+
+.progress-text::before {
+    content: '';
+    position: absolute;
+    left: -120%;
+    top: 0;
+    height: 100%;
+    width: 120%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+    pointer-events: none;
+    animation: wave 1.6s linear infinite;
 }
 
 .typing-dots {
@@ -83,6 +96,16 @@ const status = computed(() => {
     30% {
         transform: translateY(-8px);
         opacity: 1;
+    }
+}
+
+@keyframes wave {
+    0% {
+        left: -120%;
+    }
+
+    100% {
+        left: 120%;
     }
 }
 </style>

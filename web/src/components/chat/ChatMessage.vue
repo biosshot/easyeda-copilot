@@ -1,8 +1,9 @@
 <template>
     <div :class="['message', msg.role]">
-        <div v-if="msg.role === 'ai'" class="avatar">
+        <div v-if="msg.role === 'ai' && isFirstInGroup" class="avatar">
             <Icon name="Cpu" size="20" />
         </div>
+        <div v-else-if="msg.role === 'ai' && !isFirstInGroup" class="avatar-placeholder"></div>
 
         <div>
             <ChatMessageContent :message="msg" :idx="idx" @inline-buttons="onInlineButtons"
@@ -13,8 +14,8 @@
             </div>
             <div v-if="msg.role === 'ai'">
                 <!-- for showing only if msg.isReady === false -->
-                <MessageBottomControls v-if="!(msg.isReady === false)" class="bottom-cnt"
-                    @retry="emit('retry-send', idx)" :show="['retry']" />
+                <MessageBottomControls v-if="!(msg.isReady === false) && isLastInGroup" class="bottom-cnt"
+                    @retry="emit('retry-send', firstInGroupIdx)" :show="['retry']" />
             </div>
         </div>
 
@@ -33,7 +34,7 @@ import MessageBottomControls from './MessageBottomControls.vue';
 import Icon from '../shared/Icon.vue';
 import { getUserInfo } from '../../eda/user';
 
-const props = defineProps<{ msg: ChatMessage, idx: number }>();
+const props = defineProps<{ msg: ChatMessage, idx: number, isFirstInGroup: boolean, isLastInGroup: boolean, firstInGroupIdx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);
 
 const emit = defineEmits<{
@@ -85,6 +86,11 @@ const onEditMessage = (newContent: string) => {
     align-items: center;
     justify-content: center;
     color: var(--color-text-on-primary);
+}
+
+.avatar-placeholder {
+    min-width: 32px;
+    max-width: 32px;
 }
 
 .message.human .avatar {

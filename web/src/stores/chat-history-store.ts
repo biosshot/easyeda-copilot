@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { defaultStorage, IStorage } from './storage';
 
 export interface ChatMessage {
+    _id?: string;
     role: 'human' | 'ai';
     isReady: boolean;
     content: string;

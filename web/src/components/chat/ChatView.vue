@@ -1,9 +1,10 @@
 <template>
   <div v-if="!showEditor" class="chat-view">
     <div class="messages" v-if="chatMessages?.length" ref="messagesContainer" @scroll="onScroll">
-      <ChatMessage v-for="(msg, idx) in chatMessages" :key="cyrb53(msg.content)" :msg="msg" :idx="idx"
-        @retry-send="retrySend" @edit-message="onEditMessage" @inline-buttons="onInlineButtons"
-        @delete-message="deleteMessage" />
+      <ChatMessage v-for="(msg, idx) in chatMessages" :key="msg._id ?? cyrb53(msg.content)" :msg="msg" :idx="idx"
+        :isFirstInGroup="isFirstInAiGroup(idx)" :isLastInGroup="isLastInAiGroup(idx)"
+        :firstInGroupIdx="getFirstInGroupIdx(idx)" @retry-send="retrySend" @edit-message="onEditMessage"
+        @inline-buttons="onInlineButtons" @delete-message="deleteMessage" />
 
       <div v-if="isLoading" class="message ai typing-indicator">
         <div class="avatar">
@@ -191,6 +192,35 @@ function scrollToBottom() {
   else {
     console.warn("Fail scroll to bottom")
   }
+}
+
+function isFirstInAiGroup(idx: number): boolean {
+  const msg = chatMessages.value[idx];
+  if (msg.role !== 'ai') return false;
+  const prevMsg = idx > 0 ? chatMessages.value[idx - 1] : null;
+  return !prevMsg || prevMsg.role !== 'ai';
+}
+
+function isLastInAiGroup(idx: number): boolean {
+  const msg = chatMessages.value[idx];
+  if (msg.role !== 'ai') return false;
+  const nextMsg = idx < chatMessages.value.length - 1 ? chatMessages.value[idx + 1] : null;
+  return !nextMsg || nextMsg.role !== 'ai';
+}
+
+function getFirstInGroupIdx(idx: number): number {
+  const msg = chatMessages.value[idx];
+  if (msg.role !== 'ai') return idx;
+
+  let firstIdx = idx;
+  for (let i = idx - 1; i >= 0; i--) {
+    if (chatMessages.value[i].role === 'ai') {
+      firstIdx = i;
+    } else {
+      break;
+    }
+  }
+  return firstIdx;
 }
 
 function onScroll() {
