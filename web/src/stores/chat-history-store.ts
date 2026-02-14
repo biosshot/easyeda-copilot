@@ -7,6 +7,7 @@ export interface ChatMessage {
     role: 'human' | 'ai';
     isReady: boolean;
     content: string;
+    thinking?: string;
     options?: Record<string, unknown>;
 }
 

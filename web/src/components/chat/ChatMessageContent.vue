@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="content" v-if="!isEditing">
+        <div class="content" :class="props.message.role" v-if="!isEditing">
             <div class="mes-content" @dblclick="message.role === 'human' && startEditing()"
                 :class="{ 'editable-text': message.role === 'human' }">
                 <template v-if="message.role === 'human'">
@@ -20,7 +20,7 @@
                 </template>
             </div>
         </div>
-        <div v-else class="content edit-mode">
+        <div v-else class="content edit-mode" :class="props.message.role">
             <AdjTextarea v-model="editedContent" placeholder="Edit your message..." style="width: 100%;"
                 :max-height="360" @enter="saveEdit" />
             <div class="edit-controls">
@@ -247,6 +247,11 @@ defineExpose({
     /* max-width: 85%; */
     overflow: hidden;
     box-sizing: border-box;
+}
+
+.content.ai {
+    background-color: unset;
+    padding: unset;
 }
 
 .container {

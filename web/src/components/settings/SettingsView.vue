@@ -219,7 +219,7 @@ import { computed, onMounted, ref } from 'vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import { showToastMessage } from '../../eda/utils';
 import CustomSelect from '../shared/CustomSelect.vue';
-import Collapsible from './Collapsible.vue';
+import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 

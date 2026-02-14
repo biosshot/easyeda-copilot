@@ -225,12 +225,45 @@ export default function useChat() {
     }
 
     const prepareContext = (messages: ChatMessage[]) => {
-        if (messages.length > 30) {
-            showToastMessage('The context is too large and will therefore be truncated to 30 messages (we will add more efficient context optimization soon)', 'warn');
-            return messages.filter((_, i) => i > messages.length - 15 || i % 5 === 0).slice(-30);
+        messages = messages.slice(0, 128);
+        const newmessages = [] as ChatMessage[];
+
+        const process = (msg: ChatMessage): ChatMessage => {
+            try {
+                const json = JSON.parse(msg.content);
+
+                if (json.type === 'circuit_agent_result' && json.result) {
+                    return {
+                        ...msg,
+                        content: JSON.stringify({
+                            ...json,
+                            result: {
+                                circuit: {
+                                    ...json.result.circuit,
+                                    edges: undefined,
+                                    blocks_rect: undefined,
+                                    components: json.result.circuit.components?.map(comp => ({
+                                        ...comp,
+                                        pos: undefined
+                                    }))
+                                },
+                                blockDiagram: undefined
+                            }
+                        }),
+                    }
+                }
+            } catch (error) {
+                return msg;
+            }
+
+            return msg;
         }
 
-        return messages;
+        for (const msg of messages) {
+            newmessages.push(process(msg))
+        }
+
+        return newmessages;
     }
 
     async function sendMessage(retry = false, retryMesIdx = 0) {

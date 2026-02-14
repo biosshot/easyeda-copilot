@@ -6,6 +6,10 @@
         <div v-else-if="msg.role === 'ai' && !isFirstInGroup" class="avatar-placeholder"></div>
 
         <div>
+            <Collapsible v-if="msg.thinking" title="Thinking" :default-open="false">
+                <p class="thinking">{{ msg.thinking }}</p>
+            </Collapsible>
+
             <ChatMessageContent :message="msg" :idx="idx" @inline-buttons="onInlineButtons"
                 @edit-message="onEditMessage" ref="content" />
             <div v-if="msg.role === 'human'">
@@ -26,13 +30,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { ChatMessage } from '../../stores/chat-history-store';
 import { InlineButtonsIdx } from '../../types/inline-button';
 import ChatMessageContent from './ChatMessageContent.vue';
 import MessageBottomControls from './MessageBottomControls.vue';
 import Icon from '../shared/Icon.vue';
 import { getUserInfo } from '../../eda/user';
+import Collapsible from '../shared/Collapsible.vue';
 
 const props = defineProps<{ msg: ChatMessage, idx: number, isFirstInGroup: boolean, isLastInGroup: boolean, firstInGroupIdx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);
@@ -102,5 +107,12 @@ const onEditMessage = (newContent: string) => {
     align-items: center;
     justify-content: center;
     color: var(--color-text-on-surface);
+}
+
+.thinking {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-line;
 }
 </style>

@@ -68,6 +68,7 @@ defineEmits<{
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     overflow: hidden;
+    max-height: 70vh;
 }
 
 .history-header {
