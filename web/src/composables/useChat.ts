@@ -242,10 +242,11 @@ export default function useChat() {
                                     ...json.result.circuit,
                                     edges: undefined,
                                     blocks_rect: undefined,
-                                    components: json.result.circuit.components?.map(comp => ({
+                                    components: json.result.circuit.components?.map((comp: object) => ({
                                         ...comp,
                                         pos: undefined
-                                    }))
+                                        // @ts-ignore
+                                    }))?.filter((comp: object) => !comp?.designator?.includes('|') && comp?.designator?.length < 10)
                                 },
                                 blockDiagram: undefined
                             }

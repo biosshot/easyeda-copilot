@@ -21,9 +21,8 @@
                 <div class="loading-spinner">
                     <TypingDots :status="progressStatus || 'Generating suggestions...'" />
                 </div>
-                <IconButton class="cancel-button" @click="cancelRequest" :size="16" icon="CircleStop">
-                    Cancel
-                </IconButton>
+
+                <CancalButton @click="cancelRequest" />
                 <Timer />
             </div>
         </div>
@@ -82,6 +81,7 @@ import TypingDots from '../shared/TypingDots.vue';
 import IconButton from '../shared/IconButton.vue';
 import Timer from '../shared/Timer.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
+import CancalButton from '../shared/CancalButton.vue';
 
 const {
     suggestions,
@@ -361,8 +361,7 @@ const {
     border-top: 1px solid var(--color-border);
 }
 
-.apply-button,
-.cancel-button {
+.apply-button {
     padding: 4px 8px;
     border: none;
     border-radius: 6px;
@@ -389,17 +388,6 @@ const {
 .apply-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.cancel-button {
-    background: var(--color-error);
-    color: white;
-    padding: 5px 6px;
-}
-
-.cancel-button:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
 }
 
 .status-text {

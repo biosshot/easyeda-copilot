@@ -12,7 +12,7 @@
 
     <div v-if="hasRecorder" class="backwards-nav">
       <span class="line"></span>
-      <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancal last changes</IconButton>
+      <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
       <span class="line"></span>
     </div>
 

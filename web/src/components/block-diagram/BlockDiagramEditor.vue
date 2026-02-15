@@ -28,9 +28,7 @@
         <div v-if="isDigitizing" class="loading-overlay" @click.stop>
             <div class="loading-content">
                 <TypingDots :status="progressText || 'Processing image…'" />
-                <IconButton class="cancel-button" @click="cancelDigitization" :size="16" icon="CircleStop">
-                    Cancel
-                </IconButton>
+                <CancalButton @click="cancelDigitization" />
             </div>
         </div>
 
@@ -71,6 +69,7 @@ import IconButton from '../shared/IconButton.vue'
 import ContextMenu from '../shared/ContextMenu.vue'
 import TypingDots from '../shared/TypingDots.vue'
 import { useBlockDiagramEditor } from '../../composables/useBlockDiagramEditor'
+import CancalButton from '../shared/CancalButton.vue'
 
 const contextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null)
 
@@ -343,30 +342,6 @@ function onEdgeMenu(event: EdgeMouseEvent) {
         min-width: 90%;
         margin: 20px;
     }
-}
-
-.cancel-button {
-    padding: 4px 8px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.cancel-button {
-    background: var(--color-error);
-    color: white;
-    padding: 5px 6px;
-}
-
-.cancel-button:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
 }
 </style>
 <style>
