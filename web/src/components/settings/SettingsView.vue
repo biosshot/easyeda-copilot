@@ -19,6 +19,9 @@
                             { label: 'OpenAI', value: 'openai' },
                             { label: 'OpenRouter', value: 'openrouter' },
                             { label: 'Anthropic', value: 'anthropic' },
+                            { label: 'DeepSeek', value: 'deepseek' },
+                            // { label: 'ZAI', value: 'zai' },
+
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
                         <strong> If the provider you need is not listed here, openai compatible api url in a field "Base

@@ -114,5 +114,6 @@ const onEditMessage = (newContent: string) => {
     overflow-y: auto;
     overflow-x: hidden;
     white-space: pre-line;
+    color: var(--color-text-muted);
 }
 </style>

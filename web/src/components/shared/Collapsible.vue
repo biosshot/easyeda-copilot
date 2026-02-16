@@ -38,10 +38,6 @@ const isOpen = ref(props.defaultOpen ?? false);
     transition: background-color 0.2s;
 }
 
-.collapsible-header:hover {
-    background-color: var(--color-background-hover);
-}
-
 .arrow {
     font-size: 0.9rem;
     transition: transform 0.3s ease;
@@ -88,16 +84,5 @@ const isOpen = ref(props.defaultOpen ?? false);
 
 .collapsible-content .setting-group:last-child {
     margin-bottom: 0;
-}
-
-/* Цветовые акценты для темной/светлой темы */
-@media (prefers-color-scheme: dark) {
-    .collapsible-header {
-        background: rgba(255, 255, 255, 0.03);
-    }
-
-    .collapsible-header:hover {
-        background: rgba(255, 255, 255, 0.06);
-    }
 }
 </style>

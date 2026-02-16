@@ -196,6 +196,27 @@ export default function useChat() {
                         if (message) message.content += ev.data;
                         break;
                     }
+                    case 'think_chunk': {
+                        let message;
+                        if (writeToLastMessage) message = chatMessages.value.at(-1);
+                        else {
+                            historyStore.addMessageToCurrentChat({
+                                content: '',
+                                role: 'ai',
+                                options: {},
+                                isReady: false
+                            });
+
+                            message = chatMessages.value.at(-1);
+                            writeToLastMessage = true;
+                        }
+
+                        if (message) {
+                            if (!message.thinking) message.thinking = '';
+                            message.thinking += ev.data;
+                        }
+                        break;
+                    }
                     case 'message':
                         historyStore.addMessageToCurrentChat(JSON.parse(ev.data));
                         writeToLastMessage = false;
