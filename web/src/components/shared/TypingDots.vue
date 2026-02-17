@@ -38,6 +38,7 @@ const status = computed(() => {
     color: var(--color-text-muted);
     font-weight: 400;
 
+    max-width: 350px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
