@@ -59,6 +59,8 @@ const loadSettings = () => {
             // if (!validateSettingsSchema(parsed)) throw new Error('Invalid settings structure');
 
             settingsStore.loadSettings(parsed); // Requires corresponding action in Pinia store
+            settingsStore.saveSettings();
+
             showToastMessage('Settings loaded successfully!', 'success');
         } catch (error) {
             console.error('Settings load error:', error);

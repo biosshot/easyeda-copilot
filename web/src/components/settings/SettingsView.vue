@@ -20,7 +20,9 @@
                             { label: 'OpenRouter', value: 'openrouter' },
                             { label: 'Anthropic', value: 'anthropic' },
                             { label: 'DeepSeek', value: 'deepseek' },
-                            // { label: 'ZAI', value: 'zai' },
+                            // { label: 'VertexAI', value: 'vertexai' },
+                            { label: 'ZAI', value: 'zai' },
+                            { label: 'Moonshot (Kimi)', value: 'kimi' },
 
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
