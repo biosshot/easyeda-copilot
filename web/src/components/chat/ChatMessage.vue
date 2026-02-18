@@ -86,6 +86,7 @@ const onEditMessage = (newContent: string) => {
     border-radius: 50%;
     min-width: 32px;
     max-width: 32px;
+    width: 32px;
     height: 32px;
     display: flex;
     align-items: center;
@@ -101,6 +102,8 @@ const onEditMessage = (newContent: string) => {
 .message.human .avatar {
     background-color: var(--color-surface-hover);
     border-radius: 50%;
+    min-width: 32px;
+    max-width: 32px;
     width: 32px;
     height: 32px;
     display: flex;

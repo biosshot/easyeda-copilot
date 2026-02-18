@@ -455,6 +455,7 @@ button[disabled],
   border-radius: 50%;
   min-width: 32px;
   max-width: 32px;
+  width: 32px;
   height: 32px;
   display: flex;
   align-items: center;

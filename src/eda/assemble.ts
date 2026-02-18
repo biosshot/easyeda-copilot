@@ -383,8 +383,18 @@ const getPageSize = async () => {
     }
 }
 
-async function palceNet(nets: CircuitAssembly['added_net'], placeComponents: PlacedComponents, recorder?: Recorder) {
+async function placeNet(nets: CircuitAssembly['added_net'], placeComponents: PlacedComponents, recorder?: Recorder) {
     if (!nets) return;
+
+    // Конфигурация попыток: длины и базовые направления (dx, dy)
+    // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
+    const trialLengths = [20, 30, 40, 50];
+    const directions = [
+        { dx: 1, dy: 0 },   // 0 deg
+        { dx: 0, dy: -1 },  // 90 deg
+        { dx: -1, dy: 0 },  // 180 deg
+        { dx: 0, dy: 1 }    // 270 deg
+    ];
 
     for (const net of nets) {
         const pin = await findPin(net.designator, net.pin_number, placeComponents);
@@ -393,34 +403,77 @@ async function palceNet(nets: CircuitAssembly['added_net'], placeComponents: Pla
             continue;
         }
 
-        const wireLength = 20;
+        const comp = placeComponents[net.designator];
+        if (!comp) {
+            eda.sys_Message.showToastMessage(`Component not found: ${net.designator}`, ESYS_ToastMessageType.ERROR);
+            continue;
+        }
 
         const pinX = pin.pin.getState_X();
         const pinY = pin.pin.getState_Y();
-
-        let endX = pinX;
-        let endY = pinY;
-
         const rot = pin.pin.getState_Rotation();
 
-        if (rot >= 270) {
-            endY = pinY + wireLength;
-        }
-        else if (rot >= 180) {
-            endX = pinX - wireLength;
-        }
-        else if (rot >= 90) {
-            endY = pinY - wireLength;
-        }
-        else if (rot >= 0) {
-            endX = pinX + wireLength;
+        // Определение индекса основного направления на основе вращения
+        let primaryDirIndex = 0;
+        if (rot >= 270) primaryDirIndex = 3;
+        else if (rot >= 180) primaryDirIndex = 2;
+        else if (rot >= 90) primaryDirIndex = 1;
+        else primaryDirIndex = 0;
+
+        // Формирование списка направлений для проверки
+        let directionsToTry: number[] = [];
+
+        if (comp.pins.length >= 3) {
+            // Для компонентов с 3 и более выводами используется только основное направление
+            directionsToTry = [primaryDirIndex];
+        } else {
+            // Для компонентов с менее чем 3 выводами допускается перебор направлений
+            // Исключается направление, противоположное основному (внутрь компонента)
+            const forbiddenDirIndex = (primaryDirIndex + 2) % 4;
+            for (let i = 0; i < 4; i++) {
+                if (i !== forbiddenDirIndex) {
+                    directionsToTry.push(i);
+                }
+            }
+            // Приоритет отдается основному направлению
+            directionsToTry.sort((a, b) => {
+                if (a === primaryDirIndex) return -1;
+                if (b === primaryDirIndex) return 1;
+                return 0;
+            });
         }
 
-        try {
-            const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY], net.net);
-            if (wire) recorder?.add({ primitiveId: wire.getState_PrimitiveId() });
-        } catch (err) {
-            eda.sys_Message.showToastMessage(`Wire error: "${(err as any).message}" "${net.net}" ${JSON.stringify([pinX, pinY, endX, endY])}`, ESYS_ToastMessageType.ERROR);
+        let wireCreated = false;
+
+        // Внешний цикл по длинам
+        for (const dirIndex of directionsToTry) {
+            if (wireCreated) break;
+
+            // Внутренний цикл по направлениям
+            for (const wireLength of trialLengths) {
+                const dir = directions[dirIndex];
+                const endX = pinX + dir.dx * wireLength;
+                const endY = pinY + dir.dy * wireLength;
+
+                try {
+                    const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY], net.net);
+                    if (wire) {
+                        recorder?.add({ primitiveId: wire.getState_PrimitiveId() });
+                        wireCreated = true;
+                        break; // Прерывание цикла направлений при успехе
+                    }
+                } catch (err) {
+                    // Продолжение попытки со следующим направлением или длиной
+                    continue;
+                }
+            }
+        }
+
+        if (!wireCreated) {
+            eda.sys_Message.showToastMessage(
+                `Wire creation failed after all attempts: "${net.net}" at ${net.designator} ${net.pin_number}`,
+                ESYS_ToastMessageType.ERROR
+            );
         }
     }
 }
@@ -477,8 +530,31 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     // eda.sys_MessageBox.showInformationMessage(JSON.stringify(placedComp, null, 2))
 
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
-    await palceNet(circuit.added_net ?? [], placedComp, recorder);
+    await placeNet(circuit.added_net ?? [], placedComp, recorder);
     await drawRect(circuit.blocks_rect, offset, recorder);
+
+    const isUsedPin = (d: string, p: number) => {
+        const l = `${d}_pin_${p}`;
+        if (circuit.edges.some(e => e.sections.some(s => s.incomingShape === l || s.outgoingShape === l))) {
+            return true
+        }
+    }
+
+    const netForUnusedPins: CircuitAssembly['added_net'] = [];
+    for (const component of circuit.components) {
+        for (const pin of component.pins) {
+            if (!isUsedPin(component.designator, pin.pin_number) && pin.signal_name.length) {
+                netForUnusedPins.push({
+                    designator: component.designator,
+                    net: pin.signal_name,
+                    pin_number: pin.pin_number
+                });
+            }
+        }
+    }
+
+    // eda.sys_Dialog.showInformationMessage(JSON.stringify(netForUnusedPins))
+    await placeNet(netForUnusedPins, placedComp, recorder);
 
     recorder.stop();
 
