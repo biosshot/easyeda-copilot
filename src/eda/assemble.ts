@@ -19,6 +19,13 @@ interface PlacedComponents {
     };
 }
 
+interface AddedNet {
+    designator: string,
+    pin_number: number,
+    net: string,
+    pin_name?: string
+}
+
 interface ChangeRecord {
     primitiveId: string;
     time?: number;
@@ -92,8 +99,13 @@ function createrRecordChanges(): Recorder {
                     return eda.sch_PrimitiveWire.delete(record.primitiveId);
 
                 case ESCH_PrimitiveType.OBJECT:
+                    return Promise.reject("Unknown primitive type: " + type);
+
                 case ESCH_PrimitiveType.BEZIER:
+                    return Promise.reject("Unknown primitive type: " + type);
+
                 case ESCH_PrimitiveType.ELLIPSE:
+                    return Promise.reject("Unknown primitive type: " + type);
 
                 default:
                     return Promise.reject("Unknown primitive type: " + type);
@@ -246,13 +258,13 @@ function filterUniqueCoordinatePairs(arr: number[]) {
     return result;
 }
 
-const findPin = async (designator: string, pin_: unknown, placeComponents: PlacedComponents, useSchComps = true) => {
+const findPin = async (designator: string, pin_: { num: number | string, name?: string }, placeComponents: PlacedComponents, useSchComps = true) => {
     const searchComponentInSCH = async (designator: string) => {
         const components = await eda.sch_PrimitiveComponent.getAll();
         return components.find(c => c.getState_Designator()?.includes(designator));
     }
 
-    const pinNumber = Number(pin_);
+    const pinNumber = Number(pin_.num);
 
     let pins: ISCH_PrimitiveComponentPin[] = [];
     let isExternal = false;
@@ -272,6 +284,7 @@ const findPin = async (designator: string, pin_: unknown, placeComponents: Place
 
     if (pinNumber === 1 && pins.length === 1) pin = pins[0];
     else pin = pins.find(p => Number(p.getState_PinNumber()) === pinNumber)
+    if (!pin && pin_.name) pin = pins.find(p => p.getState_PinName() === pin_.name)
 
     if (!pin) return null;
 
@@ -288,6 +301,11 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
     const searchSignalName = (designator: string, pin: unknown) => {
         return components
             .find(comp => comp.designator === designator)?.pins?.find(p => Number(pin) === Number(p.pin_number))?.signal_name;
+    }
+
+    const searchPinName = (designator: string, pin: unknown) => {
+        return components
+            .find(comp => comp.designator === designator)?.pins?.find(p => Number(pin) === Number(p.pin_number))?.name;
     }
 
     const getPinPos = (srcpin: Awaited<ReturnType<typeof findPin>>, defaultP: { x: number, y: number }) => {
@@ -316,8 +334,8 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 
             const netName = signalName ?? 'unknown net';
 
-            const srcpin = await findPin(sdesignator, spin, placeComponents);
-            const trgpin = await findPin(tdesignator, tpin, placeComponents);
+            const srcpin = await findPin(sdesignator, { num: spin, name: searchPinName(sdesignator, spin) }, placeComponents);
+            const trgpin = await findPin(tdesignator, { num: tpin, name: searchPinName(tdesignator, tpin) }, placeComponents);
 
             if (!srcpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${spin} ${sdesignator}`, ESYS_ToastMessageType.ERROR);
             if (!trgpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${tpin} ${tdesignator}`, ESYS_ToastMessageType.ERROR);
@@ -364,7 +382,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                 const wire = await eda.sch_PrimitiveWire.create(values, netName);
                 if (wire) recorder?.add({ primitiveId: wire.getState_PrimitiveId() })
             } catch (err) {
-                eda.sys_Message.showToastMessage(`Wire error: ${(err as any).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape}`, ESYS_ToastMessageType.ERROR);
+                eda.sys_Message.showToastMessage(`Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape}`, ESYS_ToastMessageType.ERROR);
             }
         }
     }
@@ -383,7 +401,7 @@ const getPageSize = async () => {
     }
 }
 
-async function placeNet(nets: CircuitAssembly['added_net'], placeComponents: PlacedComponents, recorder?: Recorder) {
+async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, recorder?: Recorder) {
     if (!nets) return;
 
     // Конфигурация попыток: длины и базовые направления (dx, dy)
@@ -397,7 +415,7 @@ async function placeNet(nets: CircuitAssembly['added_net'], placeComponents: Pla
     ];
 
     for (const net of nets) {
-        const pin = await findPin(net.designator, net.pin_number, placeComponents);
+        const pin = await findPin(net.designator, { num: net.pin_number, name: net.pin_name }, placeComponents);
         if (!pin) {
             eda.sys_Message.showToastMessage(`Not found pin in placenet: ${net.designator} ${net.pin_number}`, ESYS_ToastMessageType.ERROR);
             continue;
@@ -540,14 +558,15 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         }
     }
 
-    const netForUnusedPins: CircuitAssembly['added_net'] = [];
+    const netForUnusedPins: AddedNet[] = [];
     for (const component of circuit.components) {
         for (const pin of component.pins) {
             if (!isUsedPin(component.designator, pin.pin_number) && pin.signal_name.length) {
                 netForUnusedPins.push({
                     designator: component.designator,
                     net: pin.signal_name,
-                    pin_number: pin.pin_number
+                    pin_number: pin.pin_number,
+                    pin_name: pin.name
                 });
             }
         }
