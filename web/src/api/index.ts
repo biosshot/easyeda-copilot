@@ -1,7 +1,7 @@
 import { __MODE__ } from "../mode";
 import { isEasyEda } from "../eda/utils";
 import { getUserAuth } from "../eda/user";
-import { type EventSourceMessage, EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
+import { type EventSourceMessage, EventStreamContentType, fetchEventSource } from './fetch-sse/index';
 
 type MyRequestInit = Omit<RequestInit, 'body'> & { body?: string | Blob | FormData | URLSearchParams | undefined };
 
