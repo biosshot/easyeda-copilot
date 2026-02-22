@@ -13,7 +13,8 @@ import {
   X, Trash2, SendHorizonal, ListRestart, ChevronUp, ChevronDown, Check, Replace,
   CircleCheckBig, Pencil, Bookmark, Trash, Square, Pause, CodeXml, Image, Wrench, Save,
   FileDown, TriangleAlert, ClipboardPaste, ClipboardCopy, Scissors,
-  Undo, Redo, Scaling, Minus, Paperclip, Cuboid, Upload
+  Undo, Redo, Scaling, Minus, Paperclip, Cuboid, Upload,
+  CircleDashed, LoaderCircle, CircleCheck
 } from 'lucide-vue-next';
 
 const icons: Record<string, FunctionalComponent> = {
@@ -23,7 +24,7 @@ const icons: Record<string, FunctionalComponent> = {
   ChevronUp, ChevronDown, Check, Play, CircleAlert, RotateCw, Replace,
   CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash, CodeXml, Image, Wrench, Save,
   FileDown, TriangleAlert, ClipboardCopy, ClipboardPaste, Scissors, Undo, Redo, Scaling,
-  Minus, Paperclip, Cuboid, Upload
+  Minus, Paperclip, Cuboid, Upload, CircleDashed, LoaderCircle, CircleCheck
 };
 
 const props = defineProps<{

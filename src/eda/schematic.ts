@@ -79,6 +79,10 @@ export async function getSchematic(primitiveIds?: string[]) {
             continue;
         }
 
+        if (designator.includes('|') && designator.length > 4) {
+            continue;
+        }
+
         let value: string | null = null;
 
         const name = component.getState_Name() ?? '';
@@ -163,8 +167,13 @@ export async function getSchematic(primitiveIds?: string[]) {
         }))
     }
 
-    // const explainCircuit: ExplainCircuit = { components };
-    const explainCircuit: ExplainCircuit = { components: await Promise.all(components) };
+    const componentsR = await Promise.all(components)
+    // .then(components => components.filter(component => {
+    //     const unconn = component.pins.filter(p => !p.signal_name.trim().length).length;
+    //     return unconn !== component.pins.length;
+    // }));
+
+    const explainCircuit: ExplainCircuit = { components: componentsR };
 
     return explainCircuit;
 }

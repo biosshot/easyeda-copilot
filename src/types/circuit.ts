@@ -68,15 +68,16 @@ export const CircuitAssemblyStruct = () => z.object({
     edges: z.array(z.object({
         sources: z.array(z.string()),
         targets: z.array(z.string()),
+        container: z.string(),
         sections: z.array(z.object({
             id: z.string(),
             startPoint: ElkPoint(),
             endPoint: ElkPoint(),
-            bendPoints: z.array(ElkPoint()).nullable(),
-            incomingShape: z.string().nullable(),
-            outgoingShape: z.string().nullable(),
-            incomingSections: z.array(z.string()).nullable(),
-            outgoingSections: z.array(z.string()).nullable(),
+            bendPoints: z.array(ElkPoint()).optional(),
+            incomingShape: z.string().optional(),
+            outgoingShape: z.string().optional(),
+            incomingSections: z.array(z.string()).optional(),
+            outgoingSections: z.array(z.string()).optional(),
         })),
     })),
     blocks: z.array(BlockSchema()).describe('Blocks'),
@@ -95,7 +96,8 @@ export const CircuitAssemblyStruct = () => z.object({
         designator: z.string(),
         pin_number: z.number(),
         net: z.string(),
-    })).optional()
+    })).optional(),
+    rm_components: z.array(z.string()).optional()
 });
 
 const ExplainPinSchema = () => z.object({

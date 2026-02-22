@@ -31,15 +31,19 @@
     </div>
 
     <div class="input">
-      <div v-if="settingsStore.getSetting('showInlineButtons') && inlineButtons.length" class="inline-buttons">
-        <IconButton :size="10" class="inline-button" v-for="btn in inlineButtons" :key="btn.text" :icon="btn.icon"
-          @click="btn.handler()">
-          {{ btn.text }}
-        </IconButton>
-      </div>
+      <div class="input-header">
+        <ToDoList :todos="todos" />
 
-      <IconButton class="scroll-to-bottom-btn" v-if="showScrollButton" @click="scrollToBottom" icon="ChevronDown"
-        :size="20" />
+        <div v-if="settingsStore.getSetting('showInlineButtons') && inlineButtons.length" class="inline-buttons">
+          <IconButton :size="10" class="inline-button" v-for="btn in inlineButtons" :key="btn.text" :icon="btn.icon"
+            @click="btn.handler()">
+            {{ btn.text }}
+          </IconButton>
+        </div>
+
+        <IconButton class="scroll-to-bottom-btn" v-if="showScrollButton" @click="scrollToBottom" icon="ChevronDown"
+          :size="20" />
+      </div>
 
       <div class="input-container">
         <div class="input-options">
@@ -101,6 +105,7 @@ import BlockDiagramHistory from '../block-diagram/BlockDiagramHistory.vue';
 import ContextMenu from '../shared/ContextMenu.vue';
 import { showToastMessage } from '../../eda/utils';
 import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-store';
+import ToDoList from '../shared/ToDoList.vue';
 
 const settingsStore = useSettingsStore();
 const blockDiagramHistoryStore = useBlockDiagramHistoryStore();
@@ -114,6 +119,7 @@ const {
   inlineButtons,
   options,
   lastInlineBtnIdx,
+  todos,
   onInlineButtons,
   sendMessage,
   cancelRequest,
@@ -270,6 +276,7 @@ defineExpose({
   height: 100%;
   box-sizing: border-box;
   position: relative;
+  padding-bottom: 4px;
 }
 
 .messages {
@@ -280,6 +287,7 @@ defineExpose({
   gap: 1rem;
   padding: 1rem;
   padding-right: 1rem;
+  padding-bottom: 300px;
 }
 
 /* Placeholder styles when there are no messages */
@@ -308,6 +316,10 @@ defineExpose({
 .empty-hint {
   font-size: 0.9rem;
   color: var(--color-text-tertiary);
+}
+
+.input {
+  position: relative;
 }
 
 .input-area {
@@ -399,14 +411,18 @@ button[disabled],
   border-color: var(--color-primary);
 }
 
-.inline-buttons {
+.input-header {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.2rem;
   padding: 0.5rem;
-  margin-top: -25px;
+  bottom: 100%;
   padding: 0 10px;
   position: absolute;
+  flex-direction: column-reverse;
+  width: 100%;
 }
+
+.inline-buttons {}
 
 .inline-buttons .inline-button {
   background: var(--color-primary);
@@ -417,10 +433,10 @@ button[disabled],
 }
 
 .scroll-to-bottom-btn {
-  position: absolute;
-  margin-top: -75px;
+  /* position: absolute; */
+  /* margin-top: -75px; */
+  margin: 0 auto;
   left: 50%;
-  transform: translateX(-50%);
   width: 40px;
   height: 40px;
   border-radius: 50%;

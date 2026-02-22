@@ -71,6 +71,10 @@ export default function useChat() {
     const inlineButtons = ref<InlineButton[]>([]);
     const currentController = ref<AbortController | null>(null);
     const lastInlineBtnIdx = ref(-1);
+    const todos = ref<{
+        status: "pending" | "in_progress" | "completed";
+        content: string;
+    }[]>([]);
 
     const options = ref<{
         value: unknown;
@@ -224,6 +228,11 @@ export default function useChat() {
                     case 'status':
                         progressStatus.value = ev.data;
                         break;
+
+                    case 'update-todos':
+                        todos.value = JSON.parse(ev.data);
+                        break;
+
                     default:
 
                         break;
@@ -383,6 +392,7 @@ export default function useChat() {
         inlineButtons,
         options,
         lastInlineBtnIdx,
+        todos,
 
         // Actions
         onInlineButtons,

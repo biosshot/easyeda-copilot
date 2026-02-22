@@ -15,7 +15,7 @@ const start = () => {
     const startTime = Date.now();
     intervalId = window.setInterval(() => {
         elapsed.value = (Date.now() - startTime) / 1000;
-    }, 200);
+    }, 80);
 };
 
 const stop = () => {

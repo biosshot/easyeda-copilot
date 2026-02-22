@@ -1,4 +1,6 @@
 import type { CircuitAssembly } from "./../types/circuit";
+import { removeComponent } from "./rm-compoment-with-connections";
+import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
 declare global {
     interface EDA {
@@ -198,17 +200,6 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     return comp;
 }
 
-async function getPrimitiveComponentPins(id: string) {
-    const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id);
-    if (!pins) throw new Error("Pins not found");
-
-    return pins.sort((a, b) => {
-        const aNum = Number(a.getState_PinNumber());
-        const bNum = Number(b.getState_PinNumber());
-        return aNum - bNum;
-    });
-}
-
 async function placeComponents(components: CircuitAssembly['components'], offset: Offset = { x: 0, y: 0 }, recorder?: Recorder): Promise<PlacedComponents> {
     const placedComponentsP = components.map(async (component) => {
         const { part_uuid: partUuid, designator } = component;
@@ -259,11 +250,6 @@ function filterUniqueCoordinatePairs(arr: number[]) {
 }
 
 const findPin = async (designator: string, pin_: { num: number | string, name?: string }, placeComponents: PlacedComponents, useSchComps = true) => {
-    const searchComponentInSCH = async (designator: string) => {
-        const components = await eda.sch_PrimitiveComponent.getAll();
-        return components.find(c => c.getState_Designator()?.includes(designator));
-    }
-
     const pinNumber = Number(pin_.num);
 
     let pins: ISCH_PrimitiveComponentPin[] = [];
@@ -276,7 +262,7 @@ const findPin = async (designator: string, pin_: { num: number | string, name?: 
     }
     else if (useSchComps) {
         isExternal = true;
-        component = await searchComponentInSCH(designator);
+        component = await searchComponentInSCH(designator).then(c => c?.component);
         pins = component ? await getPrimitiveComponentPins(component?.getState_PrimitiveId()) : []
     }
 
@@ -288,7 +274,7 @@ const findPin = async (designator: string, pin_: { num: number | string, name?: 
 
     if (!pin) return null;
 
-    return { pin: pin, isExternal, component };
+    return { pin: pin, isExternal, component, pins };
 };
 
 async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAssembly['components'],
@@ -325,7 +311,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
     }
 
     for (const edge of edges) {
-        for (const section of edge.sections) {
+        for (const section of edge.sections ?? []) {
             const [sdesignator, spin] = section?.incomingShape?.split?.("_pin_") ?? ['', ''];
             const [tdesignator, tpin] = section?.outgoingShape?.split?.("_pin_") ?? ['', ''];;
 
@@ -421,11 +407,7 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, rec
             continue;
         }
 
-        const comp = placeComponents[net.designator];
-        if (!comp) {
-            eda.sys_Message.showToastMessage(`Component not found: ${net.designator}`, ESYS_ToastMessageType.ERROR);
-            continue;
-        }
+        const pinCount = pin.pins.length ?? 10;
 
         const pinX = pin.pin.getState_X();
         const pinY = pin.pin.getState_Y();
@@ -441,7 +423,7 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, rec
         // Формирование списка направлений для проверки
         let directionsToTry: number[] = [];
 
-        if (comp.pins.length >= 3) {
+        if (pinCount >= 3) {
             // Для компонентов с 3 и более выводами используется только основное направление
             directionsToTry = [primaryDirIndex];
         } else {
@@ -542,10 +524,15 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
             offset.x = undefined;
         }
 
-
     const placedComp = await placeComponents(circuit.components, offset, recorder);
 
     // eda.sys_MessageBox.showInformationMessage(JSON.stringify(placedComp, null, 2))
+
+    for (const designator of circuit.rm_components ?? []) {
+        await removeComponent(designator).catch(e => {
+            eda.sys_Message.showToastMessage(`Error with rm component ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
+        });
+    }
 
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
     await placeNet(circuit.added_net ?? [], placedComp, recorder);
