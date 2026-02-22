@@ -414,12 +414,12 @@ button[disabled],
 .input-header {
   display: flex;
   gap: 0.2rem;
-  padding: 0.5rem;
   bottom: 100%;
-  padding: 0 10px;
+  padding: 2px 10px;
   position: absolute;
   flex-direction: column-reverse;
-  width: 100%;
+  width: calc(100% - 20px);
+  margin-right: 10px;
 }
 
 .inline-buttons {}

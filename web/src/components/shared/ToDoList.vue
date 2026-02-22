@@ -112,9 +112,9 @@ const props = defineProps<{
 
 .todo-content {
     flex: 1;
-    white-space: nowrap;
+    /* white-space: nowrap; */
     overflow: hidden;
-    text-overflow: ellipsis;
+    /* text-overflow: ellipsis; */
     line-height: 1.4;
 }
 </style>
