@@ -50,7 +50,7 @@ function parseAllegroNetlist(netlistText: string) {
     return pinToSignal;
 }
 
-export async function getSchematic(primitiveIds?: string[]) {
+export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
     // 1. Получаем нетлист как строку
 
     const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
@@ -138,20 +138,23 @@ export async function getSchematic(primitiveIds?: string[]) {
 
         // eslint-disable-next-line no-async-promise-executor
         components.push(new Promise(async (resolve) => {
-            const query = component.getState_SupplierId()?.toString()
-                || component.getState_SubPartName()?.toString()
-                || component.getState_ManufacturerId()?.toString();
-
             let part_uuid: string | null = null;
 
-            if (!query) {
-                eda.sys_Message.showToastMessage(`Fail get component ${designator}`, ESYS_ToastMessageType.ERROR);
-                part_uuid = null;
-            }
-            else {
-                part_uuid = await eda.lib_Device.search(query).then(devices => {
-                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
-                }).catch(() => null);
+            if (!options?.disableExtractPartUuid) {
+                const query = component.getState_SupplierId()?.toString()
+                    || component.getState_SubPartName()?.toString()
+                    || component.getState_ManufacturerId()?.toString();
+
+
+                if (!query) {
+                    eda.sys_Message.showToastMessage(`Fail get component ${designator}`, ESYS_ToastMessageType.ERROR);
+                    part_uuid = null;
+                }
+                else {
+                    part_uuid = await eda.lib_Device.search(query).then(devices => {
+                        return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
+                    }).catch(() => null);
+                }
             }
 
             resolve({

@@ -534,8 +534,10 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         });
     }
 
+    // Easyeda - slowly removes the components
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
+
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
-    await placeNet(circuit.added_net ?? [], placedComp, recorder);
     await drawRect(circuit.blocks_rect, offset, recorder);
 
     const isUsedPin = (d: string, p: number) => {
@@ -559,7 +561,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         }
     }
 
-    // eda.sys_Dialog.showInformationMessage(JSON.stringify(netForUnusedPins))
+    await placeNet(circuit.added_net ?? [], placedComp, recorder);
     await placeNet(netForUnusedPins, placedComp, recorder);
 
     recorder.stop();
