@@ -415,7 +415,7 @@ button[disabled],
   display: flex;
   gap: 0.2rem;
   bottom: 100%;
-  padding: 2px 10px;
+  padding: 0px 10px;
   position: absolute;
   flex-direction: column-reverse;
   width: calc(100% - 20px);

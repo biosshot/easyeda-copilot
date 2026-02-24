@@ -500,6 +500,12 @@ async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offs
     }
 }
 
+const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfirmationMessage>) => {
+    return new Promise<boolean>((resolve, reject) => {
+        eda.sys_Dialog.showConfirmationMessage(args[0], args[1], args[2], args[3], resolve);
+    })
+}
+
 export async function assembleCircuit(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
 
@@ -528,14 +534,17 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
 
     // eda.sys_MessageBox.showInformationMessage(JSON.stringify(placedComp, null, 2))
 
-    for (const designator of circuit.rm_components ?? []) {
-        await removeComponent(designator).catch(e => {
-            eda.sys_Message.showToastMessage(`Error with rm component ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
-        });
-    }
+    if (circuit.rm_components?.length && await confirmationMessage('The following components will be removed:\n' + circuit.rm_components.join(', '), 'Confirm deletion'))
+        for (const designator of circuit.rm_components) {
+            await removeComponent(designator).catch(e => {
+                eda.sys_Message.showToastMessage(`Error with rm component ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
+            });
+        }
+
+    // Easyeda - slowly removes the components
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
 
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
-    await placeNet(circuit.added_net ?? [], placedComp, recorder);
     await drawRect(circuit.blocks_rect, offset, recorder);
 
     const isUsedPin = (d: string, p: number) => {
@@ -559,7 +568,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         }
     }
 
-    // eda.sys_Dialog.showInformationMessage(JSON.stringify(netForUnusedPins))
+    await placeNet(circuit.added_net ?? [], placedComp, recorder);
     await placeNet(netForUnusedPins, placedComp, recorder);
 
     recorder.stop();
