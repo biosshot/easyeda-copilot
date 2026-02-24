@@ -1,6 +1,6 @@
 // composables/useChat.ts
 import { ref, computed, onScopeDispose, nextTick } from 'vue';
-import { fetchSSE, fetchWithTask } from '../api';
+import { fetchSSE, fetchSSETask, fetchWithTask } from '../api';
 import { ChatMessage, useChatHistoryStore } from '../stores/chat-history-store';
 import { useSettingsStore } from '../stores/settings-store';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
@@ -172,15 +172,59 @@ export default function useChat() {
         }
     }
 
-    async function requestStream(body: object, controller: AbortController) {
+    async function requestStream(body: object, controller: AbortController, streamid?: string, eventid?: string) {
         let writeToLastMessage = false;
 
-        await fetchSSE({
-            url: '/v2/chat/stream',
+        if (streamid) {
+            const last = chatMessages.value.at(-1);
+            if (last?.role === 'ai' && !last.isReady) writeToLastMessage = true;
+        }
+
+        let saveInterval: ReturnType<typeof setInterval> | null = null;
+        let lastEventId: string | undefined;
+
+        const saveProgress = () => {
+            localStorage.setItem('chat-last-eventid', lastEventId ?? '');
+            historyStore.saveToStorage();
+        };
+
+        const startAutoSave = () => {
+            if (saveInterval) return;
+            saveInterval = setInterval(() => {
+                saveProgress();
+            }, 8000);
+        };
+
+        const stopAutoSave = () => {
+            if (saveInterval) {
+                clearInterval(saveInterval);
+                saveInterval = null;
+            }
+        };
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                saveProgress();
+            }
+        };
+
+        const handleBeforeUnload = () => {
+            saveProgress();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('beforeunload', handleBeforeUnload);
+
+        await fetchSSETask({
+            url: '/v2/chat/s/stream',
             body: body,
             signal: controller.signal,
+            prevStreamId: streamid,
+            prevLastEventId: eventid,
 
             onmessage(ev) {
+                if (ev.id) lastEventId = ev.id;
+
                 switch (ev.event) {
                     case 'mes_chunk': {
                         let message;
@@ -197,7 +241,9 @@ export default function useChat() {
                             writeToLastMessage = true;
                         }
 
-                        if (message) message.content += ev.data;
+                        if (message) {
+                            message.content += ev.data;
+                        }
                         break;
                     }
                     case 'think_chunk': {
@@ -233,11 +279,21 @@ export default function useChat() {
                         todos.value = JSON.parse(ev.data);
                         break;
 
+                    case 'end':
+                        localStorage.setItem('chat-last-streamid', '');
+                        localStorage.setItem('chat-last-eventid', '');
+                        break;
+
                     default:
 
                         break;
                 }
 
+            },
+
+            async onopen(response, streamId) {
+                localStorage.setItem('chat-last-streamid', streamId ?? '');
+                startAutoSave();
             },
 
             onerror(err) {
@@ -249,8 +305,15 @@ export default function useChat() {
                 if (message) message.isReady = true;
             }
 
+            stopAutoSave();
             historyStore.saveToStorage();
+
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+
             isLoading.value = false;
+            localStorage.setItem('chat-last-streamid', '');
+            localStorage.setItem('chat-last-eventid', '');
         });
     }
 
@@ -297,8 +360,8 @@ export default function useChat() {
         return newmessages;
     }
 
-    async function sendMessage(retry = false, retryMesIdx = 0) {
-        if ((!newMessage.value.trim() && !retry) || isLoading.value) return;
+    async function sendMessage(retry = false, retryMesIdx = 0, continue_ = false) {
+        if ((!newMessage.value.trim() && !retry && !continue_) || isLoading.value) return;
 
         errorMessage.value = '';
         isLoading.value = true;
@@ -308,17 +371,19 @@ export default function useChat() {
         currentController.value = controller;
 
         try {
-            if (!retry) {
-                const userOptions = await collectMessageOptions();
-                historyStore.addMessageToCurrentChat({
-                    role: 'human',
-                    content: newMessage.value,
-                    options: userOptions,
-                    isReady: true
-                });
-            } else {
-                if (retryMesIdx !== -1)
-                    historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, retryMesIdx));
+            if (!continue_) {
+                if (!retry) {
+                    const userOptions = await collectMessageOptions();
+                    historyStore.addMessageToCurrentChat({
+                        role: 'human',
+                        content: newMessage.value,
+                        options: userOptions,
+                        isReady: true
+                    });
+                } else {
+                    if (retryMesIdx !== -1)
+                        historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, retryMesIdx));
+                }
             }
 
             const body = {
@@ -333,10 +398,16 @@ export default function useChat() {
             newMessage.value = '';
             progressStatus.value = 'Sending...';
 
-            if (settingsStore.getSetting('useStreamApi'))
-                await requestStream(body, controller);
-            else
-                await request(body, controller);
+            let eventid;
+            let streamid;
+
+            if (continue_) {
+                streamid = localStorage.getItem('chat-last-streamid') || undefined;
+                eventid = localStorage.getItem('chat-last-eventid') || undefined;
+            }
+
+            if ((continue_ && streamid) || !continue_)
+                await requestStream(body, controller, streamid, eventid);
 
             // Auto-scroll after update
             await nextTick();
@@ -381,6 +452,9 @@ export default function useChat() {
             }
         }
     }
+
+    // continue last stream
+    sendMessage(undefined, undefined, true)
 
     return {
         // State
