@@ -18,8 +18,10 @@ type FetchWithSSE = {
     url: string;
     body: object | string;
     signal?: AbortSignal;
+    prevStreamId?: string;
+    prevLastEventId?: string;
 
-    onopen?: (response: Response) => Promise<void>;
+    onopen?: (response: Response, streamId?: string) => Promise<void>;
     onmessage?: (ev: EventSourceMessage) => void;
     onclose?: () => void;
     onerror?: (err: unknown) => number | null | undefined | void;
@@ -244,6 +246,152 @@ export async function fetchSSE({
             }
         },
     });
+}
+
+export async function fetchSSETask({
+    url, body, prevStreamId, prevLastEventId,
+    signal, onclose, onerror, onmessage, onopen
+}: FetchWithSSE) {
+    let streamId;
+
+    if (!prevStreamId) {
+        // 1) Create a stream on the server
+        const startRes = await fetchEda(apiUrl + url + '/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': authorization,
+                'x-eda-user': getUserAuth(),
+            },
+            body: typeof body === 'string' ? body : JSON.stringify(body),
+        });
+
+        if (!startRes.ok) {
+            const text = await startRes.text();
+            throw new Error(`Failed to start stream: ${startRes.status} ${text}`);
+        }
+
+        const startJson = await startRes.json();
+        streamId = startJson.streamId;
+        if (!streamId) throw new Error('Missing streamId in start response');
+    }
+    else {
+        streamId = prevStreamId;
+    }
+
+    const streamUrl = apiUrl + url + '/' + encodeURIComponent(streamId);
+    let stopReceived = false;
+
+    // support cancellation via AbortSignal passed in signal
+    let abortHandler: (() => Promise<void>) | undefined;
+    if (signal) {
+        abortHandler = async () => {
+            try {
+                stopReceived = true;
+                await fetchEda(`${apiUrl}${url}/${encodeURIComponent(streamId)}/stop`, {
+                    method: 'POST',
+                    headers: { 'Authorization': authorization },
+                });
+            } catch (err) {
+                console.error('Failed to stop stream:', err);
+            }
+        };
+        if (signal.aborted) {
+            await abortHandler();
+            throw new Error('Operation aborted');
+        }
+        signal.addEventListener('abort', abortHandler, { once: true });
+    }
+
+    try {
+        let attempts = 0;
+        let lastEventId: string | undefined = prevLastEventId;
+
+        while (attempts < 3 && !stopReceived) {
+            try {
+                let currentUrl = streamUrl;
+                if (lastEventId) currentUrl += `?last-event-id=${lastEventId}`
+
+                await fetchEventSource(currentUrl, {
+                    method: 'GET',
+                    fetch: fetchEda as never,
+                    headers: {
+                        'Authorization': authorization,
+                        'x-eda-user': getUserAuth(),
+                    },
+                    openWhenHidden: true,
+                    signal: signal,
+
+                    onclose: () => {
+                        onclose?.();
+                    },
+
+                    onerror: (e) => {
+                        onerror?.(e);
+                        throw e;
+                    },
+
+                    onmessage: (msg) => {
+                        if (msg.id) lastEventId = msg.id;
+                        attempts = 0;
+
+                        if (msg.event === 'FatalError' || msg.event === 'error') {
+                            let errMes: string;
+                            try {
+                                errMes = JSON.parse(msg.data).error || "Server error";
+                            }
+                            catch (e) {
+                                errMes = "Server error";
+                            }
+
+                            throw new Error(errMes);
+                        }
+
+                        if (msg.event === 'end') {
+                            stopReceived = true;
+                        }
+
+                        onmessage?.(msg)
+                    },
+
+                    async onopen(response) {
+                        if (response.ok && response.headers.get('content-type')?.includes(EventStreamContentType)) {
+                            await onopen?.(response, streamId)
+                            return;
+                        } else if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+                            throw new Error('Fail to connect');
+                        }
+                        else if (response.status === 500) {
+                            const json = await response.json();
+                            throw new Error(json.error || 'Operation failed');
+                        } else {
+                            throw new Error('Fail to connect');
+                        }
+                    },
+                });
+
+                await new Promise<void>((resolve, reject) => setTimeout(resolve, 1000))
+                // fetchEventSource resolved without throwing — if stop received, break; else treat as transient and retry
+                if (stopReceived) break;
+                // otherwise, increment attempts and retry
+                attempts++;
+            } catch (err) {
+                attempts++;
+                if (signal?.aborted) throw err;
+                if (stopReceived) break;
+                if (attempts >= 3) throw err;
+                // small backoff before retry
+                await new Promise(res => setTimeout(res, 1000));
+            }
+        }
+
+        return;
+    } finally {
+        // Clean up abort listener
+        if (signal && abortHandler) {
+            signal.removeEventListener('abort', abortHandler);
+        }
+    }
 }
 
 // @ts-ignore
