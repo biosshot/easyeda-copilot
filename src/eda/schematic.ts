@@ -64,6 +64,8 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
     }
 
+    const designators = new Set<string>();
+
     for (const id of primitiveIds) {
         const component = await eda.sch_PrimitiveComponent.get(id).catch(err => null);
 
@@ -82,6 +84,14 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         if (designator.includes('|') && designator.length > 4) {
             continue;
         }
+
+        if (designators.has(designator)) {
+            eda.sys_Message.showToastMessage(`Duplicate designator: ${designator}\nPlease rename the designations. (Design -> Annotate Designator)`, ESYS_ToastMessageType.ERROR);
+            console.warn(`[getSchematic] Duplicate designator: ${designator}`);
+            continue;
+        }
+
+        designators.add(designator);
 
         let value: string | null = null;
 

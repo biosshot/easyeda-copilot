@@ -16,8 +16,6 @@ const DEFAULT_SETTINGS = {
     theme: 'light',
     showInlineButtons: true,
 
-    useStreamApi: true,
-
     // Agent Models - Base
     agentBaseModel: 'gpt-5-mini',
 
