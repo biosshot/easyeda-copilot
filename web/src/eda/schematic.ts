@@ -10,7 +10,7 @@ declare global {
     }
 }
 
-export const getSchematic = async (primitiveIds: string[]) => {
+export const getSchematic = async (primitiveIds?: string[]) => {
     if (isEasyEda() && typeof eda.getSchematic === 'function') {
         return await eda.getSchematic(primitiveIds) as ExplainCircuit;
     }

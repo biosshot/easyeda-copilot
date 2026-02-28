@@ -23,5 +23,6 @@ button {
     align-items: center;
     justify-content: center;
     gap: 5px;
+    padding: 0.2rem 0.8rem 0.2rem 0.5rem;
 }
 </style>
