@@ -25,6 +25,9 @@
         <CompletionsView v-if="activeTab === 'completions'" />
       </KeepAlive>
       <KeepAlive>
+        <SimulateView v-if="activeTab === 'simulate'" />
+      </KeepAlive>
+      <KeepAlive>
         <SettingsView v-if="activeTab === 'settings'" />
       </KeepAlive>
     </main>
@@ -46,6 +49,7 @@ import { __MODE__ } from './mode';
 import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda } from './eda/utils';
+import SimulateView from './components/simulate/SimulateView.vue';
 
 declare global {
   interface EDA {
