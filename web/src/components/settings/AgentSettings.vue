@@ -1,5 +1,10 @@
 <template>
-    <label>{{ props.title }}</label>
+    <div style="display: flex; flex-direction: row;">
+        <label>{{ props.title }}</label>
+        <div style="margin-left: auto;">
+            <slot></slot>
+        </div>
+    </div>
 
     <div class="setting-group">
         <div style="display: flex;">

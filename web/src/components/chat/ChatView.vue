@@ -94,7 +94,7 @@ import IconButton from '../shared/IconButton.vue';
 import ChatMessageContent from './ChatMessageContent.vue';
 import MessageBottomControls from './MessageBottomControls.vue';
 import TypingDots from '../shared/TypingDots.vue';
-import AdjTextarea from './AdjTextarea.vue';
+import AdjTextarea from '../shared/AdjTextarea.vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import Timer from '../shared/Timer.vue';

@@ -4,7 +4,8 @@
       <template #controls v-if="activeTab === 'chat'">
         <ChatControls :is-loading="chatViewRef?.isLoading || false" />
       </template>
-      <template #controls v-if="activeTab === 'completions'"></template>
+      <template #controls v-else-if="activeTab === 'simulate'"></template>
+      <template #controls v-else-if="activeTab === 'completions'"></template>
       <template #controls v-else-if="activeTab === 'settings'">
         <SettingsControls />
       </template>

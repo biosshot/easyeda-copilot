@@ -58,7 +58,6 @@ function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['block
     return blocks;
 }
 
-
 export default function useChat() {
     const historyStore = useChatHistoryStore();
     const settingsStore = useSettingsStore();

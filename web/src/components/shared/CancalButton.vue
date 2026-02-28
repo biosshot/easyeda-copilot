@@ -1,5 +1,5 @@
 <template>
-    <IconButton class="cancel-button" @click="cancelDigitization" :size="16" icon="Square">
+    <IconButton class="cancel-button" :size="16" icon="Square">
         Cancel
     </IconButton>
 </template>

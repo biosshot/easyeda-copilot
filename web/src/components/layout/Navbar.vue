@@ -9,7 +9,10 @@
         icon="CircleCheckBig">
         <span>Completions</span>
       </IconButton>
-
+      <IconButton :class="['tab', { active: activeTab === 'simulate' }]" @click="store.setActiveTab('simulate')"
+        icon="Play">
+        <span>Simulate</span>
+      </IconButton>
       <IconButton :class="['tab', { active: activeTab === 'settings' }]" @click="store.setActiveTab('settings')"
         icon="Settings">
         <span>Settings</span>
@@ -53,11 +56,11 @@ const activeTab = computed(() => store.activeTab);
 
 .tabs {
   display: flex;
-  gap: 1.5rem;
+  gap: 0.1rem;
 }
 
 .tab {
-  padding: 1px 10px;
+  padding: 3px 10px;
   border-radius: 0;
 }
 

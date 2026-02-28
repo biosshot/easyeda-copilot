@@ -33,7 +33,7 @@
             <div class="suggestions-section">
                 <h3>Suggestions</h3>
                 <div v-if="suggestions.length === 0" class="empty-state">
-                    <Icon name="Zap" size="32" />
+                    <Icon name="Lightbulb" size="32" />
                     <p>No suggestions available</p>
                     <p class="hint">Click the refresh button above to generate suggestions</p>
                 </div>
@@ -54,10 +54,13 @@
             <div class="action-section">
                 <h3>Custom Action</h3>
                 <div class="input-group">
-                    <textarea v-model="customAction" class="action-input"
+                    <!-- <textarea v-model="customAction" class="action-input"
                         placeholder="Enter a custom action or modification for your circuit..."
-                        :disabled="isLoading"></textarea>
-                    <div class="input-info">
+                        :disabled="isLoading"></textarea> -->
+                    <AdjTextarea style="width: 100%;" v-model="customAction" :disabled="isLoading"
+                        placeholder="Enter a custom action or modification for your circuit..." />
+
+                    <div class=" input-info">
                         <span class="char-count">{{ customAction.length }} characters</span>
                     </div>
                 </div>
@@ -82,6 +85,7 @@ import IconButton from '../shared/IconButton.vue';
 import Timer from '../shared/Timer.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import CancalButton from '../shared/CancalButton.vue';
+import AdjTextarea from '../shared/AdjTextarea.vue';
 
 const {
     suggestions,
@@ -200,7 +204,6 @@ const {
 
 /* Suggestions section */
 .suggestions-section {
-    flex: 0 1 50%;
     padding: 20px;
     border-bottom: 1px solid var(--color-border);
     overflow-y: auto;
@@ -296,7 +299,6 @@ const {
 
 /* Action section */
 .action-section {
-    flex: 1;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -311,9 +313,6 @@ const {
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
     gap: 8px;
 }
 

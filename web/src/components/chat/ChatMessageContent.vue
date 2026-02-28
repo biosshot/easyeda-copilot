@@ -46,7 +46,7 @@ import CircuitAgentResultViewer from './circuit/CircuitAgentResultViewer.vue'
 import PdfFileViewer from './pdf/PdfFileViewer.vue'
 import type { Message } from '../../types/message'
 import { InlineButton, InlineButtonsIdx } from '../../types/inline-button'
-import AdjTextarea from './AdjTextarea.vue'
+import AdjTextarea from '../shared/AdjTextarea.vue'
 import IconButton from '../shared/IconButton.vue'
 
 const props = defineProps<{ message: Message, isLast?: boolean, idx: number }>()

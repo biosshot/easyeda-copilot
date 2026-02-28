@@ -20,7 +20,7 @@
                             { label: 'OpenRouter', value: 'openrouter' },
                             { label: 'Anthropic', value: 'anthropic' },
                             { label: 'DeepSeek', value: 'deepseek' },
-                            // { label: 'VertexAI', value: 'vertexai' },
+                            { label: 'Ollama (cloud)', value: 'ollamacloud' },
                             { label: 'ZAI', value: 'zai' },
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
 
@@ -73,6 +73,10 @@
                         @model-change="onSettingChange('agentBaseModel', $event)"
                         :model-features="['json', 'tools', 'image']"
                         desc="Fallback model used when specific agent models are not configured. Recommended: balanced-performance model like gpt-5-mini.">
+                        <button @click="applyBaseAgentToAll" class="apply-to-all-btn"
+                            title="Copy base model settings to all specialized agents">
+                            Apply to all
+                        </button>
                     </AgentSettings>
 
                     <!-- Specialized Agent Configurations -->
@@ -240,6 +244,44 @@ const onSettingChange = (key: string, value: string | boolean) => {
     showToastMessage('Settings saved', 'success');
 };
 
+const applyBaseAgentToAll = () => {
+    const baseModel = settingsStore.getSetting('agentBaseModel') as string;
+    const baseReasoning = settingsStore.getSetting('agentBaseReasoning') as string;
+
+    const agentKeys: string[] = [
+        'agentBlockDiagramModel',
+        'agentBlockDiagramReasoning',
+        'agentChatModel',
+        'agentChatReasoning',
+        'agentCircuitExplainerModel',
+        'agentCircuitExplainerReasoning',
+        'agentCircuitMakerModel',
+        'agentCircuitMakerReasoning',
+        'agentCompletionsModel',
+        'agentCompletionsReasoning',
+        'agentListCompletionsModel',
+        'agentListCompletionsReasoning',
+        'agentDiagnosticAlgorithmModel',
+        'agentDiagnosticAlgorithmReasoning',
+        'agentPinDescriptionModel',
+        'agentPinDescriptionReasoning',
+        'agentLcscSearchModel',
+        'agentLcscSearchReasoning',
+        'agentLcscCatalogModel',
+        'agentLcscCatalogReasoning'
+    ];
+
+    agentKeys.forEach(key => {
+        if (key.endsWith('Model')) {
+            settingsStore.setSetting(key, baseModel);
+        } else {
+            settingsStore.setSetting(key, baseReasoning);
+        }
+    });
+
+    showToastMessage('Applied base model settings to all agents', 'success');
+};
+
 onMounted(() => {
     settingsStore.loadSettings();
 });
@@ -260,5 +302,16 @@ onMounted(() => {
 
 .settings-view {
     padding: 2rem;
+}
+
+.apply-to-all-btn {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.65rem;
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--color-text-on-primary);
+
 }
 </style>
