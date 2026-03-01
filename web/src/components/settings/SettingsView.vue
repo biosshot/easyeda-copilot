@@ -312,6 +312,5 @@ onMounted(() => {
     border-radius: 4px;
     cursor: pointer;
     color: var(--color-text-on-primary);
-
 }
 </style>

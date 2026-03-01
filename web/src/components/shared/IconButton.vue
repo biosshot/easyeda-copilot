@@ -33,6 +33,11 @@ button {
     gap: 5px;
 }
 
+button:disabled {
+    opacity: 0.5;
+    cursor: unset;
+}
+
 .is-primary {
     background-color: var(--color-primary);
     border: none;
@@ -42,7 +47,7 @@ button {
     padding: 0.2rem 0.8rem 0.2rem 0.5rem;
 }
 
-button:hover {
+button:hover:not(:disabled) {
     opacity: 0.94;
 }
 
@@ -50,7 +55,7 @@ button:hover {
     color: var(--color-text-muted);
 }
 
-.is-remove:hover {
+.is-remove:hover:not(:disabled) {
     color: var(--color-error);
 }
 
@@ -63,7 +68,7 @@ button:hover {
     padding: 6px 16px 6px 10px;
 }
 
-.is-primary:hover {
+.is-primary:hover:not(:disabled) {
     background-color: var(--color-primary-light);
 }
 

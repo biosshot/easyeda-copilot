@@ -47,27 +47,27 @@
                                         <div v-if="source.type === 'dc'" class="source-fields">
                                             <div class="form-group">
                                                 <label :for="`dc-voltage-${source.id}`">Voltage (V)</label>
-                                                <input :id="`dc-voltage-${source.id}`" type="number"
-                                                    v-model.number="source.dcVoltage" placeholder="0" step="any" />
+
+                                                <UnitInput :id="`dc-voltage-${source.id}`" variant="voltage"
+                                                    v-model="source.dcVoltage" placeholder="0" />
                                             </div>
                                         </div>
 
                                         <div v-if="source.type === 'sin'" class="source-fields">
                                             <div class="form-group">
                                                 <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
-                                                <input :id="`sin-amplitude-${source.id}`" type="number"
-                                                    v-model.number="source.sinAmplitude" placeholder="1" step="any" />
+                                                <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
+                                                    v-model="source.sinAmplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
                                                 <label :for="`sin-offset-${source.id}`">Offset (V)</label>
-                                                <input :id="`sin-offset-${source.id}`" type="number"
-                                                    v-model.number="source.sinOffset" placeholder="0" step="any" />
+                                                <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
+                                                    v-model="source.sinOffset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
                                                 <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
-                                                <input :id="`sin-frequency-${source.id}`" type="number"
-                                                    v-model.number="source.sinFrequency" placeholder="1000"
-                                                    step="any" />
+                                                <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
+                                                    v-model="source.sinFrequency" />
                                             </div>
                                         </div>
                                     </div>
@@ -121,12 +121,13 @@
                                     <div class="form-row">
                                         <div class="form-group">
                                             <label for="step-time">Step Time</label>
-                                            <TimeInput id="step-time" v-model="stepTime" placeholder="1" />
+                                            <UnitInput id="step-time" variant="time" v-model="stepTime"
+                                                placeholder="1" />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="end-time">End Time</label>
-                                            <TimeInput id="end-time" v-model="endTime" placeholder="5" />
+                                            <UnitInput id="end-time" variant="time" v-model="endTime" placeholder="5" />
                                         </div>
                                     </div>
                                 </div>
@@ -174,7 +175,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import IconButton from '../shared/IconButton.vue';
 import CustomSelect from '../shared/CustomSelect.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
@@ -185,17 +186,17 @@ import { getSchematic } from '../../eda/schematic';
 import StepPanel from '../shared/StepPanel.vue';
 import StepPanels from '../shared/StepPanels.vue';
 import TypingDots from '../shared/TypingDots.vue';
-import TimeInput from '../shared/TimeInput.vue';
 import NetInput from '../shared/NetInput.vue';
+import UnitInput, { UnitValue } from '../shared/UnitInput.vue';
 
 interface InputSource {
     id: string;
     type: 'dc' | 'sin';
     signalName: string;
-    dcVoltage: number | null;
-    sinAmplitude: number | null;
-    sinOffset: number | null;
-    sinFrequency: number | null;
+    dcVoltage: UnitValue | undefined;
+    sinAmplitude: UnitValue | undefined;
+    sinOffset: UnitValue | undefined;
+    sinFrequency: UnitValue | undefined;
 }
 
 interface OutputSignal {
@@ -241,18 +242,12 @@ const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
 
 const simulationType = ref<'tran'>('tran');
-const stepTime = ref({ value: 1, unit: 'us' as const });
-const endTime = ref({ value: 5, unit: 'ms' as const });
+const stepTime = ref<UnitValue>();
+const endTime = ref<UnitValue>();
 
-const convertToNs = (value: number, unit: 'ns' | 'us' | 'ms' | 's'): number => {
-    const multipliers = {
-        ns: 1,
-        us: 1000,
-        ms: 1_000_000,
-        s: 1_000_000_000
-    };
-    return value * multipliers[unit];
-};
+watchEffect(() => {
+    console.log(stepTime.value)
+})
 
 const handleSyncZoom = (sourceIndex: number) => {
     return (start: number, end: number) => {
@@ -289,10 +284,10 @@ const addInputSource = () => {
         id: generateId(),
         type: 'dc',
         signalName: '',
-        dcVoltage: null,
-        sinAmplitude: null,
-        sinOffset: null,
-        sinFrequency: null
+        dcVoltage: undefined,
+        sinAmplitude: undefined,
+        sinOffset: undefined,
+        sinFrequency: undefined
     });
 };
 
@@ -319,26 +314,28 @@ const removeOutputSignal = (id: string) => {
 };
 
 const runSimulation = async () => {
+    if (isRunning.value) return;
+
     isRunning.value = true;
     errorMessage.value = null;
     try {
 
         const body = {
-            step_time_ns: convertToNs(stepTime.value.value, stepTime.value.unit),
-            end_time_ns: convertToNs(endTime.value.value, endTime.value.unit),
+            step_time_ns: stepTime.value?.valueInUnits.n ?? 100000,
+            end_time_ns: endTime.value?.valueInUnits.n ?? 100000 * 100,
             output_signals: outputSignals.value.map(s => s.name),
             input_signals: inputSources.value.map((source, index) => ({
                 name: source.type === 'dc' ? `INPUT_${index}` : `INPUT_${index}`,
                 signal_name: source.signalName,
                 value: source.type === 'dc'
-                    ? source.dcVoltage?.toString() ?? '0'
-                    : source.sinAmplitude?.toString() ?? '1',
+                    ? source.dcVoltage?.valueInUnits.base ?? 0
+                    : source.sinAmplitude?.valueInUnits.base ?? 1,
                 frequency: source.type === 'sin'
-                    ? source.sinFrequency?.toString() ?? '1000'
-                    : '0',
+                    ? source.sinFrequency?.valueInUnits.base ?? 1000
+                    : 0,
                 offset: source.type === 'sin'
-                    ? source.sinOffset?.toString() ?? '0'
-                    : '0',
+                    ? source.sinOffset?.valueInUnits.base ?? 0
+                    : 0,
                 type: source.type.toUpperCase()
             })),
             components: (await getSchematic()).components
@@ -406,7 +403,6 @@ const runSimulation = async () => {
     flex-direction: column;
     height: 100%;
     width: 100%;
-    background: var(--color-surface);
 }
 
 .settings-content {
@@ -518,7 +514,6 @@ const runSimulation = async () => {
 .form-group input[type="number"] {
     width: 100%;
     padding: 0.6rem 0.75rem;
-    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 4px;
     color: var(--color-text);

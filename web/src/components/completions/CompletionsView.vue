@@ -69,8 +69,8 @@
 
             <!-- Action buttons -->
             <div class="action-buttons">
-                <IconButton :size="16" icon="Play" class="apply-button" :disabled="!canApply || isLoading"
-                    @click="applyAction">
+                <IconButton :size="16" icon="Play" variant="primary" class="apply-button"
+                    :disabled="!canApply || isLoading" @click="applyAction">
                     Apply
                 </IconButton>
             </div>
@@ -361,32 +361,7 @@ const {
 }
 
 .apply-button {
-    padding: 4px 8px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.apply-button {
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
     flex: 1;
-}
-
-.apply-button:hover:not(:disabled) {
-    background: var(--color-primary-dark);
-    transform: translateY(-1px);
-}
-
-.apply-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
 }
 
 .status-text {

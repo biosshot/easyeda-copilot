@@ -47,7 +47,6 @@ input::placeholder {
 input {
     width: 100%;
     padding: 0.6rem 0.75rem;
-    background: var(--color-surface);
     border: 1px solid var(--color-border);
     border-radius: 4px;
     color: var(--color-text);
