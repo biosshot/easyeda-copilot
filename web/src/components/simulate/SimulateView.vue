@@ -1,7 +1,8 @@
 <template>
     <div class="simulate-view-container">
         <div v-if="!isSettingsOpen" class="container">
-            <IconButton class="simulate" icon="Play" @click="openSettings">Run spice simulate with selected</IconButton>
+            <IconButton variant="primary" class="simulate" icon="Play" @click="openSettings">Run spice simulate with
+                selected</IconButton>
         </div>
 
         <div v-else class="settings-full-page">
@@ -16,7 +17,7 @@
                             <div class="sources-section">
                                 <div class="section-header">
                                     <h3>Input Sources</h3>
-                                    <IconButton icon="Plus" :size="16" class="add-button" @click="addInputSource">Add
+                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addInputSource">Add
                                         Input Source</IconButton>
                                 </div>
 
@@ -27,7 +28,7 @@
                                 <div v-for="(source, index) in inputSources" :key="source.id" class="source-item">
                                     <div class="source-header">
                                         <span class="source-label">Source {{ index + 1 }}</span>
-                                        <IconButton class="remove-button" icon="Trash2" :size="16"
+                                        <IconButton variant="remove" icon="Trash2" :size="16"
                                             @click="removeInputSource(source.id)"></IconButton>
                                     </div>
 
@@ -80,7 +81,7 @@
                             <div class="outputs-section">
                                 <div class="section-header">
                                     <h3>Output Signals</h3>
-                                    <IconButton icon="Plus" :size="16" class="add-button" @click="addOutputSignal">Add
+                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addOutputSignal">Add
                                         Output Signal</IconButton>
                                 </div>
 
@@ -91,7 +92,7 @@
                                 <div v-for="(signal, index) in outputSignals" :key="signal.id" class="output-item">
                                     <div class="output-header">
                                         <span class="output-label">Output {{ index + 1 }}</span>
-                                        <IconButton class="remove-button" icon="Trash2" :size="16"
+                                        <IconButton variant="remove" icon="Trash2" :size="16"
                                             @click="removeOutputSignal(signal.id)"></IconButton>
                                     </div>
                                     <div class="output-content">
@@ -400,15 +401,6 @@ const runSimulation = async () => {
     align-items: center;
 }
 
-.simulate {
-    padding: 0.3rem 0.7rem 0.3rem 0.3rem;
-    background-color: var(--color-primary);
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    color: var(--color-text-on-primary);
-}
-
 .settings-full-page {
     display: flex;
     flex-direction: column;
@@ -444,15 +436,6 @@ const runSimulation = async () => {
     font-size: 1rem;
     color: var(--color-text);
     font-weight: 600;
-}
-
-.add-button {
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-}
-
-.add-button:hover {
-    opacity: 0.9;
 }
 
 .empty-list {
@@ -492,24 +475,6 @@ const runSimulation = async () => {
     font-weight: 600;
     color: var(--color-text);
     font-size: 0.9rem;
-}
-
-.remove-button {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    padding: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
-    transition: all 0.2s;
-}
-
-.remove-button:hover {
-    background: var(--color-surface-hover);
-    color: var(--color-error, #ef4444);
 }
 
 .form-group {

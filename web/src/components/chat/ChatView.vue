@@ -35,8 +35,8 @@
         <ToDoList :todos="todos" />
 
         <div v-if="settingsStore.getSetting('showInlineButtons') && inlineButtons.length" class="inline-buttons">
-          <IconButton :size="10" class="inline-button" v-for="btn in inlineButtons" :key="btn.text" :icon="btn.icon"
-            @click="btn.handler()">
+          <IconButton :size="10" class="inline-button" variant="primary" v-for="btn in inlineButtons" :key="btn.text"
+            :icon="btn.icon" @click="btn.handler()">
             {{ btn.text }}
           </IconButton>
         </div>
@@ -422,19 +422,13 @@ button[disabled],
   margin-right: 10px;
 }
 
-.inline-buttons {}
-
 .inline-buttons .inline-button {
-  background: var(--color-primary);
-  color: var(--color-text-on-primary);
   font-size: 10px;
   padding: 0px 10px 0px 0px;
   border: 1px solid var(--color-border);
 }
 
 .scroll-to-bottom-btn {
-  /* position: absolute; */
-  /* margin-top: -75px; */
   margin: 0 auto;
   left: 50%;
   width: 40px;
@@ -443,10 +437,6 @@ button[disabled],
   border: 1px solid var(--color-border);
   background-color: var(--color-background);
   color: var(--color-text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
   z-index: 10;
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }

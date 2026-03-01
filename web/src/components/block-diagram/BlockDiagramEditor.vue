@@ -28,7 +28,7 @@
         <div v-if="isDigitizing" class="loading-overlay" @click.stop>
             <div class="loading-content">
                 <TypingDots :status="progressText || 'Processing image…'" />
-                <CancalButton @click="cancelDigitization" />
+                <IconButton icon="Square" variant="cancel" @click="cancelDigitization">Cancel</IconButton>
             </div>
         </div>
 
@@ -69,7 +69,6 @@ import IconButton from '../shared/IconButton.vue'
 import ContextMenu from '../shared/ContextMenu.vue'
 import TypingDots from '../shared/TypingDots.vue'
 import { useBlockDiagramEditor } from '../../composables/useBlockDiagramEditor'
-import CancalButton from '../shared/CancalButton.vue'
 
 const contextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null)
 

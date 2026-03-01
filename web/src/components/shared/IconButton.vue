@@ -1,5 +1,5 @@
 <template>
-    <button>
+    <button :class="[`is-${props.variant}`]">
         <Icon :name="props.icon" :size="props.size ?? 14" />
         <slot></slot>
     </button>
@@ -8,7 +8,15 @@
 <script setup lang="ts">
 import Icon from './Icon.vue';
 
-const props = defineProps<{ icon: string, size?: number }>();
+interface Props {
+    icon: string,
+    size?: number,
+    variant?: 'primary' | 'ghost' | 'remove' | 'cancel';
+}
+
+const props = withDefaults(defineProps<Props>(), {
+    variant: 'ghost'
+});
 
 </script>
 
@@ -23,6 +31,43 @@ button {
     align-items: center;
     justify-content: center;
     gap: 5px;
+}
+
+.is-primary {
+    background-color: var(--color-primary);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--color-text-on-primary);
     padding: 0.2rem 0.8rem 0.2rem 0.5rem;
+}
+
+button:hover {
+    opacity: 0.94;
+}
+
+.is-remove {
+    color: var(--color-text-muted);
+}
+
+.is-remove:hover {
+    color: var(--color-error);
+}
+
+.is-cancel {
+    border: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    background: var(--color-error);
+    color: white;
+    padding: 6px 16px 6px 10px;
+}
+
+.is-primary:hover {
+    background-color: var(--color-primary-light);
+}
+
+.is-primary:active {
+    background-color: var(--color-primary-dark);
 }
 </style>

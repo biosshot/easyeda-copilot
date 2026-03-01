@@ -1,7 +1,8 @@
 <template>
     <div v-if="todos.length" class="todos-section" :class="{ 'collapsed': !showTodos }">
         <div class="todos-header" @click="showTodos = !showTodos">
-            <IconButton :size="12" :icon="showTodos ? 'ChevronUp' : 'ChevronDown'" class="collapse-btn" />
+            <IconButton variant="ghost" :size="12" :icon="showTodos ? 'ChevronUp' : 'ChevronDown'"
+                class="collapse-btn" />
             <span>Todos ({{ todos.length }})</span>
         </div>
         <div v-if="showTodos" class="todos-list">
@@ -57,14 +58,10 @@ const props = defineProps<{
     cursor: pointer;
 }
 
-.todos-header:hover {}
-
 .collapse-btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* width: 18px; */
-    /* min-width: 18px; */
     padding: 0;
 }
 

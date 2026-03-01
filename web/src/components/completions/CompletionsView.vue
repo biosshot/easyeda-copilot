@@ -22,7 +22,8 @@
                     <TypingDots :status="progressStatus || 'Generating suggestions...'" />
                 </div>
 
-                <CancalButton @click="cancelRequest" />
+                <IconButton icon="Square" variant="cancel" @click="cancelRequest">Cancel</IconButton>
+
                 <Timer />
             </div>
         </div>
@@ -84,7 +85,6 @@ import TypingDots from '../shared/TypingDots.vue';
 import IconButton from '../shared/IconButton.vue';
 import Timer from '../shared/Timer.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
-import CancalButton from '../shared/CancalButton.vue';
 import AdjTextarea from '../shared/AdjTextarea.vue';
 
 const {

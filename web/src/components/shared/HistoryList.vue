@@ -2,7 +2,7 @@
     <div class="history-list-container">
         <div class="history-header">
             <h3>{{ title }}</h3>
-            <IconButton v-if="items.length > 0" @click="$emit('close')" icon="X" />
+            <IconButton variant="ghost" v-if="items.length > 0" @click="$emit('close')" icon="X" />
         </div>
 
         <div class="history-list">
@@ -18,13 +18,15 @@
                     </slot>
                 </div>
                 <slot name="item-actions" :item="item">
-                    <IconButton @click="$emit('delete', item.id)" icon="Trash2" />
+                    <IconButton variant="remove" @click="$emit('delete', item.id)" icon="Trash2" />
                 </slot>
             </div>
         </div>
 
         <div v-if="items.length > 0" class="history-footer">
-            <button class="clear-all-btn" @click="$emit('clearAll')">Clear all</button>
+            <IconButton style="width: 100%;" variant="primary" @click="$emit('clearAll')" icon="Trash2">
+                Clear all
+            </IconButton>
         </div>
     </div>
 </template>
@@ -64,7 +66,7 @@ defineEmits<{
     height: 100%;
     background-color: var(--color-background-secondary);
     border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
+    border-radius: 4px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     z-index: 1000;
     overflow: hidden;
@@ -117,9 +119,8 @@ defineEmits<{
 .history-item-content {
     flex: 1;
     padding: 0.4rem 0.5rem;
-    background-color: var(--color-background);
     border: 1px solid var(--color-border);
-    border-radius: 0.3rem;
+    border-radius: 4px;
     color: var(--color-text);
     cursor: pointer;
     text-align: left;
@@ -162,41 +163,5 @@ defineEmits<{
     padding: 0.5rem;
     border-top: 1px solid var(--color-border);
     flex-shrink: 0;
-}
-
-.clear-all-btn {
-    width: 100%;
-    padding: 0.4rem;
-    background-color: var(--color-error);
-    border: 1px solid var(--color-error);
-    color: var(--color-text-on-primary);
-    border-radius: 0.3rem;
-    cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.2s ease;
-}
-
-.clear-all-btn:hover {
-    background-color: #ff6b6b;
-    border-color: var(--color-error);
-    color: var(--color-text-on-primary);
-}
-
-/* Scrollbar styling */
-.history-list::-webkit-scrollbar {
-    width: 6px;
-}
-
-.history-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.history-list::-webkit-scrollbar-thumb {
-    background: var(--color-border);
-    border-radius: 3px;
-}
-
-.history-list::-webkit-scrollbar-thumb:hover {
-    background: var(--color-border-dark);
 }
 </style>

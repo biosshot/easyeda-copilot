@@ -13,7 +13,8 @@
 
     <p>{{ component.description }}</p>
 
-    <IconButton v-if="isEasyEdaActive" @click="placeComponent" class="place-button" icon="Replace">Place</IconButton>
+    <IconButton v-if="isEasyEdaActive" @click="placeComponent" variant="primary" class="place-button" icon="Replace">
+      Place</IconButton>
   </div>
 </template>
 
@@ -91,21 +92,5 @@ const placeComponent = async () => {
 .place-button {
   margin-top: 12px;
   width: 100%;
-  padding: 4px;
-  background: var(--color-primary);
-  color: var(--color-text-on-primary);
-  border: none;
-  border-radius: 4px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.place-button:hover {
-  background-color: var(--color-primary-light);
-}
-
-.place-button:active {
-  background-color: var(--color-primary-dark);
 }
 </style>

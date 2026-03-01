@@ -89,7 +89,7 @@
             </div>
 
             <div class="project-footer">
-                <IconButton class="assemble-button" @click="assembleCircuitHandler" icon="Play">
+                <IconButton class="assemble-button" variant="primary" @click="assembleCircuitHandler" icon="Play">
                     Assemble circuit
                 </IconButton>
             </div>
@@ -156,29 +156,7 @@ onMounted(() => {
 }
 
 .assemble-button {
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-    border: none;
-    border-radius: .375rem;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: .9rem;
-    white-space: nowrap;
-    transition: background-color .2s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0.5rem;
     padding-right: 1rem;
-}
-
-.assemble-button:hover {
-    background: var(--color-primary-hover, var(--color-primary));
-    opacity: 0.9;
-}
-
-.assemble-button:active {
-    transform: scale(0.98);
 }
 
 .project-name {
