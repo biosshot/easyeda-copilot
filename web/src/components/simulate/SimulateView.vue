@@ -9,9 +9,6 @@
                 <ErrorBanner :message="errorMessage" :type="errorType" />
             </div>
 
-            <!-- <VoltageChart ref="voltageChartRefs" :time="fakeData.time" :data="fakeData.voltages">
-            </VoltageChart> -->
-
             <Stepper :steps="steps" finish-button-text="Run simulate" finish-button-icon="Play" @finish="runSimulation">
                 <StepPanels>
                     <StepPanel :value="0">
@@ -36,9 +33,7 @@
 
                                     <div class="source-content">
                                         <div class="form-group">
-                                            <label :for="`signal-name-${source.id}`">Signal Name</label>
-                                            <input :id="`signal-name-${source.id}`" type="text"
-                                                v-model="source.signalName" placeholder="e.g., VCC12, VIN" />
+                                            <NetInput v-model="source.signalName" />
                                         </div>
                                         <div class="form-group">
                                             <label>Signal Type</label>
@@ -56,7 +51,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Поля для SIN -->
                                         <div v-if="source.type === 'sin'" class="source-fields">
                                             <div class="form-group">
                                                 <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
@@ -101,11 +95,7 @@
                                             @click="removeOutputSignal(signal.id)"></IconButton>
                                     </div>
                                     <div class="output-content">
-                                        <div class="form-group">
-                                            <label :for="`output-name-${signal.id}`">Signal Name / Node</label>
-                                            <input :id="`output-name-${signal.id}`" type="text" v-model="signal.name"
-                                                placeholder="e.g., V(out), I(R1)" />
-                                        </div>
+                                        <NetInput v-model="signal.name" />
                                     </div>
                                 </div>
                             </div>
@@ -195,6 +185,7 @@ import StepPanel from '../shared/StepPanel.vue';
 import StepPanels from '../shared/StepPanels.vue';
 import TypingDots from '../shared/TypingDots.vue';
 import TimeInput from '../shared/TimeInput.vue';
+import NetInput from '../shared/NetInput.vue';
 
 interface InputSource {
     id: string;
@@ -431,22 +422,6 @@ const runSimulation = async () => {
     margin: 0 auto;
 }
 
-.step-content {
-    animation: fadeIn 0.3s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .sources-section,
 .outputs-section {
     margin-bottom: 2rem;
@@ -537,7 +512,6 @@ const runSimulation = async () => {
     color: var(--color-error, #ef4444);
 }
 
-/* Формы */
 .form-group {
     margin-bottom: 1rem;
 }
@@ -604,10 +578,6 @@ const runSimulation = async () => {
     border-top: 1px solid var(--color-border);
 }
 
-.results-step {
-    padding-bottom: 1rem;
-}
-
 .results-section {
     background: var(--color-background);
     border: 1px solid var(--color-border);
@@ -627,62 +597,6 @@ const runSimulation = async () => {
     font-size: 1.1rem;
     color: var(--color-text);
     font-weight: 600;
-}
-
-.refresh-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 4px;
-    color: var(--color-text);
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.refresh-button:hover:not(:disabled) {
-    background: var(--color-surface-hover);
-}
-
-.refresh-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.refresh-button .spinning {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.loading-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem;
-    color: var(--color-text-tertiary);
-}
-
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid var(--color-border);
-    border-top-color: var(--color-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 1rem;
 }
 
 .no-results {

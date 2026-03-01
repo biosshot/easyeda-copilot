@@ -1,5 +1,5 @@
 import { CircuitAssembly, ExplainCircuit } from "../types/circuit";
-import { isEasyEda } from "./utils";
+import { isEasyEda, showToastMessage } from "./utils";
 // @ts-ignore
 import type _ from '@jlceda/pro-api-types';
 
@@ -26,4 +26,22 @@ export const getAllPrimitiveId = async () => {
     else {
         throw new Error('Fail getAllPrimitiveId');
     }
+}
+
+export const getSelectedWireName = async () => {
+    const selIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
+
+    if (!selIds[0]) {
+        showToastMessage('Not selected', 'warn');
+        return null;
+    }
+
+    const wire = await eda.sch_PrimitiveWire.get(selIds[0]);
+
+    if (!wire) {
+        showToastMessage('Selected not a wire', 'warn');
+        return null;
+    }
+
+    return wire?.getState_Net();
 }
