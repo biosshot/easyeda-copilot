@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted, shallowRef } from 'vue';
 import { use } from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
 import { LineChart } from 'echarts/charts';
@@ -22,13 +22,36 @@ const { shift } = useMagicKeys()
 const chartRef = ref<InstanceType<typeof VChart> | null>(null);
 
 const zoomState = ref({
-    x: { start: 0, end: 100 },
+    x: { start: 0, end: 20 },
     y: { start: 0, end: 100 }
 })
 
 const data = props.time.map((num1, index) => [num1, props.data[index]]);
 
-const chartOption = ref({
+function findMinMax(arr: number[]) {
+    if (arr.length === 0) {
+        return { min: 0, max: 0 };
+    }
+
+    let min = arr[0];
+    let max = arr[0];
+
+    for (let i = 1; i < arr.length; i++) {
+        const value = arr[i];
+        if (value < min) {
+            min = value;
+        }
+        if (value > max) {
+            max = value;
+        }
+    }
+
+    return { min, max };
+}
+
+const { min, max } = findMinMax(props.data)
+
+const chartOption = shallowRef({
     tooltip: {
         trigger: 'axis',
         confine: true,
@@ -36,7 +59,7 @@ const chartOption = ref({
     },
     xAxis: {
         type: 'value',
-        name: 'Time (ms)',
+        name: 'T (ms)',
         scale: true,
         min: null,
         max: null,
@@ -46,10 +69,10 @@ const chartOption = ref({
     },
     yAxis: {
         type: 'value',
-        name: 'Voltage (V)',
+        name: 'V (V)',
         scale: true,
-        min: Math.min(...props.data) - 4,
-        max: Math.max(...props.data) + 4,
+        min: min - 4,
+        max: max + 4,
         axisLabel: {
             formatter: (value: number) => value.toFixed(2)
         }
@@ -65,8 +88,9 @@ const chartOption = ref({
             animation: false,
             sampling: 'none',
             lineStyle: { width: 1 },
-            progressive: 10000,
-            progressiveThreshold: 20000
+            progressive: 3000,
+            progressiveThreshold: 3000,
+            clip: true
         }
     ],
     dataZoom: [
@@ -75,10 +99,11 @@ const chartOption = ref({
             xAxisIndex: 0,
             yAxisIndex: null,
             start: 0,
-            end: 100,
+            end: 20,
             zoomOnMouseWheel: true,
             moveOnMouseMove: true,
-            filterMode: 'none'
+            filterMode: 'weakFilter',
+            throttle: 50
         },
         {
             type: 'inside',
@@ -121,14 +146,19 @@ onMounted(() => {
 // Слушаем внешние события синхронизации
 const handleExternalSync = (start: number, end: number) => {
     if (!props.syncTime) return;
+    const chart = chartRef.value?.chart;
+    if (!chart) return;
 
     zoomState.value.x = { start, end };
 
-    chartOption.value.dataZoom[0] = {
-        ...chartOption.value.dataZoom[0],
-        start,
-        end,
-    }
+    chart.setOption({
+        dataZoom: [
+            {
+                start,
+                end,
+            }
+        ]
+    });
 }
 
 defineExpose({
@@ -136,37 +166,43 @@ defineExpose({
 })
 
 watch(shift, (isShiftPressed) => {
-    chartOption.value.dataZoom = [
-        {
-            ...chartOption.value.dataZoom[0],
-            start: zoomState.value.x.start,
-            end: zoomState.value.x.end,
-            zoomOnMouseWheel: !isShiftPressed,
-        },
-        {
-            ...chartOption.value.dataZoom[1],
-            start: zoomState.value.y.start,
-            end: zoomState.value.y.end,
-            zoomOnMouseWheel: isShiftPressed,
-        },
-    ]
+    const chart = chartRef.value?.chart;
+    if (!chart) return;
+
+    chart.setOption({
+        dataZoom: [
+            {
+                start: zoomState.value.x.start,
+                end: zoomState.value.x.end,
+                zoomOnMouseWheel: !isShiftPressed,
+            },
+            {
+                start: zoomState.value.y.start,
+                end: zoomState.value.y.end,
+                zoomOnMouseWheel: isShiftPressed,
+            }
+        ]
+    });
 
 }, { immediate: true })
 
 watch(() => props.syncTime, (newSyncTime) => {
+    const chart = chartRef.value?.chart;
+    if (!chart) return;
+
     if (newSyncTime && chartRef.value?.chart) {
-        chartOption.value.dataZoom = [
-            {
-                ...chartOption.value.dataZoom[0],
-                start: zoomState.value.x.start,
-                end: zoomState.value.x.end,
-            },
-            {
-                ...chartOption.value.dataZoom[1],
-                start: zoomState.value.y.start,
-                end: zoomState.value.y.end,
-            },
-        ]
+        chart.setOption({
+            dataZoom: [
+                {
+                    start: zoomState.value.x.start,
+                    end: zoomState.value.x.end,
+                },
+                {
+                    start: zoomState.value.y.start,
+                    end: zoomState.value.y.end,
+                }
+            ]
+        });
     }
 })
 

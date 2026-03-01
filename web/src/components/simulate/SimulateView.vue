@@ -8,6 +8,10 @@
             <div v-if="errorMessage" style="padding: 15px;">
                 <ErrorBanner :message="errorMessage" :type="errorType" />
             </div>
+
+            <!-- <VoltageChart ref="voltageChartRefs" :time="fakeData.time" :data="fakeData.voltages">
+            </VoltageChart> -->
+
             <Stepper :steps="steps" finish-button-text="Run simulate" finish-button-icon="Play" @finish="runSimulation">
                 <StepPanels>
                     <StepPanel :value="0">
@@ -227,6 +231,20 @@ const voltageChartRefs = ref<InstanceType<typeof VoltageChart>[]>([]);
 const errorMessage = ref<string | null>(null);
 const errorType = ref<'error' | 'warn'>('error');
 
+// const generateFakeSineData = (points: number = 1_500_000, frequency: number = 2 * Math.PI / 100, amplitude: number = 1, offset: number = 0) => {
+//     const time: number[] = [];
+//     const voltages: number[] = [];
+
+//     for (let i = 0; i < points; i++) {
+//         time.push(i);
+//         voltages.push(amplitude * Math.sin(frequency * i) + offset);
+//     }
+
+//     return { time, voltages };
+// };
+
+// const fakeData = ref(generateFakeSineData());
+
 const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
 
@@ -342,10 +360,6 @@ const runSimulation = async () => {
             body: JSON.stringify(body)
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const json = await response.json() as {
             status: string,
             error: string | null,
@@ -358,7 +372,7 @@ const runSimulation = async () => {
             }
         };
 
-        if (json.status !== 'success' && json.error) {
+        if (json.error) {
             throw new Error(json.error);
         }
 
@@ -367,8 +381,6 @@ const runSimulation = async () => {
             status: 'Completed',
             timestamp: new Date().toISOString()
         };
-
-        console.log(simulationResults.value.result);
     } catch (error) {
         errorMessage.value = error instanceof Error
             ? error.message
