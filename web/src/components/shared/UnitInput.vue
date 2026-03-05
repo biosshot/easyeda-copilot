@@ -1,7 +1,6 @@
 <template>
     <div class="time-input">
-        <input :id="id" type="number" :value="localValue" @input="onValueInput" :placeholder="placeholder" :step="step"
-            :min="min" />
+        <input :id="id" :value="localValue" @change="onValueInput" :placeholder="placeholder" :step="step" :min="min" />
         <CustomSelect class="time-unit" :model-value="modelValue.unit" :options="units"
             @update:model-value="onUnitChange" />
     </div>
@@ -14,7 +13,7 @@ import CustomSelect from './CustomSelect.vue';
 export interface UnitValue {
     value: number;
     unit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G';
-    valueInUnits: { 'n': number, 'u': number, 'm': number, 'base': number, 'k': number, 'M': number, 'G': number }
+    valueInUnits?: { 'n': number, 'u': number, 'm': number, 'base': number, 'k': number, 'M': number, 'G': number }
 }
 
 const props = withDefaults(defineProps<{
@@ -87,7 +86,7 @@ const onValueInput = (event: Event) => {
 };
 
 const onUnitChange = (newUnit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
-    // Берём значение в новой единице из valueInUnits
+    if (!props.modelValue.valueInUnits) return;
     const newValue = props.modelValue.valueInUnits[newUnit];
 
     const valueInUnits = calculateValueInUnits(newValue, newUnit);

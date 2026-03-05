@@ -422,12 +422,7 @@ export default function useChat() {
 
     function cancelRequest() {
         if (!isLoading.value || !currentController.value) return;
-
         currentController.value.abort();
-        isLoading.value = false;
-        progressStatus.value = '';
-        showToastMessage('Request cancelled by user.', 'info');
-        currentController.value = null;
     }
 
     function retrySend(messageIdx: number) {

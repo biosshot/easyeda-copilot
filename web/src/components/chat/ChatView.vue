@@ -422,6 +422,10 @@ button[disabled],
   margin-right: 10px;
 }
 
+.inline-buttons {
+  display: flex;
+}
+
 .inline-buttons .inline-button {
   font-size: 10px;
   padding: 0px 10px 0px 0px;

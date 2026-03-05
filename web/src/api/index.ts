@@ -344,6 +344,7 @@ export async function fetchSSETask({
                                 errMes = "Server error";
                             }
 
+                            stopReceived = true;
                             throw new Error(errMes);
                         }
 
@@ -378,8 +379,7 @@ export async function fetchSSETask({
             } catch (err) {
                 attempts++;
                 if (signal?.aborted) throw err;
-                if (stopReceived) break;
-                if (attempts >= 3) throw err;
+                if (attempts >= 3 || stopReceived) throw err;
                 // small backoff before retry
                 await new Promise(res => setTimeout(res, 1000));
             }

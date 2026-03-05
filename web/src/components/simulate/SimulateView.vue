@@ -137,34 +137,32 @@
 
                     <StepPanel :value="3">
                         <div class="settings-content">
-                            <div class="results-section">
-                                <div class="results-header">
-                                    <h3>Simulation Results</h3>
-                                </div>
+                            <div class="results-header">
+                                <h3>Simulation Results</h3>
+                            </div>
 
-                                <div class="sync-checkbox">
-                                    <label>
-                                        <input type="checkbox" v-model="syncGraphsByTime" />
-                                        Sync graphs by time
-                                    </label>
-                                </div>
+                            <div class="sync-checkbox">
+                                <label>
+                                    <input type="checkbox" v-model="syncGraphsByTime" />
+                                    Sync graphs by time
+                                </label>
+                            </div>
 
-                                <TypingDots v-if="isRunning" status="Running simulation..." />
+                            <TypingDots v-if="isRunning" status="Running simulation..." />
 
-                                <div v-else-if="simulationResults" class="results-content">
-                                    <div v-for="(output_signal, index) in simulationResults.result.output_signals"
-                                        :key="output_signal.signal_name">
-                                        <span>{{ output_signal.signal_name }}</span>
-                                        <VoltageChart ref="voltageChartRefs" :time="simulationResults.result.time"
-                                            :data="output_signal.volages" :sync-time="syncGraphsByTime"
-                                            @sync-zoom="(s, e) => handleSyncZoom(index)(s, e)">
-                                        </VoltageChart>
-                                    </div>
+                            <div v-else-if="simulationResults" class="results-content">
+                                <div v-for="(output_signal, index) in simulationResults.result.output_signals"
+                                    :key="output_signal.signal_name">
+                                    <h2 style="text-align: center;">{{ output_signal.signal_name }}</h2>
+                                    <VoltageChart ref="voltageChartRefs" :time="simulationResults.result.time"
+                                        :data="output_signal.volages" :sync-time="syncGraphsByTime"
+                                        @sync-zoom="(s, e) => handleSyncZoom(index)(s, e)">
+                                    </VoltageChart>
                                 </div>
+                            </div>
 
-                                <div v-else class="no-results">
-                                    <p>No simulation results yet. Click "Run Simulation" to start.</p>
-                                </div>
+                            <div v-else class="no-results">
+                                <p>No simulation results yet. Click "Run Simulation" to start.</p>
                             </div>
                         </div>
                     </StepPanel>
@@ -242,8 +240,8 @@ const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
 
 const simulationType = ref<'tran'>('tran');
-const stepTime = ref<UnitValue>();
-const endTime = ref<UnitValue>();
+const stepTime = ref<UnitValue>({ unit: 'u', value: 100 });
+const endTime = ref<UnitValue>({ unit: 'm', value: 10 });
 
 watchEffect(() => {
     console.log(stepTime.value)
@@ -321,21 +319,15 @@ const runSimulation = async () => {
     try {
 
         const body = {
-            step_time_ns: stepTime.value?.valueInUnits.n ?? 100000,
-            end_time_ns: endTime.value?.valueInUnits.n ?? 100000 * 100,
+            step_time_ns: stepTime.value?.valueInUnits?.n ?? 100000,
+            end_time_ns: endTime.value?.valueInUnits?.n ?? 100000 * 100,
             output_signals: outputSignals.value.map(s => s.name),
             input_signals: inputSources.value.map((source, index) => ({
                 name: source.type === 'dc' ? `INPUT_${index}` : `INPUT_${index}`,
                 signal_name: source.signalName,
-                value: source.type === 'dc'
-                    ? source.dcVoltage?.valueInUnits.base ?? 0
-                    : source.sinAmplitude?.valueInUnits.base ?? 1,
-                frequency: source.type === 'sin'
-                    ? source.sinFrequency?.valueInUnits.base ?? 1000
-                    : 0,
-                offset: source.type === 'sin'
-                    ? source.sinOffset?.valueInUnits.base ?? 0
-                    : 0,
+                value: source.type === 'dc' ? source.dcVoltage?.valueInUnits?.base ?? 0 : source.sinAmplitude?.valueInUnits?.base ?? 1,
+                frequency: source.type === 'sin' ? source.sinFrequency?.valueInUnits?.base ?? 1000 : 0,
+                offset: source.type === 'sin' ? source.sinOffset?.valueInUnits?.base ?? 0 : 0,
                 type: source.type.toUpperCase()
             })),
             components: (await getSchematic()).components
@@ -536,13 +528,6 @@ const runSimulation = async () => {
 .output-content {
     padding-top: 0.5rem;
     border-top: 1px solid var(--color-border);
-}
-
-.results-section {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 8px;
-    padding: 1.5rem;
 }
 
 .results-header {

@@ -34,7 +34,7 @@ const activate = (stepValue?: string | number) => {
 .stepper-panel {
     flex: 1;
     overflow-y: auto;
-    padding: 0.4rem 0.4rem;
+    padding: 0.4rem 0.8rem;
     animation: fadeIn 0.3s ease;
 }
 
