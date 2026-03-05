@@ -18,6 +18,9 @@ EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit
 - **Diagnostic Tools**: Generate diagnostic algorithms for circuit analysis
 - **Structural Diagrams**: Create comprehensive structural diagrams for complex circuits -->
 
+# More examples:
+[Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples)
+
 ## Installation
 
 To install the extension, download the latest release. In EasyEDA Pro, go to Settings → Extensions → Extensions Manager → Import Extensions, select the *.eext file, and be sure to check the External Interactions box.
