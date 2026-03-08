@@ -1,215 +1,412 @@
 <template>
-    <VChart class="chart" ref="chartRef" :option="chartOption" autoresize />
+    <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
+        <!-- Панель управления видимостью сигналов -->
+        <div style="padding: 8px; background: #222; color: white; display: flex; flex-wrap: wrap; gap: 12px;">
+            <label v-for="signal in signals" :key="signal.name" style="display: flex; align-items: center; gap: 4px;">
+                <input type="checkbox" :checked="visibility[signal.name] !== false"
+                    @change="toggleSignal(signal.name)" />
+                <span :style="{ color: getColor(signal.name) }">{{ signal.name }}</span>
+            </label>
+        </div>
+
+        <!-- Grid для графика и осей -->
+        <div style="
+        flex: 1;
+        display: grid;
+        grid-template-rows: 1fr 2.5em;
+        grid-template-columns: 6em 1fr;
+        gap: 0;
+        position: relative;
+      ">
+            <!-- Левая ось Y -->
+            <div style="border-right: solid 2px #444">
+                <canvas ref="axisYCanvas"
+                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+            </div>
+
+            <!-- Основной график + сетка (накладываются) -->
+            <div style="position: relative">
+                <canvas ref="plotCanvas"
+                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+                <canvas v-if="grid" ref="gridCanvas"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
+            </div>
+
+            <!-- Пустой угол -->
+            <div style="border-right: solid 2px #444; border-top: solid 2px #444"></div>
+
+            <!-- Нижняя ось X -->
+            <div style="border-top: solid 2px #444">
+                <canvas ref="axisXCanvas"
+                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted, shallowRef } from 'vue';
-import { use } from 'echarts/core';
-import { CanvasRenderer } from 'echarts/renderers';
-import { LineChart } from 'echarts/charts';
-import { GridComponent, TooltipComponent, DataZoomComponent } from 'echarts/components';
-import VChart from 'vue-echarts';
-import { useMagicKeys } from '@vueuse/core'
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+// @ts-ignore
+import { WebglPlot, ColorRGBA, WebglLine } from 'webgl-plot';
 
-use([CanvasRenderer, LineChart, GridComponent, TooltipComponent, DataZoomComponent]);
-
-const props = defineProps<{ time: number[], data: number[], syncTime?: boolean }>();
-const emit = defineEmits<{
-    syncZoom: [start: number, end: number]
+const props = defineProps<{
+    time: number[];
+    signals: { data: number[]; name: string }[];
+    grid?: boolean;
 }>();
 
-const { shift } = useMagicKeys()
-const chartRef = ref<InstanceType<typeof VChart> | null>(null);
+const visibility = ref<Record<string, boolean>>({});
+watch(() => props.signals, (newSignals) => {
+    const newVis: Record<string, boolean> = {};
+    newSignals.forEach(s => { newVis[s.name] = true; });
+    visibility.value = newVis;
+}, { immediate: true });
 
-const zoomState = ref({
-    x: { start: 0, end: 20 },
-    y: { start: 0, end: 100 }
-})
-
-const data = props.time.map((num1, index) => [num1, props.data[index]]);
-
-function findMinMax(arr: number[]) {
-    if (arr.length === 0) {
-        return { min: 0, max: 0 };
-    }
-
-    let min = arr[0];
-    let max = arr[0];
-
-    for (let i = 1; i < arr.length; i++) {
-        const value = arr[i];
-        if (value < min) {
-            min = value;
-        }
-        if (value > max) {
-            max = value;
-        }
-    }
-
-    return { min, max };
+const colorPalette = [
+    [0, 0.8, 1, 1],
+    [1, 0.5, 0, 1],
+    [0.3, 1, 0.3, 1],
+    [1, 0.3, 0.3, 1],
+    [1, 0.8, 0, 1],
+    [0.8, 0.4, 1, 1],
+];
+function getColor(name: string): string {
+    const index = props.signals.findIndex(s => s.name === name) % colorPalette.length;
+    const c = colorPalette[index];
+    return `rgba(${c[0] * 255}, ${c[1] * 255}, ${c[2] * 255}, ${c[3]})`;
 }
 
-const { min, max } = findMinMax(props.data)
+const plotCanvas = ref<HTMLCanvasElement | null>(null);
+const gridCanvas = ref<HTMLCanvasElement | null>(null);
+const axisXCanvas = ref<HTMLCanvasElement | null>(null);
+const axisYCanvas = ref<HTMLCanvasElement | null>(null);
 
-const chartOption = shallowRef({
-    tooltip: {
-        trigger: 'axis',
-        confine: true,
-        axisPointer: { type: 'line' }
-    },
-    xAxis: {
-        type: 'value',
-        name: 'T (ms)',
-        scale: true,
-        min: null,
-        max: null,
-        axisLabel: {
-            formatter: (value: number) => value.toFixed(2)
-        }
-    },
-    yAxis: {
-        type: 'value',
-        name: 'V (V)',
-        scale: true,
-        min: min - 4,
-        max: max + 4,
-        axisLabel: {
-            formatter: (value: number) => value.toFixed(2)
-        }
-    },
-    series: [
-        {
-            data,
-            type: 'line',
-            showSymbol: false,
-            large: true,
-            largeThreshold: 2000,
-            hoverAnimation: false,
-            animation: false,
-            sampling: 'none',
-            lineStyle: { width: 1 },
-            progressive: 3000,
-            progressiveThreshold: 3000,
-            clip: true
-        }
-    ],
-    dataZoom: [
-        {
-            type: 'inside',
-            xAxisIndex: 0,
-            yAxisIndex: null,
-            start: 0,
-            end: 20,
-            zoomOnMouseWheel: true,
-            moveOnMouseMove: true,
-            filterMode: 'weakFilter',
-            throttle: 50
-        },
-        {
-            type: 'inside',
-            xAxisIndex: null,
-            yAxisIndex: 0,
-            start: 0,
-            end: 100,
-            zoomOnMouseWheel: false,
-            moveOnMouseMove: true,
-            filterMode: 'none'
-        }
-    ]
-})
+let wglp: WebglPlot;
+let dataLines: WebglLine[] = [];
+let animationFrame: number;
+
+let isPanning = false;
+let panStartX = 0, panStartY = 0;
+let panStartOffsetX = 0, panStartOffsetY = 0;
+
+let resizeTimer: number;
 
 onMounted(() => {
-    const chart = chartRef.value?.chart
+    if (!plotCanvas.value || !axisXCanvas.value || !axisYCanvas.value) return;
 
-    if (chart) {
-        chart.on('dataZoom', (params) => {
-            if (!params || typeof params !== 'object' || !('batch' in params)) return;
-            if (!Array.isArray(params.batch)) return;
-
-            if (!params.batch || !params.batch[0]) return
-
-            const { start, end } = params.batch[0]
-
-            if (shift.value) {
-                zoomState.value.y = { start, end }
-            } else {
-                zoomState.value.x = { start, end }
+    const resizeCanvases = () => {
+        const dpr = window.devicePixelRatio || 1;
+        [plotCanvas, gridCanvas, axisXCanvas, axisYCanvas].forEach(canvasRef => {
+            const canvas = canvasRef.value;
+            if (canvas) {
+                canvas.width = canvas.clientWidth * dpr;
+                canvas.height = canvas.clientHeight * dpr;
             }
+        });
+    };
+    resizeCanvases();
 
-            if (props.syncTime && !shift.value) {
-                emit('syncZoom', start, end)
-            }
-        })
-    }
-})
+    wglp = new WebglPlot(plotCanvas.value);
+    wglp.removeAllLines();
 
-// Слушаем внешние события синхронизации
-const handleExternalSync = (start: number, end: number) => {
-    if (!props.syncTime) return;
-    const chart = chartRef.value?.chart;
-    if (!chart) return;
+    wglp.gScaleX = 1;
+    wglp.gOffsetX = 0;
+    wglp.gScaleY = 0.1;
+    wglp.gOffsetY = 0;
 
-    zoomState.value.x = { start, end };
+    plotCanvas.value.addEventListener('mousedown', onMouseDown);
+    plotCanvas.value.addEventListener('mousemove', onMouseMove);
+    plotCanvas.value.addEventListener('mouseup', onMouseUp);
+    plotCanvas.value.addEventListener('wheel', onWheel, { passive: false });
+    plotCanvas.value.addEventListener('dblclick', onDblClick);
+    plotCanvas.value.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    chart.setOption({
-        dataZoom: [
-            {
-                start,
-                end,
-            }
-        ]
+    window.addEventListener('resize', onResize);
+
+    updateLines();
+
+    const animate = () => {
+        wglp.update();
+        drawAxesAndGrid();
+        animationFrame = requestAnimationFrame(animate);
+    };
+    animate();
+});
+
+function updateLines() {
+    if (!wglp) return;
+
+    wglp.removeAllLines();
+    dataLines = [];
+
+    props.signals.forEach((signal, index) => {
+        if (visibility.value[signal.name] === false) return;
+
+        const color = colorPalette[index % colorPalette.length];
+        const rgba = new ColorRGBA(color[0], color[1], color[2], color[3]);
+        const numPoints = signal.data.length;
+        const line = new WebglLine(rgba, numPoints);
+        line.lineSpaceX(-1, 2 / numPoints);
+
+        for (let i = 0; i < numPoints; i++) {
+            line.setY(i, signal.data[i]);
+        }
+
+        wglp.addDataLine(line);
+        dataLines.push(line);
     });
+
+    autoScaleY();
 }
 
-defineExpose({
-    handleExternalSync
-})
+function autoScaleY() {
+    if (props.signals.length === 0 || !wglp) return;
 
-watch(shift, (isShiftPressed) => {
-    const chart = chartRef.value?.chart;
-    if (!chart) return;
-
-    chart.setOption({
-        dataZoom: [
-            {
-                start: zoomState.value.x.start,
-                end: zoomState.value.x.end,
-                zoomOnMouseWheel: !isShiftPressed,
-            },
-            {
-                start: zoomState.value.y.start,
-                end: zoomState.value.y.end,
-                zoomOnMouseWheel: isShiftPressed,
-            }
-        ]
+    let minY = Infinity, maxY = -Infinity;
+    props.signals.forEach(signal => {
+        if (visibility.value[signal.name] === false) return;
+        const data = signal.data;
+        for (let i = 0; i < data.length; i++) {
+            if (data[i] < minY) minY = data[i];
+            if (data[i] > maxY) maxY = data[i];
+        }
     });
 
-}, { immediate: true })
+    if (minY === Infinity || maxY === -Infinity) return;
 
-watch(() => props.syncTime, (newSyncTime) => {
-    const chart = chartRef.value?.chart;
-    if (!chart) return;
+    const padding = (maxY - minY) * 0.05;
+    const worldMin = minY - padding;
+    const worldMax = maxY + padding;
+    const range = worldMax - worldMin;
 
-    if (newSyncTime && chartRef.value?.chart) {
-        chart.setOption({
-            dataZoom: [
-                {
-                    start: zoomState.value.x.start,
-                    end: zoomState.value.x.end,
-                },
-                {
-                    start: zoomState.value.y.start,
-                    end: zoomState.value.y.end,
-                }
-            ]
-        });
+    wglp.gScaleY = 2 / range;
+    wglp.gOffsetY = -worldMin * wglp.gScaleY - 1;
+}
+
+function toggleSignal(name: string) {
+    visibility.value = {
+        ...visibility.value,
+        [name]: !visibility.value[name]
+    };
+}
+
+watch([() => props.signals, visibility], () => {
+    updateLines();
+}, { deep: true });
+
+function drawAxesAndGrid() {
+    if (!wglp) return;
+
+    const xCanvas = axisXCanvas.value;
+    const yCanvas = axisYCanvas.value;
+    const gCanvas = gridCanvas.value;
+
+    if (!xCanvas || !yCanvas) return;
+
+    const xCtx = xCanvas.getContext('2d');
+    const yCtx = yCanvas.getContext('2d');
+    if (!xCtx || !yCtx) return;
+
+    xCtx.clearRect(0, 0, xCanvas.width, xCanvas.height);
+    yCtx.clearRect(0, 0, yCanvas.width, yCanvas.height);
+
+    const xMinWorld = (-1 - wglp.gOffsetX) / wglp.gScaleX;
+    const xMaxWorld = (1 - wglp.gOffsetX) / wglp.gScaleX;
+    const yMinWorld = (-1 - wglp.gOffsetY) / wglp.gScaleY;
+    const yMaxWorld = (1 - wglp.gOffsetY) / wglp.gScaleY;
+
+    const divisions = 8;
+    const xTicks: number[] = [];
+    const yTicks: number[] = [];
+
+    for (let i = 0; i <= divisions; i++) {
+        const t = i / divisions;
+        xTicks.push(xMinWorld + t * (xMaxWorld - xMinWorld));
+        yTicks.push(yMinWorld + t * (yMaxWorld - yMinWorld));
     }
-})
 
+    if (props.grid && gCanvas) {
+        const gCtx = gCanvas.getContext('2d');
+        if (gCtx) {
+            gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+            gCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+            gCtx.lineWidth = 1;
+
+            for (const worldX of xTicks) {
+                const xNorm = worldX * wglp.gScaleX + wglp.gOffsetX;
+                const screenX = ((xNorm + 1) / 2) * gCanvas.width;
+                gCtx.beginPath();
+                gCtx.moveTo(screenX, 0);
+                gCtx.lineTo(screenX, gCanvas.height);
+                gCtx.stroke();
+            }
+
+            for (const worldY of yTicks) {
+                const yNorm = worldY * wglp.gScaleY + wglp.gOffsetY;
+                const screenY = (1 - (yNorm + 1) / 2) * gCanvas.height;
+                gCtx.beginPath();
+                gCtx.moveTo(0, screenY);
+                gCtx.lineTo(gCanvas.width, screenY);
+                gCtx.stroke();
+            }
+        }
+    }
+
+    xCtx.font = '16px Courier New';
+    xCtx.fillStyle = '#fff';
+    xCtx.strokeStyle = '#fff';
+    xCtx.lineWidth = 1;
+
+    for (let i = 0; i <= divisions; i++) {
+        const worldX = xTicks[i];
+        const xNorm = worldX * wglp.gScaleX + wglp.gOffsetX;
+        const screenX = ((xNorm + 1) / 2) * xCanvas.width;
+
+        const index = ((worldX + 1) / 2) * (props.time.length - 1);
+        const idx = Math.round(Math.max(0, Math.min(props.time.length - 1, index)));
+        const timeValue = props.time[idx];
+
+        xCtx.fillText(timeValue.toFixed(3) + ' с', screenX - 30, 20);
+        xCtx.beginPath();
+        xCtx.moveTo(screenX, 0);
+        xCtx.lineTo(screenX, 10);
+        xCtx.stroke();
+    }
+
+    yCtx.font = '16px Courier New';
+    yCtx.fillStyle = '#fff';
+    yCtx.strokeStyle = '#fff';
+    yCtx.lineWidth = 1;
+
+    for (let i = 0; i <= divisions; i++) {
+        const worldY = yTicks[i];
+        const yNorm = worldY * wglp.gScaleY + wglp.gOffsetY;
+        const screenY = (1 - (yNorm + 1) / 2) * yCanvas.height;
+
+        yCtx.fillText(worldY.toFixed(2) + ' В', 5, screenY);
+        yCtx.beginPath();
+        yCtx.moveTo(yCanvas.width - 10, screenY);
+        yCtx.lineTo(yCanvas.width, screenY);
+        yCtx.stroke();
+    }
+}
+
+function onMouseDown(e: MouseEvent) {
+    if (e.button !== 0) return;
+    e.preventDefault();
+
+    const normCoords = getNormalizedCoordinates(e);
+    if (!normCoords) return;
+
+    isPanning = true;
+    panStartX = normCoords.x;
+    panStartY = normCoords.y;
+    panStartOffsetX = wglp.gOffsetX;
+    panStartOffsetY = wglp.gOffsetY;
+
+    plotCanvas.value!.style.cursor = 'grabbing';
+}
+
+function onMouseMove(e: MouseEvent) {
+    if (!isPanning) return;
+    e.preventDefault();
+
+    const normCoords = getNormalizedCoordinates(e);
+    if (!normCoords) return;
+
+    wglp.gOffsetX = panStartOffsetX + (normCoords.x - panStartX);
+    wglp.gOffsetY = panStartOffsetY + (normCoords.y - panStartY);
+}
+
+function onMouseUp(e: MouseEvent) {
+    if (e.button !== 0) return;
+    isPanning = false;
+    plotCanvas.value!.style.cursor = 'default';
+}
+
+function onWheel(e: WheelEvent) {
+    e.preventDefault();
+
+    const factor = e.deltaY > 0 ? 1 / 1.1 : 1.1;
+    const normCoords = getNormalizedCoordinates(e);
+    if (!normCoords) return;
+
+    const xNorm = normCoords.x;
+    const yNorm = normCoords.y;
+
+    if (e.shiftKey) {
+        const worldY = (yNorm - wglp.gOffsetY) / wglp.gScaleY;
+        wglp.gScaleY *= factor;
+        wglp.gScaleY = Math.max(1e-12, wglp.gScaleY);
+        wglp.gOffsetY = yNorm - worldY * wglp.gScaleY;
+    } else {
+        const worldX = (xNorm - wglp.gOffsetX) / wglp.gScaleX;
+        wglp.gScaleX *= factor;
+        wglp.gScaleX = Math.max(1e-12, wglp.gScaleX);
+        wglp.gOffsetX = xNorm - worldX * wglp.gScaleX;
+    }
+}
+
+function onDblClick(e: MouseEvent) {
+    e.preventDefault();
+    wglp.gScaleX = 1;
+    wglp.gOffsetX = 0;
+    autoScaleY();
+}
+
+function getNormalizedCoordinates(e: MouseEvent | WheelEvent): { x: number; y: number } | null {
+    if (!plotCanvas.value) return null;
+    const rect = plotCanvas.value.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const mouseX = (e.clientX - rect.left) * dpr;
+    const mouseY = (e.clientY - rect.top) * dpr;
+
+    const xNorm = (2 * mouseX) / plotCanvas.value.width - 1;
+    const yNorm = 1 - (2 * mouseY) / plotCanvas.value.height;
+    return { x: xNorm, y: yNorm };
+}
+
+function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+        if (plotCanvas.value && axisXCanvas.value && axisYCanvas.value) {
+            const dpr = window.devicePixelRatio || 1;
+            plotCanvas.value.width = plotCanvas.value.clientWidth * dpr;
+            plotCanvas.value.height = plotCanvas.value.clientHeight * dpr;
+            if (gridCanvas.value) {
+                gridCanvas.value.width = gridCanvas.value.clientWidth * dpr;
+                gridCanvas.value.height = gridCanvas.value.clientHeight * dpr;
+            }
+            axisXCanvas.value.width = axisXCanvas.value.clientWidth * dpr;
+            axisXCanvas.value.height = axisXCanvas.value.clientHeight * dpr;
+            axisYCanvas.value.width = axisYCanvas.value.clientWidth * dpr;
+            axisYCanvas.value.height = axisYCanvas.value.clientHeight * dpr;
+        }
+    }, 100);
+}
+
+onUnmounted(() => {
+    if (plotCanvas.value) {
+        plotCanvas.value.removeEventListener('mousedown', onMouseDown);
+        plotCanvas.value.removeEventListener('mousemove', onMouseMove);
+        plotCanvas.value.removeEventListener('mouseup', onMouseUp);
+        plotCanvas.value.removeEventListener('wheel', onWheel);
+        plotCanvas.value.removeEventListener('dblclick', onDblClick);
+    }
+    window.removeEventListener('resize', onResize);
+    cancelAnimationFrame(animationFrame);
+});
 </script>
 
 <style scoped>
-.chart {
-    height: 400px;
+div {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+canvas {
+    display: block;
+    background-color: transparent;
 }
 </style>

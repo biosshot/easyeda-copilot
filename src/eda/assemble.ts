@@ -23,7 +23,7 @@ interface PlacedComponents {
 
 interface AddedNet {
     designator: string,
-    pin_number: number,
+    pin_number: number | string,
     net: string,
     pin_name?: string
 }
@@ -286,12 +286,12 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 
     const searchSignalName = (designator: string, pin: unknown) => {
         return components
-            .find(comp => comp.designator === designator)?.pins?.find(p => Number(pin) === Number(p.pin_number))?.signal_name;
+            .find(comp => comp.designator === designator)?.pins?.find(p => pin == p.pin_number)?.signal_name;
     }
 
     const searchPinName = (designator: string, pin: unknown) => {
         return components
-            .find(comp => comp.designator === designator)?.pins?.find(p => Number(pin) === Number(p.pin_number))?.name;
+            .find(comp => comp.designator === designator)?.pins?.find(p => pin == p.pin_number)?.name;
     }
 
     const getPinPos = (srcpin: Awaited<ReturnType<typeof findPin>>, defaultP: { x: number, y: number }) => {
@@ -550,7 +550,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
     await drawRect(circuit.blocks_rect, offset, recorder);
 
-    const isUsedPin = (d: string, p: number) => {
+    const isUsedPin = (d: string, p: number | string) => {
         const l = `${d}_pin_${p}`;
         if (circuit.edges.some(e => e.sections.some(s => s.incomingShape === l || s.outgoingShape === l))) {
             return true

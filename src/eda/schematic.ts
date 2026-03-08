@@ -1,11 +1,5 @@
 import type { ExplainCircuit } from '../types/circuit';
 
-// Безопасное извлечение чисел из строк
-function safeParseInt(str: string, fallback = 0): number {
-    const num = parseInt(str, 10);
-    return isNaN(num) ? fallback : num;
-}
-
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {
     netlistText = netlistText.replaceAll('\r', '').replaceAll('\n\n', '\n').replaceAll(" ,\n", " ");
@@ -119,7 +113,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         if (Array.isArray(rawPins)) {
             for (const p of rawPins) {
                 const rawNum = p.getState_PinNumber();
-                const pinNumber = safeParseInt(rawNum, 0);
+                const pinNumber = rawNum;
                 const pinName = p.getState_PinName();
 
                 // Сопоставление: "R7.1" → сигнал

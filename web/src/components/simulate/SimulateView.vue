@@ -10,13 +10,18 @@
                 <ErrorBanner :message="errorMessage" :type="errorType" />
             </div>
 
-            <Stepper :steps="steps" finish-button-text="Run simulate" finish-button-icon="Play" @finish="runSimulation">
+            <Stepper :steps="steps" :finish-button-text="isRunning ? 'Stop' : 'Run simulate'"
+                :finish-button-icon="isRunning ? 'Square' : 'Play'"
+                @finish="isRunning ? stopSimulation() : runSimulation()">
                 <StepPanels>
                     <StepPanel :value="0">
                         <div class="settings-content">
                             <div class="sources-section">
                                 <div class="section-header">
                                     <h3>Input Sources</h3>
+                                    <!-- <IconButton icon="Plus" :size="16" variant="primary"
+                                        @click="autoDetectInputSources">Auto
+                                        detect</IconButton> -->
                                     <IconButton icon="Plus" :size="16" variant="primary" @click="addInputSource">Add
                                         Input Source</IconButton>
                                 </div>
@@ -178,7 +183,7 @@ import IconButton from '../shared/IconButton.vue';
 import CustomSelect from '../shared/CustomSelect.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import Stepper from '../shared/Stepper.vue';
-import { apiUrl, fetchEda } from '../../api';
+import { apiUrl, fetchEda, fetchWithTask } from '../../api';
 import VoltageChart from '../shared/VoltageChart.vue';
 import { getSchematic } from '../../eda/schematic';
 import StepPanel from '../shared/StepPanel.vue';
@@ -186,6 +191,7 @@ import StepPanels from '../shared/StepPanels.vue';
 import TypingDots from '../shared/TypingDots.vue';
 import NetInput from '../shared/NetInput.vue';
 import UnitInput, { UnitValue } from '../shared/UnitInput.vue';
+import { showToastMessage } from '../../eda/utils';
 
 interface InputSource {
     id: string;
@@ -238,6 +244,7 @@ const errorType = ref<'error' | 'warn'>('error');
 
 const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
+const abortController = ref<AbortController | undefined>();
 
 const simulationType = ref<'tran'>('tran');
 const stepTime = ref<UnitValue>({ unit: 'u', value: 100 });
@@ -311,13 +318,20 @@ const removeOutputSignal = (id: string) => {
     outputSignals.value = outputSignals.value.filter(s => s.id !== id);
 };
 
+const stopSimulation = () => {
+    abortController.value?.abort();
+}
+
 const runSimulation = async () => {
     if (isRunning.value) return;
 
     isRunning.value = true;
     errorMessage.value = null;
-    try {
 
+    const controller = new AbortController();
+    abortController.value = controller;
+
+    try {
         const body = {
             step_time_ns: stepTime.value?.valueInUnits?.n ?? 100000,
             end_time_ns: endTime.value?.valueInUnits?.n ?? 100000 * 100,
@@ -333,15 +347,14 @@ const runSimulation = async () => {
             components: (await getSchematic()).components
         };
 
-        const response = await fetchEda(apiUrl + '/v1/simulate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(body)
+        const response = await fetchWithTask({
+            url: '/v1/simulate',
+            fetchOptions: { signal: controller.signal },
+            body: body,
+            pollIntervalMs: 1000
         });
 
-        const json = await response.json() as {
+        const json = response as {
             status: string,
             error: string | null,
             result: {
@@ -372,6 +385,18 @@ const runSimulation = async () => {
         isRunning.value = false;
     }
 };
+
+const autoDetectInputSources = async () => {
+    let circuit;
+    try {
+        circuit = await getSchematic();
+    } catch (error) {
+        showToastMessage("Fail to get circuit: " + (error as Error).message, 'error');
+        return;
+    }
+
+    circuit
+}
 
 </script>
 

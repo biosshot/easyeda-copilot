@@ -2,9 +2,9 @@ import { z } from "zod";
 import { LCSC_uuid } from "./lcsc";
 
 const PinSchema = () => z.object({
-    pin_number: z.number().describe('Pin number.'),
+    pin_number: z.number().or(z.string()).describe('Pin number.'),
     name: z.string().describe('Pin name (e.g., "VCC").'),
-    signal_name: z.string().describe('The name of the signal to which the pin is connected. (Only name)'),
+    signal_name: z.string().describe('The name of the signal the pin is connected to. (Name only). The signal name assigned to the pin must be identical to the signal name of the target output.'),
 });
 
 export const BaseComponentSchema = () => z.object({
@@ -94,16 +94,16 @@ export const CircuitAssemblyStruct = () => z.object({
     }).optional(),
     added_net: z.array(z.object({
         designator: z.string(),
-        pin_number: z.number(),
+        pin_number: z.number().or(z.string()),
         net: z.string(),
     })).optional(),
     rm_components: z.array(z.string()).optional()
 });
 
 const ExplainPinSchema = () => z.object({
-    pin_number: z.number().describe('Pin number.'),
+    pin_number: z.number().or(z.string()).describe('Pin number.'),
     name: z.string().describe('Pin name (e.g., "VCC").'),
-    signal_name: z.string().describe('The name of the signal to which the pin is connected. (Only name)'),
+    signal_name: z.string().describe('The name of the signal the pin is connected to. (Name only). The signal name assigned to the pin must be identical to the signal name of the target output.'),
 });
 
 const ExplainComponentSchema = () => z.object({
@@ -123,6 +123,12 @@ export const ExplainCircuitStruct = () => z.object({
 
 export const DiagnosticAlgoritm = () => z.object({});
 
+export const CircuitModStruct = () => z.object({
+    add_components: z.array(BaseComponentSchema()).describe('Components to add'),
+    rm_components: z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit')
+});
+
+export type CircuitMod = z.infer<ReturnType<typeof CircuitModStruct>>;
 export type ExplainCircuit = z.infer<ReturnType<typeof ExplainCircuitStruct>>;
 export type CircuitAssembly = z.infer<ReturnType<typeof CircuitAssemblyStruct>>;
 export type CircuitWithoutBlocks = z.infer<ReturnType<typeof CircuitWithoutBlocksStruct>>;

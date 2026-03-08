@@ -12,7 +12,7 @@
 .stepper__list {
     display: flex;
     justify-content: center;
-    padding: 1.5rem 1rem;
+    padding: 0.8rem 0.5rem;
     border-bottom: 1px solid var(--color-border);
     background: var(--color-background);
 }
