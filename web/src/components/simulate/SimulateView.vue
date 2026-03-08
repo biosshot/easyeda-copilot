@@ -146,24 +146,13 @@
                                 <h3>Simulation Results</h3>
                             </div>
 
-                            <div class="sync-checkbox">
-                                <label>
-                                    <input type="checkbox" v-model="syncGraphsByTime" />
-                                    Sync graphs by time
-                                </label>
-                            </div>
-
                             <TypingDots v-if="isRunning" status="Running simulation..." />
 
-                            <div v-else-if="simulationResults" class="results-content">
-                                <div v-for="(output_signal, index) in simulationResults.result.output_signals"
-                                    :key="output_signal.signal_name">
-                                    <h2 style="text-align: center;">{{ output_signal.signal_name }}</h2>
-                                    <VoltageChart ref="voltageChartRefs" :time="simulationResults.result.time"
-                                        :data="output_signal.volages" :sync-time="syncGraphsByTime"
-                                        @sync-zoom="(s, e) => handleSyncZoom(index)(s, e)">
-                                    </VoltageChart>
-                                </div>
+                            <div v-else-if="simulationResult" class="results-content">
+
+                                <VoltageChart style="height: 400px;" ref="voltageChartRefs"
+                                    :time="simulationResult.time" :signals="simulationResult.signals">
+                                </VoltageChart>
                             </div>
 
                             <div v-else class="no-results">
@@ -208,40 +197,17 @@ interface OutputSignal {
     name: string;
 }
 
-interface SimulationResults {
-    result: {
-        time: number[],
-        output_signals: {
-            signal_name: string,
-            volages: number[]
-        }[]
-    },
-    status: string;
-    timestamp: string;
+interface SimulationResult {
+    time: number[],
+    signals: { data: number[]; name: string }[]
 }
 
 const isSettingsOpen = ref(false);
 const isRunning = ref(false);
-const simulationResults = ref<SimulationResults | null>(null);
+const simulationResult = ref<SimulationResult | null>(null);
 const syncGraphsByTime = ref(false);
-const voltageChartRefs = ref<InstanceType<typeof VoltageChart>[]>([]);
 const errorMessage = ref<string | null>(null);
 const errorType = ref<'error' | 'warn'>('error');
-
-// const generateFakeSineData = (points: number = 1_500_000, frequency: number = 2 * Math.PI / 100, amplitude: number = 1, offset: number = 0) => {
-//     const time: number[] = [];
-//     const voltages: number[] = [];
-
-//     for (let i = 0; i < points; i++) {
-//         time.push(i);
-//         voltages.push(amplitude * Math.sin(frequency * i) + offset);
-//     }
-
-//     return { time, voltages };
-// };
-
-// const fakeData = ref(generateFakeSineData());
-
 const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
 const abortController = ref<AbortController | undefined>();
@@ -254,19 +220,6 @@ watchEffect(() => {
     console.log(stepTime.value)
 })
 
-const handleSyncZoom = (sourceIndex: number) => {
-    return (start: number, end: number) => {
-        if (!syncGraphsByTime.value) return;
-
-        // Синхронизируем все графики кроме того, который инициировал зум
-        voltageChartRefs.value.forEach((chart, index) => {
-            if (index !== sourceIndex && chart?.handleExternalSync) {
-                chart.handleExternalSync(start, end);
-            }
-        });
-    };
-}
-
 const steps = [
     { id: 'sources', label: 'Input Sources' },
     { id: 'outputs', label: 'Output Signals' },
@@ -276,7 +229,7 @@ const steps = [
 
 const openSettings = () => {
     isSettingsOpen.value = true;
-    simulationResults.value = null;
+    simulationResult.value = null;
     errorMessage.value = null;
 };
 
@@ -370,17 +323,19 @@ const runSimulation = async () => {
             throw new Error(json.error);
         }
 
-        simulationResults.value = {
-            result: json.result,
-            status: 'Completed',
-            timestamp: new Date().toISOString()
+        simulationResult.value = {
+            time: json.result.time,
+            signals: json.result.output_signals.map(sign => ({
+                data: sign.volages,
+                name: sign.signal_name
+            }))
         };
     } catch (error) {
         errorMessage.value = error instanceof Error
             ? error.message
             : 'An unexpected error occurred during simulation';
         errorType.value = 'error';
-        simulationResults.value = null;
+        simulationResult.value = null;
     } finally {
         isRunning.value = false;
     }

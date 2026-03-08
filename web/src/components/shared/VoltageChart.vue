@@ -1,7 +1,13 @@
 <template>
     <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
-        <!-- Панель управления видимостью сигналов -->
-        <div style="padding: 8px; background: #222; color: white; display: flex; flex-wrap: wrap; gap: 12px;">
+        <div :style="{
+            padding: '8px',
+            background: theme.colors.backgroundSecondary,
+            color: theme.colors.text,
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px'
+        }">
             <label v-for="signal in signals" :key="signal.name" style="display: flex; align-items: center; gap: 4px;">
                 <input type="checkbox" :checked="visibility[signal.name] !== false"
                     @change="toggleSignal(signal.name)" />
@@ -9,7 +15,6 @@
             </label>
         </div>
 
-        <!-- Grid для графика и осей -->
         <div style="
         flex: 1;
         display: grid;
@@ -18,27 +23,25 @@
         gap: 0;
         position: relative;
       ">
-            <!-- Левая ось Y -->
-            <div style="border-right: solid 2px #444">
+            <div :style="{ borderRight: `solid 2px ${theme.colors.border}` }">
                 <canvas ref="axisYCanvas"
-                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+                    :style="{ backgroundColor: theme.colors.background, width: '100%', height: '100%', display: 'block' }"></canvas>
             </div>
 
-            <!-- Основной график + сетка (накладываются) -->
             <div style="position: relative">
                 <canvas ref="plotCanvas"
-                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+                    :style="{ backgroundColor: theme.colors.background, width: '100%', height: '100%', display: 'block' }"></canvas>
                 <canvas v-if="grid" ref="gridCanvas"
                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
             </div>
 
-            <!-- Пустой угол -->
-            <div style="border-right: solid 2px #444; border-top: solid 2px #444"></div>
+            <div
+                :style="{ borderRight: `solid 2px ${theme.colors.border}`, borderTop: `solid 2px ${theme.colors.border}` }">
+            </div>
 
-            <!-- Нижняя ось X -->
-            <div style="border-top: solid 2px #444">
+            <div :style="{ borderTop: `solid 2px ${theme.colors.border}` }">
                 <canvas ref="axisXCanvas"
-                    style="width: 100%; height: 100%; display: block; background-color: #111;"></canvas>
+                    :style="{ backgroundColor: theme.colors.background, width: '100%', height: '100%', display: 'block' }"></canvas>
             </div>
         </div>
     </div>
@@ -46,8 +49,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
-// @ts-ignore
 import { WebglPlot, ColorRGBA, WebglLine } from 'webgl-plot';
+import { useTheme } from '../../composables/useTheme';
 
 const props = defineProps<{
     time: number[];
@@ -55,6 +58,10 @@ const props = defineProps<{
     grid?: boolean;
 }>();
 
+// Тема
+const { theme } = useTheme();
+
+// Видимость сигналов
 const visibility = ref<Record<string, boolean>>({});
 watch(() => props.signals, (newSignals) => {
     const newVis: Record<string, boolean> = {};
@@ -62,6 +69,7 @@ watch(() => props.signals, (newSignals) => {
     visibility.value = newVis;
 }, { immediate: true });
 
+// Цвета для сигналов (можно позже сделать настраиваемыми через тему)
 const colorPalette = [
     [0, 0.8, 1, 1],
     [1, 0.5, 0, 1],
@@ -76,6 +84,7 @@ function getColor(name: string): string {
     return `rgba(${c[0] * 255}, ${c[1] * 255}, ${c[2] * 255}, ${c[3]})`;
 }
 
+// Refs на canvas
 const plotCanvas = ref<HTMLCanvasElement | null>(null);
 const gridCanvas = ref<HTMLCanvasElement | null>(null);
 const axisXCanvas = ref<HTMLCanvasElement | null>(null);
@@ -159,6 +168,7 @@ function updateLines() {
     autoScaleY();
 }
 
+// Автомасштабирование по Y с динамическим padding
 function autoScaleY() {
     if (props.signals.length === 0 || !wglp) return;
 
@@ -174,7 +184,8 @@ function autoScaleY() {
 
     if (minY === Infinity || maxY === -Infinity) return;
 
-    const padding = (maxY - minY) * 0.05;
+    // Новый padding: не менее 0.2 и 10% от размаха
+    const padding = Math.max(0.2, (maxY - minY) * 0.1);
     const worldMin = minY - padding;
     const worldMax = maxY + padding;
     const range = worldMax - worldMin;
@@ -194,6 +205,7 @@ watch([() => props.signals, visibility], () => {
     updateLines();
 }, { deep: true });
 
+// ========== Отрисовка осей и сетки (синхронизированы) ==========
 function drawAxesAndGrid() {
     if (!wglp) return;
 
@@ -210,6 +222,7 @@ function drawAxesAndGrid() {
     xCtx.clearRect(0, 0, xCanvas.width, xCanvas.height);
     yCtx.clearRect(0, 0, yCanvas.width, yCanvas.height);
 
+    // Видимый диапазон в мировых координатах
     const xMinWorld = (-1 - wglp.gOffsetX) / wglp.gScaleX;
     const xMaxWorld = (1 - wglp.gOffsetX) / wglp.gScaleX;
     const yMinWorld = (-1 - wglp.gOffsetY) / wglp.gScaleY;
@@ -225,11 +238,23 @@ function drawAxesAndGrid() {
         yTicks.push(yMinWorld + t * (yMaxWorld - yMinWorld));
     }
 
+    // Сетка (используем цвет текста с прозрачностью)
     if (props.grid && gCanvas) {
         const gCtx = gCanvas.getContext('2d');
         if (gCtx) {
             gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
-            gCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+            // Извлекаем цвет текста из темы и добавляем прозрачность
+            const textColor = theme.value.colors.text;
+            // Преобразуем hex в rgba (упрощённо, если hex, то парсим, но для простоты используем полупрозрачный белый/чёрный)
+            // В реальном проекте лучше использовать функцию для преобразования hex в rgba
+            // Здесь для демонстрации будем использовать rgba с альфа-каналом 0.25 от цвета текста
+            // Упростим: возьмём цвет текста и применим opacity через rgba, но нужно знать rgb компоненты.
+            // Вместо этого можно добавить в тему отдельный цвет для сетки или использовать css-переменную.
+            // Для примера установим сетку полупрозрачным серым, но чтобы соответствовать теме, можно использовать theme.colors.text с opacity.
+            // Так как точное преобразование hex->rgb требует дополнительной логики, предлагаю использовать theme.colors.border с opacity.
+            // Или добавим в тему поле grid. Пока используем border с opacity.
+            const borderColor = theme.value.colors.border;
+            gCtx.strokeStyle = borderColor + '40'; // добавляем прозрачность 25% (если hex, то append '40')
             gCtx.lineWidth = 1;
 
             for (const worldX of xTicks) {
@@ -252,9 +277,10 @@ function drawAxesAndGrid() {
         }
     }
 
-    xCtx.font = '16px Courier New';
-    xCtx.fillStyle = '#fff';
-    xCtx.strokeStyle = '#fff';
+    // Ось X
+    xCtx.font = '18px Courier New';
+    xCtx.fillStyle = theme.value.colors.text;
+    xCtx.strokeStyle = theme.value.colors.text;
     xCtx.lineWidth = 1;
 
     for (let i = 0; i <= divisions; i++) {
@@ -273,9 +299,10 @@ function drawAxesAndGrid() {
         xCtx.stroke();
     }
 
-    yCtx.font = '16px Courier New';
-    yCtx.fillStyle = '#fff';
-    yCtx.strokeStyle = '#fff';
+    // Ось Y
+    yCtx.font = '18px Courier New';
+    yCtx.fillStyle = theme.value.colors.text;
+    yCtx.strokeStyle = theme.value.colors.text;
     yCtx.lineWidth = 1;
 
     for (let i = 0; i <= divisions; i++) {
@@ -291,6 +318,7 @@ function drawAxesAndGrid() {
     }
 }
 
+// ========== Обработчики взаимодействия ==========
 function onMouseDown(e: MouseEvent) {
     if (e.button !== 0) return;
     e.preventDefault();
@@ -379,7 +407,7 @@ function onResize() {
             }
             axisXCanvas.value.width = axisXCanvas.value.clientWidth * dpr;
             axisXCanvas.value.height = axisXCanvas.value.clientHeight * dpr;
-            axisYCanvas.value.width = axisYCanvas.value.clientWidth * dpr;
+            axisYCanvas.value.width = axisYCanvas.value.clientWidth * dpr - 30;
             axisYCanvas.value.height = axisYCanvas.value.clientHeight * dpr;
         }
     }, 100);
@@ -407,6 +435,5 @@ div {
 
 canvas {
     display: block;
-    background-color: transparent;
 }
 </style>
