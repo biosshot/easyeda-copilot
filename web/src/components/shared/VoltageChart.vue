@@ -49,6 +49,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+// @ts-ignore
 import { WebglPlot, ColorRGBA, WebglLine } from 'webgl-plot';
 import { useTheme } from '../../composables/useTheme';
 

@@ -144,12 +144,13 @@
                         <div class="settings-content">
                             <div class="results-header">
                                 <h3>Simulation Results</h3>
+                                <IconButton :size="18" icon="ExternalLink" variant="primary"
+                                    @click="openGraphInNewWindow" title="Open in new window" />
                             </div>
 
                             <TypingDots v-if="isRunning" status="Running simulation..." />
 
                             <div v-else-if="simulationResult" class="results-content">
-
                                 <VoltageChart style="height: 400px;" ref="voltageChartRefs"
                                     :time="simulationResult.time" :signals="simulationResult.signals">
                                 </VoltageChart>
@@ -200,6 +201,15 @@ interface OutputSignal {
 interface SimulationResult {
     time: number[],
     signals: { data: number[]; name: string }[]
+}
+
+declare global {
+    interface EDA {
+        chartData?: {
+            time: number[];
+            signals: { data: number[]; name: string }[];
+        };
+    }
 }
 
 const isSettingsOpen = ref(false);
@@ -275,6 +285,25 @@ const stopSimulation = () => {
     abortController.value?.abort();
 }
 
+const openGraphInNewWindow = async () => {
+    if (!simulationResult.value) {
+        showToastMessage('No simulation data to display', 'error');
+        return;
+    }
+
+    await eda.sys_IFrame.openIFrame(
+        '/iframe/graph.html',
+        800,
+        600,
+        undefined,
+        {
+            maximizeButton: true,
+            minimizeButton: true,
+            grayscaleMask: false
+        }
+    );
+};
+
 const runSimulation = async () => {
     if (isRunning.value) return;
 
@@ -330,6 +359,9 @@ const runSimulation = async () => {
                 name: sign.signal_name
             }))
         };
+
+        // Сохраняем данные в eda для открытия в новом окне
+        eda.chartData = simulationResult.value;
     } catch (error) {
         errorMessage.value = error instanceof Error
             ? error.message
