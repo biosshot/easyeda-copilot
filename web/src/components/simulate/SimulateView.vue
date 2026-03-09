@@ -446,6 +446,26 @@
                                 <VoltageChart style="height: 400px;" ref="voltageChartRefs"
                                     :time="simulationResult.time" :signals="simulationResult.signals">
                                 </VoltageChart>
+
+                                <div v-if="simulationResult.warns.length > 0" class="warnings-section">
+                                    <ErrorBanner v-for="(warn, index) in simulationResult.warns" :key="index"
+                                        :message="warn.text" type="warn" />
+                                </div>
+
+                                <div v-if="simulationResult.component_map.length > 0" class="component-map-section">
+                                    <h4>Component Mapping</h4>
+                                    <div class="component-map-table">
+                                        <div class="component-map-header">
+                                            <span>Schematic Component</span>
+                                            <span>SPICE Model</span>
+                                        </div>
+                                        <div v-for="(item, index) in simulationResult.component_map" :key="index"
+                                            class="component-map-row">
+                                            <span>{{ item.name }}</span>
+                                            <span>{{ item.spice_model_name }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div v-else class="no-results">
@@ -492,7 +512,9 @@ interface OutputSignal {
 
 interface SimulationResult {
     time: number[],
-    signals: { data: number[]; name: string }[]
+    signals: { data: number[]; name: string }[],
+    warns: { wtype: string, text: string }[],
+    component_map: { name: string, spice_model_name: string }[]
 }
 
 declare global {
@@ -694,27 +716,29 @@ const runSimulation = async () => {
         });
 
         const json = response as {
-            status: string,
-            error: string | null,
-            result: {
-                time: number[],
-                output_signals: {
-                    signal_name: string,
-                    volages: number[]
-                }[]
-            }
+            time: number[],
+            output_signals: {
+                signal_name: string,
+                volages: number[]
+            }[],
+            component_map: {
+                name: string,
+                spice_model_name: string
+            }[],
+            warns: {
+                wtype: string,
+                text: string
+            }[]
         };
 
-        if (json.error) {
-            throw new Error(json.error);
-        }
-
         simulationResult.value = {
-            time: json.result.time,
-            signals: json.result.output_signals.map(sign => ({
+            time: json.time,
+            signals: json.output_signals.map(sign => ({
                 data: sign.volages,
                 name: sign.signal_name
-            }))
+            })),
+            warns: json.warns || [],
+            component_map: json.component_map || []
         };
 
         // Сохраняем данные в eda для открытия в новом окне
@@ -755,8 +779,8 @@ const runSimulation = async () => {
 }
 
 .settings-content {
-    max-width: 800px;
     margin: 0 auto;
+    padding: 1rem;
 }
 
 .sources-section,
@@ -803,17 +827,10 @@ const runSimulation = async () => {
     text-align: center;
     color: var(--color-text-tertiary);
     font-size: 0.9rem;
-    background: var(--color-background);
-    border-radius: 6px;
-    border: 1px dashed var(--color-border);
 }
 
 .source-item,
 .output-item {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 1.25rem;
     margin-bottom: 1rem;
 }
 
@@ -861,12 +878,7 @@ const runSimulation = async () => {
     margin-bottom: 0;
 }
 
-.settings-form {
-    background: var(--color-background);
-    border: 1px solid var(--color-border);
-    border-radius: 6px;
-    padding: 1.25rem;
-}
+.settings-form {}
 
 .form-row {
     display: grid;
@@ -946,5 +958,91 @@ const runSimulation = async () => {
     width: auto;
     margin-right: 0.5rem;
     cursor: pointer;
+}
+
+.warnings-section {
+    margin-top: 1.5rem;
+    background: var(--color-background);
+}
+
+.warnings-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.warning-item {
+    display: flex;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.85rem;
+}
+
+.warning-item:last-child {
+    border-bottom: none;
+}
+
+.warning-type {
+    font-weight: 600;
+    color: var(--color-warning);
+    min-width: 80px;
+}
+
+.warning-text {
+    color: var(--color-text-secondary);
+    flex: 1;
+}
+
+.component-map-section {
+    margin-top: 1.5rem;
+    padding: 1rem;
+}
+
+.component-map-section h4 {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.component-map-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.component-map-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--color-text);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.component-map-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.component-map-row:last-child {
+    border-bottom: none;
+}
+
+.component-map-row span:first-child {
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.component-map-row span:last-child {
+    color: var(--color-text-secondary);
 }
 </style>

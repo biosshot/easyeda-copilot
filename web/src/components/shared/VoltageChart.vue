@@ -6,13 +6,30 @@
             color: theme.colors.text,
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '12px'
+            gap: '12px',
+            alignItems: 'center'
         }">
             <label v-for="signal in signals" :key="signal.name" style="display: flex; align-items: center; gap: 4px;">
                 <input type="checkbox" :checked="visibility[signal.name] !== false"
                     @change="toggleSignal(signal.name)" />
                 <span :style="{ color: getColor(signal.name) }">{{ signal.name }}</span>
             </label>
+
+            <div style="margin-left: auto; display: flex; gap: 8px; align-items: center;">
+                <button @click="showHelp = !showHelp"
+                    style="padding: 4px 8px; color: var(--color-text-on-surface); border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">?</button>
+            </div>
+        </div>
+
+        <div v-if="showHelp" :style="{
+            padding: '8px 12px',
+            background: theme.colors.backgroundSecondary,
+            color: theme.colors.text,
+            fontSize: '12px',
+            borderBottom: `1px solid ${theme.colors.border}`
+        }">
+            <strong>Controls: </strong>Left-click to pan | Wheel to zoom X | Shift + Wheel to zoom Y | Double-click to
+            reset
         </div>
 
         <div style="
@@ -60,6 +77,8 @@ const props = defineProps<{
 const { theme } = useTheme();
 
 const visibility = ref<Record<string, boolean>>({});
+const showHelp = ref(false);
+
 watch(() => props.signals, (newSignals) => {
     const newVis: Record<string, boolean> = {};
     newSignals.forEach(s => { newVis[s.name] = true; });
