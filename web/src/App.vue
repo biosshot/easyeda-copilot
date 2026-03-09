@@ -1,39 +1,39 @@
 <template>
-  <!-- <div id="app">
+  <div id="app">
     <Navbar>
       <template #controls v-if="activeTab === 'chat'">
         <ChatControls :is-loading="chatViewRef?.isLoading || false" />
       </template>
-<template #controls v-else-if="activeTab === 'simulate'"></template>
-<template #controls v-else-if="activeTab === 'completions'"></template>
-<template #controls v-else-if="activeTab === 'settings'">
+      <template #controls v-else-if="activeTab === 'simulate'"></template>
+      <template #controls v-else-if="activeTab === 'completions'"></template>
+      <template #controls v-else-if="activeTab === 'settings'">
         <SettingsControls />
       </template>
-</Navbar>
+    </Navbar>
 
-<div v-if="hasRecorder" class="backwards-nav">
-  <span class="line"></span>
-  <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
-  <span class="line"></span>
-</div>
+    <div v-if="hasRecorder" class="backwards-nav">
+      <span class="line"></span>
+      <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
+      <span class="line"></span>
+    </div>
 
-<main>
-  <KeepAlive>
-    <ChatView v-if="activeTab === 'chat'" ref="chatViewRef" />
-  </KeepAlive>
-  <KeepAlive>
-    <CompletionsView v-if="activeTab === 'completions'" />
-  </KeepAlive>
-  <KeepAlive>
-    <SimulateView v-if="activeTab === 'simulate'" />
-  </KeepAlive>
-  <KeepAlive>
-    <SettingsView v-if="activeTab === 'settings'" />
-  </KeepAlive>
-</main>
-</div> -->
+    <main>
+      <KeepAlive>
+        <ChatView v-if="activeTab === 'chat'" ref="chatViewRef" />
+      </KeepAlive>
+      <KeepAlive>
+        <CompletionsView v-if="activeTab === 'completions'" />
+      </KeepAlive>
+      <KeepAlive>
+        <SimulateView v-if="activeTab === 'simulate'" />
+      </KeepAlive>
+      <KeepAlive>
+        <SettingsView v-if="activeTab === 'settings'" />
+      </KeepAlive>
+    </main>
+  </div>
 
-  <VoltageChart :time="[0, 0.001, 0.002]" :signals="[{ data: [1, 1, 1], name: 'v' }]"></VoltageChart>
+  <!-- <VoltageChart :time="[0, 0.001, 0.002]" :signals="[{ data: [1, 1, 1], name: 'v' }]"></VoltageChart> -->
 </template>
 
 <script setup lang="ts">
@@ -52,7 +52,7 @@ import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
-import VoltageChart from './components/shared/VoltageChart.vue';
+// import VoltageChart from './components/shared/VoltageChart.vue';
 
 declare global {
   interface EDA {

@@ -10,9 +10,10 @@
 
 <style scoped>
 .stepper__panels {
-    flex: 1;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    height: 0;
+    flex-grow: 1;
 }
 </style>
