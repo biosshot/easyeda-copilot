@@ -45,7 +45,10 @@
                                             <label>Signal Type</label>
                                             <CustomSelect :model-value="source.type" :options="[
                                                 { label: 'DC', value: 'dc' },
-                                                { label: 'Sine', value: 'sin' }
+                                                { label: 'Sine', value: 'sin' },
+                                                { label: 'Pulse', value: 'pulse' },
+                                                { label: 'Saw', value: 'saw' },
+                                                { label: 'Reverse Saw', value: 'rsaw' },
                                             ]" @update:model-value="updateSourceType(source.id, $event)" />
                                         </div>
 
@@ -54,7 +57,7 @@
                                                 <label :for="`dc-voltage-${source.id}`">Voltage (V)</label>
 
                                                 <UnitInput :id="`dc-voltage-${source.id}`" variant="voltage"
-                                                    v-model="source.dcVoltage" placeholder="0" />
+                                                    v-model="source.amplitude" placeholder="0" />
                                             </div>
                                         </div>
 
@@ -62,17 +65,76 @@
                                             <div class="form-group">
                                                 <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
                                                 <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
-                                                    v-model="source.sinAmplitude" placeholder="1" />
+                                                    v-model="source.amplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
                                                 <label :for="`sin-offset-${source.id}`">Offset (V)</label>
                                                 <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
-                                                    v-model="source.sinOffset" placeholder="0" />
+                                                    v-model="source.offset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
                                                 <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
                                                 <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
-                                                    v-model="source.sinFrequency" />
+                                                    v-model="source.frequency" />
+                                            </div>
+                                        </div>
+
+                                        <div v-if="source.type === 'pulse'" class="source-fields">
+                                            <div class="form-group">
+                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
+                                                    v-model="source.amplitude" placeholder="1" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
+                                                    v-model="source.offset" placeholder="0" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
+                                                    v-model="source.frequency" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-fill-${source.id}`">Fill (%)</label>
+                                                <input type="number" :id="`sin-frequency-${source.id}`"
+                                                    v-model="source.fill">
+                                            </div>
+                                        </div>
+
+                                        <div v-if="source.type === 'saw'" class="source-fields">
+                                            <div class="form-group">
+                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
+                                                    v-model="source.amplitude" placeholder="1" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
+                                                    v-model="source.offset" placeholder="0" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
+                                                    v-model="source.frequency" />
+                                            </div>
+                                        </div>
+
+                                        <div v-if="source.type === 'rsaw'" class="source-fields">
+                                            <div class="form-group">
+                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
+                                                    v-model="source.amplitude" placeholder="1" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
+                                                    v-model="source.offset" placeholder="0" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
+                                                    v-model="source.frequency" />
                                             </div>
                                         </div>
                                     </div>
@@ -185,12 +247,12 @@ import { showToastMessage } from '../../eda/utils';
 
 interface InputSource {
     id: string;
-    type: 'dc' | 'sin';
+    type: 'dc' | 'sin' | 'pulse' | 'saw' | 'triangle' | 'rsaw';
     signalName: string;
-    dcVoltage: UnitValue | undefined;
-    sinAmplitude: UnitValue | undefined;
-    sinOffset: UnitValue | undefined;
-    sinFrequency: UnitValue | undefined;
+    amplitude: UnitValue | undefined;
+    offset: UnitValue | undefined;
+    frequency: UnitValue | undefined;
+    fill: number | undefined;
 }
 
 interface OutputSignal {
@@ -248,14 +310,18 @@ const generateId = (): string => {
 };
 
 const addInputSource = () => {
+    const amplitude: UnitValue = { unit: 'base', value: 12 };
+    const offset: UnitValue = { unit: 'base', value: 0 };
+    const frequency: UnitValue = { unit: 'base', value: 100 };
+
     inputSources.value.push({
         id: generateId(),
         type: 'dc',
         signalName: '',
-        dcVoltage: undefined,
-        sinAmplitude: undefined,
-        sinOffset: undefined,
-        sinFrequency: undefined
+        amplitude: amplitude,
+        offset: offset,
+        frequency: frequency,
+        fill: 50
     });
 };
 
@@ -319,12 +385,13 @@ const runSimulation = async () => {
             end_time_ns: endTime.value?.valueInUnits?.n ?? 100000 * 100,
             output_signals: outputSignals.value.map(s => s.name),
             input_signals: inputSources.value.map((source, index) => ({
-                name: source.type === 'dc' ? `INPUT_${index}` : `INPUT_${index}`,
+                name: `INPUT_${index}`,
                 signal_name: source.signalName,
-                value: source.type === 'dc' ? source.dcVoltage?.valueInUnits?.base ?? 0 : source.sinAmplitude?.valueInUnits?.base ?? 1,
-                frequency: source.type === 'sin' ? source.sinFrequency?.valueInUnits?.base ?? 1000 : 0,
-                offset: source.type === 'sin' ? source.sinOffset?.valueInUnits?.base ?? 0 : 0,
-                type: source.type.toUpperCase()
+                value: source.amplitude?.valueInUnits?.base ?? 1,
+                frequency: source.frequency?.valueInUnits?.base ?? 1000,
+                offset: source.offset?.valueInUnits?.base ?? 0,
+                type: source.type.toUpperCase(),
+                fill: source.fill ?? 50
             })),
             components: (await getSchematic()).components
         };
@@ -372,18 +439,6 @@ const runSimulation = async () => {
         isRunning.value = false;
     }
 };
-
-const autoDetectInputSources = async () => {
-    let circuit;
-    try {
-        circuit = await getSchematic();
-    } catch (error) {
-        showToastMessage("Fail to get circuit: " + (error as Error).message, 'error');
-        return;
-    }
-
-    circuit
-}
 
 </script>
 

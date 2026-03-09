@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import CustomSelect from './CustomSelect.vue';
 
 export interface UnitValue {
@@ -51,7 +51,7 @@ const unitMultipliers: Record<'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G', number
     'G': 1e9,
 };
 
-const roundToPrecision = (value: number, precision: number = 5) => {
+const roundToPrecision = (value: number, precision: number = 12) => {
     if (value === 0) return 0;
     const multiplier = Math.pow(10, precision);
     return Math.round(value * multiplier) / multiplier;
@@ -86,13 +86,10 @@ const onValueInput = (event: Event) => {
 };
 
 const onUnitChange = (newUnit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
-    if (!props.modelValue.valueInUnits) return;
-    const newValue = props.modelValue.valueInUnits[newUnit];
-
-    const valueInUnits = calculateValueInUnits(newValue, newUnit);
+    const valueInUnits = calculateValueInUnits(props.modelValue.value, newUnit);
 
     emit('update:modelValue', {
-        value: newValue,
+        value: props.modelValue.value,
         unit: newUnit,
         valueInUnits
     });
@@ -121,6 +118,10 @@ const units = computed(() => {
         { label: 'GHz', value: 'G' }
     ];
 });
+
+onMounted(() => {
+    onUnitChange(props.modelValue.unit)
+})
 </script>
 
 <style scoped>

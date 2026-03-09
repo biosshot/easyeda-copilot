@@ -23,4 +23,20 @@ const signals = eda.chartData?.signals ?? [];
 
 </script>
 
-<style scoped></style>
+<style>
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-text);
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    /* блокируем прокрутку на body/html */
+}
+</style>

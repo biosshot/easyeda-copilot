@@ -293,7 +293,7 @@ function drawAxesAndGrid() {
         const idx = Math.round(Math.max(0, Math.min(props.time.length - 1, index)));
         const timeValue = props.time[idx];
 
-        xCtx.fillText(timeValue.toFixed(3) + ' с', screenX - 30, 20);
+        xCtx.fillText(timeValue.toFixed(3) + ' sec', screenX - 30, 20);
         xCtx.beginPath();
         xCtx.moveTo(screenX, 0);
         xCtx.lineTo(screenX, 10);
@@ -311,7 +311,7 @@ function drawAxesAndGrid() {
         const yNorm = worldY * wglp.gScaleY + wglp.gOffsetY;
         const screenY = (1 - (yNorm + 1) / 2) * yCanvas.height;
 
-        yCtx.fillText(worldY.toFixed(2) + ' В', 5, screenY);
+        yCtx.fillText(worldY.toFixed(2) + ' V', 5, screenY);
         yCtx.beginPath();
         yCtx.moveTo(yCanvas.width - 10, screenY);
         yCtx.lineTo(yCanvas.width, screenY);
