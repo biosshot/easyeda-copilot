@@ -28,20 +28,39 @@ export const getAllPrimitiveId = async () => {
     }
 }
 
-export const getSelectedWireName = async () => {
-    const selIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
+let activeWirePromise: Promise<string | undefined> | undefined = undefined;
 
-    if (!selIds[0]) {
-        showToastMessage('Not selected', 'warn');
-        return null;
+export const waitForWireSelect = (signal?: AbortSignal) => {
+    if (activeWirePromise) {
+        return activeWirePromise;
     }
 
-    const wire = await eda.sch_PrimitiveWire.get(selIds[0]);
+    activeWirePromise = new Promise<string | undefined>((resolve, reject) => {
+        eda.sch_SelectControl.clearSelected()
 
-    if (!wire) {
-        showToastMessage('Selected not a wire', 'warn');
-        return null;
-    }
+        const i = setInterval(async () => {
+            if (signal?.aborted) {
+                clearInterval(i);
+                activeWirePromise = undefined;
+                return reject(new Error('Aborted'));
+            }
 
-    return wire?.getState_Net();
+            const primitives = await Promise.race([
+                eda.sch_SelectControl.getSelectedPrimitives(),
+                new Promise((resolve, reject) => setTimeout(() => resolve(undefined), 150))
+            ]);
+
+            if (!primitives || !Array.isArray(primitives)) return;
+
+            for (const primitive of primitives) {
+                if (primitive.primitiveType === "Wire" && primitive.param.net) {
+                    clearInterval(i);
+                    activeWirePromise = undefined;
+                    resolve(primitive.param.net);
+                }
+            }
+        }, 200);
+    });
+
+    return activeWirePromise;
 }

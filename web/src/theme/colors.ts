@@ -51,15 +51,15 @@ export const semanticColors = {
  * Палетка для светлой темы (опционально)
  */
 export const lightThemeColors = {
-    primary: '#0ea5e9',
-    primaryLight: '#38bdf8',
-    primaryDark: '#0284c7',
+    primary: '#5588ff',          // Ваш новый основной цвет
+    primaryLight: '#88aaff',     // Светлее
+    primaryDark: '#3366cc',      // Насыщеннее
 
-    secondary: '#1e40af',
+    secondary: '#4444bc',        // Глубокий синий для контраста
     success: '#16a34a',
     error: '#dc2626',
     warning: '#ea580c',
-    info: '#0284c7',
+    info: '#5588ff',             // Инфо теперь совпадает с primary
 
     background: '#ffffff',
     backgroundSecondary: '#f9fafb',

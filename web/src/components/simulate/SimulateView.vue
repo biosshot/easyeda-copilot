@@ -199,6 +199,236 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <h3>Error Tolerances</h3>
+                                </div>
+
+                                <p class="section-description">
+                                    Control the accuracy of the simulation. Lower values increase accuracy but slow down
+                                    computation.
+                                </p>
+
+                                <div class="settings-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="abstol">ABSTOL (A)</label>
+                                            <UnitInput id="abstol" variant="current" v-model="abstol"
+                                                placeholder="1p" />
+                                            <span class="field-description">Absolute current tolerance in Amperes</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="reltol">RELTOL</label>
+                                            <input type="number" id="reltol" v-model="reltol" step="0.001"
+                                                placeholder="0.001" />
+                                            <span class="field-description">Relative tolerance for voltages and currents
+                                                (0.001 = 0.1%)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="vntol">VNTOL (V)</label>
+                                            <UnitInput id="vntol" variant="voltage" v-model="vntol" placeholder="1u" />
+                                            <span class="field-description">Absolute voltage tolerance in Volts</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="chgtol">CHGTOL (C)</label>
+                                            <UnitInput id="chgtol" variant="charge" v-model="chgtol"
+                                                placeholder="10f" />
+                                            <span class="field-description">Absolute charge tolerance in Coulombs</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="trtol">TRTOL</label>
+                                            <input type="number" id="trtol" v-model="trtol" step="0.1"
+                                                placeholder="7.0" />
+                                            <span class="field-description">Time step error coefficient. Lower = more
+                                                accurate .tran steps</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="pivrel">PIVREL</label>
+                                            <input type="number" id="pivrel" v-model="pivrel" step="1e-3"
+                                                placeholder="1e-3" />
+                                            <span class="field-description">Relative pivot threshold for matrix
+                                                selection</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="pivtol">PIVTOL</label>
+                                        <input type="number" id="pivtol" v-model="pivtol" step="1e-13"
+                                            placeholder="1e-13" />
+                                        <span class="field-description">Absolute pivot threshold for matrix
+                                            selection</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <h3>Iteration Limits</h3>
+                                </div>
+
+                                <p class="section-description">
+                                    Define when the simulator should stop iterating or adjust the calculation step.
+                                </p>
+
+                                <div class="settings-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="itl1">ITL1 (DC Op Point)</label>
+                                            <input type="number" id="itl1" v-model="itl1" step="1" placeholder="100" />
+                                            <span class="field-description">Iteration limit for DC operating point
+                                                analysis</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="itl2">ITL2 (DC Sweep)</label>
+                                            <input type="number" id="itl2" v-model="itl2" step="1" placeholder="50" />
+                                            <span class="field-description">Iteration limit for each DC sweep point (.DC
+                                                analysis)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="itl4">ITL4 (TRAN Point)</label>
+                                            <input type="number" id="itl4" v-model="itl4" step="1" placeholder="10" />
+                                            <span class="field-description">Iteration limit per transient point.
+                                                Exceeding reduces timestep</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="itl5">ITL5 (Total TRAN)</label>
+                                            <input type="number" id="itl5" v-model="itl5" step="1" placeholder="5000" />
+                                            <span class="field-description">Total iteration limit for entire transient
+                                                analysis (0 = infinite)</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="itl6">ITL6 (Source Stepping)</label>
+                                        <input type="number" id="itl6" v-model="itl6" step="1" placeholder="0" />
+                                        <span class="field-description">Iteration limit for Source Stepping convergence
+                                            algorithm</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <h3>Analysis Methods</h3>
+                                </div>
+
+                                <p class="section-description">
+                                    Configure numerical integration methods and convergence aids.
+                                </p>
+
+                                <div class="settings-form">
+                                    <div class="form-group">
+                                        <label for="method">METHOD</label>
+                                        <CustomSelect :model-value="method" :options="[
+                                            { label: 'Trapezoidal (trap)', value: 'trap' },
+                                            { label: 'Gear', value: 'gear' }
+                                        ]" @update:model-value="method = $event" />
+                                        <span class="field-description">Integration method: trap (faster) or gear (more
+                                            stable for stiff systems)</span>
+                                    </div>
+
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="gmin">GMIN</label>
+                                            <input type="number" id="gmin" v-model="gmin" step="1e-12"
+                                                placeholder="1e-12" />
+                                            <span class="field-description">Minimum conductance added to each branch for
+                                                convergence</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="gminsteps">GMINSTEPS</label>
+                                            <input type="number" id="gminsteps" v-model="gminsteps" step="1"
+                                                placeholder="0" />
+                                            <span class="field-description">Number of Gmin-stepping algorithm
+                                                steps</span>
+                                        </div>
+
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <label for="sourcesteps">SOURCESTEPS</label>
+                                        <input type="number" id="sourcesteps" v-model="sourcesteps" step="1"
+                                            placeholder="0" />
+                                        <span class="field-description">Number of Source-stepping algorithm
+                                            steps</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <h3>Temperature</h3>
+                                </div>
+
+                                <p class="section-description">
+                                    Set the operating and nominal temperatures for the simulation.
+                                </p>
+
+                                <div class="settings-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="temp">TEMP (°C)</label>
+                                            <input type="number" id="temp" v-model="temp" step="1" placeholder="27" />
+                                            <span class="field-description">Operating temperature of the circuit in
+                                                Celsius</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="tnom">TNOM (°C)</label>
+                                            <input type="number" id="tnom" v-model="tnom" step="1" placeholder="27" />
+                                            <span class="field-description">Nominal temperature for model parameters
+                                                measurement</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="settings-section">
+                                <div class="section-header">
+                                    <h3>Stability (Shunts)</h3>
+                                </div>
+
+                                <p class="section-description">
+                                    Add shunt elements to improve simulation stability and convergence.
+                                </p>
+
+                                <div class="settings-form">
+                                    <div class="form-row">
+                                        <div class="form-group">
+                                            <label for="rshunt">RSHUNT (Ω)</label>
+                                            <UnitInput id="rshunt" variant="resistance" v-model="rshunt"
+                                                placeholder="∞" />
+                                            <span class="field-description">Resistance from each node to ground (helps
+                                                with floating nodes)</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="cshunt">CSHUNT (F)</label>
+                                            <UnitInput id="cshunt" variant="capacitance" v-model="cshunt"
+                                                placeholder="0" />
+                                            <span class="field-description">Capacitance from each node to ground (helps
+                                                with sharp edges)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </StepPanel>
 
@@ -277,7 +507,6 @@ declare global {
 const isSettingsOpen = ref(false);
 const isRunning = ref(false);
 const simulationResult = ref<SimulationResult | null>(null);
-const syncGraphsByTime = ref(false);
 const errorMessage = ref<string | null>(null);
 const errorType = ref<'error' | 'warn'>('error');
 const inputSources = ref<InputSource[]>([]);
@@ -287,6 +516,36 @@ const abortController = ref<AbortController | undefined>();
 const simulationType = ref<'tran'>('tran');
 const stepTime = ref<UnitValue>({ unit: 'u', value: 100 });
 const endTime = ref<UnitValue>({ unit: 'm', value: 10 });
+
+// Error Tolerances
+const abstol = ref<UnitValue>({ unit: 'n', value: 1 });
+const reltol = ref<number>(0.01);
+const vntol = ref<UnitValue>({ unit: 'u', value: 1 });
+const chgtol = ref<UnitValue>({ unit: 'p', value: 1 });
+const trtol = ref<number>(7.0);
+const pivrel = ref<number>(1e-3);
+const pivtol = ref<number>(1e-13);
+
+// Iteration Limits
+const itl1 = ref<number>(500);
+const itl2 = ref<number>(200);
+const itl4 = ref<number>(100);
+const itl5 = ref<number>(5000);
+const itl6 = ref<number>(0);
+
+// Analysis Methods
+const method = ref<'trap' | 'gear'>('gear');
+const gmin = ref<number>(1e-12);
+const gminsteps = ref<number>(0);
+const sourcesteps = ref<number>(0);
+
+// Temperature
+const temp = ref<number>(25);
+const tnom = ref<number>(25);
+
+// Stability (Shunts)
+const rshunt = ref<UnitValue>({ unit: 'G', value: 10 });
+const cshunt = ref<UnitValue>({ unit: 'p', value: 1 });
 
 watchEffect(() => {
     console.log(stepTime.value)
@@ -393,7 +652,38 @@ const runSimulation = async () => {
                 type: source.type.toUpperCase(),
                 fill: source.fill ?? 50
             })),
-            components: (await getSchematic()).components
+            components: (await getSchematic()).components,
+
+            options: {// Error Tolerances
+                abstol: abstol.value?.valueInUnits?.base ?? 1e-12,
+                reltol: reltol.value,
+                vntol: vntol.value?.valueInUnits?.base ?? 1e-6,
+                chgtol: chgtol.value?.valueInUnits?.base ?? 1e-14,
+                trtol: trtol.value,
+                pivrel: pivrel.value,
+                pivtol: pivtol.value,
+
+                // Iteration Limits
+                itl1: itl1.value,
+                itl2: itl2.value,
+                itl4: itl4.value,
+                itl5: itl5.value,
+                itl6: itl6.value,
+
+                // Analysis Methods
+                method: method.value,
+                gmin: gmin.value,
+                gminsteps: gminsteps.value,
+                sourcesteps: sourcesteps.value,
+
+                // Temperature
+                temp: temp.value,
+                tnom: tnom.value,
+
+                // Stability (Shunts)
+                rshunt: rshunt.value?.valueInUnits?.base,
+                cshunt: cshunt.value?.valueInUnits?.base
+            }
         };
 
         const response = await fetchWithTask({
@@ -491,6 +781,21 @@ const runSimulation = async () => {
     font-size: 1rem;
     color: var(--color-text);
     font-weight: 600;
+}
+
+.section-description {
+    margin-bottom: 1rem;
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.field-description {
+    display: block;
+    margin-top: 0.35rem;
+    color: var(--color-text-tertiary);
+    font-size: 0.75rem;
+    line-height: 1.4;
 }
 
 .empty-list {

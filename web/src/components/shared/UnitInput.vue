@@ -12,8 +12,8 @@ import CustomSelect from './CustomSelect.vue';
 
 export interface UnitValue {
     value: number;
-    unit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G';
-    valueInUnits?: { 'n': number, 'u': number, 'm': number, 'base': number, 'k': number, 'M': number, 'G': number }
+    unit: 'f' | 'p' | 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G';
+    valueInUnits?: { 'f': number, 'p': number, 'n': number, 'u': number, 'm': number, 'base': number, 'k': number, 'M': number, 'G': number }
 }
 
 const props = withDefaults(defineProps<{
@@ -22,12 +22,12 @@ const props = withDefaults(defineProps<{
     placeholder?: string;
     step?: string;
     min?: number;
-    variant: 'time' | 'voltage' | 'freq'
+    variant: 'time' | 'voltage' | 'freq' | 'current' | 'resistance' | 'capacitance' | 'charge'
 }>(), {
     modelValue: () => ({
         value: 10,
         unit: 'base' as const,
-        valueInUnits: { 'n': 0, 'u': 0, 'm': 0, 'base': 0, 'k': 0, 'M': 0, 'G': 0 }
+        valueInUnits: { 'f': 0, 'p': 0, 'n': 0, 'u': 0, 'm': 0, 'base': 0, 'k': 0, 'M': 0, 'G': 0 }
     })
 });
 
@@ -41,7 +41,9 @@ watch(() => props.modelValue.value, (newValue) => {
     localValue.value = newValue;
 });
 
-const unitMultipliers: Record<'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G', number> = {
+const unitMultipliers: Record<'f' | 'p' | 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G', number> = {
+    'f': 1e-15,
+    'p': 1e-12,
     'n': 1e-9,
     'u': 1e-6,
     'm': 1e-3,
@@ -57,10 +59,12 @@ const roundToPrecision = (value: number, precision: number = 12) => {
     return Math.round(value * multiplier) / multiplier;
 };
 
-const calculateValueInUnits = (value: number, currentUnit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
+const calculateValueInUnits = (value: number, currentUnit: 'f' | 'p' | 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
     const baseValue = value * unitMultipliers[currentUnit];
 
     return {
+        'f': roundToPrecision(baseValue / unitMultipliers.f),
+        'p': roundToPrecision(baseValue / unitMultipliers.p),
         'n': roundToPrecision(baseValue / unitMultipliers.n),
         'u': roundToPrecision(baseValue / unitMultipliers.u),
         'm': roundToPrecision(baseValue / unitMultipliers.m),
@@ -85,7 +89,7 @@ const onValueInput = (event: Event) => {
     });
 };
 
-const onUnitChange = (newUnit: 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
+const onUnitChange = (newUnit: 'f' | 'p' | 'n' | 'u' | 'm' | 'base' | 'k' | 'M' | 'G') => {
     const valueInUnits = calculateValueInUnits(props.modelValue.value, newUnit);
 
     emit('update:modelValue', {
@@ -107,6 +111,37 @@ const units = computed(() => {
         { label: 'µV', value: 'u' },
         { label: 'mV', value: 'm' },
         { label: 'V', value: 'base' },
+    ];
+    else if (props.variant === 'current') return [
+        { label: 'nA', value: 'n' },
+        { label: 'µA', value: 'u' },
+        { label: 'mA', value: 'm' },
+        { label: 'A', value: 'base' },
+        { label: 'kA', value: 'k' },
+        { label: 'MA', value: 'M' },
+        { label: 'GA', value: 'G' }
+    ];
+    else if (props.variant === 'resistance') return [
+        { label: 'mΩ', value: 'm' },
+        { label: 'Ω', value: 'base' },
+        { label: 'kΩ', value: 'k' },
+        { label: 'MΩ', value: 'M' },
+        { label: 'GΩ', value: 'G' }
+    ];
+    else if (props.variant === 'capacitance') return [
+        { label: 'pF', value: 'p' },
+        { label: 'nF', value: 'n' },
+        { label: 'µF', value: 'u' },
+        { label: 'mF', value: 'm' },
+        { label: 'F', value: 'base' },
+    ];
+    else if (props.variant === 'charge') return [
+        { label: 'fC', value: 'f' },
+        { label: 'pC', value: 'p' },
+        { label: 'nC', value: 'n' },
+        { label: 'µC', value: 'u' },
+        { label: 'mC', value: 'm' },
+        { label: 'C', value: 'base' },
     ];
     else return [
         { label: 'nHz', value: 'n' },

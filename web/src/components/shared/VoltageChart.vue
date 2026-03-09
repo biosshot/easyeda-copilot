@@ -16,13 +16,13 @@
         </div>
 
         <div style="
-        flex: 1;
-        display: grid;
-        grid-template-rows: 1fr 2.5em;
-        grid-template-columns: 6em 1fr;
-        gap: 0;
-        position: relative;
-      ">
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr 2.5em;
+            grid-template-columns: 6em 1fr;
+            gap: 0;
+            position: relative;
+        ">
             <div :style="{ borderRight: `solid 2px ${theme.colors.border}` }">
                 <canvas ref="axisYCanvas"
                     :style="{ backgroundColor: theme.colors.background, width: '100%', height: '100%', display: 'block' }"></canvas>
@@ -31,8 +31,6 @@
             <div style="position: relative">
                 <canvas ref="plotCanvas"
                     :style="{ backgroundColor: theme.colors.background, width: '100%', height: '100%', display: 'block' }"></canvas>
-                <canvas v-if="grid" ref="gridCanvas"
-                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
             </div>
 
             <div
@@ -54,15 +52,13 @@ import { WebglPlot, ColorRGBA, WebglLine } from 'webgl-plot';
 import { useTheme } from '../../composables/useTheme';
 
 const props = defineProps<{
-    time: number[];
+    time: number[];                     // массив времени в миллисекундах
     signals: { data: number[]; name: string }[];
-    grid?: boolean;
+    grid?: boolean;                      // больше не используется, но оставим для совместимости
 }>();
 
-// Тема
 const { theme } = useTheme();
 
-// Видимость сигналов
 const visibility = ref<Record<string, boolean>>({});
 watch(() => props.signals, (newSignals) => {
     const newVis: Record<string, boolean> = {};
@@ -70,7 +66,6 @@ watch(() => props.signals, (newSignals) => {
     visibility.value = newVis;
 }, { immediate: true });
 
-// Цвета для сигналов (можно позже сделать настраиваемыми через тему)
 const colorPalette = [
     [0, 0.8, 1, 1],
     [1, 0.5, 0, 1],
@@ -85,9 +80,7 @@ function getColor(name: string): string {
     return `rgba(${c[0] * 255}, ${c[1] * 255}, ${c[2] * 255}, ${c[3]})`;
 }
 
-// Refs на canvas
 const plotCanvas = ref<HTMLCanvasElement | null>(null);
-const gridCanvas = ref<HTMLCanvasElement | null>(null);
 const axisXCanvas = ref<HTMLCanvasElement | null>(null);
 const axisYCanvas = ref<HTMLCanvasElement | null>(null);
 
@@ -106,19 +99,17 @@ onMounted(() => {
 
     const resizeCanvases = () => {
         const dpr = window.devicePixelRatio || 1;
-        [plotCanvas, gridCanvas, axisXCanvas, axisYCanvas].forEach(canvasRef => {
-            const canvas = canvasRef.value;
-            if (canvas) {
-                canvas.width = canvas.clientWidth * dpr;
-                canvas.height = canvas.clientHeight * dpr;
-            }
-        });
+        plotCanvas.value!.width = plotCanvas.value!.clientWidth * dpr;
+        plotCanvas.value!.height = plotCanvas.value!.clientHeight * dpr;
+        axisXCanvas.value!.width = axisXCanvas.value!.clientWidth * dpr;
+        axisXCanvas.value!.height = axisXCanvas.value!.clientHeight * dpr;
+        axisYCanvas.value!.width = axisYCanvas.value!.clientWidth * dpr; // убрано -30
+        axisYCanvas.value!.height = axisYCanvas.value!.clientHeight * dpr;
     };
     resizeCanvases();
 
     wglp = new WebglPlot(plotCanvas.value);
     wglp.removeAllLines();
-
     wglp.gScaleX = 1;
     wglp.gOffsetX = 0;
     wglp.gScaleY = 0.1;
@@ -137,7 +128,7 @@ onMounted(() => {
 
     const animate = () => {
         wglp.update();
-        drawAxesAndGrid();
+        drawAxes();
         animationFrame = requestAnimationFrame(animate);
     };
     animate();
@@ -169,7 +160,6 @@ function updateLines() {
     autoScaleY();
 }
 
-// Автомасштабирование по Y с динамическим padding
 function autoScaleY() {
     if (props.signals.length === 0 || !wglp) return;
 
@@ -185,7 +175,6 @@ function autoScaleY() {
 
     if (minY === Infinity || maxY === -Infinity) return;
 
-    // Новый padding: не менее 0.2 и 10% от размаха
     const padding = Math.max(0.2, (maxY - minY) * 0.1);
     const worldMin = minY - padding;
     const worldMax = maxY + padding;
@@ -206,14 +195,23 @@ watch([() => props.signals, visibility], () => {
     updateLines();
 }, { deep: true });
 
-// ========== Отрисовка осей и сетки (синхронизированы) ==========
-function drawAxesAndGrid() {
+function formatSI(value: number, unit: string): string {
+    if (value === 0) return '0 ' + unit;
+    const prefixes = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+    const absValue = Math.abs(value);
+    const exp = Math.floor(Math.log10(absValue));
+    let idx = Math.floor(exp / 3) + 8;
+    idx = Math.max(0, Math.min(prefixes.length - 1, idx));
+    const scaled = value / Math.pow(10, (idx - 8) * 3);
+    const formatted = scaled.toFixed(2).replace(/\.?0+$/, '');
+    return formatted + ' ' + prefixes[idx] + unit;
+}
+
+function drawAxes() {
     if (!wglp) return;
 
     const xCanvas = axisXCanvas.value;
     const yCanvas = axisYCanvas.value;
-    const gCanvas = gridCanvas.value;
-
     if (!xCanvas || !yCanvas) return;
 
     const xCtx = xCanvas.getContext('2d');
@@ -223,95 +221,47 @@ function drawAxesAndGrid() {
     xCtx.clearRect(0, 0, xCanvas.width, xCanvas.height);
     yCtx.clearRect(0, 0, yCanvas.width, yCanvas.height);
 
-    // Видимый диапазон в мировых координатах
-    const xMinWorld = (-1 - wglp.gOffsetX) / wglp.gScaleX;
-    const xMaxWorld = (1 - wglp.gOffsetX) / wglp.gScaleX;
-    const yMinWorld = (-1 - wglp.gOffsetY) / wglp.gScaleY;
-    const yMaxWorld = (1 - wglp.gOffsetY) / wglp.gScaleY;
-
-    const divisions = 8;
-    const xTicks: number[] = [];
-    const yTicks: number[] = [];
-
-    for (let i = 0; i <= divisions; i++) {
-        const t = i / divisions;
-        xTicks.push(xMinWorld + t * (xMaxWorld - xMinWorld));
-        yTicks.push(yMinWorld + t * (yMaxWorld - yMinWorld));
-    }
-
-    // Сетка (используем цвет текста с прозрачностью)
-    if (props.grid && gCanvas) {
-        const gCtx = gCanvas.getContext('2d');
-        if (gCtx) {
-            gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
-            // Извлекаем цвет текста из темы и добавляем прозрачность
-            const textColor = theme.value.colors.text;
-            // Преобразуем hex в rgba (упрощённо, если hex, то парсим, но для простоты используем полупрозрачный белый/чёрный)
-            // В реальном проекте лучше использовать функцию для преобразования hex в rgba
-            // Здесь для демонстрации будем использовать rgba с альфа-каналом 0.25 от цвета текста
-            // Упростим: возьмём цвет текста и применим opacity через rgba, но нужно знать rgb компоненты.
-            // Вместо этого можно добавить в тему отдельный цвет для сетки или использовать css-переменную.
-            // Для примера установим сетку полупрозрачным серым, но чтобы соответствовать теме, можно использовать theme.colors.text с opacity.
-            // Так как точное преобразование hex->rgb требует дополнительной логики, предлагаю использовать theme.colors.border с opacity.
-            // Или добавим в тему поле grid. Пока используем border с opacity.
-            const borderColor = theme.value.colors.border;
-            gCtx.strokeStyle = borderColor + '40'; // добавляем прозрачность 25% (если hex, то append '40')
-            gCtx.lineWidth = 1;
-
-            for (const worldX of xTicks) {
-                const xNorm = worldX * wglp.gScaleX + wglp.gOffsetX;
-                const screenX = ((xNorm + 1) / 2) * gCanvas.width;
-                gCtx.beginPath();
-                gCtx.moveTo(screenX, 0);
-                gCtx.lineTo(screenX, gCanvas.height);
-                gCtx.stroke();
-            }
-
-            for (const worldY of yTicks) {
-                const yNorm = worldY * wglp.gScaleY + wglp.gOffsetY;
-                const screenY = (1 - (yNorm + 1) / 2) * gCanvas.height;
-                gCtx.beginPath();
-                gCtx.moveTo(0, screenY);
-                gCtx.lineTo(gCanvas.width, screenY);
-                gCtx.stroke();
-            }
-        }
-    }
-
-    // Ось X
     xCtx.font = '18px Courier New';
     xCtx.fillStyle = theme.value.colors.text;
     xCtx.strokeStyle = theme.value.colors.text;
     xCtx.lineWidth = 1;
 
+    yCtx.font = '18px Courier New';
+    yCtx.fillStyle = theme.value.colors.text;
+    yCtx.strokeStyle = theme.value.colors.text;
+    yCtx.lineWidth = 1;
+
+    const divisions = 8;
+    const numPoints = props.time.length;
+
     for (let i = 0; i <= divisions; i++) {
-        const worldX = xTicks[i];
-        const xNorm = worldX * wglp.gScaleX + wglp.gOffsetX;
-        const screenX = ((xNorm + 1) / 2) * xCanvas.width;
+        const t = i / divisions;
+        const xNorm = -1 + t * 2;
+        const index = ((xNorm - (wglp.gOffsetX)) / wglp.gScaleX + 1) / 2 * (numPoints - 1);
 
-        const index = ((worldX + 1) / 2) * (props.time.length - 1);
-        const idx = Math.round(Math.max(0, Math.min(props.time.length - 1, index)));
-        const timeValue = props.time[idx];
+        const idx = Math.ceil(Math.max(0, Math.min(numPoints - 1, index)));
+        const timeValueMs = props.time[idx];
+        const timeValueSec = timeValueMs / 1000;
+        const formattedTime = formatSI(timeValueSec, 's');
+        const screenX = i * (xCanvas.width / divisions);
 
-        xCtx.fillText(timeValue.toFixed(3) + ' sec', screenX - 30, 20);
+        const textWidth = xCtx.measureText(formattedTime).width;
+        xCtx.fillText(formattedTime, screenX - textWidth / 2, 20);
         xCtx.beginPath();
         xCtx.moveTo(screenX, 0);
         xCtx.lineTo(screenX, 10);
         xCtx.stroke();
     }
 
-    // Ось Y
-    yCtx.font = '18px Courier New';
-    yCtx.fillStyle = theme.value.colors.text;
-    yCtx.strokeStyle = theme.value.colors.text;
-    yCtx.lineWidth = 1;
-
     for (let i = 0; i <= divisions; i++) {
-        const worldY = yTicks[i];
-        const yNorm = worldY * wglp.gScaleY + wglp.gOffsetY;
-        const screenY = (1 - (yNorm + 1) / 2) * yCanvas.height;
+        const t = i / divisions;
+        const yNorm = 1 - t * 2;
+        const worldY = (yNorm - wglp.gOffsetY) / wglp.gScaleY;
+        const formattedVoltage = formatSI(worldY, 'V');
 
-        yCtx.fillText(worldY.toFixed(2) + ' V', 5, screenY);
+        const screenY = i * (yCanvas.height / divisions);
+
+        yCtx.fillText(formattedVoltage, 5, screenY);
         yCtx.beginPath();
         yCtx.moveTo(yCanvas.width - 10, screenY);
         yCtx.lineTo(yCanvas.width, screenY);
@@ -319,7 +269,6 @@ function drawAxesAndGrid() {
     }
 }
 
-// ========== Обработчики взаимодействия ==========
 function onMouseDown(e: MouseEvent) {
     if (e.button !== 0) return;
     e.preventDefault();
@@ -402,13 +351,9 @@ function onResize() {
             const dpr = window.devicePixelRatio || 1;
             plotCanvas.value.width = plotCanvas.value.clientWidth * dpr;
             plotCanvas.value.height = plotCanvas.value.clientHeight * dpr;
-            if (gridCanvas.value) {
-                gridCanvas.value.width = gridCanvas.value.clientWidth * dpr;
-                gridCanvas.value.height = gridCanvas.value.clientHeight * dpr;
-            }
             axisXCanvas.value.width = axisXCanvas.value.clientWidth * dpr;
             axisXCanvas.value.height = axisXCanvas.value.clientHeight * dpr;
-            axisYCanvas.value.width = axisYCanvas.value.clientWidth * dpr - 30;
+            axisYCanvas.value.width = axisYCanvas.value.clientWidth * dpr; // убрано -30
             axisYCanvas.value.height = axisYCanvas.value.clientHeight * dpr;
         }
     }, 100);
