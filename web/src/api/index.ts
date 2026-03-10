@@ -222,7 +222,7 @@ export async function fetchSSE({
                     errMes = JSON.parse(msg.data).error || "Server error";
                 }
                 catch (e) {
-                    errMes = "Server error";
+                    errMes = msg.data || "Server error";
                 }
 
                 throw new Error(errMes);
@@ -267,8 +267,8 @@ export async function fetchSSETask({
         });
 
         if (!startRes.ok) {
-            const text = await startRes.text();
-            throw new Error(`Failed to start stream: ${startRes.status} ${text}`);
+            const json = await startRes.json();
+            throw new Error(`Failed to start stream ${startRes.status}: ${json.error}`);
         }
 
         const startJson = await startRes.json();
@@ -341,7 +341,7 @@ export async function fetchSSETask({
                                 errMes = JSON.parse(msg.data).error || "Server error";
                             }
                             catch (e) {
-                                errMes = "Server error";
+                                errMes = msg.data || "Server error";
                             }
 
                             stopReceived = true;

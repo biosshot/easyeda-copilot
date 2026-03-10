@@ -1,5 +1,10 @@
 <template>
   <div id="app">
+    <label v-if="!isOnlineMode" style="text-align: center; font-size: 14px;">You are in Half
+      Offline or Full Offline mode. This
+      extension
+      only works in EasyEDA Pro Full Online
+      Mode!</label>
     <Navbar>
       <template #controls v-if="activeTab === 'chat'">
         <ChatControls :is-loading="chatViewRef?.isLoading || false" />
@@ -62,6 +67,9 @@ declare global {
     },
   }
 }
+
+const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
+
 const recorderRef = ref<EDA['lastChangesRecorder']>(undefined);
 
 let intervalId: number | null = null;

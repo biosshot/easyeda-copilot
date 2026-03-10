@@ -436,8 +436,8 @@
                         <div class="settings-content">
                             <div class="results-header">
                                 <h3>Simulation Results</h3>
-                                <IconButton :size="18" icon="ExternalLink" variant="primary"
-                                    @click="openGraphInNewWindow" title="Open in new window" />
+                                <IconButton :size="18" icon="ExternalLink" variant="ghost" @click="openGraphInNewWindow"
+                                    title="Open in new window" />
                             </div>
 
                             <TypingDots v-if="isRunning" status="Running simulation..." />

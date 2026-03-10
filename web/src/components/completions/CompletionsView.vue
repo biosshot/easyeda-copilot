@@ -6,7 +6,7 @@
                 <h2>Circuit Completions</h2>
                 <p class="header-description">Generate and apply suggestions to complete your circuit</p>
             </div>
-            <IconButton class="refresh-button" @click="generateCompletions" :disabled="isLoading"
+            <IconButton class="refresh-button" @click="generateCompletions" :disabled="isLoading" variant="ghost"
                 :title="isLoading ? 'Generating completions...' : 'Generate new completions'" :size="18"
                 icon="RotateCw" />
         </div>
@@ -138,28 +138,7 @@ const {
 
 .refresh-button {
     flex-shrink: 0;
-    padding: 8px 12px;
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-    font-size: 0.9rem;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.refresh-button:hover:not(:disabled) {
-    background: var(--color-primary-dark);
-    transform: translateY(-1px);
-}
-
-.refresh-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }
 
 .refresh-button .spin {
@@ -436,5 +415,6 @@ const {
 .error-container {
     display: flex;
     justify-content: center;
+    padding: 10px;
 }
 </style>
