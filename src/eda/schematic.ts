@@ -61,7 +61,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     const designators = new Set<string>();
 
     for (const id of primitiveIds) {
-        const component = await eda.sch_PrimitiveComponent.get(id).catch(err => null);
+        const component: ISCH_PrimitiveComponent_2 | undefined = await eda.sch_PrimitiveComponent.get(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
 
         if (!component || component.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) {
             console.error(`[getSchematic] Error Processing component`, component);
