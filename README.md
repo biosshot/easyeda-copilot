@@ -51,6 +51,13 @@ Search for components in LCSC by description or characteristics
   <em>10 MHz low-noise operational amplifier</em>
 </div>
 
+## SPICE Circuit Simulation
+Automatically selects SPICE models from a library of 50,000 components.
+!CRITICAL: ALWAYS VERIFY THE SPICE MODELS USED TO REPLACE YOUR COMPONENTS. YOU CAN FIND THEM BELOW THE GRAPH AFTER THE SIMULATION!
+
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/spice.gif)
+
+
 ## Generating Documentation
 
 ![Structural Diagram](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i3.png)
