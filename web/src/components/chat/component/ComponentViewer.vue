@@ -67,7 +67,7 @@ watchEffect(() => {
                 }
             )
         }
-        else {
+        else if (Array.isArray(result.components)) {
             result.components.slice(0, 2).map(comp => {
                 inlineButtons.push(
                     {
