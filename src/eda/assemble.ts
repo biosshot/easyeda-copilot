@@ -172,9 +172,10 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
             uuid: '181f479f152643bbaa46a4b8cd92ed2e',
         });
 
-        comp.setState_Name(component.value || "GND");
+        const s = (component.value || "GND").toUpperCase()
+        comp.setState_Name(s);
         comp.setState_OtherProperty({
-            "Global Net Name": component.value || "GND"
+            "Global Net Name": s
         });
     }
     else if (partUuid === 'VCC') {
@@ -183,9 +184,10 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
             uuid: '4e5977e7f049493cbf5b5f91190144d3',
         });
 
-        comp.setState_Name(component.value || "VCC");
+        const s = (component.value || "VCC").toUpperCase()
+        comp.setState_Name(s);
         comp.setState_OtherProperty({
-            "Global Net Name": component.value || "VCC"
+            "Global Net Name": s
         });
     }
     else {

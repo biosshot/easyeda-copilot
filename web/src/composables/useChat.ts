@@ -345,6 +345,18 @@ export default function useChat() {
                         }),
                     }
                 }
+                else if (json.type === 'image_url') {
+                    return {
+                        ...msg,
+                        content: JSON.stringify({
+                            ...json,
+                            result: {
+                                ...(json.result ?? {}),
+                                image_url: 'Image not sent for cost reasons'
+                            }
+                        })
+                    }
+                }
             } catch (error) {
                 return msg;
             }

@@ -16,6 +16,7 @@
                         :result="parsedMessage.result"
                         @inline-buttons="emit('inline-buttons', { buttons: $event, idx })" />
                     <PdfFileViewer v-else-if="parsedMessage?.type === 'pdf_file'" :result="parsedMessage.result" />
+                    <ImageUrlView v-else-if="parsedMessage?.type === 'image_url'" :result="parsedMessage.result" />
                     <div v-else ref="markdownElement" v-html="safeHtml"></div>
                 </template>
             </div>
@@ -48,6 +49,7 @@ import type { Message } from '../../types/message'
 import { InlineButton, InlineButtonsIdx } from '../../types/inline-button'
 import AdjTextarea from '../shared/AdjTextarea.vue'
 import IconButton from '../shared/IconButton.vue'
+import ImageUrlView from './img/ImageUrlView.vue'
 
 const props = defineProps<{ message: Message, isLast?: boolean, idx: number }>()
 const emit = defineEmits<{
