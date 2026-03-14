@@ -821,7 +821,6 @@ const runSimulation = async () => {
         if (simulationType.value === 'tran') {
             body = {
                 ...body,
-                analysis_type: 'transient' as const,
                 analysis_options: {
                     type: 'transient' as const,
                     step_time_ns: stepTime.value?.valueInUnits?.n ?? 100,
@@ -834,7 +833,6 @@ const runSimulation = async () => {
         } else if (simulationType.value === 'ac') {
             body = {
                 ...body,
-                analysis_type: 'ac' as const,
                 analysis_options: {
                     type: 'ac' as const,
                     start_freq: acStartFreq.value?.valueInUnits?.base ?? 10,
@@ -851,7 +849,6 @@ const runSimulation = async () => {
 
             body = {
                 ...body,
-                analysis_type: 'dc' as const,
                 analysis_options: {
                     type: 'dc' as const,
                     source_name: source.name,
@@ -863,7 +860,6 @@ const runSimulation = async () => {
         } else if (simulationType.value === 'op') {
             body = {
                 ...body,
-                analysis_type: 'op' as const,
                 analysis_options: {
                     type: 'op' as const,
                 },

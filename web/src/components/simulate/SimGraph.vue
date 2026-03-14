@@ -4,7 +4,6 @@
         <VoltageChart ref="voltageChartRefs" variant="transient" :time="simulationResult.result.time"
             :signals="simulationResult.result.output_signals.map(s => ({ name: s.signal_name, data: s.voltages }))"
             x-label="Time" y-label="Voltage (V)" :grid="true" :show-legend="true" />
-        <p class="result-description">Transient Analysis: Time-domain response</p>
     </div>
 
     <!-- AC Analysis -->
@@ -12,7 +11,6 @@
         <VoltageChart ref="voltageChartRefs" variant="ac" :time="simulationResult.result.frequencies"
             :signals="simulationResult.result.output_signals.map(s => ({ name: s.signal_name, data: s.magnitude }))"
             x-label="Frequency" y-label="Magnitude (dB)" :grid="true" :show-legend="true" />
-        <p class="result-description">AC Analysis: Frequency response (magnitude)</p>
     </div>
 
     <!-- DC Sweep -->
@@ -20,7 +18,6 @@
         <VoltageChart ref="voltageChartRefs" variant="dc" :time="simulationResult.result.sweep_values"
             :signals="simulationResult.result.output_signals.map(s => ({ name: s.signal_name, data: s.voltages }))"
             x-label="Source Voltage" y-label="Output Voltage (V)" :grid="true" :show-legend="true" />
-        <p class="result-description">DC Sweep: Output vs Source Voltage</p>
     </div>
 
     <!-- Operating Point -->

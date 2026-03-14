@@ -52,6 +52,7 @@ export const SimulateOptionsSchema = () => z.object({
 
 export const TranAnalysisOptionsSchema = () => z.object({
     type: z.literal('transient').default('transient'),
+    start_time_ns: (z.number()).nullish(),
     step_time_ns: z.number().default(100),
     end_time_ns: z.number().default(60_000),
 });
@@ -92,13 +93,8 @@ export const CircuitToSimulateSchema = () => z.object({
     input_signals: (z.array(InputSignalSchema())),
     output_signals: (z.array(z.string().describe('signal_name'))),
 
-    // Новый подход: тип анализа и опции
-    analysis_type: z.enum(['transient', 'ac', 'dc', 'op']).default('transient'),
-    analysis_options: AnalysisOptionsSchema().nullish(),
+    analysis_options: (AnalysisOptionsSchema()),
 
-    // Обратная совместимость — старые поля остаются
-    step_time_ns: z.number().default(100),
-    end_time_ns: z.number().default(60_000),
     options: SimulateOptionsSchema().nullish(),
 });
 
