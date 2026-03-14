@@ -1,25 +1,22 @@
 <template>
     <div id="app">
         <div style="height: 100vh; display: flex; flex-direction: column;">
-            <VoltageChart :time="time" :signals="signals" grid />
+            <SimGraph style="height: 100vh;" :simulation-result="simulationResult!"></SimGraph>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import VoltageChart from './components/shared/VoltageChart.vue';
+import SimGraph from './components/simulate/SimGraph.vue';
+import { SimulateResult } from './types/spice';
 
 declare global {
     interface EDA {
-        chartData?: {
-            time: number[];
-            signals: { data: number[]; name: string }[];
-        };
+        simulationResult?: SimulateResult
     }
 }
 
-const time = eda.chartData?.time ?? [];
-const signals = eda.chartData?.signals ?? [];
+const simulationResult = eda.simulationResult;
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div style="width: 100%; height: 100%; display: flex; flex-direction: column">
-        <div :style="{
+        <div v-if="showLegend" :style="{
             padding: '8px',
             background: theme.colors.backgroundSecondary,
             color: theme.colors.text,
@@ -63,16 +63,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 // @ts-ignore
 import { WebglPlot, ColorRGBA, WebglLine } from 'webgl-plot';
 import { useTheme } from '../../composables/useTheme';
 
-const props = defineProps<{
+export type VoltageChartVariant = 'transient' | 'ac' | 'dc' | 'op';
+
+const props = withDefaults(defineProps<{
     time: number[];                     // массив времени в миллисекундах
     signals: { data: number[]; name: string }[];
     grid?: boolean;                      // больше не используется, но оставим для совместимости
-}>();
+    variant?: VoltageChartVariant;
+    xLabel?: string;
+    yLabel?: string;
+    showLegend?: boolean;
+}>(), {
+    variant: 'transient',
+    xLabel: 'Time',
+    yLabel: 'Voltage',
+    showLegend: true,
+});
 
 const { theme } = useTheme();
 
@@ -194,7 +205,10 @@ function autoScaleY() {
 
     if (minY === Infinity || maxY === -Infinity) return;
 
-    const padding = Math.max(0.2, (maxY - minY) * 0.1);
+    // For AC analysis (dB), use different padding
+    const padding = props.variant === 'ac'
+        ? Math.max(1, (maxY - minY) * 0.1)
+        : Math.max(0.2, (maxY - minY) * 0.1);
     const worldMin = minY - padding;
     const worldMax = maxY + padding;
     const range = worldMax - worldMin;
@@ -253,39 +267,76 @@ function drawAxes() {
     const divisions = 8;
     const numPoints = props.time.length;
 
+    // X-axis labels
     for (let i = 0; i <= divisions; i++) {
         const t = i / divisions;
         const xNorm = -1 + t * 2;
         const index = ((xNorm - (wglp.gOffsetX)) / wglp.gScaleX + 1) / 2 * (numPoints - 1);
 
         const idx = Math.ceil(Math.max(0, Math.min(numPoints - 1, index)));
-        const timeValueMs = props.time[idx];
-        const timeValueSec = timeValueMs / 1000;
-        const formattedTime = formatSI(timeValueSec, 's');
+        const xValue = props.time[idx];
+
+        let formattedValue: string;
+        if (props.variant === 'ac') {
+            // Frequency in Hz
+            formattedValue = formatSI(xValue, 'Hz');
+        } else if (props.variant === 'dc') {
+            // DC sweep voltage
+            formattedValue = formatSI(xValue, 'V');
+        } else {
+            // Transient - time in seconds (time is in ms)
+            const timeValueSec = xValue / 1000;
+            formattedValue = formatSI(timeValueSec, 's');
+        }
+
         const screenX = i * (xCanvas.width / divisions);
 
-        const textWidth = xCtx.measureText(formattedTime).width;
-        xCtx.fillText(formattedTime, screenX - textWidth / 2, 20);
+        const textWidth = xCtx.measureText(formattedValue).width;
+        xCtx.fillText(formattedValue, screenX - textWidth / 2, 20);
         xCtx.beginPath();
         xCtx.moveTo(screenX, 0);
         xCtx.lineTo(screenX, 10);
         xCtx.stroke();
     }
 
+    // X-axis title
+    const xTitleWidth = xCtx.measureText(props.xLabel).width;
+    xCtx.fillText(props.xLabel, xCanvas.width / 2 - xTitleWidth / 2, xCanvas.height - 5);
+
+    // Y-axis labels
     for (let i = 0; i <= divisions; i++) {
         const t = i / divisions;
         const yNorm = 1 - t * 2;
         const worldY = (yNorm - wglp.gOffsetY) / wglp.gScaleY;
-        const formattedVoltage = formatSI(worldY, 'V');
+
+        let formattedValue: string;
+        if (props.variant === 'ac') {
+            // Magnitude in dB - already in dB, just format
+            formattedValue = worldY.toFixed(1) + ' dB';
+        } else if (props.variant === 'dc') {
+            // DC voltage
+            formattedValue = formatSI(worldY, 'V');
+        } else {
+            // Transient voltage
+            formattedValue = formatSI(worldY, 'V');
+        }
 
         const screenY = i * (yCanvas.height / divisions);
 
-        yCtx.fillText(formattedVoltage, 5, screenY);
+        yCtx.fillText(formattedValue, 24, screenY);
         yCtx.beginPath();
         yCtx.moveTo(yCanvas.width - 10, screenY);
         yCtx.lineTo(yCanvas.width, screenY);
         yCtx.stroke();
     }
+
+    // Y-axis title (rotated)
+    yCtx.save();
+    yCtx.translate(10, yCanvas.height / 2);
+    yCtx.rotate(-Math.PI / 2);
+    const yTitleWidth = yCtx.measureText(props.yLabel).width;
+    yCtx.fillText(props.yLabel, -yTitleWidth / 2, 0);
+    yCtx.restore();
 }
 
 function onMouseDown(e: MouseEvent) {

@@ -181,11 +181,15 @@
                                     <div class="form-group">
                                         <label for="simulation-type">Simulation Type</label>
                                         <CustomSelect :model-value="simulationType" :options="[
-                                            { label: 'Transient (TRAN)', value: 'tran' }
+                                            { label: 'Transient (TRAN)', value: 'tran' },
+                                            { label: 'AC Analysis', value: 'ac' },
+                                            { label: 'DC Sweep', value: 'dc' },
+                                            { label: 'Operating Point (OP)', value: 'op' }
                                         ]" @update:model-value="simulationType = $event" />
                                     </div>
 
-                                    <div class="form-row">
+                                    <!-- Transient Settings -->
+                                    <div v-if="simulationType === 'tran'" class="form-row">
                                         <div class="form-group">
                                             <label for="step-time">Step Time</label>
                                             <UnitInput id="step-time" variant="time" v-model="stepTime"
@@ -197,6 +201,59 @@
                                             <UnitInput id="end-time" variant="time" v-model="endTime" placeholder="5" />
                                         </div>
                                     </div>
+
+                                    <!-- AC Analysis Settings -->
+                                    <div v-if="simulationType === 'ac'" class="form-row">
+                                        <div class="form-group">
+                                            <label for="start-freq">Start Frequency (Hz)</label>
+                                            <UnitInput id="start-freq" variant="freq" v-model="acStartFreq"
+                                                placeholder="10" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="end-freq">End Frequency (Hz)</label>
+                                            <UnitInput id="end-freq" variant="freq" v-model="acEndFreq"
+                                                placeholder="1e6" />
+                                        </div>
+                                    </div>
+                                    <div v-if="simulationType === 'ac'" class="form-group">
+                                        <label for="points-per-decade">Points per Decade</label>
+                                        <input type="number" id="points-per-decade" v-model="acPointsPerDecade" step="1"
+                                            placeholder="100" />
+                                    </div>
+                                    <div v-if="simulationType === 'ac'" class="form-group">
+                                        <label for="sweep-type">Sweep Type</label>
+                                        <CustomSelect :model-value="acSweepType" :options="[
+                                            { label: 'Decade (dec)', value: 'dec' },
+                                            { label: 'Octave (oct)', value: 'oct' },
+                                            { label: 'Linear (lin)', value: 'lin' }
+                                        ]" @update:model-value="acSweepType = $event" />
+                                    </div>
+
+                                    <!-- DC Sweep Settings -->
+                                    <div v-if="simulationType === 'dc'" class="form-group">
+                                        <NetInput id="dc-source-name" v-model="dcNetName"></NetInput>
+                                    </div>
+                                    <div v-if="simulationType === 'dc'" class="form-row">
+                                        <div class="form-group">
+                                            <label for="dc-start">Start Value (V)</label>
+                                            <UnitInput id="dc-start" variant="voltage" v-model="dcStartValue"
+                                                placeholder="0" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="dc-end">End Value (V)</label>
+                                            <UnitInput id="dc-end" variant="voltage" v-model="dcEndValue"
+                                                placeholder="5" />
+                                        </div>
+                                    </div>
+                                    <div v-if="simulationType === 'dc'" class="form-group">
+                                        <label for="dc-step">Step Value (V)</label>
+                                        <UnitInput id="dc-step" variant="voltage" v-model="dcStepValue"
+                                            placeholder="0.1" />
+                                    </div>
+
+                                    <!-- OP Analysis has no additional settings -->
                                 </div>
                             </div>
 
@@ -443,9 +500,9 @@
                             <TypingDots v-if="isRunning" status="Running simulation..." />
 
                             <div v-else-if="simulationResult" class="results-content">
-                                <VoltageChart style="height: 400px;" ref="voltageChartRefs"
-                                    :time="simulationResult.time" :signals="simulationResult.signals">
-                                </VoltageChart>
+                                <div style="height: 400px;">
+                                    <SimGraph :simulation-result="simulationResult"></SimGraph>
+                                </div>
 
                                 <div v-if="simulationResult.warns.length > 0" class="warnings-section">
                                     <ErrorBanner v-for="(warn, index) in simulationResult.warns" :key="index"
@@ -493,7 +550,9 @@ import StepPanels from '../shared/StepPanels.vue';
 import TypingDots from '../shared/TypingDots.vue';
 import NetInput from '../shared/NetInput.vue';
 import UnitInput, { UnitValue } from '../shared/UnitInput.vue';
-import { showToastMessage } from '../../eda/utils';
+import { isEasyEda, showToastMessage } from '../../eda/utils';
+import { SimulateResult, SimulateResultSchema } from '../../types/spice';
+import SimGraph from './SimGraph.vue';
 
 interface InputSource {
     id: string;
@@ -510,34 +569,36 @@ interface OutputSignal {
     name: string;
 }
 
-interface SimulationResult {
-    time: number[],
-    signals: { data: number[]; name: string }[],
-    warns: { wtype: string, text: string }[],
-    component_map: { name: string, spice_model_name: string }[]
-}
-
 declare global {
     interface EDA {
-        chartData?: {
-            time: number[];
-            signals: { data: number[]; name: string }[];
-        };
+        simulationResult?: SimulateResult
     }
 }
 
 const isSettingsOpen = ref(false);
 const isRunning = ref(false);
-const simulationResult = ref<SimulationResult | null>(null);
+const simulationResult = ref<SimulateResult | null>(null);
 const errorMessage = ref<string | null>(null);
 const errorType = ref<'error' | 'warn'>('error');
 const inputSources = ref<InputSource[]>([]);
 const outputSignals = ref<OutputSignal[]>([]);
 const abortController = ref<AbortController | undefined>();
 
-const simulationType = ref<'tran'>('tran');
+const simulationType = ref<'tran' | 'ac' | 'dc' | 'op'>('tran');
 const stepTime = ref<UnitValue>({ unit: 'u', value: 100 });
 const endTime = ref<UnitValue>({ unit: 'm', value: 10 });
+
+// AC Analysis Settings
+const acStartFreq = ref<UnitValue>({ unit: 'base', value: 10 });
+const acEndFreq = ref<UnitValue>({ unit: 'base', value: 1e6 });
+const acPointsPerDecade = ref<number>(100);
+const acSweepType = ref<'dec' | 'oct' | 'lin'>('dec');
+
+// DC Sweep Settings
+const dcNetName = ref<string | undefined>(undefined);
+const dcStartValue = ref<UnitValue>({ unit: 'base', value: 0 });
+const dcEndValue = ref<UnitValue>({ unit: 'base', value: 5 });
+const dcStepValue = ref<UnitValue>({ unit: 'base', value: 0.1 });
 
 // Error Tolerances
 const abstol = ref<UnitValue>({ unit: 'n', value: 1 });
@@ -661,20 +722,66 @@ const runSimulation = async () => {
     abortController.value = controller;
 
     try {
-        const body = {
-            step_time_ns: stepTime.value?.valueInUnits?.n ?? 100000,
-            end_time_ns: endTime.value?.valueInUnits?.n ?? 100000 * 100,
+
+        const input_signals = inputSources.value.map((source, index) => ({
+            name: `INPUT_${index}`,
+            signal_name: source.signalName,
+            value: source.amplitude?.valueInUnits?.base ?? 1,
+            frequency: source.frequency?.valueInUnits?.base ?? 1000,
+            offset: source.offset?.valueInUnits?.base ?? 0,
+            type: source.type.toUpperCase(),
+            fill: source.fill ?? 50
+        }))
+        // Формируем body в зависимости от типа анализа
+        const baseBody = {
             output_signals: outputSignals.value.map(s => s.name),
-            input_signals: inputSources.value.map((source, index) => ({
-                name: `INPUT_${index}`,
-                signal_name: source.signalName,
-                value: source.amplitude?.valueInUnits?.base ?? 1,
-                frequency: source.frequency?.valueInUnits?.base ?? 1000,
-                offset: source.offset?.valueInUnits?.base ?? 0,
-                type: source.type.toUpperCase(),
-                fill: source.fill ?? 50
-            })),
-            components: (await getSchematic()).components,
+            input_signals,
+            components: isEasyEda() ? (await getSchematic()).components : [],
+
+            // components: [
+            //     {
+            //         "designator": "R4",
+            //         "value": "56kΩ",
+            //         "pins": [
+            //             {
+            //                 "pin_number": "2",
+            //                 "name": "2",
+            //                 "signal_name": "VIN"
+            //             },
+            //             {
+            //                 "pin_number": "1",
+            //                 "name": "1",
+            //                 "signal_name": "NET1"
+            //             }
+            //         ],
+            //         "part_uuid": "856fddc18019495081b89d9458a1110c",
+            //         "pos": {
+            //             "x": 195,
+            //             "y": 880
+            //         }
+            //     },
+            //     {
+            //         "designator": "R5",
+            //         "value": "56kΩ",
+            //         "pins": [
+            //             {
+            //                 "pin_number": "2",
+            //                 "name": "2",
+            //                 "signal_name": "NET1"
+            //             },
+            //             {
+            //                 "pin_number": "1",
+            //                 "name": "1",
+            //                 "signal_name": "GND"
+            //             }
+            //         ],
+            //         "part_uuid": "856fddc18019495081b89d9458a1110c",
+            //         "pos": {
+            //             "x": 195,
+            //             "y": 815
+            //         }
+            //     }
+            // ],
 
             options: {// Error Tolerances
                 abstol: abstol.value?.valueInUnits?.base ?? 1e-12,
@@ -708,6 +815,61 @@ const runSimulation = async () => {
             }
         };
 
+        let body: any = { ...baseBody };
+
+        // Добавляем параметры в зависимости от типа анализа
+        if (simulationType.value === 'tran') {
+            body = {
+                ...body,
+                analysis_type: 'transient' as const,
+                analysis_options: {
+                    type: 'transient' as const,
+                    step_time_ns: stepTime.value?.valueInUnits?.n ?? 100,
+                    end_time_ns: endTime.value?.valueInUnits?.n ?? 60000,
+                },
+                // Обратная совместимость
+                step_time_ns: stepTime.value?.valueInUnits?.n ?? 100,
+                end_time_ns: endTime.value?.valueInUnits?.n ?? 60000,
+            };
+        } else if (simulationType.value === 'ac') {
+            body = {
+                ...body,
+                analysis_type: 'ac' as const,
+                analysis_options: {
+                    type: 'ac' as const,
+                    start_freq: acStartFreq.value?.valueInUnits?.base ?? 10,
+                    end_freq: acEndFreq.value?.valueInUnits?.base ?? 1e6,
+                    points_per_decade: acPointsPerDecade.value,
+                    sweep_type: acSweepType.value,
+                },
+            };
+        } else if (simulationType.value === 'dc') {
+            const source = input_signals.find(is => is.signal_name === dcNetName.value)
+
+            if (!source || !dcNetName.value)
+                throw new Error('Source net unknown');
+
+            body = {
+                ...body,
+                analysis_type: 'dc' as const,
+                analysis_options: {
+                    type: 'dc' as const,
+                    source_name: source.name,
+                    start_value: dcStartValue.value?.valueInUnits?.base ?? 0,
+                    end_value: dcEndValue.value?.valueInUnits?.base ?? 5,
+                    step_value: dcStepValue.value?.valueInUnits?.base ?? 0.1,
+                },
+            };
+        } else if (simulationType.value === 'op') {
+            body = {
+                ...body,
+                analysis_type: 'op' as const,
+                analysis_options: {
+                    type: 'op' as const,
+                },
+            };
+        }
+
         const response = await fetchWithTask({
             url: '/v1/simulate',
             fetchOptions: { signal: controller.signal },
@@ -715,34 +877,14 @@ const runSimulation = async () => {
             pollIntervalMs: 1000
         });
 
-        const json = response as {
-            time: number[],
-            output_signals: {
-                signal_name: string,
-                volages: number[]
-            }[],
-            component_map: {
-                name: string,
-                spice_model_name: string
-            }[],
-            warns: {
-                wtype: string,
-                text: string
-            }[]
-        };
+        const json = SimulateResultSchema().parse(response)
 
-        simulationResult.value = {
-            time: json.time,
-            signals: json.output_signals.map(sign => ({
-                data: sign.volages,
-                name: sign.signal_name
-            })),
-            warns: json.warns || [],
-            component_map: json.component_map || []
-        };
-
+        simulationResult.value = json;
         // Сохраняем данные в eda для открытия в новом окне
-        eda.chartData = simulationResult.value;
+
+        if (isEasyEda())
+            eda.simulationResult = simulationResult.value;
+
     } catch (error) {
         errorMessage.value = error instanceof Error
             ? error.message
@@ -753,6 +895,18 @@ const runSimulation = async () => {
         isRunning.value = false;
     }
 };
+
+function formatSI(value: number, unit: string): string {
+    if (value === 0) return '0 ' + unit;
+    const prefixes = ['y', 'z', 'a', 'f', 'p', 'n', 'µ', 'm', '', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y'];
+    const absValue = Math.abs(value);
+    const exp = Math.floor(Math.log10(absValue));
+    let idx = Math.floor(exp / 3) + 8;
+    idx = Math.max(0, Math.min(prefixes.length - 1, idx));
+    const scaled = value / Math.pow(10, (idx - 8) * 3);
+    const formatted = scaled.toFixed(2).replace(/\.?0+$/, '');
+    return formatted + ' ' + prefixes[idx] + unit;
+}
 
 </script>
 
