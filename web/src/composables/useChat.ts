@@ -89,7 +89,7 @@ export default function useChat() {
 
     function onInlineButtons(data: { idx: number; buttons: InlineButton[] }) {
         if (data.idx > lastInlineBtnIdx.value) {
-            inlineButtons.value = data.buttons;
+            inlineButtons.value = data.buttons.slice(0, 3);
             lastInlineBtnIdx.value = data.idx;
         }
     }

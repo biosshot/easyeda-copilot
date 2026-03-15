@@ -20,14 +20,14 @@ const DEFAULT_SETTINGS = {
     agentBaseModel: 'gpt-5-mini',
 
     // Agent Models - Specialized
-    agentBlockDiagramModel: 'gpt-5.2',
+    agentBlockDiagramModel: 'gpt-5.4',
     agentChatModel: 'gpt-5-mini',
-    agentCircuitExplainerModel: 'gpt-5.2',
-    agentCircuitMakerModel: 'gpt-5.2',
-    agentCompletionsModel: 'gpt-5.2',
+    agentCircuitExplainerModel: 'gpt-5.4',
+    agentCircuitMakerModel: 'gpt-5.4',
+    agentCompletionsModel: 'gpt-5.4',
     agentListCompletionsModel: 'gpt-5-mini',
-    agentDiagnosticAlgorithmModel: 'gpt-5.2',
-    agentPinDescriptionModel: 'gpt-5.2',
+    agentDiagnosticAlgorithmModel: 'gpt-5.4',
+    agentPinDescriptionModel: 'gpt-5.4',
     agentLcscSearchModel: 'gpt-5-mini',
     agentLcscCatalogModel: 'gpt-5-mini',
 

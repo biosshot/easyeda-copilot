@@ -46,6 +46,7 @@ function parseAllegroNetlist(netlistText: string) {
 
 export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
     // 1. Получаем нетлист как строку
+    eda.sys_Message.showToastMessage(`Please make sure there are no duplicate designators or go to Design -> Annotate Designator`, ESYS_ToastMessageType.INFO);
 
     const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
     const pinToSignal = parseAllegroNetlist(netlistText);

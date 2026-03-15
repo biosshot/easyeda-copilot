@@ -86,7 +86,7 @@
                             @reasoning-change="onSettingChange('agentBlockDiagramReasoning', $event)"
                             @model-change="onSettingChange('agentBlockDiagramModel', $event)"
                             :model-features="['tools', 'json']"
-                            desc="Generates structural diagrams, system architectures, and visual block representations. Recommended: gpt-5.2 for complex diagram logic.">
+                            desc="Generates structural diagrams, system architectures, and visual block representations. Recommended: gpt-5.4 for complex diagram logic.">
                         </AgentSettings>
                     </Collapsible>
 
@@ -104,7 +104,7 @@
                             @model-change="onSettingChange('agentCircuitExplainerModel', $event)"
                             :reasoning="settings.agentCircuitExplainerReasoning as string"
                             @reasoning-change="onSettingChange('agentCircuitExplainerReasoning', $event)"
-                            desc="Analyzes and explains circuit functionality, signal flow, and component interactions. Recommended: gpt-5.2 for deep technical analysis.">
+                            desc="Analyzes and explains circuit functionality, signal flow, and component interactions. Recommended: gpt-5.4 for deep technical analysis.">
                         </AgentSettings>
                     </Collapsible>
 
@@ -114,7 +114,7 @@
                             :reasoning="settings.agentCircuitMakerReasoning as string"
                             @reasoning-change="onSettingChange('agentCircuitMakerReasoning', $event)"
                             :model-features="['tools', 'json']"
-                            desc="Creates new schematics, modifies existing circuits. Recommended: gpt-5.2 for precision and complexity handling.">
+                            desc="Creates new schematics, modifies existing circuits. Recommended: gpt-5.4 for precision and complexity handling.">
                         </AgentSettings>
                     </Collapsible>
 
@@ -123,7 +123,7 @@
                             @model-change="onSettingChange('agentCompletionsModel', $event)"
                             :reasoning="settings.agentCompletionsReasoning as string"
                             @reasoning-change="onSettingChange('agentCompletionsReasoning', $event)"
-                            :model-features="['tools', 'json']" desc="Collects the completions. Recommended: gpt-5.2.">
+                            :model-features="['tools', 'json']" desc="Collects the completions. Recommended: gpt-5.4.">
                         </AgentSettings>
                     </Collapsible>
 
@@ -144,7 +144,7 @@
                             @model-change="onSettingChange('agentDiagnosticAlgorithmModel', $event)"
                             :reasoning="settings.agentDiagnosticAlgorithmReasoning as string"
                             @reasoning-change="onSettingChange('agentDiagnosticAlgorithmReasoning', $event)"
-                            desc="Generates fault-finding procedures, test sequences, and troubleshooting workflows. Recommended: gpt-5.2 for logical flow generation.">
+                            desc="Generates fault-finding procedures, test sequences, and troubleshooting workflows. Recommended: gpt-5.4 for logical flow generation.">
                         </AgentSettings>
                     </Collapsible>
 
@@ -154,7 +154,7 @@
                             :reasoning="settings.agentPinDescriptionReasoning as string"
                             :model-features="['json', 'image']"
                             @reasoning-change="onSettingChange('agentPinDescriptionReasoning', $event)"
-                            desc="Sometimes in LCSC pins are designated only by numbers and in order to determine the correct names of pins and their functions, a vision model is required. Recommended: gpt-5.2.">
+                            desc="Sometimes in LCSC pins are designated only by numbers and in order to determine the correct names of pins and their functions, a vision model is required. Recommended: gpt-5.4.">
                         </AgentSettings>
                     </Collapsible>
 

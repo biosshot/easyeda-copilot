@@ -19,7 +19,7 @@
             </div>
         </div>
 
-        <input :value="props.model" type="text" placeholder="e.g., gpt-5.2"
+        <input :value="props.model" type="text" placeholder="e.g., gpt-5.4"
             @change="emits('modelChange', ($event.target as HTMLInputElement).value)" />
         <p class="hint">{{ props.desc }}</p>
     </div>

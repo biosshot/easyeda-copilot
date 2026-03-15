@@ -424,6 +424,7 @@ button[disabled],
 
 .inline-buttons {
   display: flex;
+  gap: 0.23rem;
 }
 
 .inline-buttons .inline-button {
