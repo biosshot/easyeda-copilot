@@ -145,9 +145,6 @@ export default function useChat() {
         return userOptions;
     }
 
-    /**
-     * Обработчик выбора файлов
-     */
     async function handleFileSelect(event: Event) {
         const input = event.target as HTMLInputElement;
         const files = input.files;
@@ -159,27 +156,18 @@ export default function useChat() {
             const parsedFile = await parseFile(file);
 
             if (parsedFile) {
+                if (attachedFiles.value.length > 8) {
+                    showToastMessage(`Max 8 files at time`, 'error');
+                    break
+                }
+
                 attachedFiles.value.push(parsedFile);
             } else {
                 showToastMessage(`File "${file.name}" not supported`, 'warn');
             }
         }
 
-        // Очищаем input для возможности повторной загрузки того же файла
         input.value = '';
-    }
-
-    async function handleFileDrop(files: FileList) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            const parsedFile = await parseFile(file);
-
-            if (parsedFile) {
-                attachedFiles.value.push(parsedFile);
-            } else {
-                showToastMessage(`File "${file.name}" not supported`, 'warn');
-            }
-        }
     }
 
     function removeAttachedFile(fileId: string) {
@@ -533,7 +521,6 @@ export default function useChat() {
         deleteMessage,
         onEditMessage,
         handleFileSelect,
-        handleFileDrop,
         removeAttachedFile,
         clearAttachedFiles,
         getAcceptString

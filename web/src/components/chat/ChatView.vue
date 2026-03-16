@@ -150,9 +150,7 @@ const {
   deleteMessage,
   onEditMessage,
   handleFileSelect,
-  handleFileDrop,
   removeAttachedFile,
-  clearAttachedFiles,
   getAcceptString
 } = useChat();
 

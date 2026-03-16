@@ -45,13 +45,13 @@ import ComponentViewer from './component/ComponentViewer.vue'
 import CircuitExplainViewer from './circuit/CircuitExplainViewer.vue'
 import CircuitAgentResultViewer from './circuit/CircuitAgentResultViewer.vue'
 import PdfFileViewer from './pdf/PdfFileViewer.vue'
-import type { Message } from '../../types/message'
 import { InlineButton, InlineButtonsIdx } from '../../types/inline-button'
 import AdjTextarea from '../shared/AdjTextarea.vue'
 import IconButton from '../shared/IconButton.vue'
 import ImageUrlView from './img/ImageUrlView.vue'
+import { ChatMessage } from '../../stores/chat-history-store'
 
-const props = defineProps<{ message: Message, isLast?: boolean, idx: number }>()
+const props = defineProps<{ message: ChatMessage, isLast?: boolean, idx: number }>()
 const emit = defineEmits<{
     'inline-buttons': [InlineButtonsIdx],
     'edit-message': [string]
