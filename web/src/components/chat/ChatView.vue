@@ -54,8 +54,29 @@
           </IconButton>
         </div>
 
+        <div v-if="attachedFiles.length > 0" class="attached-files">
+          <div v-for="file in attachedFiles" :key="file.id" class="attached-file">
+            <div class="attached-file-preview" v-if="file.type === 'image'">
+              <img :src="file.content" :alt="file.name" />
+            </div>
+            <div class="attached-file-icon" v-else>
+              <Icon name="FileText" size="24" />
+            </div>
+            <div class="attached-file-info">
+              <span class="attached-file-name">{{ file.name }}</span>
+              <span class="attached-file-size">{{ formatFileSize(file.size) }}</span>
+            </div>
+            <button class="attached-file-remove" @click="removeAttachedFile(file.id)">
+              <Icon name="X" size="16" />
+            </button>
+          </div>
+        </div>
+
         <div class="input-area">
           <IconButton :size="16" icon="Paperclip" class="attach-btn" @click="handleAttachClick"></IconButton>
+
+          <input ref="fileInput" type="file" multiple :accept="getAcceptString()" @change="handleFileSelect"
+            style="display: none;" />
 
           <AdjTextarea v-model="newMessage" placeholder="Ask about components, specifications, or circuits..."
             @enter="sendMessage" />
@@ -106,6 +127,7 @@ import ContextMenu from '../shared/ContextMenu.vue';
 import { showToastMessage } from '../../eda/utils';
 import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-store';
 import ToDoList from '../shared/ToDoList.vue';
+import { formatFileSize } from '../../utils/file-size';
 
 const settingsStore = useSettingsStore();
 const blockDiagramHistoryStore = useBlockDiagramHistoryStore();
@@ -120,12 +142,18 @@ const {
   options,
   lastInlineBtnIdx,
   todos,
+  attachedFiles,
   onInlineButtons,
   sendMessage,
   cancelRequest,
   retrySend,
   deleteMessage,
-  onEditMessage
+  onEditMessage,
+  handleFileSelect,
+  handleFileDrop,
+  removeAttachedFile,
+  clearAttachedFiles,
+  getAcceptString
 } = useChat();
 
 const messagesContainer = ref<HTMLElement | null>(null);
@@ -134,6 +162,7 @@ const showEditor = ref(false);
 const showHistoryPanel = ref(false);
 const blockDiagramEditor = ref<InstanceType<typeof BlockDiagramEditor> | null>(null);
 const attachCtxMenu = ref<InstanceType<typeof ContextMenu> | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 onActivated(() => {
   nextTick(() => {
@@ -252,6 +281,13 @@ const attachMenuItems = [
     label: 'Draw Block Diagram',
     click: () => {
       showEditor.value = true;
+    }
+  },
+  {
+    icon: 'Upload',
+    label: 'Upload File',
+    click: () => {
+      fileInput.value?.click();
     }
   }
 ];
@@ -390,6 +426,90 @@ button[disabled],
   display: flex;
   gap: 10px;
   flex-direction: row;
+}
+
+.attached-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.attached-file {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  max-width: 200px;
+}
+
+.attached-file-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 0.25rem;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.attached-file-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.attached-file-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface);
+  border-radius: 0.25rem;
+  flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.attached-file-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.attached-file-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text);
+}
+
+.attached-file-size {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+}
+
+.attached-file-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.attached-file-remove:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text);
 }
 
 .input-option {

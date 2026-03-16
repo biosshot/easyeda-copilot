@@ -244,7 +244,7 @@ defineExpose({
 <style scoped>
 .content {
     background-color: var(--color-background-secondary);
-    padding: 0.6rem 1rem;
+    padding: 0.3rem 0.8rem;
     border-radius: 0.5rem;
     /* max-width: 85%; */
     overflow: hidden;

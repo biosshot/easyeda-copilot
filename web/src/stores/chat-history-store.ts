@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { defaultStorage, IStorage } from './storage';
+import type { AttachmentFile } from '../utils/file-parser';
 
 export interface ChatMessage {
     _id?: string;
@@ -9,6 +10,7 @@ export interface ChatMessage {
     content: string;
     thinking?: string;
     options?: Record<string, unknown>;
+    attachments?: AttachmentFile[];
 }
 
 export interface ChatSession {

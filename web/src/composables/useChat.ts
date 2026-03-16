@@ -10,6 +10,7 @@ import { formatError } from '../utils/error';
 import { makeLLmSettings } from '../utils/llm-settings';
 import { FlowExportObject } from '@vue-flow/core';
 import { CircuitBlocks } from '../types/circuit';
+import { parseFile, getAcceptString, AttachmentFile } from '../utils/file-parser';
 
 function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['blocks'] {
     const { nodes, edges } = flowData;
@@ -74,6 +75,7 @@ export default function useChat() {
         status: "pending" | "in_progress" | "completed";
         content: string;
     }[]>([]);
+    const attachedFiles = ref<AttachmentFile[]>([]);
 
     const options = ref<{
         value: unknown;
@@ -141,6 +143,51 @@ export default function useChat() {
         }
 
         return userOptions;
+    }
+
+    /**
+     * Обработчик выбора файлов
+     */
+    async function handleFileSelect(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const files = input.files;
+
+        if (!files || files.length === 0) return;
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const parsedFile = await parseFile(file);
+
+            if (parsedFile) {
+                attachedFiles.value.push(parsedFile);
+            } else {
+                showToastMessage(`File "${file.name}" not supported`, 'warn');
+            }
+        }
+
+        // Очищаем input для возможности повторной загрузки того же файла
+        input.value = '';
+    }
+
+    async function handleFileDrop(files: FileList) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const parsedFile = await parseFile(file);
+
+            if (parsedFile) {
+                attachedFiles.value.push(parsedFile);
+            } else {
+                showToastMessage(`File "${file.name}" not supported`, 'warn');
+            }
+        }
+    }
+
+    function removeAttachedFile(fileId: string) {
+        attachedFiles.value = attachedFiles.value.filter(f => f.id !== fileId);
+    }
+
+    function clearAttachedFiles() {
+        attachedFiles.value = [];
     }
 
     async function request(body: object, controller: AbortController) {
@@ -389,8 +436,11 @@ export default function useChat() {
                         role: 'human',
                         content: newMessage.value,
                         options: userOptions,
-                        isReady: true
+                        isReady: true,
+                        attachments: attachedFiles.value.length > 0 ? [...attachedFiles.value] : undefined
                     });
+
+                    clearAttachedFiles();
                 } else {
                     if (retryMesIdx !== -1)
                         historyStore.setMessagesToCurrentChat(chatMessages.value.slice(0, retryMesIdx));
@@ -473,6 +523,7 @@ export default function useChat() {
         options,
         lastInlineBtnIdx,
         todos,
+        attachedFiles,
 
         // Actions
         onInlineButtons,
@@ -480,6 +531,11 @@ export default function useChat() {
         cancelRequest,
         retrySend,
         deleteMessage,
-        onEditMessage
+        onEditMessage,
+        handleFileSelect,
+        handleFileDrop,
+        removeAttachedFile,
+        clearAttachedFiles,
+        getAcceptString
     };
 }

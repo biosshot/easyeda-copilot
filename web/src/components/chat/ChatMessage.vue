@@ -6,6 +6,21 @@
         <div v-else-if="msg.role === 'ai' && !isFirstInGroup" class="avatar-placeholder"></div>
 
         <div>
+            <div v-if="msg.attachments && msg.attachments.length > 0" class="attachments">
+                <div v-for="file in msg.attachments" :key="file.id" class="attachment">
+                    <div class="attachment-preview" v-if="file.type === 'image'">
+                        <img :src="file.content" :alt="file.name" />
+                    </div>
+                    <div class="attachment-icon" v-else>
+                        <Icon name="FileText" size="24" />
+                    </div>
+                    <div class="attachment-info">
+                        <span class="attachment-name">{{ file.name }}</span>
+                        <span class="attachment-size">{{ formatFileSize(file.size) }}</span>
+                    </div>
+                </div>
+            </div>
+
             <Collapsible v-if="msg.thinking" title="Thinking" :default-open="false">
                 <p class="thinking">{{ msg.thinking }}</p>
             </Collapsible>
@@ -38,6 +53,7 @@ import MessageBottomControls from './MessageBottomControls.vue';
 import Icon from '../shared/Icon.vue';
 import { getUserInfo } from '../../eda/user';
 import Collapsible from '../shared/Collapsible.vue';
+import { formatFileSize } from '../../utils/file-size';
 
 const props = defineProps<{ msg: ChatMessage, idx: number, isFirstInGroup: boolean, isLastInGroup: boolean, firstInGroupIdx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);
@@ -75,6 +91,71 @@ const onEditMessage = (newContent: string) => {
     .bottom-cnt {
         visibility: visible;
     }
+}
+
+.attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.attachment {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background-color: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    max-width: 200px;
+}
+
+.attachment-preview {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.25rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.attachment-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.attachment-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-surface);
+    border-radius: 0.25rem;
+    flex-shrink: 0;
+    color: var(--color-text);
+}
+
+.attachment-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+
+.attachment-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--color-text);
+}
+
+.attachment-size {
+    font-size: 0.75rem;
+    color: var(--color-text-tertiary);
 }
 
 .message.human {

@@ -49,7 +49,7 @@ const close = () => {
 
 defineExpose({
     open: (event: any) => {
-        const height = props.items.length * 23;
+        const height = props.items.length * 24 + 10;
 
         let y_ = event.clientY;
 
