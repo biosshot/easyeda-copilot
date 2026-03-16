@@ -687,9 +687,6 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     // Easyeda - slowly removes the components
     await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
 
-    // Easyeda - slowly removes the components
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
-
     await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
     await drawRect(circuit.blocks_rect, offset, recorder);
 
