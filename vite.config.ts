@@ -2,7 +2,7 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
-import { analyzer } from 'vite-bundle-analyzer'
+// import { analyzer } from 'vite-bundle-analyzer'
 
 export default defineConfig(({ mode }) => {
     return {
@@ -18,7 +18,8 @@ export default defineConfig(({ mode }) => {
             outDir: resolve(__dirname, 'iframe'), // ← финальная сборка в корневой /dist
             emptyOutDir: true, // очищать dist перед сборкой
             sourcemap: false,
-            minify: "terser",
+            // minify: "terser",
+            minify: false,
             terserOptions: {
                 format: {
                     comments: false, // ← УДАЛЯЕТ ВСЕ комментарии, включая лицензии

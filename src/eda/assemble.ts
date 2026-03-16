@@ -146,6 +146,32 @@ function chunkArray(arr: unknown[], size: number) {
     return chunkedArr;
 }
 
+function withTimeout<T>(
+    promise: T,
+    timeout_ms: number,
+    errorMessage = 'Operation timeout'
+): Promise<T> {
+    let timeoutId: number;
+
+    const timeoutPromise = new Promise<never>((_, reject) => {
+        // @ts-ignore
+        timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeout_ms);
+    });
+
+    // @ts-ignore
+    const safePromise = promise.then((result) => {
+        if (timeoutId) clearTimeout(timeoutId);
+        return result;
+
+        // @ts-ignore
+    }).catch((err) => {
+        if (timeoutId) clearTimeout(timeoutId);
+        throw err;
+    });
+
+    return Promise.race([safePromise, timeoutPromise]);
+}
+
 async function createComponet(component: CircuitAssembly['components'][0], offset: Offset = { x: 0, y: 0 }) {
     let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
     const { part_uuid: partUuid, designator, pos } = component;
@@ -154,11 +180,28 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset)
 
     const create = async (data: { libraryUuid: string, uuid: string }) => {
-        const comp = await eda.sch_PrimitiveComponent.create(data,
-            to2(x),
-            to2(y),
-            undefined, pos.rotate
-        );
+        const maybeLibUuid = [...new Set([data.libraryUuid, 'lcsc', '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])]
+
+        let comp;
+
+        for (const lib of maybeLibUuid) {
+            try {
+                const compPromise = eda.sch_PrimitiveComponent.create({
+                    uuid: data.uuid,
+                    libraryUuid: lib,
+                },
+                    to2(x),
+                    to2(y),
+                    undefined, pos.rotate
+                );
+
+                comp = await withTimeout(compPromise, 5500);
+            } catch (error) {
+                comp = undefined;
+            }
+
+            if (comp) break;
+        }
 
         if (!comp) throw new Error("Component not found");
         eda.sys_Message.showToastMessage(`Component ${component.designator} place at ${x} ${y}`, ESYS_ToastMessageType.SUCCESS);
@@ -508,29 +551,98 @@ const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfi
     })
 }
 
+async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2)[]): Promise<{
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+    width: number;
+    height: number;
+} | null> {
+    if (!components || components.length === 0) return null;
+
+    let minX = Infinity, minY = Infinity;
+    let maxX = -Infinity, maxY = -Infinity;
+
+    for (const comp of components) {
+        const primitiveId = comp.getState_PrimitiveId();
+        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+
+        if (pins && pins.length > 0) {
+            for (const pin of pins) {
+                const x = pin.getState_X();
+                const y = pin.getState_Y();
+                if (typeof x === 'number' && typeof y === 'number') {
+                    minX = Math.min(minX, x);
+                    maxX = Math.max(maxX, x);
+                    minY = Math.min(minY, y);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        } else {
+            // Фоллбэк: если нет пинов, используем центр компонента
+            const x = comp.getState_X();
+            const y = comp.getState_Y();
+            const padding = 50;
+            minX = Math.min(minX, x - padding);
+            maxX = Math.max(maxX, x + padding);
+            minY = Math.min(minY, y - padding);
+            maxY = Math.max(maxY, y + padding);
+        }
+    }
+
+    if (minX === Infinity) return null;
+
+    return {
+        minX,
+        minY,
+        maxX,
+        maxY,
+        width: maxX - minX,
+        height: maxY - minY
+    };
+}
+
 export async function assembleCircuit(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
 
     const recorder = createrRecordChanges();
 
-    const pageSize = await getPageSize();
+    // @ts-ignore
+    const components = await withTimeout(eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT), 1500).catch(e => undefined);
+    const busyPlace = components ? await getBBox(components) : undefined;
+    const offset: Offset = { x: 0, y: 0 };
     const root = (circuit.blocks_rect ?? []).find(block => block.name === 'block___v_root__');
 
-    const offset: Offset = { x: 0, y: 0 };
+    if (!root) {
+        throw new Error('Root not found in assenble circuit')
+    }
 
-    const otions = {
-        centered: circuit.assembly_options?.centered ?? true
-    };
+    if (busyPlace) {
+        const pageSize = await getPageSize();
 
-    if (root)
-        if (otions.centered) {
-            offset.x = (pageSize.width - root.width) / 2;
-            offset.y = ((pageSize.height - root.height) / 2) + root.height;
-        }
-        else {
-            offset.y = root.height;
-            offset.x = undefined;
-        }
+    }
+    else {
+        const pageSize = await getPageSize();
+        offset.x = (pageSize.width - root.width) / 2;
+        offset.y = ((pageSize.height - root.height) / 2) + root.height;
+    }
+
+
+
+    // const otions = {
+    //     centered: circuit.assembly_options?.centered ?? true
+    // };
+
+    // if (root)
+    //     if (otions.centered) {
+    //         offset.x = (pageSize.width - root.width) / 2;
+    //         offset.y = ((pageSize.height - root.height) / 2) + root.height;
+    //     }
+    //     else {
+    //         offset.y = root.height;
+    //         offset.x = undefined;
+    //     }
 
     const placedComp = await placeComponents(circuit.components, offset, recorder);
 
