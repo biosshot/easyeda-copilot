@@ -618,35 +618,64 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         throw new Error('Root not found in assenble circuit')
     }
 
-    if (busyPlace) {
-        const pageSize = await getPageSize();
+    const pageSize = await getPageSize();
 
+    const pageCenter = {
+        x: (pageSize.width - root.width) / 2,
+        y: ((pageSize.height - root.height) / 2) + root.height
+    };
+
+    if (busyPlace) {
+        const PADDING = 220;
+
+        const positions = [
+            // RIGHT
+            {
+                x: busyPlace.maxX + PADDING,
+                y: ((pageSize.height - root.height) / 2) + root.height,
+                name: 'RIGHT' as const
+            },
+            // BOTTOM
+            {
+                x: (pageSize.width - root.width) / 2,
+                y: (-busyPlace.maxY) - PADDING,
+                name: 'BOTTOM' as const
+            },
+            // TOP
+            {
+                x: (pageSize.width - root.width) / 2,
+                y: (-(busyPlace.minY - root.height)) + PADDING,
+                name: 'TOP' as const
+            },
+            // LEFT
+            {
+                x: busyPlace.minX - PADDING - root.width,
+                y: ((pageSize.height - root.height) / 2) + root.height,
+                name: 'LEFT' as const
+            },
+        ];
+
+        const bestPosition = positions.reduce((best, current) => {
+
+            const currentDist = Math.hypot(
+                current.x - pageCenter.x,
+                current.y - pageCenter.y
+            );
+
+            if (!best) return { pos: current, dist: currentDist };
+
+            return currentDist < best.dist ? { pos: current, dist: currentDist } : best;
+        }, null as { pos: typeof positions[0], dist: number } | null);
+
+        offset.x = bestPosition!.pos.x;
+        offset.y = bestPosition!.pos.y;
     }
     else {
-        const pageSize = await getPageSize();
-        offset.x = (pageSize.width - root.width) / 2;
-        offset.y = ((pageSize.height - root.height) / 2) + root.height;
+        offset.x = pageCenter.x;
+        offset.y = pageCenter.y;
     }
 
-
-
-    // const otions = {
-    //     centered: circuit.assembly_options?.centered ?? true
-    // };
-
-    // if (root)
-    //     if (otions.centered) {
-    //         offset.x = (pageSize.width - root.width) / 2;
-    //         offset.y = ((pageSize.height - root.height) / 2) + root.height;
-    //     }
-    //     else {
-    //         offset.y = root.height;
-    //         offset.x = undefined;
-    //     }
-
     const placedComp = await placeComponents(circuit.components, offset, recorder);
-
-    // eda.sys_MessageBox.showInformationMessage(JSON.stringify(placedComp, null, 2))
 
     if (circuit.rm_components?.length && await confirmationMessage('The following components will be removed:\n' + circuit.rm_components.join(', '), 'Confirm deletion'))
         for (const designator of circuit.rm_components) {
