@@ -2,6 +2,8 @@ import type { CircuitAssembly } from "./../types/circuit";
 import { removeComponent } from "./rm-compoment-with-connections";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
+const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode()
+
 declare global {
     interface EDA {
         lastChangesRecorder?: Recorder,
@@ -180,7 +182,14 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset)
 
     const create = async (data: { libraryUuid: string, uuid: string }) => {
-        const maybeLibUuid = [...new Set([data.libraryUuid, 'lcsc', '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])]
+        let maybeLibUuid;
+
+        if (isOffline) {
+            maybeLibUuid = [...new Set([data.libraryUuid, '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])];
+        }
+        else {
+            maybeLibUuid = [data.libraryUuid];
+        }
 
         let comp;
 
@@ -195,7 +204,11 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
                     undefined, pos.rotate
                 );
 
-                comp = await withTimeout(compPromise, 5500);
+                if (isOffline)
+                    comp = await withTimeout(compPromise, 25000);
+                else
+                    comp = await compPromise;
+
             } catch (error) {
                 comp = undefined;
             }
@@ -295,7 +308,7 @@ function filterUniqueCoordinatePairs(arr: number[]) {
 }
 
 const findPin = async (designator: string, pin_: { num: number | string, name?: string }, placeComponents: PlacedComponents, useSchComps = true) => {
-    const pinNumber = Number(pin_.num);
+    const pinNumber = pin_.num;
 
     let pins: ISCH_PrimitiveComponentPin[] = [];
     let isExternal = false;
@@ -314,7 +327,7 @@ const findPin = async (designator: string, pin_: { num: number | string, name?: 
     let pin: ISCH_PrimitiveComponentPin | undefined;
 
     if (pinNumber === 1 && pins.length === 1) pin = pins[0];
-    else pin = pins.find(p => Number(p.getState_PinNumber()) === pinNumber)
+    else pin = pins.find(p => p.getState_PinNumber() === pinNumber)
     if (!pin && pin_.name) pin = pins.find(p => p.getState_PinName() === pin_.name)
 
     if (!pin) return null;
@@ -615,7 +628,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     const root = (circuit.blocks_rect ?? []).find(block => block.name === 'block___v_root__');
 
     if (!root) {
-        throw new Error('Root not found in assenble circuit')
+        throw new Error('Root not found in asm circuit')
     }
 
     const pageSize = await getPageSize();
