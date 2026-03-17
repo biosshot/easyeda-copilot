@@ -16,7 +16,7 @@
       </template>
     </Navbar>
 
-    <div v-if="hasRecorder" class="backwards-nav">
+    <div v-if="hasCheckpoint" class="backwards-nav">
       <span class="line"></span>
       <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
       <span class="line"></span>
@@ -55,40 +55,41 @@ import SettingsControls from './components/settings/SettingsControls.vue';
 import { __MODE__ } from './mode';
 import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
-import { isEasyEda } from './eda/utils';
+import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
 // import VoltageChart from './components/shared/VoltageChart.vue';
 
 declare global {
   interface EDA {
-    lastChangesRecorder?: {
-      backwards: () => void;
-      isEnded: () => boolean;
+    checkpointer?: {
+      restore: () => Promise<boolean>,
+      save: () => Promise<void>,
+      hasCheckpoint: () => boolean
     },
   }
 }
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
 
-const recorderRef = ref<EDA['lastChangesRecorder']>(undefined);
-
 let intervalId: number | null = null;
+
+const hasCheckpoint = ref<boolean>(false);
 
 if (isEasyEda()) {
   intervalId = window.setInterval(() => {
-    recorderRef.value = eda.lastChangesRecorder;
-  }, 200);
+    hasCheckpoint.value = eda.checkpointer?.hasCheckpoint() ?? false;
+  }, 1000);
 
   onScopeDispose(() => {
     if (intervalId) clearInterval(intervalId);
   });
 }
 
-const hasRecorder = computed(() => isEasyEda() && recorderRef.value);
-
 const backward = () => {
-  if (hasRecorder.value)
-    eda.lastChangesRecorder?.backwards();
+  if (hasCheckpoint.value)
+    eda.checkpointer?.restore();
+  else
+    showToastMessage('Checkpoint not found', 'info');
 }
 
 const store = useAppStore();

@@ -1,4 +1,5 @@
 import type { CircuitAssembly } from "./../types/circuit";
+import { checkpointer } from "./checkpointer";
 import { removeComponent } from "./rm-compoment-with-connections";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
@@ -6,9 +7,11 @@ const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment
 
 declare global {
     interface EDA {
-        lastChangesRecorder?: Recorder,
+        checkpointer: typeof checkpointer,
     }
 }
+
+eda.checkpointer = checkpointer;
 
 interface Offset {
     x: number | undefined;
@@ -30,20 +33,6 @@ interface AddedNet {
     pin_name?: string
 }
 
-interface ChangeRecord {
-    primitiveId: string;
-    time?: number;
-}
-
-interface Recorder {
-    add: (r: ChangeRecord) => void;
-    backwards: () => void;
-    get: () => ChangeRecord[],
-    isValid: () => boolean;
-    stop: () => void;
-    isEnded: () => boolean;
-}
-
 const to2 = (x: number) => { x = Math.round(x); return x - (x % 5); }
 
 const applyOffset = (x: number, y: number, offset: Offset) => {
@@ -52,92 +41,6 @@ const applyOffset = (x: number, y: number, offset: Offset) => {
     if (offset.y) y = offset.y - y;
 
     return { x, y };
-}
-
-function createrRecordChanges(): Recorder {
-    let records: ChangeRecord[] = [];
-    let isValid = true;
-    let isEnd = false;
-
-    const add = (record: ChangeRecord) => {
-        records.push({
-            ...record,
-            time: Date.now()
-        });
-    }
-
-    const get = () => records
-
-    const backwards = () => {
-        if (!isEnd) return;
-
-        const promises = records.map(async record => {
-            const type = await eda.sch_Primitive.getPrimitiveTypeByPrimitiveId(record.primitiveId);
-            if (!type) return;
-
-            switch (type as string) {
-                case ESCH_PrimitiveType.ARC:
-                    return eda.sch_PrimitiveArc.delete(record.primitiveId);
-                case ESCH_PrimitiveType.BUS:
-                    return eda.sch_PrimitiveBus.delete(record.primitiveId);
-                case ESCH_PrimitiveType.CIRCLE:
-                    return eda.sch_PrimitiveCircle.delete(record.primitiveId);
-                case ESCH_PrimitiveType.COMPONENT:
-                    return eda.sch_PrimitiveComponent.delete(record.primitiveId);
-                case ESCH_PrimitiveType.COMPONENT_PIN:
-                    return eda.sch_PrimitivePin.delete(record.primitiveId);
-                case ESCH_PrimitiveType.PIN:
-                    return eda.sch_PrimitivePin.delete(record.primitiveId);
-                case ESCH_PrimitiveType.POLYGON:
-                    return eda.sch_PrimitivePolygon.delete(record.primitiveId);
-
-                case 'Rect':
-                case ESCH_PrimitiveType.RECTANGLE:
-                    return eda.sch_PrimitiveRectangle.delete(record.primitiveId);
-
-                case ESCH_PrimitiveType.TEXT:
-                    return eda.sch_PrimitiveText.delete(record.primitiveId);
-
-                case 'NetGroup':
-                case ESCH_PrimitiveType.WIRE:
-                    return eda.sch_PrimitiveWire.delete(record.primitiveId);
-
-                case ESCH_PrimitiveType.OBJECT:
-                    return Promise.reject("Unknown primitive type: " + type);
-
-                case ESCH_PrimitiveType.BEZIER:
-                    return Promise.reject("Unknown primitive type: " + type);
-
-                case ESCH_PrimitiveType.ELLIPSE:
-                    return Promise.reject("Unknown primitive type: " + type);
-
-                default:
-                    return Promise.reject("Unknown primitive type: " + type);
-            }
-        });
-
-        if (eda.lastChangesRecorder === recorder) {
-            eda.lastChangesRecorder = undefined;
-        }
-
-        isValid = false;
-        records = [];
-
-        return Promise.all(promises)
-    }
-
-    const recorder: Recorder = {
-        add,
-        backwards,
-        get,
-        isValid: () => isValid,
-        isEnded: () => isEnd,
-        stop: () => isEnd = true
-    };
-
-    eda.lastChangesRecorder = recorder;
-
-    return recorder;
 }
 
 function chunkArray(arr: unknown[], size: number) {
@@ -258,7 +161,7 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     return comp;
 }
 
-async function placeComponents(components: CircuitAssembly['components'], offset: Offset = { x: 0, y: 0 }, recorder?: Recorder): Promise<PlacedComponents> {
+async function placeComponents(components: CircuitAssembly['components'], offset: Offset = { x: 0, y: 0 }): Promise<PlacedComponents> {
     const placedComponentsP = components.map(async (component) => {
         const { part_uuid: partUuid, designator } = component;
         if (!partUuid) return undefined;
@@ -266,8 +169,6 @@ async function placeComponents(components: CircuitAssembly['components'], offset
         try {
             const placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 = await createComponet(component, offset);
             const primitiveId = placedComponent.getState_PrimitiveId();
-
-            recorder?.add({ primitiveId: primitiveId });
 
             const pins = await getPrimitiveComponentPins(primitiveId);
             await placedComponent.done();
@@ -336,7 +237,7 @@ const findPin = async (designator: string, pin_: { num: number | string, name?: 
 };
 
 async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAssembly['components'],
-    placeComponents: PlacedComponents, offset: Offset = { x: 0, y: 0 }, recorder?: Recorder) {
+    placeComponents: PlacedComponents, offset: Offset = { x: 0, y: 0 }) {
     const pointToArr = (p: { x: number, y: number }) => {
         const { x, y } = applyOffset(p.x, p.y, offset);
         return [x, -y];
@@ -424,7 +325,6 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 
             try {
                 const wire = await eda.sch_PrimitiveWire.create(values, netName);
-                if (wire) recorder?.add({ primitiveId: wire.getState_PrimitiveId() })
             } catch (err) {
                 eda.sys_Message.showToastMessage(`Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape}`, ESYS_ToastMessageType.ERROR);
             }
@@ -445,7 +345,7 @@ const getPageSize = async () => {
     }
 }
 
-async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, recorder?: Recorder) {
+async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents) {
     if (!nets) return;
 
     // Конфигурация попыток: длины и базовые направления (dx, dy)
@@ -516,12 +416,10 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, rec
                 try {
                     const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY], net.net);
                     if (wire) {
-                        recorder?.add({ primitiveId: wire.getState_PrimitiveId() });
                         wireCreated = true;
-                        break; // Прерывание цикла направлений при успехе
+                        break;
                     }
                 } catch (err) {
-                    // Продолжение попытки со следующим направлением или длиной
                     continue;
                 }
             }
@@ -536,7 +434,7 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, rec
     }
 }
 
-async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offset = { x: 0, y: 0 }, recorder?: Recorder) {
+async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offset = { x: 0, y: 0 }) {
 
     for (const block of blocksRect ?? []) {
         if (block.name === 'block___v_root__') continue;
@@ -551,10 +449,6 @@ async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offs
 
         const text = await eda.sch_PrimitiveText.create(x, y + 3 + (5 * descArr.length), desc, undefined, undefined, undefined, 5)
         const text_2 = await eda.sch_PrimitiveText.create(x, y + 18 + (5 * descArr.length), block.name, undefined, undefined, undefined, 14);
-
-        if (rect) recorder?.add({ primitiveId: rect.getState_PrimitiveId() });
-        if (text) recorder?.add({ primitiveId: text.getState_PrimitiveId() });
-        if (text_2) recorder?.add({ primitiveId: text_2.getState_PrimitiveId() });
     }
 }
 
@@ -618,8 +512,7 @@ async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComp
 
 export async function assembleCircuit(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
-
-    const recorder = createrRecordChanges();
+    await checkpointer.save();
 
     // @ts-ignore
     const components = await withTimeout(eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT), 1500).catch(e => undefined);
@@ -688,7 +581,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         offset.y = pageCenter.y;
     }
 
-    const placedComp = await placeComponents(circuit.components, offset, recorder);
+    const placedComp = await placeComponents(circuit.components, offset);
 
     if (circuit.rm_components?.length && await confirmationMessage('The following components will be removed:\n' + circuit.rm_components.join(', '), 'Confirm deletion'))
         for (const designator of circuit.rm_components) {
@@ -700,8 +593,8 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     // Easyeda - slowly removes the components
     await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
 
-    await drawEdges(circuit.edges, circuit.components, placedComp, offset, recorder);
-    await drawRect(circuit.blocks_rect, offset, recorder);
+    await drawEdges(circuit.edges, circuit.components, placedComp, offset);
+    await drawRect(circuit.blocks_rect, offset);
 
     const isUsedPin = (d: string, p: number | string) => {
         const l = `${d}_pin_${p}`;
@@ -724,10 +617,8 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         }
     }
 
-    await placeNet(circuit.added_net ?? [], placedComp, recorder);
-    await placeNet(netForUnusedPins, placedComp, recorder);
-
-    recorder.stop();
+    await placeNet(circuit.added_net ?? [], placedComp);
+    await placeNet(netForUnusedPins, placedComp);
 
     eda.sys_Message.showToastMessage(`Assemble complete.`, ESYS_ToastMessageType.SUCCESS);
 }
