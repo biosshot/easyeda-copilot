@@ -217,7 +217,7 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         }
 
         if (!comp) throw new Error("Component not found");
-        eda.sys_Message.showToastMessage(`Component ${component.designator} place at ${x} ${y}`, ESYS_ToastMessageType.SUCCESS);
+        // eda.sys_Message.showToastMessage(`Component ${component.designator} place at ${x} ${y}`, ESYS_ToastMessageType.SUCCESS);
 
         return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2;
     };
@@ -326,9 +326,9 @@ const findPin = async (designator: string, pin_: { num: number | string, name?: 
 
     let pin: ISCH_PrimitiveComponentPin | undefined;
 
-    if (pinNumber === 1 && pins.length === 1) pin = pins[0];
-    else pin = pins.find(p => p.getState_PinNumber() === pinNumber)
-    if (!pin && pin_.name) pin = pins.find(p => p.getState_PinName() === pin_.name)
+    if (pinNumber == 1 && pins.length === 1) pin = pins[0];
+    else pin = pins.find(p => p.getState_PinNumber() == pinNumber)
+    if (!pin && pin_.name) pin = pins.find(p => p.getState_PinName() == pin_.name)
 
     if (!pin) return null;
 
@@ -342,12 +342,12 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
         return [x, -y];
     }
 
-    const searchSignalName = (designator: string, pin: unknown) => {
+    const searchSignalName = (designator: string, pin: string | number) => {
         return components
             .find(comp => comp.designator === designator)?.pins?.find(p => pin == p.pin_number)?.signal_name;
     }
 
-    const searchPinName = (designator: string, pin: unknown) => {
+    const searchPinName = (designator: string, pin: string | number) => {
         return components
             .find(comp => comp.designator === designator)?.pins?.find(p => pin == p.pin_number)?.name;
     }
@@ -381,8 +381,8 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
             const srcpin = await findPin(sdesignator, { num: spin, name: searchPinName(sdesignator, spin) }, placeComponents);
             const trgpin = await findPin(tdesignator, { num: tpin, name: searchPinName(tdesignator, tpin) }, placeComponents);
 
-            if (!srcpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${spin} ${sdesignator}`, ESYS_ToastMessageType.ERROR);
-            if (!trgpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${tpin} ${tdesignator}`, ESYS_ToastMessageType.ERROR);
+            if (!srcpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${spin} ${sdesignator}`, ESYS_ToastMessageType.WARNING);
+            if (!trgpin) eda.sys_Message.showToastMessage(`Wire error not found pin: ${tpin} ${tdesignator}`, ESYS_ToastMessageType.WARNING);
 
             const srcPinPos = getPinPos(srcpin, section.startPoint);
             const trgPinPos = getPinPos(trgpin, section.endPoint);
