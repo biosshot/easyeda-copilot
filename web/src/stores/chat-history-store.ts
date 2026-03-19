@@ -1,16 +1,29 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 import { defaultStorage, IStorage } from './storage';
-import type { AttachmentFile } from '../utils/file-parser';
+import { AttachmentFileSchema, type AttachmentFile } from '../utils/file-parser';
+import { z } from 'zod';
+
+export const ChatMessageSchema = z.object({
+    _id: z.string().optional(),
+    role: z.enum(['human', 'ai']),
+    isReady: z.boolean().optional(),
+    content: z.string(),
+    thinking: z.string().optional(),
+    options: z.record(z.string(), z.unknown()).optional(),
+    attachments: z.array(AttachmentFileSchema).optional(),
+    checkpoint: z.string().optional()
+});
 
 export interface ChatMessage {
     _id?: string;
     role: 'human' | 'ai';
-    isReady: boolean;
+    isReady?: boolean;
     content: string;
     thinking?: string;
     options?: Record<string, unknown>;
     attachments?: AttachmentFile[];
+    checkpoint?: string
 }
 
 export interface ChatSession {

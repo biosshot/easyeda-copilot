@@ -8,13 +8,7 @@
 
 <script setup lang="ts">
 import SimGraph from './components/simulate/SimGraph.vue';
-import { SimulateResult } from './types/spice';
-
-declare global {
-    interface EDA {
-        simulationResult?: SimulateResult
-    }
-}
+import "./types/eda";
 
 const simulationResult = eda.simulationResult;
 

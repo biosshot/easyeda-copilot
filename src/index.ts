@@ -24,10 +24,11 @@ declare global {
 	interface EDA {
 		assembleCircuit: typeof assembleCircuit,
 		getSchematic: typeof getSchematic,
-		chartData?: {
-			time: number[];
-			signals: { data: number[]; name: string }[];
-		};
+		checkpointer: {
+			restore: (id?: string) => Promise<boolean>;
+			save: (minor: boolean) => Promise<string | null>;
+			hasCheckpoint: () => boolean;
+		},
 	}
 }
 

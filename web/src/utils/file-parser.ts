@@ -1,5 +1,15 @@
 
 export type AttachmentFileType = 'image' | 'raw_text';
+import { z } from 'zod';
+
+export const AttachmentFileSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    type: z.enum(['image', 'raw_text']),
+    mimeType: z.string(),
+    size: z.number(),
+    content: z.string()
+})
 
 export interface AttachmentFile {
     id: string;

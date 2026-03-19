@@ -1,17 +1,8 @@
 import type { CircuitAssembly } from "./../types/circuit";
-import { checkpointer } from "./checkpointer";
 import { removeComponent } from "./rm-compoment-with-connections";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
 const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode()
-
-declare global {
-    interface EDA {
-        checkpointer: typeof checkpointer,
-    }
-}
-
-eda.checkpointer = checkpointer;
 
 interface Offset {
     x: number | undefined;
@@ -512,7 +503,8 @@ async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComp
 
 export async function assembleCircuit(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
-    await checkpointer.save();
+    if (eda.checkpointer) await eda.checkpointer.save(true);
+    else eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
 
     // @ts-ignore
     const components = await withTimeout(eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT), 1500).catch(e => undefined);

@@ -57,37 +57,24 @@ import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
+import { checkpointer } from './eda/checkpointer';
 // import VoltageChart from './components/shared/VoltageChart.vue';
-
-declare global {
-  interface EDA {
-    checkpointer?: {
-      restore: () => Promise<boolean>,
-      save: () => Promise<void>,
-      hasCheckpoint: () => boolean
-    },
-  }
-}
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
 
-let intervalId: number | null = null;
-
 const hasCheckpoint = ref<boolean>(false);
 
-if (isEasyEda()) {
-  intervalId = window.setInterval(() => {
-    hasCheckpoint.value = eda.checkpointer?.hasCheckpoint() ?? false;
-  }, 1000);
+const intervalId = window.setInterval(() => {
+  hasCheckpoint.value = checkpointer.hasCheckpoint();
+}, 1000);
 
-  onScopeDispose(() => {
-    if (intervalId) clearInterval(intervalId);
-  });
-}
+onScopeDispose(() => {
+  if (intervalId) clearInterval(intervalId);
+});
 
 const backward = () => {
   if (hasCheckpoint.value)
-    eda.checkpointer?.restore();
+    checkpointer.restore();
   else
     showToastMessage('Checkpoint not found', 'info');
 }
@@ -150,35 +137,6 @@ body {
   width: 100%;
 }
 
-.placeholder {
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.placeholder-content {
-  text-align: center;
-  color: var(--color-text-muted);
-  max-width: 420px;
-}
-
-.empty-title {
-  font-size: 1.25rem;
-  color: var(--color-text);
-  margin-bottom: 0.5rem;
-}
-
-.empty-sub {
-  margin-bottom: 0.5rem;
-}
-
-.empty-hint {
-  font-size: 0.9rem;
-  color: var(--color-text-tertiary);
-}
-
-/* === Стили для скроллбара === */
-
 /* Chrome, Edge, Safari */
 ::-webkit-scrollbar {
   width: 8px;
@@ -209,7 +167,9 @@ body {
 *::-webkit-scrollbar-thumb:active {
   background: var(--color-border-light);
 }
+</style>
 
+<style scoped>
 .backwards-nav {
   width: 100%;
   display: flex;

@@ -1,7 +1,7 @@
 // composables/useChat.ts
 import { ref, computed, onScopeDispose, nextTick } from 'vue';
 import { fetchSSE, fetchSSETask, fetchWithTask } from '../api';
-import { ChatMessage, useChatHistoryStore } from '../stores/chat-history-store';
+import { ChatMessage, ChatMessageSchema, useChatHistoryStore } from '../stores/chat-history-store';
 import { useSettingsStore } from '../stores/settings-store';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { isEasyEda, showToastMessage } from '../eda/utils';
@@ -11,6 +11,7 @@ import { makeLLmSettings } from '../utils/llm-settings';
 import { FlowExportObject } from '@vue-flow/core';
 import { CircuitBlocks } from '../types/circuit';
 import { parseFile, getAcceptString, AttachmentFile } from '../utils/file-parser';
+import { checkpointer } from '../eda/checkpointer';
 
 function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['blocks'] {
     const { nodes, edges } = flowData;
@@ -256,7 +257,7 @@ export default function useChat() {
             prevStreamId: streamid,
             prevLastEventId: eventid,
 
-            onmessage(ev) {
+            async onmessage(ev) {
                 if (ev.id) lastEventId = ev.id;
 
                 switch (ev.event) {
@@ -302,14 +303,34 @@ export default function useChat() {
                         break;
                     }
                     case 'message':
-                        historyStore.addMessageToCurrentChat(JSON.parse(ev.data));
-                        writeToLastMessage = false;
+                        try {
+                            const data = ChatMessageSchema.parse(JSON.parse(ev.data));
+
+                            // This is normal because we are just making a checkpoint.
+                            if (data.content.includes('circuit_agent_result') && isEasyEda() && checkpointer) {
+                                const checkpointId = await checkpointer.save(false).catch(e => undefined);
+                                if (checkpointId) {
+                                    const lastHummanMsg = historyStore.getCurrentChat()?.messages.findLast(m => m.role === 'human');
+                                    if (lastHummanMsg) {
+                                        lastHummanMsg.checkpoint = checkpointId;
+                                        historyStore.saveToStorage();
+                                    }
+                                }
+                            }
+
+                            historyStore.addMessageToCurrentChat(data);
+                            writeToLastMessage = false;
+                        } catch (error) {
+                            showToastMessage('Fail process message ai', 'error')
+                        }
+
                         break;
                     case 'status':
                         progressStatus.value = ev.data;
                         break;
 
                     case 'update-todos':
+                        // @ need fix is unsafe
                         todos.value = JSON.parse(ev.data);
                         break;
 
