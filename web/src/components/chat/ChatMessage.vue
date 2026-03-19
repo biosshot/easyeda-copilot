@@ -30,13 +30,13 @@
                     @edit-message="onEditMessage" ref="content" />
                 <div v-if="msg.role === 'human'">
                     <MessageBottomControls class="bottom-cnt" @retry="emit('retry-send', idx)"
-                        @edit="content?.toggleEdit()" @delete="emit('delete-message', idx)"
-                        :show="['edit', 'retry', 'delete']" />
+                        @edit="content?.toggleEdit()" @delete="emit('delete-message', idx)" @copy="copy()"
+                        :show="['edit', 'retry', 'delete', 'copy']" />
                 </div>
                 <div v-if="msg.role === 'ai'">
                     <!-- for showing only if msg.isReady === false -->
                     <MessageBottomControls v-if="!(msg.isReady === false) && isLastInGroup" class="bottom-cnt"
-                        @retry="emit('retry-send', firstInGroupIdx)" :show="['retry']" />
+                        @retry="emit('retry-send', firstInGroupIdx)" @copy="copy()" :show="['retry', 'copy']" />
                 </div>
 
             </div>
@@ -96,6 +96,15 @@ const restoreCheckpoint = () => {
             showToastMessage('Checkpoint not found', 'error');
     else
         showToastMessage('Checkpointer not allowed', 'error');
+}
+
+const copy = async () => {
+    try {
+        await navigator.clipboard.writeText(props.msg.content);
+        showToastMessage('Copied', 'success')
+    } catch (err) {
+        showToastMessage('Error with copy', 'warn')
+    }
 }
 
 </script>

@@ -321,7 +321,7 @@ defineExpose({
   gap: 1rem;
   padding: 1rem;
   padding-right: 1rem;
-  padding-bottom: 300px;
+  padding-bottom: 200px;
 }
 
 /* Placeholder styles when there are no messages */
@@ -432,6 +432,8 @@ button[disabled],
   gap: 0.5rem;
   padding: 0.5rem;
   margin-bottom: 0.5rem;
+  max-height: 18vh;
+  overflow: auto;
 }
 
 .attached-file {
