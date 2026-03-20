@@ -2,7 +2,18 @@ import type { CircuitAssembly } from "./../types/circuit";
 import { removeComponent } from "./rm-compoment-with-connections";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
-const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode()
+const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
+
+const VCC_PORT_COMPONENT = {
+    libraryUuid: 'f5af0881d090439f925343ec8aedf154',
+    uuid: '4e5977e7f049493cbf5b5f91190144d3',
+};
+
+const NET_PORT_COMPONENT = {
+    libraryUuid: 'f5af0881d090439f925343ec8aedf154',
+    uuid: '7523d33c197549a39030c4ac7fddee68',
+};
+
 
 interface Offset {
     x: number | undefined;
@@ -68,6 +79,47 @@ function withTimeout<T>(
     return Promise.race([safePromise, timeoutPromise]);
 }
 
+const placeComponent = async (data: { libraryUuid: string, uuid: string }, { x, y, rotate }: { x: number, y: number, rotate?: number }) => {
+    let maybeLibUuid;
+
+    if (isOffline) {
+        maybeLibUuid = [...new Set([data.libraryUuid, '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])];
+    }
+    else {
+        maybeLibUuid = [data.libraryUuid];
+    }
+
+    let comp;
+
+    for (const lib of maybeLibUuid) {
+        try {
+            const compPromise = eda.sch_PrimitiveComponent.create({
+                uuid: data.uuid,
+                libraryUuid: lib,
+            },
+                to2(x),
+                to2(y),
+                undefined, rotate
+            );
+
+            if (isOffline)
+                comp = await withTimeout(compPromise, 25000);
+            else
+                comp = await compPromise;
+
+        } catch (error) {
+            comp = undefined;
+        }
+
+        if (comp) break;
+    }
+
+    if (!comp) throw new Error("Component not found");
+    // eda.sys_Message.showToastMessage(`Component ${component.designator} place at ${x} ${y}`, ESYS_ToastMessageType.SUCCESS);
+
+    return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2;
+};
+
 async function createComponet(component: CircuitAssembly['components'][0], offset: Offset = { x: 0, y: 0 }) {
     let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
     const { part_uuid: partUuid, designator, pos } = component;
@@ -75,52 +127,11 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
 
     const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset)
 
-    const create = async (data: { libraryUuid: string, uuid: string }) => {
-        let maybeLibUuid;
-
-        if (isOffline) {
-            maybeLibUuid = [...new Set([data.libraryUuid, '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])];
-        }
-        else {
-            maybeLibUuid = [data.libraryUuid];
-        }
-
-        let comp;
-
-        for (const lib of maybeLibUuid) {
-            try {
-                const compPromise = eda.sch_PrimitiveComponent.create({
-                    uuid: data.uuid,
-                    libraryUuid: lib,
-                },
-                    to2(x),
-                    to2(y),
-                    undefined, pos.rotate
-                );
-
-                if (isOffline)
-                    comp = await withTimeout(compPromise, 25000);
-                else
-                    comp = await compPromise;
-
-            } catch (error) {
-                comp = undefined;
-            }
-
-            if (comp) break;
-        }
-
-        if (!comp) throw new Error("Component not found");
-        // eda.sys_Message.showToastMessage(`Component ${component.designator} place at ${x} ${y}`, ESYS_ToastMessageType.SUCCESS);
-
-        return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2;
-    };
-
     if (partUuid === 'GND') {
-        comp = await create({
+        comp = await placeComponent({
             libraryUuid: 'f5af0881d090439f925343ec8aedf154',
             uuid: '181f479f152643bbaa46a4b8cd92ed2e',
-        });
+        }, { x, y, rotate: pos.rotate });
 
         const s = (component.value || "GND").toUpperCase()
         comp.setState_Name(s);
@@ -129,10 +140,7 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         });
     }
     else if (partUuid === 'VCC') {
-        comp = await create({
-            libraryUuid: 'f5af0881d090439f925343ec8aedf154',
-            uuid: '4e5977e7f049493cbf5b5f91190144d3',
-        });
+        comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate: pos.rotate });
 
         const s = (component.value || "VCC").toUpperCase()
         comp.setState_Name(s);
@@ -141,10 +149,10 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         });
     }
     else {
-        comp = await create({
+        comp = await placeComponent({
             libraryUuid: 'lcsc',
             uuid: partUuid
-        });
+        }, { x, y, rotate: pos.rotate });
 
         comp.setState_Designator(designator);
     }
@@ -336,24 +344,33 @@ const getPageSize = async () => {
     }
 }
 
-async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents) {
+async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, makePort: boolean, components: ISCH_PrimitiveComponent[] | ISCH_PrimitiveComponent_2[] | undefined) {
     if (!nets) return;
 
     // Конфигурация попыток: длины и базовые направления (dx, dy)
     // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
     const trialLengths = [20, 30, 40, 50];
+    const trialPortOffsetLengths = [15, 20, 25, 30];
+
     const directions = [
-        { dx: 1, dy: 0 },   // 0 deg
-        { dx: 0, dy: -1 },  // 90 deg
-        { dx: -1, dy: 0 },  // 180 deg
-        { dx: 0, dy: 1 }    // 270 deg
+        { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
+        { dx: 0, dy: -1, port_offset_y: 0 },  // top
+        { dx: -1, dy: 0, port_offset_y: -1 },  // left
+        { dx: 0, dy: 1, port_offset_y: 0 },    // bottom
     ];
 
     for (const net of nets) {
+        let makePortForThis = makePort;
+
         const pin = await findPin(net.designator, { num: net.pin_number, name: net.pin_name }, placeComponents);
         if (!pin) {
             eda.sys_Message.showToastMessage(`Not found pin in placenet: ${net.designator} ${net.pin_number}`, ESYS_ToastMessageType.ERROR);
             continue;
+        }
+
+        const simComp = components?.find(c => c.getState_Net() === net.net || c.getState_OtherProperty()?.['Global Net Name'] === net.net);
+        if (simComp) {
+            makePortForThis = false;
         }
 
         const pinCount = pin.pins.length ?? 10;
@@ -393,26 +410,56 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents) {
         }
 
         let wireCreated = false;
+        let endX;
+        let endY;
+        let endYPort;
+        let dir;
 
         // Внешний цикл по длинам
         for (const dirIndex of directionsToTry) {
             if (wireCreated) break;
+            dir = directions[dirIndex];
 
             // Внутренний цикл по направлениям
             for (const wireLength of trialLengths) {
-                const dir = directions[dirIndex];
-                const endX = pinX + dir.dx * wireLength;
-                const endY = pinY + dir.dy * wireLength;
+                if (wireCreated) break;
 
-                try {
-                    const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY], net.net);
-                    if (wire) {
-                        wireCreated = true;
-                        break;
-                    }
-                } catch (err) {
-                    continue;
+                let portOffsets = makePortForThis ? trialPortOffsetLengths : [0];
+                if (dir.port_offset_y === 0) {
+                    portOffsets = [0];
                 }
+
+                for (const portOffsetLen of portOffsets) {
+                    if (wireCreated) break;
+
+                    endX = pinX + dir.dx * wireLength;
+                    endY = pinY + dir.dy * wireLength;
+                    endYPort = pinY + dir.port_offset_y * portOffsetLen;
+
+                    try {
+                        const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY, endX, endYPort], net.net);
+                        if (wire) {
+                            wireCreated = true;
+                            break;
+                        }
+                    } catch (err) {
+                        continue;
+                    }
+                }
+            }
+        }
+
+        if (wireCreated && makePortForThis && endX && endYPort && dir) {
+            const rotation = dir.dy === 1 ? 180 : 0;
+            const comp = await placeComponent(NET_PORT_COMPONENT, { x: endX, y: -endYPort, rotate: rotation }).catch(e => undefined);
+
+            if (comp) {
+                comp.setState_Name(net.net);
+                comp.setState_OtherProperty({
+                    "Global Net Name": net.net
+                });
+
+                await comp.done();
             }
         }
 
@@ -463,29 +510,33 @@ async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComp
     let maxX = -Infinity, maxY = -Infinity;
 
     for (const comp of components) {
-        const primitiveId = comp.getState_PrimitiveId();
-        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+        try {
+            const primitiveId = comp.getState_PrimitiveId();
+            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
 
-        if (pins && pins.length > 0) {
-            for (const pin of pins) {
-                const x = pin.getState_X();
-                const y = pin.getState_Y();
-                if (typeof x === 'number' && typeof y === 'number') {
-                    minX = Math.min(minX, x);
-                    maxX = Math.max(maxX, x);
-                    minY = Math.min(minY, y);
-                    maxY = Math.max(maxY, y);
+            if (pins && pins.length > 0) {
+                for (const pin of pins) {
+                    const x = pin.getState_X();
+                    const y = pin.getState_Y();
+                    if (typeof x === 'number' && typeof y === 'number') {
+                        minX = Math.min(minX, x);
+                        maxX = Math.max(maxX, x);
+                        minY = Math.min(minY, y);
+                        maxY = Math.max(maxY, y);
+                    }
                 }
+            } else {
+                // Фоллбэк: если нет пинов, используем центр компонента
+                const x = comp.getState_X();
+                const y = comp.getState_Y();
+                const padding = 50;
+                minX = Math.min(minX, x - padding);
+                maxX = Math.max(maxX, x + padding);
+                minY = Math.min(minY, y - padding);
+                maxY = Math.max(maxY, y + padding);
             }
-        } else {
-            // Фоллбэк: если нет пинов, используем центр компонента
-            const x = comp.getState_X();
-            const y = comp.getState_Y();
-            const padding = 50;
-            minX = Math.min(minX, x - padding);
-            maxX = Math.max(maxX, x + padding);
-            minY = Math.min(minY, y - padding);
-            maxY = Math.max(maxY, y + padding);
+        } catch (error) {
+            // skip
         }
     }
 
@@ -573,17 +624,17 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         offset.y = pageCenter.y;
     }
 
-    const placedComp = await placeComponents(circuit.components, offset);
-
     if (circuit.rm_components?.length && await confirmationMessage('The following components will be removed:\n' + circuit.rm_components.join(', '), 'Confirm deletion'))
         for (const designator of circuit.rm_components) {
             await removeComponent(designator).catch(e => {
-                eda.sys_Message.showToastMessage(`Error with rm component ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
+                eda.sys_Message.showToastMessage(`Error with rm component ${designator}: ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
             });
         }
 
     // Easyeda - slowly removes the components
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 4000)));
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 2000)));
+
+    const placedComp = await placeComponents(circuit.components, offset);
 
     await drawEdges(circuit.edges, circuit.components, placedComp, offset);
     await drawRect(circuit.blocks_rect, offset);
@@ -609,8 +660,8 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         }
     }
 
-    await placeNet(circuit.added_net ?? [], placedComp);
-    await placeNet(netForUnusedPins, placedComp);
+    await placeNet(circuit.added_net ?? [], placedComp, true, components);
+    await placeNet(netForUnusedPins, placedComp, false, components);
 
     eda.sys_Message.showToastMessage(`Assemble complete.`, ESYS_ToastMessageType.SUCCESS);
 }

@@ -182,7 +182,9 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
 async function removeWiresFromComponentToFirstJunction(
     componentPins: ISCH_PrimitiveComponentPin[],
     allWires: EasyEDAWire[]
-): Promise<void> {
+) {
+    const rmIndxs: number[] = [];
+
     for (const pin of componentPins) {
         const pinX = pin.getState_X();
         const pinY = pin.getState_Y();
@@ -206,6 +208,8 @@ async function removeWiresFromComponentToFirstJunction(
             mergedLines.push(...wire.line);
         }
 
+        rmIndxs.push(wireIndex);
+
         // Передаем объединенные линии в modify для оставшегося провода
         if (newAllWires.length > 0 && mergedLines.length > 0) {
             await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
@@ -213,7 +217,51 @@ async function removeWiresFromComponentToFirstJunction(
             });
         }
         else {
-            await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId)
+            await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId);
+        }
+    }
+
+    return allWires.filter((_, index) => !rmIndxs.includes(index));;
+}
+
+async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
+    // Проблемма в api при получении за раз
+    const shortSymbolsIds = [
+        // @ts-ignore
+        ...await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.NET_FLAG).catch(e => []),
+        // @ts-ignore
+        ...await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.NET_PORT).catch(e => [])
+    ]
+
+    const shortSymbols = await eda.sch_PrimitiveComponent.get(shortSymbolsIds);
+
+    for (let idx = 0; idx < shortSymbolsIds.length; idx++) {
+        if (shortSymbols[idx].getState_Net() !== net
+            && shortSymbols[idx].getState_OtherProperty()?.['Global Net Name'] !== net) continue;
+        const shortSymbol = shortSymbols[idx];
+
+        let pinX;
+        let pinY;
+
+        try {
+            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(shortSymbolsIds[idx]);
+
+            if (pins?.length !== 1) continue;
+
+            pinX = pins[0].getState_X();
+            pinY = pins[0].getState_Y();
+        }
+        catch (error) {
+            pinX = shortSymbol.getState_X();
+            pinY = shortSymbol.getState_Y();
+        }
+
+        const wireIndex = allWires.findIndex(wire =>
+            wire.line.some(segment => (segment[0] === pinX && segment[1] === pinY) || segment[2] === pinX && segment[3] === pinY)
+        );
+
+        if (wireIndex === -1) {
+            await eda.sch_PrimitiveComponent.delete(shortSymbolsIds[idx]).catch(e => undefined);
         }
     }
 }
@@ -229,13 +277,16 @@ export async function removeComponent(designator: string) {
 
     for (const pin of sch.components[0].pins) {
         const net = pin.signal_name;
+        if (!net) continue
 
         const wire = await eda.sch_PrimitiveWire.getAll(net);
-
-        const result = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire))
+        let allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire))
 
         // Вызываем функцию для удаления проводов
-        await removeWiresFromComponentToFirstJunction(pins, result);
-    }
+        allWires = await removeWiresFromComponentToFirstJunction(pins, allWires);
 
+        rmUnunsedShortSym(allWires, net).catch(e => {
+            eda.sys_Message.showToastMessage(`Fail rm unused short sym. ${(e as Error).message}`, ESYS_ToastMessageType.WARNING);
+        });
+    }
 }
