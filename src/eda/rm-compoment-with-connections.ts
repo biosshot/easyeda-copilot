@@ -99,7 +99,7 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
             if (path.length === 0) {
                 path.push([p1.x, p1.y, p2.x, p2.y]);
             } else {
-                // Проверяем, нужно ли合并 (merge) с предыдущим отрезком, если они коллинеарны и идут подряд
+                // Проверяем, нужно ли (merge) с предыдущим отрезком, если они коллинеарны и идут подряд
                 const lastSeg = path[path.length - 1];
                 const lastX2 = lastSeg[2];
                 const lastY2 = lastSeg[3];
@@ -224,6 +224,41 @@ async function removeWiresFromComponentToFirstJunction(
     return allWires.filter((_, index) => !rmIndxs.includes(index));;
 }
 
+export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2) {
+    let pinX;
+    let pinY;
+    let primitiveId: string | undefined;
+    let shortSymbol: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+
+    if (typeof primitive === 'string') {
+        primitiveId = primitive;
+    }
+    else {
+        shortSymbol = primitive;
+    }
+
+    try {
+        if (!primitiveId) throw new Error('Not prim id');
+
+        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+
+        if (pins?.length !== 1) return undefined;
+
+        pinX = pins[0].getState_X();
+        pinY = pins[0].getState_Y();
+    }
+    catch (error) {
+        if (!shortSymbol && primitiveId) shortSymbol = await eda.sch_PrimitiveComponent.get(primitiveId);
+        if (!shortSymbol) return undefined;
+
+        pinX = shortSymbol.getState_X();
+        // компоненты инвертируют y
+        pinY = -shortSymbol.getState_Y();
+    }
+
+    return { pinX, pinY }
+}
+
 async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
     // Проблемма в api при получении за раз
     const shortSymbolsIds = [
@@ -238,26 +273,13 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
     for (let idx = 0; idx < shortSymbolsIds.length; idx++) {
         if (shortSymbols[idx].getState_Net() !== net
             && shortSymbols[idx].getState_OtherProperty()?.['Global Net Name'] !== net) continue;
-        const shortSymbol = shortSymbols[idx];
 
-        let pinX;
-        let pinY;
+        const pos = await getShortSymPos(shortSymbolsIds[idx]);
 
-        try {
-            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(shortSymbolsIds[idx]);
-
-            if (pins?.length !== 1) continue;
-
-            pinX = pins[0].getState_X();
-            pinY = pins[0].getState_Y();
-        }
-        catch (error) {
-            pinX = shortSymbol.getState_X();
-            pinY = shortSymbol.getState_Y();
-        }
+        if (!pos) continue;
 
         const wireIndex = allWires.findIndex(wire =>
-            wire.line.some(segment => (segment[0] === pinX && segment[1] === pinY) || segment[2] === pinX && segment[3] === pinY)
+            wire.line.some(segment => (segment[0] === pos.pinX && segment[1] === pos.pinY) || segment[2] === pos.pinX && segment[3] === pos.pinY)
         );
 
         if (wireIndex === -1) {

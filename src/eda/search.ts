@@ -23,3 +23,20 @@ export async function getPrimitiveComponentPins(id: string) {
         return aNum - bNum;
     });
 }
+
+export async function hasDirectWire(net: string, p1: { x: number, y: number }, p2: { x: number, y: number }) {
+    const wires = await eda.sch_PrimitiveWire.getAll(net);
+
+    for (const wire of wires) {
+        const lineRaw = wire.getState_Line()
+
+        const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+
+        const hasP1 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? v === p1.x && w[i + 1] === p1.y : false))
+        const hasP2 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? v === p2.x && w[i + 1] === p2.y : false))
+
+        if (hasP1 && hasP2) return true
+    }
+
+    return false
+}

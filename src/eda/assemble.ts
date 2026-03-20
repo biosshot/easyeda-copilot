@@ -1,6 +1,6 @@
 import type { CircuitAssembly } from "./../types/circuit";
-import { removeComponent } from "./rm-compoment-with-connections";
-import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
+import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections";
+import { getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
 
 const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
 
@@ -368,9 +368,25 @@ async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, mak
             continue;
         }
 
-        const simComp = components?.find(c => c.getState_Net() === net.net || c.getState_OtherProperty()?.['Global Net Name'] === net.net);
-        if (simComp) {
-            makePortForThis = false;
+        if (makePortForThis) {
+            const simComps = components?.filter(c => c.getState_Net() === net.net || c.getState_OtherProperty()?.['Global Net Name'] === net.net
+                && (c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_FLAG || c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_PORT));
+
+            if (simComps) {
+                const shortSymsPos = await Promise.all(simComps.map(simComp => getShortSymPos(simComp))).catch(e => undefined);
+
+                if (shortSymsPos) {
+                    for (const pos of shortSymsPos) {
+                        if (!pos) continue;
+
+                        const hasDirect = await hasDirectWire(net.net, { x: pin.pin.getState_X(), y: pin.pin.getState_Y() }, { x: pos.pinX, y: pos.pinY }).catch(r => null);
+                        if (hasDirect === true) {
+                            makePortForThis = false;
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         const pinCount = pin.pins.length ?? 10;
@@ -558,8 +574,9 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     else eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
 
     // @ts-ignore
-    const components = await withTimeout(eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT), 1500).catch(e => undefined);
-    const busyPlace = components ? await getBBox(components) : undefined;
+    const components = await withTimeout(eda.sch_PrimitiveComponent.getAll(), 1500).catch(e => undefined);
+    const busyPlace = components ? await getBBox(components.filter(c => c.getState_ComponentType() === ESCH_PrimitiveComponentType.COMPONENT ||
+        c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_PORT || c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_FLAG)) : undefined;
     const offset: Offset = { x: 0, y: 0 };
     const root = (circuit.blocks_rect ?? []).find(block => block.name === 'block___v_root__');
 
@@ -630,7 +647,6 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
                 eda.sys_Message.showToastMessage(`Error with rm component ${designator}: ${(e as Error).message}`, ESYS_ToastMessageType.ERROR);
             });
         }
-
     // Easyeda - slowly removes the components
     await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((circuit.rm_components?.length ?? 10) * 50, 2000)));
 
