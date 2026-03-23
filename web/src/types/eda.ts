@@ -1,5 +1,7 @@
 import { CircuitAssembly, ExplainCircuit } from "./circuit";
 import { SimulateResult } from "./spice";
+// @ts-ignore
+import type _ from '@jlceda/pro-api-types';
 
 declare global {
     interface EDA {
