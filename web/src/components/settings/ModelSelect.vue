@@ -2,7 +2,7 @@
     <div class="model-select-wrapper">
         <div class="model-input-container" ref="wrapper">
             <input ref="inputRef" :value="modelValue" type="text"
-                :placeholder="props.placeholder || 'Select or type model name'" @input="onInput" @focus="openDropdown"
+                :placeholder="props.placeholder || 'Select or type model name'" @change="onChange" @focus="openDropdown"
                 @keydown.arrow-down="navigateDown" @keydown.arrow-up="navigateUp" @keydown.enter="selectCurrent"
                 @keydown.escape="closeDropdown" @keydown.tab="closeDropdown" class="model-input" />
             <button class="dropdown-toggle" @click="toggleDropdown" tabindex="-1">
@@ -42,6 +42,7 @@ import { ref, computed, onMounted, onUnmounted, watchEffect, watch } from 'vue';
 import Icon from '../shared/Icon.vue';
 import { isEasyEda, showToastMessage } from '../../eda/utils';
 import { fetchEda } from '../../api';
+import { fetchModelsCached } from './model-сache';
 
 export interface LlmModel {
     id: string;
@@ -79,13 +80,13 @@ const filteredModels = computed(() => {
 
 const PROVIDER_CONFIGS = {
     openai: {
-        baseUrl: 'https://api.openai.com',
-        endpoint: '/v1/models',
+        baseUrl: 'https://api.openai.com/v1/',
+        endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'openai' })
     },
     openrouter: {
         baseUrl: 'https://openrouter.ai/api/v1',
-        endpoint: '/models',
+        endpoint: 'models',
         normalize: (m: { id: string, pricing: number, name: string, context_length: number }) => ({
             id: m.id,
             name: m.name || m.id.split('/').pop(),
@@ -105,22 +106,22 @@ const PROVIDER_CONFIGS = {
     },
     deepseek: {
         baseUrl: 'https://api.deepseek.com',
-        endpoint: '/models',
+        endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'deepseek' })
     },
     ollamacloud: {
-        baseUrl: 'https://ollama.com',
-        endpoint: '/v1/models',
+        baseUrl: 'https://ollama.com/v1/',
+        endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'ollama' })
     },
     zai: {
-        baseUrl: 'https://open.bigmodel.cn/api/paas/v4',
-        endpoint: '/models',
+        baseUrl: 'https://open.bigmodel.cn/api/paas/v4/',
+        endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'zai' })
     },
     kimi: {
-        baseUrl: 'https://api.moonshot.cn',
-        endpoint: '/v1/models',
+        baseUrl: 'https://api.moonshot.cn/v1/',
+        endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'kimi' })
     }
 
@@ -129,9 +130,7 @@ const PROVIDER_CONFIGS = {
 async function loadModels() {
     // @ts-ignore
     const config = PROVIDER_CONFIGS[props.provider];
-    if (!config) return;
-
-    if (config.staticModels) {
+    if (config?.staticModels) {
         models.value = config.staticModels;
         return;
     }
@@ -139,26 +138,9 @@ async function loadModels() {
     if (!props.apiKey) return;
 
     isLoading.value = true;
-
     try {
-        const base = props.baseUrl || config.baseUrl;
-        const url = new URL(config.endpoint, base).href;
-
-        const res = await fetchEda(url, {
-            headers: {
-                'Authorization': `Bearer ${props.apiKey}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const json = await res.json();
-
-        const data = json.data || json.models || []
-
-        models.value = data.map(config.normalize);
+        models.value = await fetchModelsCached(props.provider, props.baseUrl, props.apiKey);
     } catch (err) {
-        showToastMessage(`Failed to fetch models for ${props.provider}: ` + (err as Error).message, 'warn');
         models.value = [];
     } finally {
         isLoading.value = false;
@@ -185,7 +167,7 @@ const selectModel = (modelId: string) => {
     closeDropdown();
 };
 
-const onInput = (event: Event) => {
+const onChange = (event: Event) => {
     emit('update:modelValue', (event.target as HTMLInputElement).value);
 };
 
