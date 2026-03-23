@@ -1,10 +1,11 @@
 <template>
     <div class="model-select-wrapper">
         <div class="model-input-container" ref="wrapper">
-            <input ref="inputRef" :value="modelValue" type="text"
-                :placeholder="props.placeholder || 'Select or type model name'" @change="onChange" @focus="openDropdown"
-                @keydown.arrow-down="navigateDown" @keydown.arrow-up="navigateUp" @keydown.enter="selectCurrent"
-                @keydown.escape="closeDropdown" @keydown.tab="closeDropdown" class="model-input" />
+            <input ref="inputRef" :value="inputValue" type="text"
+                :placeholder="props.placeholder || 'Select or type model name'" @input="onInput" @change="onChange"
+                @focus="openDropdown" @keydown.arrow-down="navigateDown" @keydown.arrow-up="navigateUp"
+                @keydown.enter="selectCurrent" @keydown.escape="closeDropdown" @keydown.tab="closeDropdown"
+                class="model-input" />
             <button class="dropdown-toggle" @click="toggleDropdown" tabindex="-1">
                 <Icon name="ChevronUp" size="16" :class="{ 'is-open': isDropdownOpen }" />
             </button>
@@ -21,7 +22,7 @@
                             <Icon v-if="model.id === modelValue" name="Check" size="14" class="item-checkmark" />
                         </button>
                         <div v-if="filteredModels.length === 0 && models.length > 0" class="dropdown-empty">
-                            No models match "{{ modelValue }}"
+                            No models match "{{ inputValue }}"
                         </div>
                         <div v-if="models.length === 0 && !isLoading" class="dropdown-empty">
                             No models.
@@ -38,11 +39,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watchEffect, watch } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import Icon from '../shared/Icon.vue';
-import { isEasyEda, showToastMessage } from '../../eda/utils';
-import { fetchEda } from '../../api';
-import { fetchModelsCached } from './model-сache';
+import { fetchModelsCached, PROVIDER_CONFIGS } from './model-сache';
 
 export interface LlmModel {
     id: string;
@@ -60,7 +59,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    'update:modelValue': [string];
+    'update:llm-model': [string];
 }>();
 
 const isDropdownOpen = ref(false);
@@ -69,63 +68,20 @@ const isLoading = ref(false);
 const models = ref<LlmModel[]>([]);
 const wrapper = ref<HTMLDivElement | null>(null);
 
+const inputValue = ref(props.modelValue);
+
+watch(() => props.modelValue, (newVal) => {
+    inputValue.value = newVal;
+});
+
 const filteredModels = computed(() => {
-    const query = props.modelValue.toLowerCase().trim();
+    const query = inputValue.value.toLowerCase().trim();
     if (!query) return models.value;
     return models.value.filter(m =>
         m.name.toLowerCase().includes(query) ||
         m.id.toLowerCase().includes(query)
     );
 });
-
-const PROVIDER_CONFIGS = {
-    openai: {
-        baseUrl: 'https://api.openai.com/v1/',
-        endpoint: 'models',
-        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'openai' })
-    },
-    openrouter: {
-        baseUrl: 'https://openrouter.ai/api/v1',
-        endpoint: 'models',
-        normalize: (m: { id: string, pricing: number, name: string, context_length: number }) => ({
-            id: m.id,
-            name: m.name || m.id.split('/').pop(),
-            contextLength: m.context_length,
-            provider: 'openrouter',
-            pricing: m.pricing
-        })
-    },
-    anthropic: {
-        // Anthropic не имеет endpoint для списка моделей
-        staticModels: [
-            { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', contextLength: 200000 },
-            { id: 'claude-opus-4-20250514', name: 'Claude Opus 4', contextLength: 200000 },
-            { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', contextLength: 200000 },
-            { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', contextLength: 200000 }
-        ]
-    },
-    deepseek: {
-        baseUrl: 'https://api.deepseek.com',
-        endpoint: 'models',
-        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'deepseek' })
-    },
-    ollamacloud: {
-        baseUrl: 'https://ollama.com/v1/',
-        endpoint: 'models',
-        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'ollama' })
-    },
-    zai: {
-        baseUrl: 'https://open.bigmodel.cn/api/paas/v4/',
-        endpoint: 'models',
-        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'zai' })
-    },
-    kimi: {
-        baseUrl: 'https://api.moonshot.cn/v1/',
-        endpoint: 'models',
-        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'kimi' })
-    }
-
-}
 
 async function loadModels() {
     // @ts-ignore
@@ -163,12 +119,19 @@ const toggleDropdown = () => {
 };
 
 const selectModel = (modelId: string) => {
-    emit('update:modelValue', modelId);
+    inputValue.value = modelId;
+    emit('update:llm-model', modelId);
     closeDropdown();
 };
 
+const onInput = (event: Event) => {
+    const value = (event.target as HTMLInputElement).value;
+    inputValue.value = value;
+};
+
 const onChange = (event: Event) => {
-    emit('update:modelValue', (event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
+    emit('update:llm-model', value);
 };
 
 const navigateUp = () => {
@@ -191,6 +154,9 @@ const selectCurrent = () => {
     if (isDropdownOpen.value && hoveredIndex.value >= 0 && filteredModels.value[hoveredIndex.value]) {
         selectModel(filteredModels.value[hoveredIndex.value].id);
     } else {
+        if (inputValue.value) {
+            emit('update:llm-model', inputValue.value);
+        }
         closeDropdown();
     }
 };

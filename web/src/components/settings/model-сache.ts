@@ -65,11 +65,10 @@ export const PROVIDER_CONFIGS = {
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'zai' })
     },
     kimi: {
-        baseUrl: 'https://api.moonshot.cn/v1/',
+        baseUrl: 'https://api.moonshot.ai/v1/',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'kimi' })
     }
-
 }
 
 

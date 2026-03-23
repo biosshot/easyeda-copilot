@@ -22,7 +22,7 @@
         <ModelSelect :model-value="props.model" :provider="settingsStore.getSetting('apiProvider') as string"
             :api-key="settingsStore.getSetting('apiKey') as string"
             :base-url="settingsStore.getSetting('llmBaseUrl') as string"
-            @update:model-value="emits('modelChange', $event)" />
+            @update:llm-model="emits('modelChange', $event)" />
         <p class="hint">{{ props.desc }}</p>
     </div>
 
