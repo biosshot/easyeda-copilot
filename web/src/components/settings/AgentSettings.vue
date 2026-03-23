@@ -7,9 +7,9 @@
     </div>
 
     <div class="setting-group">
-        <div style="display: flex;">
+        <div style="display: flex; align-items: center;">
             <label>Model</label>
-            <div style="margin-left: auto;">
+            <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
                 <Icon v-if="props.modelFeatures?.includes('json')" name="CodeXml" :size="14"
                     title="The model must be able to use structured output" />
                 <Icon v-if="props.modelFeatures?.includes('image')" name="Image" :size="14"
@@ -19,8 +19,10 @@
             </div>
         </div>
 
-        <input :value="props.model" type="text" placeholder="e.g., gpt-5.4"
-            @change="emits('modelChange', ($event.target as HTMLInputElement).value)" />
+        <ModelSelect :model-value="props.model" :provider="settingsStore.getSetting('apiProvider') as string"
+            :api-key="settingsStore.getSetting('apiKey') as string"
+            :base-url="settingsStore.getSetting('llmBaseUrl') as string"
+            @update:model-value="emits('modelChange', $event)" />
         <p class="hint">{{ props.desc }}</p>
     </div>
 
@@ -33,10 +35,21 @@
 
 
 <script setup lang="ts">
+import { useSettingsStore } from '../../stores/settings-store';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Icon from '../shared/Icon.vue';
+import ModelSelect from './ModelSelect.vue';
 
-const props = defineProps<{ title: string, model: string, desc: string, reasoning: string, modelFeatures?: ('image' | 'tools' | 'json')[] }>();
+const settingsStore = useSettingsStore();
+
+const props = defineProps<{
+    title: string,
+    model: string,
+    desc: string,
+    reasoning: string,
+    modelFeatures?: ('image' | 'tools' | 'json')[]
+}>();
+
 const emits = defineEmits<{
     modelChange: [string],
     reasoningChange: [string]
