@@ -43,10 +43,16 @@ export const PROVIDER_CONFIGS = {
     },
     anthropic: {
         staticModels: [
-            { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', contextLength: 200000 },
+            { id: 'claude-opus-4-6', name: 'Claude Opus 4.6', contextLength: 1000000 },
+            { id: 'claude-opus-4-5-20251101', name: 'Claude Opus 4.5', contextLength: 1000000 },
+            { id: 'claude-opus-4-1-20250805', name: 'Claude Opus 4.1', contextLength: 200000 },
             { id: 'claude-opus-4-20250514', name: 'Claude Opus 4', contextLength: 200000 },
-            { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', contextLength: 200000 },
-            { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', contextLength: 200000 }
+
+            { id: 'claude-sonnet-4-6', name: 'Claude Sonnet 4.6', contextLength: 1000000 },
+            { id: 'claude-sonnet-4-5-20250929', name: 'Claude Sonnet 4.5', contextLength: 1000000 },
+            { id: 'claude-sonnet-4-20250514', name: 'Claude Sonnet 4', contextLength: 1000000 },
+
+            { id: 'claude-haiku-4-5-20251001', name: 'Claude Haiku 4.5', contextLength: 200000 },
         ]
     },
     deepseek: {
