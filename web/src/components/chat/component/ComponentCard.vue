@@ -13,29 +13,27 @@
 
     <p>{{ component.description }}</p>
 
-    <IconButton v-if="isEasyEdaActive" @click="placeComponent" variant="primary" class="place-button" icon="Replace">
+    <IconButton v-if="isEasyEdaActive" @click="onClick" variant="primary" class="place-button" icon="Replace">
       Place</IconButton>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { isEasyEda } from '../../../eda/utils'
+import { isEasyEda, showToastMessage } from '../../../eda/utils'
 import type { Component } from '../../../types/component'
 import IconButton from '../../shared/IconButton.vue'
+import { placeComponent } from './place';
 
 const props = defineProps<{ component: Component }>();
 
 const isEasyEdaActive = computed(() => isEasyEda())
 
-const placeComponent = async () => {
+const onClick = async () => {
   try {
-    await eda.sch_PrimitiveComponent.placeComponentWithMouse({
-      libraryUuid: 'lcsc',
-      uuid: props.component.part_uuid
-    })
+    await placeComponent(props.component.part_uuid);
   } catch (error) {
-    console.error('Error placing component:', error)
+    showToastMessage('Error place component: ' + (error as Error).message, 'error');
   }
 }
 </script>

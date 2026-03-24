@@ -31,8 +31,10 @@
 <script setup lang="ts">
 import { onMounted, watch, watchEffect } from 'vue';
 import type { Component } from '../../../types/component';
-import ComponentCard from './ComponentCard.vue' // Предполагается, что ты создашь этот компонент
+import ComponentCard from './ComponentCard.vue';
 import { InlineButton } from '../../../types/inline-button';
+import { showToastMessage } from '../../../eda/utils';
+import { placeComponent } from './place';
 
 const props = defineProps<{
     result: {
@@ -43,14 +45,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'inline-buttons': [InlineButton[]] }>();
 
-const placeComponent = async (part_uuid: string) => {
+const place = async (part_uuid: string) => {
     try {
-        await eda.sch_PrimitiveComponent.placeComponentWithMouse({
-            libraryUuid: 'lcsc',
-            uuid: part_uuid
-        })
+        await placeComponent(part_uuid);
     } catch (error) {
-        console.error('Error placing component:', error)
+        showToastMessage('Error place component: ' + (error as Error).message, 'error');
     }
 }
 
@@ -63,7 +62,7 @@ watchEffect(() => {
                 {
                     icon: 'Play',
                     text: result.best_component.name,
-                    handler: () => placeComponent(result.best_component?.part_uuid ?? '')
+                    handler: () => place(result.best_component?.part_uuid ?? '')
                 }
             )
         }
@@ -73,7 +72,7 @@ watchEffect(() => {
                     {
                         icon: 'Play',
                         text: comp.name,
-                        handler: () => placeComponent(comp?.part_uuid ?? '')
+                        handler: () => place(comp?.part_uuid ?? '')
                     }
                 )
             })

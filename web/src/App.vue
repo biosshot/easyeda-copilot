@@ -16,7 +16,7 @@
       </template>
     </Navbar>
 
-    <div v-if="hasCheckpoint" class="backwards-nav">
+    <div v-if="hasCheckpoint" class="backwards-nav" :style="{ top: isOnlineMode ? '35px' : '75px' }">
       <span class="line"></span>
       <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
       <span class="line"></span>

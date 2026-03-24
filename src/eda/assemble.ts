@@ -83,7 +83,7 @@ const placeComponent = async (data: { libraryUuid: string, uuid: string }, { x, 
     let maybeLibUuid;
 
     if (isOffline) {
-        maybeLibUuid = [...new Set([data.libraryUuid, '0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154'])];
+        maybeLibUuid = [...new Set(['0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154', data.libraryUuid])];
     }
     else {
         maybeLibUuid = [data.libraryUuid];

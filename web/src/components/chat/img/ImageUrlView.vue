@@ -6,17 +6,14 @@
                 BETWEEN REQUESTS` }}</div>
         </template>
         <template v-else>
-            <div class="error-state">
-                <Icon name="CircleAlert" size="20" class="error-icon" />
-                <span>Failed to load image</span>
-            </div>
+            <ErrorBanner message="Failed to load image" />
         </template>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import Icon from '../../shared/Icon.vue'
+import ErrorBanner from '../../shared/ErrorBanner.vue';
 
 const props = defineProps<{ result: { image_url?: string, label?: string } }>();
 
@@ -32,6 +29,7 @@ function handleError() {
 .image-url-viewer {
     display: inline-block;
     max-width: 99%;
+    padding: 5px;
 }
 
 .image-url-viewer img {
@@ -46,21 +44,5 @@ function handleError() {
     font-size: 0.85rem;
     color: var(--color-text-tertiary);
     text-align: center;
-}
-
-.error-state {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    background-color: var(--color-background-secondary);
-    border: 1px solid var(--color-error-border, #e53e3e);
-    border-radius: 0.5rem;
-    color: var(--color-error, #e53e3e);
-    font-size: 0.9rem;
-}
-
-.error-icon {
-    flex-shrink: 0;
 }
 </style>

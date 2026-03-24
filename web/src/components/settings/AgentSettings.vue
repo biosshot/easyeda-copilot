@@ -2,7 +2,7 @@
     <div style="display: flex; flex-direction: row;">
         <label>{{ props.title }}</label>
         <div style="margin-left: auto;">
-            <slot></slot>
+            <slot name="custom-header"></slot>
         </div>
     </div>
 
@@ -31,6 +31,8 @@
         <CustomSelect :model-value="reasoning" @update:model-value="emits('reasoningChange', $event)" :options="[{ label: 'Minimal', value: 'minimal' }, { label: 'Low', value: 'low' },
         { label: 'Medium', value: 'medium' }, { label: 'High', value: 'high' }]" />
     </div>
+
+    <slot name="custom-settings"></slot>
 </template>
 
 

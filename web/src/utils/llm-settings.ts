@@ -21,6 +21,7 @@ export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStor
         'circuit-explainer': {
             model: settingsStore.getSetting('agentCircuitExplainerModel') || undefined,
             reasoning: settingsStore.getSetting('agentCircuitExplainerReasoning') || undefined,
+            useSpice: Boolean(settingsStore.getSetting('agentCircuitExplainerUseSpice') || false)
         },
         'circuit-maker': {
             model: settingsStore.getSetting('agentCircuitMakerModel') || undefined,

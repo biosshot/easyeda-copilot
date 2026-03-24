@@ -73,10 +73,13 @@
                         @model-change="onSettingChange('agentBaseModel', $event)"
                         :model-features="['json', 'tools', 'image']"
                         desc="Fallback model used when specific agent models are not configured. Recommended: balanced-performance model like gpt-5-mini.">
-                        <button @click="applyBaseAgentToAll" class="apply-to-all-btn"
-                            title="Copy base model settings to all specialized agents">
-                            Apply to all
-                        </button>
+
+                        <template #custom-header>
+                            <button @click="applyBaseAgentToAll" class="apply-to-all-btn"
+                                title="Copy base model settings to all specialized agents">
+                                Apply to all
+                            </button>
+                        </template>
                     </AgentSettings>
 
                     <!-- Specialized Agent Configurations -->
@@ -105,6 +108,20 @@
                             :reasoning="settings.agentCircuitExplainerReasoning as string"
                             @reasoning-change="onSettingChange('agentCircuitExplainerReasoning', $event)"
                             desc="Analyzes and explains circuit functionality, signal flow, and component interactions. Recommended: gpt-5.4 for deep technical analysis.">
+
+                            <template #custom-settings>
+                                <div class="setting-group">
+                                    <label for="agentCircuitExplainerUseSpice">
+                                        <input id="agentCircuitExplainerUseSpice" type="checkbox"
+                                            :checked="settings.agentCircuitExplainerUseSpice as boolean"
+                                            @change="onSettingChange('agentCircuitExplainerUseSpice', ($event.target as HTMLInputElement).checked)" />
+                                        Add spice-simulation to agent tools
+                                    </label>
+
+                                    <p class="hint">Adds a spice-simulation tool to the agent and the ability to display
+                                        simulation results. REQUIRES VISION</p>
+                                </div>
+                            </template>
                         </AgentSettings>
                     </Collapsible>
 
