@@ -1,3 +1,4 @@
+import { ExplainCircuit } from "../types/circuit";
 import { getSchematic } from "./schematic";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 
@@ -288,16 +289,20 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
     }
 }
 
-export async function removeComponent(designator: string) {
+export async function removeComponent(designator: string, circuit?: ExplainCircuit) {
     const component = await searchComponentInSCH(designator);
     if (!component) throw new Error('Component not found ' + designator);
 
-    const sch = await getSchematic([component.primitiveId]);
+    if (!circuit) circuit = await getSchematic([component.primitiveId]);
     const pins = await getPrimitiveComponentPins(component.primitiveId)
 
     await eda.sch_PrimitiveComponent.delete(component.primitiveId);
 
-    for (const pin of sch.components[0].pins) {
+    const componentCircuit = circuit.components.find(c => c.designator === designator);
+
+    if (!componentCircuit) throw new Error(`Not found component in sch ${designator}`)
+
+    for (const pin of componentCircuit.pins) {
         const net = pin.signal_name;
         if (!net) continue
 

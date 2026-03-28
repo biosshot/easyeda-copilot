@@ -181,6 +181,17 @@
                             :reasoning="settings.agentLcscSearchReasoning as string" :model-features="['json', 'tools']"
                             @reasoning-change="onSettingChange('agentLcscSearchReasoning', $event)"
                             desc="Translates design requirements into precise LCSC catalog queries and filters results. Recommended: gpt-5-mini query optimization.">
+
+                            <template #custom-settings>
+                                <div class="setting-group">
+                                    <label for="agentLcscSearchUsePrefetch">
+                                        <input id="agentLcscSearchUsePrefetch" type="checkbox"
+                                            :checked="settings.agentLcscSearchUsePrefetch as boolean"
+                                            @change="onSettingChange('agentLcscSearchUsePrefetch', ($event.target as HTMLInputElement).checked)" />
+                                        Performs a preliminary web search
+                                    </label>
+                                </div>
+                            </template>
                         </AgentSettings>
                     </Collapsible>
 

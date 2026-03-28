@@ -46,6 +46,7 @@ export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStor
         'lcsc-search': {
             model: settingsStore.getSetting('agentLcscSearchModel') || undefined,
             reasoning: settingsStore.getSetting('agentLcscSearchReasoning') || undefined,
+            usePrefetch: Boolean(settingsStore.getSetting('agentLcscSearchUsePrefetch') || false)
         },
         'lcsc-most-rel-catalog': {
             model: settingsStore.getSetting('agentLcscCatalogModel') || undefined,
