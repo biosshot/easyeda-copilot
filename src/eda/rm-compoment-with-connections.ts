@@ -1,6 +1,7 @@
 import { ExplainCircuit } from "../types/circuit";
 import { getSchematic } from "./schematic";
 import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
+import { rmPartFromDesignator } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
 interface Point {
@@ -290,13 +291,15 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
 }
 
 export async function removeComponent(designator: string, circuit?: ExplainCircuit) {
+    designator = rmPartFromDesignator(designator);
     const component = await searchComponentInSCH(designator);
     if (!component) throw new Error('Component not found ' + designator);
 
-    if (!circuit) circuit = await getSchematic([component.primitiveId]);
-    const pins = await getPrimitiveComponentPins(component.primitiveId)
+    const primitiveIds = component.map(c => c.primitiveId);
+    if (!circuit) circuit = await getSchematic(primitiveIds);
+    const pins = (await Promise.all(component.map(component => getPrimitiveComponentPins(component.primitiveId)))).flat();
 
-    await eda.sch_PrimitiveComponent.delete(component.primitiveId);
+    await eda.sch_PrimitiveComponent.delete(primitiveIds);
 
     const componentCircuit = circuit.components.find(c => c.designator === designator);
 

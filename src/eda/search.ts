@@ -1,16 +1,26 @@
+import { PlacedComponents } from "./types";
+import { rmPartFromDesignator } from "./utils";
+
 export const searchComponentInSCH = async (designator: string) => {
-    designator = designator.trim();
+    designator = rmPartFromDesignator(designator);
+
     // @ts-ignore
     const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT);
     const components = await eda.sch_PrimitiveComponent.get(promIdComponent);
+    const found = [];
 
     for (let index = 0; index < components.length; index++) {
         const component = components[index];
         if (component.getState_Designator()?.trim() === designator)
-            return { component, primitiveId: promIdComponent[index] };
+            if (!found.length ||
+                (found[0].component.getState_SubPartName() &&
+                    component.getState_SubPartName() &&
+                    component.getState_SubPartName()?.includes(found[0].component.getState_SupplierId() ?? ''))
+            )
+                found.push({ component, primitiveId: promIdComponent[index] });
     }
 
-    return undefined;
+    return found.length ? found : undefined;
 }
 
 export async function getPrimitiveComponentPins(id: string) {
@@ -40,3 +50,51 @@ export async function hasDirectWire(net: string, p1: { x: number, y: number }, p
 
     return false
 }
+
+export const findPin = async (designator: string, pin_: { num: number | string, name?: string }, placeComponents: PlacedComponents, useSchComps = true) => {
+    const pinNumber = pin_.num;
+    designator = rmPartFromDesignator(designator);
+
+    let pins: ISCH_PrimitiveComponentPin[][] = [];
+    let isExternal = false;
+    let components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined)[] = [];
+
+    await Promise.all(Object.entries(placeComponents).map(async ([pdesignator, placedComp]) => {
+        pdesignator = rmPartFromDesignator(pdesignator);
+
+        if (pdesignator === designator) {
+            const c = await eda.sch_PrimitiveComponent.get(placedComp.primitive_id);
+            components.push(c);
+            pins.push(placedComp.pins);
+        }
+    }));
+
+    if (useSchComps && !pins.length) {
+        isExternal = true;
+        components = (await searchComponentInSCH(designator).then(c => c?.map(c => c.component))) ?? [];
+        pins = components ? await Promise.all(components.map(c => getPrimitiveComponentPins(c?.getState_PrimitiveId() ?? ''))) : []
+    }
+
+    let pin: ISCH_PrimitiveComponentPin | undefined;
+    let component: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+
+    if (pinNumber == 1 && pins.length === 1 && pins[0].length === 1) { pin = pins[0][0]; component = components[0]; }
+    else {
+        for (let index = 0; index < pins.length; index++) {
+            component = components[index];
+            pin = pins[index].find(p => p.getState_PinNumber() == pinNumber);
+            if (pin) break;
+        }
+    }
+    if (!pin && pin_.name) {
+        for (let index = 0; index < pins.length; index++) {
+            component = components[index];
+            pin = pins[index].find(p => p.getState_PinName() == pin_.name);
+            if (pin) break;
+        }
+    }
+
+    if (!pin) return null;
+
+    return { pin: pin, isExternal, component, pins };
+};

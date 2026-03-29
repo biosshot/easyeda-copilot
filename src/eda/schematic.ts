@@ -50,29 +50,26 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
     const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
     const pinToSignal = parseAllegroNetlist(netlistText);
-    console.log("[getSchematic] Parsed netlist, total pins:", pinToSignal.entries());
 
-    const components: Promise<ExplainCircuit['components'][0]>[] = [];
-    // const components: ExplainCircuit['components'][0][] = [];
 
     if (!primitiveIds) {
         primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
     }
 
-    const designators = new Set<string>();
+    const componentsMap: Map<string, ExplainCircuit['components'][0] & { code?: string }> = new Map();
 
     for (const id of primitiveIds) {
-        const component: ISCH_PrimitiveComponent_2 | undefined = await eda.sch_PrimitiveComponent.get(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
+        const primitiveComponent: ISCH_PrimitiveComponent_2 | undefined = await eda.sch_PrimitiveComponent.get(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
 
-        if (!component || component.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) {
-            console.error(`[getSchematic] Error Processing component`, component);
+        if (!primitiveComponent || primitiveComponent.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) {
+            // eda.sys_Log.add(`[getSchematic] Error Processing component ${JSON.stringify(primitiveComponent)}`);
             continue;
         }
 
-        const designator = component.getState_Designator() ?? '';
+        const designator = primitiveComponent.getState_Designator() ?? '';
 
         if (!designator.trim()) {
-            console.error(`[getSchematic] Error Processing component`);
+            // eda.sys_Log.add(`[getSchematic] Error Processing component`);
             continue;
         }
 
@@ -80,36 +77,36 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             continue;
         }
 
-        if (designators.has(designator)) {
+        const component = componentsMap.get(designator);
+
+        if (component && !primitiveComponent.getState_SubPartName()) {
             eda.sys_Message.showToastMessage(`Duplicate designator: ${designator}\nPlease rename the designations. (Design -> Annotate Designator)`, ESYS_ToastMessageType.ERROR);
-            console.warn(`[getSchematic] Duplicate designator: ${designator}`);
+            console.warn(`[getSchematic] Duplicate designator: ${designator}; ${primitiveComponent.getState_SubPartName()}`);
             continue;
         }
 
-        designators.add(designator);
-
         let value: string | null = null;
 
-        const name = component.getState_Name() ?? '';
+        const name = primitiveComponent.getState_Name() ?? '';
 
         if (name.includes("Manufacturer Part")) {
-            value = component.getState_ManufacturerId() ?? '';
+            value = primitiveComponent.getState_ManufacturerId() ?? '';
         }
         else if (name.includes("Value")) {
-            value = component.getState_OtherProperty()?.Value?.toString() ?? null;
+            value = primitiveComponent.getState_OtherProperty()?.Value?.toString() ?? null;
         }
         else if (name[0] !== '=') {
             value = name;
         }
 
         if (!value) {
-            value = component.getState_ManufacturerId() ?? '';
+            value = primitiveComponent.getState_ManufacturerId() ?? '';
         }
 
         const pins: ExplainCircuit['components'][0]['pins'] = [];
 
-        console.log(`[getSchematic] Processing component: ${designator}, Value: ${value}`);
-        const rawPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(component.getState_PrimitiveId())
+        // eda.sys_Log.add(`[getSchematic] Processing component: ${designator}, Value: ${value}`);
+        const rawPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveComponent.getState_PrimitiveId())
 
         if (Array.isArray(rawPins)) {
             for (const p of rawPins) {
@@ -120,7 +117,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                 // Сопоставление: "R7.1" → сигнал
                 const pinRef = `${designator}.${pinNumber}`;
                 const signalName = pinToSignal.get(pinRef) || '';
-                console.log(`[getSchematic]   Pin: ${pinRef}, Name: ${pinName}, Signal: ${signalName}`);
+                // eda.sys_Log.add(`[getSchematic]   Pin: ${pinRef}, Name: ${pinName}, Signal: ${signalName}`);
 
                 pins.push({
                     pin_number: pinNumber,
@@ -130,58 +127,49 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             }
         }
 
-        // components.push({
-        //     designator,
-        //     value: value ?? 'none',
-        //     pins,
-        //     part_uuid: component.getState_Component().uuid,
-        //     pos: {
-        //         x: component.getState_X(),
-        //         y: component.getState_Y()
-        //     }
-        // });
-
-        // eslint-disable-next-line no-async-promise-executor
-        components.push(new Promise(async (resolve) => {
-            let part_uuid: string | null = null;
-
-            if (!options?.disableExtractPartUuid) {
-                const query = component.getState_SupplierId()?.toString()
-                    || component.getState_SubPartName()?.toString()
-                    || component.getState_ManufacturerId()?.toString();
-
-
-                if (!query) {
-                    eda.sys_Message.showToastMessage(`Fail get component ${designator}`, ESYS_ToastMessageType.ERROR);
-                    part_uuid = null;
-                }
-                else {
-                    part_uuid = await eda.lib_Device.search(query).then(devices => {
-                        return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
-                    }).catch(() => null);
-                }
-            }
-
-            resolve({
-                designator,
-                value: value ?? 'none',
-                pins,
-                part_uuid,
-                pos: {
-                    x: component.getState_X(),
-                    y: component.getState_Y()
-                }
-            });
-        }))
+        componentsMap.set(designator, {
+            designator,
+            part_uuid: null,
+            pins: [...(component?.pins ?? []), ...pins],
+            value,
+            pos: {
+                x: primitiveComponent.getState_X(),
+                y: primitiveComponent.getState_Y()
+            },
+            code: primitiveComponent.getState_SupplierId()?.toString() || undefined
+        })
     }
 
-    const componentsR = await Promise.all(components)
-    // .then(components => components.filter(component => {
-    //     const unconn = component.pins.filter(p => !p.signal_name.trim().length).length;
-    //     return unconn !== component.pins.length;
-    // }));
+    // eslint-disable-next-line no-async-promise-executor
+    const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
+        let part_uuid: string | null = null;
 
-    const explainCircuit: ExplainCircuit = { components: componentsR };
+        if (!options?.disableExtractPartUuid) {
+            const query = component.code || component.value;
+
+            if (!query) {
+                eda.sys_Message.showToastMessage(`Fail get component ${component.designator}`, ESYS_ToastMessageType.ERROR);
+                part_uuid = null;
+            }
+            else {
+                part_uuid = await eda.lib_Device.search(query).then(devices => {
+                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
+                }).catch(() => null);
+            }
+        }
+
+        resolve({
+            designator: component.designator,
+            pins: component.pins,
+            value: component.value,
+            pos: component.pos,
+            part_uuid,
+        });
+    }));
+
+    const components = await Promise.all(componentsPromises)
+
+    const explainCircuit: ExplainCircuit = { components };
 
     return explainCircuit;
 }
