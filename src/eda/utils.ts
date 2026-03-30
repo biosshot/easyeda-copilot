@@ -107,7 +107,9 @@ export const rmPartFromDesignator = (designator: string) => {
     const lastDotIndex = designator.lastIndexOf('.');
 
     if (lastDotIndex !== -1) {
-        designator = designator.substring(0, lastDotIndex);
+        const number = designator.substring(lastDotIndex + 1);
+        if (/^\d+$/.test(number))
+            designator = designator.substring(0, lastDotIndex);
     }
 
     return designator;

@@ -180,6 +180,20 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
     });
 }
 
+function countPoints(mergedLines: number[][]): Record<string, number> {
+    const counts: Record<string, number> = {};
+
+    mergedLines.forEach(([x1, y1, x2, y2]) => {
+        const p1 = `${x1},${y1}`;
+        const p2 = `${x2},${y2}`;
+
+        counts[p1] = (counts[p1] || 0) + 1;
+        counts[p2] = (counts[p2] || 0) + 1;
+    });
+
+    return counts;
+}
+
 // Функция для удаления проводов от компонента до первого узла
 async function removeWiresFromComponentToFirstJunction(
     componentPins: ISCH_PrimitiveComponentPin[],
@@ -214,16 +228,34 @@ async function removeWiresFromComponentToFirstJunction(
 
         // Передаем объединенные линии в modify для оставшегося провода
         if (newAllWires.length > 0 && mergedLines.length > 0) {
-            await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
-                line: mergedLines
-            });
+            if (!Object.values(countPoints(mergedLines)).find(x => x >= 4)) {
+                await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
+                    line: mergedLines
+                });
+            }
+            else {
+                await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId)
+                await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
+
+                for (const line of mergedLines) {
+                    const wire = await eda.sch_PrimitiveWire.create(line, wireWithPin.net);
+                    await wire?.done().catch(e => undefined);
+                }
+
+                await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
+
+                return { end: false, allWires };
+            }
         }
         else {
             await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId);
+            await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
+            return { end: false, allWires };
         }
     }
 
-    return allWires.filter((_, index) => !rmIndxs.includes(index));;
+    allWires.filter((_, index) => !rmIndxs.includes(index));
+    return { end: true, allWires };
 }
 
 export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2) {
@@ -309,13 +341,18 @@ export async function removeComponent(designator: string, circuit?: ExplainCircu
         const net = pin.signal_name;
         if (!net) continue
 
-        const wire = await eda.sch_PrimitiveWire.getAll(net);
-        let allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire))
+        let end = false;
+        let allWires;
 
-        // Вызываем функцию для удаления проводов
-        allWires = await removeWiresFromComponentToFirstJunction(pins, allWires);
+        do {
+            const wire = await eda.sch_PrimitiveWire.getAll(net);
+            allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire))
+            const { allWires: allWires__, end: end__ } = await removeWiresFromComponentToFirstJunction(pins, allWires);
+            end = end__;
+            allWires = allWires__;
+        } while (!end);
 
-        rmUnunsedShortSym(allWires, net).catch(e => {
+        await rmUnunsedShortSym(allWires, net).catch(e => {
             eda.sys_Message.showToastMessage(`Fail rm unused short sym. ${(e as Error).message}`, ESYS_ToastMessageType.WARNING);
         });
     }

@@ -1,5 +1,5 @@
 import { PlacedComponents } from "./types";
-import { rmPartFromDesignator } from "./utils";
+import { rmPartFromDesignator, to2 } from "./utils";
 
 export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
@@ -11,13 +11,8 @@ export const searchComponentInSCH = async (designator: string) => {
 
     for (let index = 0; index < components.length; index++) {
         const component = components[index];
-        if (component.getState_Designator()?.trim() === designator)
-            if (!found.length ||
-                (found[0].component.getState_SubPartName() &&
-                    component.getState_SubPartName() &&
-                    component.getState_SubPartName()?.includes(found[0].component.getState_SupplierId() ?? ''))
-            )
-                found.push({ component, primitiveId: promIdComponent[index] });
+        if (rmPartFromDesignator(component.getState_Designator()?.trim() ?? '') === designator)
+            found.push({ component, primitiveId: promIdComponent[index] });
     }
 
     return found.length ? found : undefined;
@@ -34,6 +29,10 @@ export async function getPrimitiveComponentPins(id: string) {
     });
 }
 
+const fuzzyRound = (x: number, y: number) => {
+    return Math.abs(x - y) < 10;
+}
+
 export async function hasDirectWire(net: string, p1: { x: number, y: number }, p2: { x: number, y: number }) {
     const wires = await eda.sch_PrimitiveWire.getAll(net);
 
@@ -42,8 +41,8 @@ export async function hasDirectWire(net: string, p1: { x: number, y: number }, p
 
         const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
 
-        const hasP1 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? v === p1.x && w[i + 1] === p1.y : false))
-        const hasP2 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? v === p2.x && w[i + 1] === p2.y : false))
+        const hasP1 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? fuzzyRound(v, p1.x) && fuzzyRound(w[i + 1], p1.y) : false))
+        const hasP2 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? fuzzyRound(v, p2.x) && fuzzyRound(w[i + 1], p2.y) : false))
 
         if (hasP1 && hasP2) return true
     }

@@ -79,7 +79,7 @@ export const CircuitAssemblyStruct = () => z.object({
             outgoingShape: z.string().optional(),
             incomingSections: z.array(z.string()).optional(),
             outgoingSections: z.array(z.string()).optional(),
-        })),
+        })).optional(),
     })),
     blocks: z.array(BlockSchema()).describe('Blocks'),
     blocks_rect: z.array(z.object({
@@ -98,7 +98,8 @@ export const CircuitAssemblyStruct = () => z.object({
         pin_number: z.number().or(z.string()),
         net: z.string(),
     })).optional(),
-    rm_components: z.array(z.string()).optional()
+    rm_components: z.array(z.string()).optional(),
+    replace_components: z.array(z.string()).optional(),
 });
 
 const ExplainPinSchema = () => z.object({

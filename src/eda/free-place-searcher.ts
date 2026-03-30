@@ -20,6 +20,9 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     }));
 
     const STEP = 80;
+    eda.sys_Log.add(`${JSON.stringify(componentsRect)}`)
+    eda.sys_Log.add(`${JSON.stringify(targetPoint)}`)
+    eda.sys_Log.add(`${JSON.stringify(tagetSize)}`)
 
     // Функция проверки пересечения двух прямоугольников
     function isOverlap(rect1: { x: number, y: number, w: number, h: number }, rect2: { x: number, y: number, w: number, h: number }): boolean {
@@ -32,8 +35,8 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     // Проверяет, свободно ли место для прямоугольника с центром в (cx, cy)
     function isFree(cx: number, cy: number): boolean {
         const targetRect = {
-            x: cx - tagetSize.w / 2,
-            y: cy - tagetSize.h / 2,
+            x: cx - tagetSize.w,
+            y: cy - tagetSize.h,
             w: tagetSize.w,
             h: tagetSize.h
         };
