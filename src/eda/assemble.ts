@@ -1,7 +1,7 @@
 import type { CircuitAssembly, ExplainCircuit } from "./../types/circuit";
 import { searchFreePlaceV2 } from "./free-place-searcher";
 import { placeComponent } from "./place-component";
-import { placeNet } from "./place-net";
+import { placeNet, rmNet } from "./place-net";
 import { ComponentReplacer } from "./replacer";
 import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections";
 import { getSchematic } from "./schematic";
@@ -53,6 +53,8 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
 
         comp.setState_Designator(rmPartFromDesignator(designator));
     }
+
+    eda.sys_Log.add(`Place component ${designator} ${partUuid} at ${x} ${y} rot: ${pos.rotate}`)
 
     return comp;
 }
@@ -202,6 +204,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 
             try {
                 const wire = await eda.sch_PrimitiveWire.create(values, netName);
+                // await wire?.done();
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
                     `- srcpin: ${srcpin?.component?.getState_Designator()}; trgpin: ${trgpin?.component?.getState_Designator()}`;
@@ -572,11 +575,16 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
 
     const netForUnusedPins = getNetForUnusedPins(components, edges);
 
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 2000)));
+
+    await rmNet(circuit.rm_net ?? [], placedComp)
     await placeNet(added_net ?? [], placedComp, true);
     await placeNet(netForUnusedPins, placedComp, true);
 
-    if (!rm_components?.length && !components.length && componentsAllowReplace.length) {
-        const net = componentsAllowReplace[0].component.pins?.[0]?.signal_name;
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
+
+    if (components.length) {
+        const net = components[0].pins?.[0]?.signal_name;
         if (net) {
             const wire = await eda.sch_PrimitiveWire.getAll(net).then(w => w?.[0]);
             if (wire) {

@@ -98,6 +98,11 @@ export const CircuitAssemblyStruct = () => z.object({
         pin_number: z.number().or(z.string()),
         net: z.string(),
     })).optional(),
+    rm_net: z.array(z.object({
+        designator: z.string(),
+        pin_number: z.union([z.number(), z.string()]),
+        net: z.string(),
+    })).optional(),
     rm_components: z.array(z.string()).optional(),
     replace_components: z.array(z.string()).optional(),
 });

@@ -1,13 +1,14 @@
+import { CircuitAssembly } from "../types/circuit";
 import { placeComponent } from "./place-component";
-import { getShortSymPos, isPointOnSegment } from "./rm-compoment-with-connections";
+import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
-import { AddedNet, NET_PORT_COMPONENT, PlacedComponents } from "./types";
+import { AddedNet, NET_PORT_COMPONENT, PlacedComponents, RmNet } from "./types";
 import { withTimeout } from "./utils";
 
 // Конфигурация попыток: длины и базовые направления (dx, dy)
 // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
-const trialLengths = [20, 40, 60, 80, 100];
-const trialPortOffsetLengths = [15, 25, 35, 45, 55, 65, 75, 85].map(x => x - 5);
+const trialLengths = [20, 30, 40, 60, 80, 100, 120, 140, 160, 180, 190, 210, 230, 10, 5];
+const trialPortOffsetLengths = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125, 135, 145, 155, 165, 175, 185, 195, 205, 215].map(x => x - 5);
 
 const directions = [
     { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
@@ -305,4 +306,14 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
             await place(group, index, placeComponents, makePort)
         }
     };
+}
+
+export async function rmNet(nets: RmNet[], placeComponents: PlacedComponents) {
+    for (const net of nets) {
+        await rmWireFromComponentPin(net.designator, net.pin_number, net.net).catch(e => {
+            const msg = `Failded rm net from: ${net.designator} ${net.pin_number}`;
+            eda.sys_Log.add(msg);
+            eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
+        });
+    }
 }

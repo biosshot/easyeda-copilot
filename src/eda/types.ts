@@ -31,6 +31,12 @@ export interface AddedNet {
     pin_name?: string
 }
 
+export interface RmNet {
+    designator: string,
+    net: string,
+    pin_number: number | string,
+}
+
 export interface ComponentToReplace {
     component: CircuitAssembly['components'][0],
     replacer: Awaited<ReturnType<typeof ComponentReplacer>>

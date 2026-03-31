@@ -1,6 +1,6 @@
 import { ExplainCircuit } from "../types/circuit";
 import { getSchematic } from "./schematic";
-import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
+import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { rmPartFromDesignator } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
@@ -68,10 +68,10 @@ function splitWireAtJunctions(
 
     // 2. Разделяем сегменты в точках пинов (если пин лежит внутри сегмента)
     const pinPoints = new Set<string>();
-    eda.sys_Log.add(`All pins ${pins.length}`)
+    // eda.sys_Log.add(`All pins ${pins.length}`)
 
     for (const pin of pins) {
-        eda.sys_Log.add(`V0 Check in seq pin ${pin.x} ${pin.y}; seg: ${segments.length}`)
+        // eda.sys_Log.add(`V0 Check in seq pin ${pin.x} ${pin.y}; seg: ${segments.length}`)
 
         for (let i = 0; i < segments.length; i++) {
             const seg = segments[i];
@@ -81,7 +81,7 @@ function splitWireAtJunctions(
                 pinPoints.add(getPointKey(pin));
                 continue;
             }
-            eda.sys_Log.add(`Check in seq pin ${pin.x} ${pin.y}; seg: ${JSON.stringify(seg)}`)
+            // eda.sys_Log.add(`Check in seq pin ${pin.x} ${pin.y}; seg: ${JSON.stringify(seg)}`)
 
             // Если пин внутри сегмента — разделяем его на два
             if (isPointOnSegment(pin, seg)) {
@@ -392,6 +392,35 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
     }
 }
 
+const getAllPinsPos = async () => (await getAllPrimitivePins().catch(e => [])).map(p => ({ x: p.getState_X(), y: p.getState_Y() }))
+
+export async function rmWireFromComponentPin(designator: string, pinNumber: string | number, net: string) {
+    const pin = await findPin(designator, { num: pinNumber }, {});
+    if (!pin) throw new Error('Component not found ' + designator);
+    const wire = await eda.sch_PrimitiveWire.getAll(net);
+
+    const allPinsPos = await getAllPinsPos();
+    let allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire, {
+        pins: allPinsPos
+    }));
+    let end = false;
+
+    do {
+        const wire = await eda.sch_PrimitiveWire.getAll(net);
+        // Передаём координаты всех пинов компонента для обработки узлов на проводах
+        allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire, {
+            pins: allPinsPos
+        }))
+        const { allWires: allWires__, end: end__ } = await removeWiresFromComponentToFirstJunction([pin.pin], allWires);
+        end = end__;
+        allWires = allWires__;
+    } while (!end);
+
+    await rmUnunsedShortSym(allWires, net).catch(e => {
+        eda.sys_Message.showToastMessage(`Fail rm unused short sym. ${(e as Error).message}`, ESYS_ToastMessageType.WARNING);
+    });
+}
+
 export async function removeComponent(designator: string, circuit?: ExplainCircuit) {
     designator = rmPartFromDesignator(designator);
     const component = await searchComponentInSCH(designator);
@@ -401,7 +430,7 @@ export async function removeComponent(designator: string, circuit?: ExplainCircu
     if (!circuit) circuit = await getSchematic(primitiveIds);
     const pins = (await Promise.all(component.map(component => getPrimitiveComponentPins(component.primitiveId)))).flat();
 
-    const allPinsPos = (await getAllPrimitivePins()).map(p => ({ x: p.getState_X(), y: p.getState_Y() }))
+    const allPinsPos = await getAllPinsPos();
     await eda.sch_PrimitiveComponent.delete(primitiveIds);
 
     const componentCircuit = circuit.components.find(c => c.designator === designator);

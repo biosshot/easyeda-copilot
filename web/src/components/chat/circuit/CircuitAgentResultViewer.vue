@@ -91,6 +91,22 @@
                     </div>
                 </Collapsible>
 
+                <!-- Removed components -->
+                <Collapsible v-if="result?.circuit?.rm_components?.length" class="rm-components-section">
+                    <template #title>
+                        <span class="custom-collapsible-title minus">
+                            <span class="symbol">-{{ result.circuit.rm_components.length }}</span>
+                            <span class="label">Removed components</span>
+                        </span>
+                    </template>
+                    <div class="rm-components-list">
+                        <div v-for="(component, idx) in result.circuit.rm_components" :key="idx"
+                            class="component-item-simple">
+                            <span class="designator">{{ component }}</span>
+                        </div>
+                    </div>
+                </Collapsible>
+
                 <!-- Added nets -->
                 <Collapsible v-if="result?.circuit?.added_net?.length" class="added-net-section">
                     <template #title>
@@ -110,21 +126,25 @@
                     </div>
                 </Collapsible>
 
-                <!-- Removed components -->
-                <Collapsible v-if="result?.circuit?.rm_components?.length" class="rm-components-section">
+                <!-- Rm nets -->
+                <Collapsible v-if="result?.circuit?.rm_net?.length" class="added-net-section">
                     <template #title>
                         <span class="custom-collapsible-title minus">
-                            <span class="symbol">-{{ result.circuit.rm_components.length }}</span>
-                            <span class="label">Removed components</span>
+                            <span class="symbol">-{{ result.circuit.rm_net.length }}</span>
+                            <span class="label">Remove nets</span>
                         </span>
                     </template>
-                    <div class="rm-components-list">
-                        <div v-for="(component, idx) in result.circuit.rm_components" :key="idx"
-                            class="component-item-simple">
-                            <span class="designator">{{ component }}</span>
+                    <div class="added-net-list">
+                        <div v-for="(net, idx) in result.circuit.rm_net" :key="idx" class="net-item">
+                            <div class="net-header">
+                                <span class="designator">{{ net.designator }}</span>
+                                <span class="pin-number">Pin {{ net.pin_number }}</span>
+                                <span class="net-name">{{ net.net }}</span>
+                            </div>
                         </div>
                     </div>
                 </Collapsible>
+
 
                 <!-- Replaced components -->
                 <Collapsible v-if="result?.circuit?.replace_components?.length" class="replace-components-section">
