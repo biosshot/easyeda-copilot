@@ -1,7 +1,9 @@
 <template>
     <div class="collapsible-section">
         <div class="collapsible-header" @click="isOpen = !isOpen">
-            <span>{{ props.title }}</span>
+            <slot name="title">
+                <span>{{ props.title }}</span>
+            </slot>
             <icon class="arrow" name="ChevronUp" size="16" :class="{ 'rotated': isOpen }" />
         </div>
         <div v-show="isOpen" class="collapsible-content">
@@ -14,7 +16,7 @@
 import { ref } from 'vue';
 import Icon from '../shared/Icon.vue';
 
-const props = defineProps<{ title: string, defaultOpen?: boolean }>();
+const props = defineProps<{ title?: string, defaultOpen?: boolean }>();
 const isOpen = ref(props.defaultOpen ?? false);
 
 </script>

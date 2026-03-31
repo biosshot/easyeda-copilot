@@ -7,7 +7,7 @@ import { withTimeout } from "./utils";
 // Конфигурация попыток: длины и базовые направления (dx, dy)
 // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
 const trialLengths = [20, 40, 60, 80, 100];
-const trialPortOffsetLengths = [25, 35, 45, 55, 65, 75, 85].map(x => x - 5);
+const trialPortOffsetLengths = [25, 35, 45, 55, 65, 75, 85];
 
 const directions = [
     { dx: 1, dy: 0, port_offset_y: -1 },   // rigth

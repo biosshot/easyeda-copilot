@@ -15,8 +15,13 @@
                 </div>
 
                 <!-- Блоки схемы -->
-                <div v-if="result?.circuit?.blocks?.length" class="blocks-section">
-                    <h3>Structural blocks</h3>
+                <Collapsible v-if="result?.circuit?.blocks?.length" class="blocks-section">
+                    <template #title>
+                        <span class="custom-collapsible-title">
+                            <span class="label">{{ result.circuit.blocks.length }} Structural blocks</span>
+                        </span>
+                    </template>
+
                     <div class="blocks-grid">
                         <div v-for="block in result.circuit.blocks" :key="block.name" class="block-card">
                             <div class="block-header">
@@ -33,11 +38,16 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </Collapsible>
 
                 <!-- Компоненты -->
-                <div v-if="result?.circuit?.components?.length" class="components-section">
-                    <h3>Components ({{ components.length }})</h3>
+                <Collapsible v-if="components.length" class="components-section">
+                    <template #title>
+                        <span class="custom-collapsible-title add">
+                            <span class="symbol">+{{ components.length }}</span>
+                            <span class="label">Components</span>
+                        </span>
+                    </template>
                     <div class="components-list">
                         <div v-for="(component, idx) in components" :key="idx" class="component-item">
                             <div class="component-header">
@@ -79,7 +89,59 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </Collapsible>
+
+                <!-- Added nets -->
+                <Collapsible v-if="result?.circuit?.added_net?.length" class="added-net-section">
+                    <template #title>
+                        <span class="custom-collapsible-title add">
+                            <span class="symbol">+{{ result.circuit.added_net.length }}</span>
+                            <span class="label">Added nets</span>
+                        </span>
+                    </template>
+                    <div class="added-net-list">
+                        <div v-for="(net, idx) in result.circuit.added_net" :key="idx" class="net-item">
+                            <div class="net-header">
+                                <span class="designator">{{ net.designator }}</span>
+                                <span class="pin-number">Pin {{ net.pin_number }}</span>
+                                <span class="net-name">{{ net.net }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </Collapsible>
+
+                <!-- Removed components -->
+                <Collapsible v-if="result?.circuit?.rm_components?.length" class="rm-components-section">
+                    <template #title>
+                        <span class="custom-collapsible-title minus">
+                            <span class="symbol">-{{ result.circuit.rm_components.length }}</span>
+                            <span class="label">Removed components</span>
+                        </span>
+                    </template>
+                    <div class="rm-components-list">
+                        <div v-for="(component, idx) in result.circuit.rm_components" :key="idx"
+                            class="component-item-simple">
+                            <span class="designator">{{ component }}</span>
+                        </div>
+                    </div>
+                </Collapsible>
+
+                <!-- Replaced components -->
+                <Collapsible v-if="result?.circuit?.replace_components?.length" class="replace-components-section">
+                    <template #title>
+                        <span class="custom-collapsible-title">
+                            <span class="label">{{ result.circuit.replace_components.length }} Replaced
+                                components</span>
+                        </span>
+                    </template>
+
+                    <div class="replace-components-list">
+                        <div v-for="(component, idx) in result.circuit.replace_components" :key="idx"
+                            class="component-item-simple">
+                            <span class="designator">{{ component }}</span>
+                        </div>
+                    </div>
+                </Collapsible>
             </div>
 
             <!-- Правая часть: структурная схема в PDF -->
@@ -99,16 +161,18 @@
 
 <script setup lang="ts">
 import PdfFileViewer from '../pdf/PdfFileViewer.vue'
+import Collapsible from '../../shared/Collapsible.vue'
 import IconButton from '../../shared/IconButton.vue'
 import { onMounted } from 'vue'
 import { InlineButton } from '../../../types/inline-button'
 import { assembleCircuit } from '../../../eda/assemble-circuit'
+import { CircuitAssembly } from '../../../types/circuit'
 
-const props = defineProps<{ result: any }>()
+const props = defineProps<{ result: { circuit: CircuitAssembly, blockDiagram?: string } }>()
 
 const emit = defineEmits<{ 'inline-buttons': [InlineButton[]] }>();
 
-const components = props.result?.circuit?.components?.filter?.((comp: any) => !['GND', 'VCC'].includes(comp.part_uuid)) || [];
+const components = props.result?.circuit?.components?.filter?.((comp) => !['GND', 'VCC'].includes(comp.part_uuid!) && !comp.designator.includes('|')) || [];
 
 const assembleCircuitHandler = async () => {
     assembleCircuit(props.result.circuit);
@@ -133,7 +197,7 @@ onMounted(() => {
 .circuit-info {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    /* gap: 0.5rem; */
     min-width: 0;
 }
 
@@ -177,20 +241,15 @@ onMounted(() => {
 }
 
 /* === Блоки === */
-.blocks-section h3,
-.components-section h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    color: var(--color-text-primary);
+.blocks-section,
+.components-section {
+    margin-top: 0.1rem;
 }
 
 .blocks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
-    max-height: 250px;
-    overflow-y: auto;
 }
 
 .block-card {
@@ -258,8 +317,6 @@ onMounted(() => {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1rem;
-    max-height: 250px;
-    overflow-y: auto;
     padding-right: 0.5rem;
 }
 
@@ -388,6 +445,99 @@ onMounted(() => {
     margin: 0;
     font-size: 1.1rem;
     color: var(--color-text-primary);
+}
+
+.rm-components-section,
+.added-net-section,
+.replace-components-section {
+    margin-top: 0.1rem;
+}
+
+.added-net-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.net-item {
+    background: var(--color-background);
+    padding: 0.1rem;
+    transition: background-color 0.2s;
+}
+
+.net-item:hover {
+    background: var(--color-surface-hover);
+}
+
+.net-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+}
+
+.net-header .designator {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    min-width: 50px;
+}
+
+.net-header .pin-number {
+    color: var(--color-primary);
+    font-size: 0.85rem;
+}
+
+.net-header .net-name {
+    color: var(--color-text-secondary);
+}
+
+.rm-components-list,
+.replace-components-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.component-item-simple {
+    background: var(--color-background);
+    padding: 0.1rem;
+    transition: background-color 0.2s;
+}
+
+.custom-collapsible-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.custom-collapsible-title .symbol {
+    font-weight: 700;
+}
+
+.custom-collapsible-title.add {
+    color: #2cbe4e;
+    /* GitHub green */
+}
+
+.custom-collapsible-title.minus {
+    color: #cb2431;
+    /* GitHub red */
+}
+
+.custom-collapsible-title .label {
+    color: var(--color-text-primary);
+}
+
+.component-item-simple:hover {
+    background: var(--color-surface-hover);
+}
+
+.component-item-simple .designator {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 0.95rem;
 }
 
 @media (max-width: 1200px) {
