@@ -32,7 +32,7 @@ function pointsEqual(p1: Point, p2: Point): boolean {
 }
 
 // Проверка, лежит ли точка на сегменте (коллинеарна и в bounding box)
-function isPointOnSegment(point: Point, segment: Segment): boolean {
+export function isPointOnSegment(point: Point, segment: Segment): boolean {
     const { start, end } = segment;
 
     // Проверяем коллинеарность через векторное произведение

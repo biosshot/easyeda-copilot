@@ -1,5 +1,5 @@
 import { placeComponent } from "./place-component";
-import { getShortSymPos } from "./rm-compoment-with-connections";
+import { getShortSymPos, isPointOnSegment } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
 import { AddedNet, NET_PORT_COMPONENT, PlacedComponents } from "./types";
 import { withTimeout } from "./utils";
@@ -7,7 +7,7 @@ import { withTimeout } from "./utils";
 // Конфигурация попыток: длины и базовые направления (dx, dy)
 // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
 const trialLengths = [20, 40, 60, 80, 100];
-const trialPortOffsetLengths = [25, 35, 45, 55, 65, 75, 85];
+const trialPortOffsetLengths = [15, 25, 35, 45, 55, 65, 75, 85].map(x => x - 5);
 
 const directions = [
     { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
@@ -16,7 +16,7 @@ const directions = [
     { dx: 0, dy: 1, port_offset_y: 0 },    // bottom
 ];
 
-function groupAndSortNetsByDesignator(nets: AddedNet[]): AddedNet[][] {
+async function groupAndSortNetsByDesignator(nets: AddedNet[], placeComponents: PlacedComponents) {
     const grouped = new Map<string, AddedNet[]>();
 
     for (const net of nets) {
@@ -27,12 +27,29 @@ function groupAndSortNetsByDesignator(nets: AddedNet[]): AddedNet[][] {
 
     const result: AddedNet[][] = [];
     for (const group of grouped.values()) {
-        const sorted = [...group].sort((a, b) => {
+        // const sorted = [...group].sort((a, b) => {
+        //     const aNum = typeof a.pin_number === 'number' ? a.pin_number : parseInt(a.pin_number, 10) || 0;
+        //     const bNum = typeof b.pin_number === 'number' ? b.pin_number : parseInt(b.pin_number, 10) || 0;
+        //     return aNum - bNum;
+        // });
+        // const pins = await findPin(group[0].designator, { num: group[0].pin_number }, placeComponents).then(p => p?.pins?.[0]).catch(e => undefined);
+        // if (!pins) {
+        //     eda.sys_Log.add(`Not found pins for sort ${group[0].designator}`)
+        const sorted = group.toSorted((a, b) => {
             const aNum = typeof a.pin_number === 'number' ? a.pin_number : parseInt(a.pin_number, 10) || 0;
             const bNum = typeof b.pin_number === 'number' ? b.pin_number : parseInt(b.pin_number, 10) || 0;
             return aNum - bNum;
         });
         result.push(sorted);
+        // }
+        // else {
+        //     const sorted = group.toSorted((a, b) => {
+        //         const aNum = pins.find(p => p.getState_PinNumber() === a.pin_number)?.getState_Y() || 0;
+        //         const bNum = pins.find(p => p.getState_PinNumber() === b.pin_number)?.getState_Y() || 0;
+        //         return aNum - bNum;
+        //     });
+        //     result.push(sorted);
+        // }
     }
 
     return result;
@@ -57,8 +74,8 @@ const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_Primi
     return true;
 }
 
-async function place(net: AddedNet, placeComponents: PlacedComponents, makePort: boolean) {
-    let makePortForThis = makePort;
+async function place(group: AddedNet[], myIndex: number, placeComponents: PlacedComponents, makePort: boolean) {
+    const net: AddedNet = group[myIndex];
 
     const pin = await findPin(net.designator, { num: net.pin_number, name: net.pin_name }, placeComponents);
     if (!pin) {
@@ -67,6 +84,75 @@ async function place(net: AddedNet, placeComponents: PlacedComponents, makePort:
         eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
         return;
     }
+
+    if (myIndex > 0 && pin.pins[0]?.length) {
+        const eqNet = group.slice(0, myIndex).filter(n => n.net === net.net && n.designator === net.designator);
+        if (!eqNet.length)
+            eda.sys_Log.add(`Fail merget wire not found eqNet ${net.designator} ${net.net}`);
+        const notEqNet = group.filter(n => n.net !== net.net && n.designator === net.designator);
+
+        const pinsInEqNet = pin.pins[0].filter(p => eqNet.some(n => n.pin_number === p.getState_PinNumber()))
+        const pinsNotInEqNet = pin.pins[0].filter(p => notEqNet.some(n => n.pin_number === p.getState_PinNumber()))
+
+        for (const prevNet of eqNet) {
+            const prevPin = pinsInEqNet.find(p => p.getState_PinNumber() === prevNet.pin_number);
+            if (!prevPin) {
+                eda.sys_Log.add(`Fail merget wire not found prevPin ${net.designator} ${net.net}`);
+                continue;
+            }
+
+            const myPinX = pin.pin.getState_X();
+            const myPinY = pin.pin.getState_Y();
+            const prevPinX = prevPin.getState_X();
+            const prevPinY = prevPin.getState_Y();
+            if (prevPinX !== myPinX && prevPinY !== myPinY) continue;
+            if (prevPin.getState_Rotation() !== pin.pin.getState_Rotation()) {
+                eda.sys_Log.add(`Fail merget wire rotation not eq ${net.designator} ${net.net}`);
+                continue;
+            }
+
+            const hasOtherPointOnLine = pinsNotInEqNet
+                // .filter(p => p.getState_PinNumber() !== prevPin.getState_PinNumber() && p.getState_PinNumber() !== pin.pin.getState_PinNumber())
+                .some(p => isPointOnSegment({ x: p.getState_X(), y: p.getState_Y() },
+                    {
+                        start: {
+                            x: myPinX,
+                            y: myPinY,
+                        },
+                        end: {
+                            x: prevPinX,
+                            y: prevPinY
+                        },
+                        originalIndex: -1
+                    },
+                ));
+
+            if (hasOtherPointOnLine) {
+                eda.sys_Log.add(`Fail merget wire has pin on line ${net.designator} ${net.net}`)
+                continue;
+            }
+
+            const line = [myPinX, myPinY, prevPinX, prevPinY];
+
+            try {
+                const wire = await eda.sch_PrimitiveWire.create(line, net.net);
+                if (wire) {
+                    // eda.sys_Log.add(`Create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
+                    return;
+                }
+                else {
+                    eda.sys_Log.add(`Failded create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
+                }
+            } catch (err) {
+                eda.sys_Log.add(`Failded create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
+            }
+        }
+    }
+    else {
+        eda.sys_Log.add(`Fail merget wire not this first net ${net.designator} ${net.net}`);
+    }
+
+    let makePortForThis = makePort;
 
     let simComps: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2)[] | undefined;
 
@@ -211,11 +297,12 @@ async function place(net: AddedNet, placeComponents: PlacedComponents, makePort:
 }
 
 export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponents, makePort: boolean) {
-    const groups = groupAndSortNetsByDesignator(nets);
+    const groups = await groupAndSortNetsByDesignator(nets, placeComponents);
 
     for (const group of groups) {
-        for (const net of group) {
-            await place(net, placeComponents, makePort)
+        for (let index = 0; index < group.length; index++) {
+            const net = group[index];
+            await place(group, index, placeComponents, makePort)
         }
     };
 }
