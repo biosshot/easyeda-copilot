@@ -1,3 +1,4 @@
+import { getBBox } from "./utils";
 
 interface Offset {
     x: number | undefined;
@@ -12,11 +13,24 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     if (ignoreDisgnators?.length)
         componentsOnSch = componentsOnSch.filter(c => !ignoreDisgnators.includes(c.getState_Designator()!));
 
-    const componentsRect = componentsOnSch.map(comp => ({
-        x: comp.getState_X() - 50,
-        y: comp.getState_Y() - 50,
-        w: 100,
-        h: 100
+    const PADDING = 80;
+
+    const componentsRect = await Promise.all(componentsOnSch.map(async comp => {
+        const bbox = await getBBox([comp]).catch(e => undefined);
+        if (!bbox)
+            return {
+                x: comp.getState_X() - 50,
+                y: comp.getState_Y() - 50,
+                w: 100,
+                h: 100
+            }
+
+        return {
+            x: bbox.minX - PADDING,
+            y: (-bbox.minY) + PADDING,
+            w: bbox.width + PADDING * 2,
+            h: bbox.height + PADDING * 2
+        }
     }));
 
     const STEP = 80;
@@ -35,8 +49,8 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     // Проверяет, свободно ли место для прямоугольника с центром в (cx, cy)
     function isFree(cx: number, cy: number): boolean {
         const targetRect = {
-            x: cx - tagetSize.w,
-            y: cy - tagetSize.h,
+            x: cx,
+            y: cy,
             w: tagetSize.w,
             h: tagetSize.h
         };
@@ -59,8 +73,8 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
                 if (Math.max(Math.abs(dx), Math.abs(dy)) !== radius) {
                     continue;
                 }
-                const candidateX = targetPoint.x + dx;
-                const candidateY = targetPoint.y + dy;
+                const candidateX = targetPoint.x + dx - tagetSize.w;
+                const candidateY = targetPoint.y + dy - tagetSize.h;
                 if (isFree(candidateX, candidateY)) {
                     return { x: candidateX, y: candidateY };
                 }

@@ -1,6 +1,6 @@
 import { ExplainCircuit } from "../types/circuit";
 import { getSchematic } from "./schematic";
-import { getPrimitiveComponentPins, searchComponentInSCH } from "./search";
+import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { rmPartFromDesignator } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
@@ -26,11 +26,38 @@ interface EasyEDAWire {
 // Вспомогательная функция для создания уникального ключа точки
 const getPointKey = (p: Point): string => `${p.x},${p.y}`;
 
+// Проверка равенства двух точек
+function pointsEqual(p1: Point, p2: Point): boolean {
+    return p1.x === p2.x && p1.y === p2.y;
+}
+
+// Проверка, лежит ли точка на сегменте (коллинеарна и в bounding box)
+function isPointOnSegment(point: Point, segment: Segment): boolean {
+    const { start, end } = segment;
+
+    // Проверяем коллинеарность через векторное произведение
+    const crossProduct = (point.y - start.y) * (end.x - start.x) - (point.x - start.x) * (end.y - start.y);
+    if (crossProduct !== 0) return false;
+
+    // Проверяем, находится ли точка в bounding box сегмента
+    const minX = Math.min(start.x, end.x);
+    const maxX = Math.max(start.x, end.x);
+    const minY = Math.min(start.y, end.y);
+    const maxY = Math.max(start.y, end.y);
+
+    return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+}
+
 /**
  * Основная функция для разделения провода на сегменты в местах разветвлений
  */
-function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
+function splitWireAtJunctions(
+    wireData: EasyEDAWire,
+    options?: { pins?: Point[] }
+): EasyEDAWire[] {
     if (!wireData.line || wireData.line.length === 0) return [wireData];
+
+    const pins = options?.pins ?? [];
 
     // 1. Парсим отрезки из формата [x1, y1, x2, y2]
     const segments: Segment[] = wireData.line.map((coords, index) => ({
@@ -39,7 +66,47 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
         originalIndex: index
     }));
 
-    // 2. Строим карту смежности (какие сегменты подключены к какой точке)
+    // 2. Разделяем сегменты в точках пинов (если пин лежит внутри сегмента)
+    const pinPoints = new Set<string>();
+    eda.sys_Log.add(`All pins ${pins.length}`)
+
+    for (const pin of pins) {
+        eda.sys_Log.add(`V0 Check in seq pin ${pin.x} ${pin.y}; seg: ${segments.length}`)
+
+        for (let i = 0; i < segments.length; i++) {
+            const seg = segments[i];
+
+            // Пропускаем, если пин уже на конце сегмента
+            if (pointsEqual(pin, seg.start) || pointsEqual(pin, seg.end)) {
+                pinPoints.add(getPointKey(pin));
+                continue;
+            }
+            eda.sys_Log.add(`Check in seq pin ${pin.x} ${pin.y}; seg: ${JSON.stringify(seg)}`)
+
+            // Если пин внутри сегмента — разделяем его на два
+            if (isPointOnSegment(pin, seg)) {
+                eda.sys_Log.add(`Pin in seq ${pin.x} ${pin.y}`)
+                const pinKey = getPointKey(pin);
+                pinPoints.add(pinKey);
+
+                const newSeg1: Segment = {
+                    start: seg.start,
+                    end: pin,
+                    originalIndex: seg.originalIndex
+                };
+                const newSeg2: Segment = {
+                    start: pin,
+                    end: seg.end,
+                    originalIndex: seg.originalIndex
+                };
+
+                segments.splice(i, 1, newSeg1, newSeg2);
+                i++; // Пропускаем следующий индекс, т.к. добавили новый сегмент
+            }
+        }
+    }
+
+    // 3. Строим карту смежности (какие сегменты подключены к какой точке)
     // Map<"x,y", Set<segmentIndex>>
     const adjacencyMap = new Map<string, Set<number>>();
 
@@ -56,7 +123,7 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
         addToMap(seg.end, idx);
     });
 
-    // 3. Определяем критические точки (Junctions и Ends)
+    // 4. Определяем критические точки (Junctions и Ends)
     // Junction: степень узла > 2 (Т-образное пересечение или крест)
     // End: степень узла == 1 (Конец провода)
     // Обычная точка: степень узла == 2 (Просто изгиб или продолжение)
@@ -71,6 +138,9 @@ function splitWireAtJunctions(wireData: EasyEDAWire): EasyEDAWire[] {
             ends.add(pointKey);
         }
     });
+
+    // Добавляем пины как junctions (даже если степень = 2, пин всё равно узел)
+    pinPoints.forEach(pointKey => junctions.add(pointKey));
 
     // 4. Собираем новые цепи
     // Нам нужно пройти по графу от каждого End или Junction до следующего End/Junction
@@ -331,6 +401,7 @@ export async function removeComponent(designator: string, circuit?: ExplainCircu
     if (!circuit) circuit = await getSchematic(primitiveIds);
     const pins = (await Promise.all(component.map(component => getPrimitiveComponentPins(component.primitiveId)))).flat();
 
+    const allPinsPos = (await getAllPrimitivePins()).map(p => ({ x: p.getState_X(), y: p.getState_Y() }))
     await eda.sch_PrimitiveComponent.delete(primitiveIds);
 
     const componentCircuit = circuit.components.find(c => c.designator === designator);
@@ -346,7 +417,10 @@ export async function removeComponent(designator: string, circuit?: ExplainCircu
 
         do {
             const wire = await eda.sch_PrimitiveWire.getAll(net);
-            allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire))
+            // Передаём координаты всех пинов компонента для обработки узлов на проводах
+            allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire, {
+                pins: allPinsPos
+            }))
             const { allWires: allWires__, end: end__ } = await removeWiresFromComponentToFirstJunction(pins, allWires);
             end = end__;
             allWires = allWires__;
