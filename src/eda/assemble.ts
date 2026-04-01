@@ -8,6 +8,9 @@ import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
 import { AddedNet, ComponentToReplace, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
 import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout } from "./utils";
+import PQueue from 'p-queue';
+
+const assembleQueue = new PQueue({ concurrency: 1 });
 
 const applyOffset = (x: number, y: number, offset: Offset) => {
 
@@ -49,7 +52,7 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         comp = await placeComponent({
             libraryUuid: 'lcsc',
             uuid: partUuid
-        }, { x, y, rotate: pos.rotate, subPartName: component.subPartName });
+        }, { x, y, rotate: pos.rotate, subPartName: component.sub_part_name });
 
         comp.setState_Designator(rmPartFromDesignator(designator));
     }
@@ -312,7 +315,7 @@ function getNetForUnusedPins(components: CircuitAssembly['components'], edges: C
     return netForUnusedPins;
 }
 
-export async function assembleCircuit(circuit: CircuitAssembly) {
+async function assembleCircuitTask(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
     eda.sys_Log.add(`Assemble circuit...`);
 
@@ -368,7 +371,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
                 let primitive;
 
                 if (primitives.length > 1) {
-                    const id = component.subPartName?.split('.').at(-1);
+                    const id = component.sub_part_name?.split('.').at(-1);
                     primitive = primitives.find(primitive => {
                         const oldid = primitive.component.getState_SubPartName()?.split('.').at(-1);
                         return id && oldid && id === oldid;
@@ -377,7 +380,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
                 else primitive = primitives[0];
 
                 if (!primitive) {
-                    eda.sys_Log.add(`Not found part: "${designator}" ${component.subPartName}`)
+                    eda.sys_Log.add(`Not found part: "${designator}" ${component.sub_part_name}`)
                     return;
                 }
 
@@ -394,108 +397,9 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
 
                 componentsAllowReplace.push({ component, replacer });
             }
-            // const designator = rmPartFromDesignator(component.designator);
-            // if (designator.includes('|')) return;
-            // if (!rm_components!.includes(designator)) {
-            //     eda.sys_Log.add(`Replace not allow: "${designator}" not found in rm components: ${rm_components}`)
-            //     return;
-            // }
-            // if (!component.part_uuid) {
-            //     eda.sys_Log.add(`Replace not allow: "${designator}" not part_uuid`)
-            //     return;
-            // }
-
-            // const schComponent = schematic!.components.find(sc => sc.designator === designator);
-            // if (!schComponent) {
-            //     eda.sys_Log.add(`Replace not allow: "${designator}" not found in sch: ${schematic!.components.map(c => c.designator)}`)
-            //     return;
-            // }
-
-            // const schematicMap = new Map(
-            //     schComponent.pins.map(p => [String(p.pin_number), p.signal_name])
-            // );
-
-            // const mismatches = component.pins.filter(cPin => {
-            //     const sSignal = schematicMap.get(String(cPin.pin_number));
-            //     return sSignal !== undefined && sSignal !== cPin.signal_name;
-            // });
-
-            // if (mismatches.length > 0) {
-            //     eda.sys_Log.add(`Replace not allow: "${designator}" found ${mismatches.length} mismatches`)
-            //     return;
-            // }
-
-            // const primitives = await searchComponentInSCH(designator);
-            // if (!primitives || !primitives?.length) {
-            //     eda.sys_Log.add(`Replace not allow: "${designator}" primitve not found`)
-            //     return;
-            // }
-
-            // let primitive;
-
-            // if (primitives.length > 1) {
-            //     const id = component.subPartName?.split('.').at(-1);
-            //     primitive = primitives.find(primitive => {
-            //         const oldid = primitive.component.getState_SubPartName()?.split('.').at(-1);
-            //         eda.sys_Log.add(`Search sub part w: ${id}; ${oldid}`)
-
-            //         return id && oldid && id === oldid;
-            //     })
-            // }
-            // else primitive = primitives[0];
-
-            // if (!primitive) return;
-
-            // const replacer = await ComponentReplacer(primitive.component, component.part_uuid, component.subPartName);
-
-            // const { cause, isAllow } = replacer.isAllow();
-
-            // if (!isAllow) {
-            //     const msg = `Not allow replace componet "${designator}": ` + cause;
-            //     eda.sys_Log.add(msg);
-            //     eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.WARNING);
-            //     return;
-            // }
-
-            // componentsAllowReplace.push({ component, replacer });
-            // // componentsNotAllowReplace = componentsNotAllowReplace.filter(c => rmPartFromDesignator(c.designator) !== designator);
         });
 
         await Promise.all(tasks);
-
-        // if (componentsNotAllowReplace.length)
-        //     componentsAllowReplace = componentsAllowReplace.filter(componentToRep => {
-        //         let signals = componentToRep.component.pins.map(p => p.signal_name).filter(Boolean);
-        //         signals = [...new Set(signals)];
-
-        //         let signalsWithNotRep = componentsNotAllowReplace.flatMap(componentNotRep =>
-        //             componentNotRep.pins.filter(p => signals.includes(p.signal_name)).map(p => p.signal_name)
-        //         );
-        //         signalsWithNotRep = [...new Set(signalsWithNotRep)];
-
-        //         if (!signalsWithNotRep.length) return true;
-
-        //         const notAllowDesignators = [
-        //             ...componentsAllowReplace.map(c => rmPartFromDesignator(c.component.designator)),
-        //             ...componentsNotAllowReplace.map(c => rmPartFromDesignator(c.designator))
-        //         ]
-
-        //         let signalsInAllComponents = schematic!.components
-        //             .filter(component => !notAllowDesignators.includes(rmPartFromDesignator(component.designator)))
-        //             .flatMap(component => component.pins.filter(p => signalsWithNotRep.includes(p.signal_name)).map(p => p.signal_name))
-        //             .filter(Boolean);
-
-        //         signalsInAllComponents = [...new Set(signalsInAllComponents)];
-
-        //         if (signalsInAllComponents.length === signalsWithNotRep.length) {
-        //             return true;
-        //         }
-
-        //         componentToRep.replacer.cancel();
-
-        //         eda.sys_Log.add(`Component "${componentToRep.component.designator}" rm from componentsAllowReplace because hi has uuid signal: ${signalsInAllComponents}; ${signalsWithNotRep}`)
-        //         return false;
-        //     });
     }
 
     if (componentsAllowReplace.length) {
@@ -511,6 +415,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
 
                 components = components.filter(c => rmPartFromDesignator(c.designator) !== designator);
                 rm_components = rm_components!.filter(rmdesignator => rmPartFromDesignator(rmdesignator) !== designator);
+                // @ts-ignore
                 const pattern = new RegExp(`${RegExp.escape(designator)}[_.]`);
                 edges = edges.filter(e => !e.sections?.some(s =>
                     pattern.test(s.incomingShape ?? '') || pattern.test(s.outgoingShape ?? '')
@@ -540,6 +445,7 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
         components = components.filter(component => {
             const designator = rmPartFromDesignator(component.designator);
             if (!(designator.includes('|') && designator.length > 4)) return true;
+            // @ts-ignore
             const pattern = new RegExp(`${RegExp.escape(designator)}[_.]`);
             return edges.some(e =>
                 e.sections?.some?.(s =>
@@ -556,17 +462,22 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
     const offset = await searchFreePlaceV2(placeTarget, { w: root.width, h: root.height })
     eda.sys_Log.add(`Place at: ${JSON.stringify(offset)}`);
 
-    if (rm_components?.length && await confirmationMessage('The following components will be removed:\n' + rm_components.join(', '), 'Confirm deletion'))
+    if (rm_components?.length && await confirmationMessage('The following components will be removed:\n' + rm_components.join(', '), 'Confirm deletion')) {
+        const addAddedNet = [];
         for (const designator of rm_components) {
-            await removeComponent(designator, schematic).catch(e => {
+            const added = await removeComponent(designator, schematic).catch(e => {
                 const msg = `Error with rm component ${designator}: ${(e as Error).message}`;
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
+                return [];
             });
+
+            addAddedNet.push(...added);
         }
 
-    // Easyeda - slowly removes the components
-    // await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((rm_components?.length ?? 10) * 50, 2000)));
+        if (!added_net) added_net = addAddedNet;
+        else added_net = [...added_net, ...addAddedNet];
+    }
 
     const placedComp = await placeComponents(components, offset);
 
@@ -577,22 +488,20 @@ export async function assembleCircuit(circuit: CircuitAssembly) {
 
     await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 2000)));
 
-    await rmNet(circuit.rm_net ?? [], placedComp)
+    const needAddNet = await rmNet(circuit.rm_net ?? [], placedComp);
+
+    if (!added_net) added_net = needAddNet;
+    else added_net = [...added_net, ...needAddNet];
+
     await placeNet(added_net ?? [], placedComp, true);
     await placeNet(netForUnusedPins, placedComp, true);
 
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
-
-    if (components.length) {
-        const net = components[0].pins?.[0]?.signal_name;
-        if (net) {
-            const wire = await eda.sch_PrimitiveWire.getAll(net).then(w => w?.[0]);
-            if (wire) {
-                wire.done();
-            }
-        }
-    }
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, 500));
 
     eda.sys_Message.showToastMessage(`Assemble complete.`, ESYS_ToastMessageType.SUCCESS);
     eda.sys_Log.add(`Assemble complete.`);
+}
+
+export function assembleCircuit(...args: Parameters<typeof assembleCircuitTask>) {
+    return assembleQueue.add(() => assembleCircuitTask(...args))
 }

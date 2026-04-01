@@ -309,11 +309,18 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
 }
 
 export async function rmNet(nets: RmNet[], placeComponents: PlacedComponents) {
+    const addedNets = [];
+
     for (const net of nets) {
-        await rmWireFromComponentPin(net.designator, net.pin_number, net.net).catch(e => {
+        const addedNet = await rmWireFromComponentPin(net.designator, net.pin_number, net.net).catch(e => {
             const msg = `Failded rm net from: ${net.designator} ${net.pin_number}`;
             eda.sys_Log.add(msg);
             eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
+            return [];
         });
+
+        addedNets.push(addedNet);
     }
+
+    return addedNets.flat();
 }

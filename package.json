@@ -52,6 +52,7 @@
 		"katex": "^0.16.27",
 		"lucide-vue-next": "^0.552.0",
 		"marked": "^16.4.1",
+		"p-queue": "^9.1.0",
 		"papaparse": "^5.5.3",
 		"pdf-lib": "^1.17.1",
 		"pinia": "^3.0.3",

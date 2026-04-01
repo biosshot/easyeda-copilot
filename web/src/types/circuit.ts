@@ -17,7 +17,7 @@ export const BaseComponentSchema = () => z.object({
 });
 
 const ComponentWithPosSchema = () => BaseComponentSchema().extend({
-    subPartName: z.string().optional(),
+    sub_part_name: z.string().optional(),
     pos: z.object({
         x: z.number().describe("X position"),
         y: z.number().describe("Y position"),

@@ -35,8 +35,8 @@ const fuzzyRound = (x: number, y: number) => {
 
 export async function getAllPrimitivePins() {
     const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(e => []);
-    const pins = await Promise.allSettled(promIdComponent.map(id => eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id)));
-    return pins.filter(result => result.status === 'fulfilled').map(result => result.value!).filter(Boolean).flat();
+    const pins = await Promise.allSettled(promIdComponent.map(async id => ({ primitiveId: id, pins: (await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id))! })));
+    return pins.filter(result => result.status === 'fulfilled').map(result => result.value!).filter(item => item.pins);
 }
 
 export async function hasDirectWire(net: string, p1: { x: number, y: number }, p2: { x: number, y: number }) {

@@ -67,7 +67,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
             y: 0,
             addIntoBom: savedProps.addIntoBom,
             addIntoPcb: savedProps.addIntoPcb,
-            subPartName: component.subPartName
+            subPartName: component.sub_part_name
         });
 
         if (!newComp) {
