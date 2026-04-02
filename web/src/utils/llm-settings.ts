@@ -1,11 +1,23 @@
 import { useSettingsStore } from "../stores/settings-store"
 
+const pInt = (v: string | number | boolean) => {
+    const val = parseInt(v.toString());
+    return !isNaN(val) ? val : undefined;
+}
+
 export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStore>) => {
     const s = {
         provider: settingsStore.getSetting('apiProvider'),
         apiKey: settingsStore.getSetting('apiKey'),
         'base-url': settingsStore.getSetting('llmBaseUrl').toString().trim() || undefined,
         maxToolParallel: parseInt(settingsStore.getSetting('maxToolParallel').toString()) || undefined,
+        contextManagement: {
+            mode: settingsStore.getSetting('contextManagementMode') || undefined,
+            summarizeKeepLastMessages: pInt(settingsStore.getSetting('contextSummarizeKeepLastMessages')),
+            summarizeThreshold: pInt(settingsStore.getSetting('contextSummarizeThreshold')),
+            trimThreshold: pInt(settingsStore.getSetting('contextTrimThreshold')),
+            saveFirstMessages: pInt(settingsStore.getSetting('contextSaveFirstMessages')),
+        },
 
         base: {
             model: settingsStore.getSetting('agentBaseModel') || undefined,

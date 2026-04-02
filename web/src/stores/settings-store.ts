@@ -50,6 +50,13 @@ const DEFAULT_SETTINGS = {
     tavilyApiKey: '',
 
     maxToolParallel: 3,
+
+    // Context Management
+    contextManagementMode: 'disable',
+    contextSummarizeKeepLastMessages: 16,
+    contextSummarizeThreshold: 64000,
+    contextTrimThreshold: 128,
+    contextSaveFirstMessages: 5,
 };
 
 type SettingsKey = keyof typeof DEFAULT_SETTINGS | (string & {});

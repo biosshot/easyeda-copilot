@@ -305,6 +305,15 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                         pinMiss.oldX + pinMiss.missDX, -(pinMiss.oldY + pinMiss.missDY)]).catch(e => undefined);
                 }
             }
+
+            if (!pinMissSizes.length && componentCircuit?.pins.length) {
+                for (const pin of componentCircuit.pins) {
+                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name);
+                    for (const wire of wires) {
+                        await wire.done().catch(e => undefined);
+                    }
+                }
+            }
         }
     }
 }

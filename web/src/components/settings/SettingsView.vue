@@ -65,6 +65,12 @@
                             @change="onSettingChange('maxToolParallel', Math.max(1, Math.min(25, Number(($event.target as HTMLInputElement).value))))" />
                         <p class="hint">Maximum number of tools that can run in parallel.</p>
                     </div>
+
+                    <div class="setting-group">
+                        <label for="maxToolParallel">Context management</label>
+                        <ContextManagementSettings :settings="settings"
+                            @setting-change="(key, value) => onSettingChange(key, value)" />
+                    </div>
                 </Collapsible>
 
                 <Collapsible title="Agents" :default-open="true">
@@ -254,6 +260,7 @@ import CustomSelect from '../shared/CustomSelect.vue';
 import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
+import ContextManagementSettings from './ContextManagementSettings.vue';
 
 const settingsStore = useSettingsStore();
 const settings = computed(() => settingsStore.getAllSettings);
