@@ -38,6 +38,7 @@ h2 {
 
 .setting-group input[type="text"],
 .setting-group input[type="password"],
+.setting-group input[type="number"],
 .setting-group select {
     width: 100%;
     padding: 0.75rem;

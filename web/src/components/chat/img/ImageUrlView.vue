@@ -1,34 +1,40 @@
 <template>
-    <div class="image-url-viewer">
-        <template v-if="imageUrl && !error">
-            <img :src="imageUrl" :alt="props.result.label || 'Image'" @error="handleError" />
+    <div v-if="(displayImage && !error) || (error && !disableError)" class="image-url-viewer">
+        <template v-if="displayImage && !error">
+            <img :src="displayImage" :alt="props.result.label || 'Image'" @error="handleError" />
             <div v-if="props.result.label" class="image-label">{{ props.result.label + `\n ATTENTION IMAGES ARE NOT SENT
                 BETWEEN REQUESTS` }}</div>
         </template>
-        <template v-else>
+        <template v-else-if="!disableError">
             <ErrorBanner message="Failed to load image" />
         </template>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import ErrorBanner from '../../shared/ErrorBanner.vue';
 
-const props = defineProps<{ result: { image_url?: string, label?: string } }>();
+const props = defineProps<{ result: { image_url?: string, label?: string }, disableError?: boolean }>();
+const displayImage = computed(() => props.result.image_url);
 
-const imageUrl = ref(props.result.image_url);
 const error = ref(false);
 
 function handleError() {
     error.value = true;
 }
+
+watch(displayImage, () => {
+    error.value = false;
+})
+
 </script>
 
 <style scoped>
 .image-url-viewer {
     display: inline-block;
     max-width: 99%;
+    height: fit-content;
     padding: 5px;
 }
 

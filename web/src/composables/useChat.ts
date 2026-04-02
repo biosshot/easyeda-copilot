@@ -152,8 +152,34 @@ export default function useChat() {
 
         if (!files || files.length === 0) return;
 
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
+        await attachFiles(Array.from(files));
+        input.value = '';
+    }
+
+    async function handleClipboardPaste(event: ClipboardEvent) {
+        const clipboardItems = event.clipboardData?.items;
+        if (!clipboardItems?.length) return;
+
+        const imageFiles: File[] = [];
+
+        for (const item of Array.from(clipboardItems)) {
+            if (item.kind !== 'file') continue;
+            const file = item.getAsFile();
+            if (!file) continue;
+            if (!file.type.startsWith('image/')) continue;
+            imageFiles.push(file);
+        }
+
+        if (!imageFiles.length) return;
+
+        event.preventDefault();
+        await attachFiles(imageFiles);
+    }
+
+    async function attachFiles(files: File[]) {
+        if (!files.length) return;
+
+        for (const file of files) {
             const parsedFile = await parseFile(file);
 
             if (parsedFile) {
@@ -167,8 +193,6 @@ export default function useChat() {
                 showToastMessage(`File "${file.name}" not supported`, 'warn');
             }
         }
-
-        input.value = '';
     }
 
     function removeAttachedFile(fileId: string) {
@@ -542,6 +566,7 @@ export default function useChat() {
         deleteMessage,
         onEditMessage,
         handleFileSelect,
+        handleClipboardPaste,
         removeAttachedFile,
         clearAttachedFiles,
         getAcceptString

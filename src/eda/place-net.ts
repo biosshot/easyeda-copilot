@@ -2,20 +2,29 @@ import { CircuitAssembly } from "../types/circuit";
 import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
-import { AddedNet, NET_PORT_COMPONENT, PlacedComponents, RmNet } from "./types";
+import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
 import { withTimeout } from "./utils";
 
-// Конфигурация попыток: длины и базовые направления (dx, dy)
-// Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
-const trialLengths = [20, 30, 40, 60, 80, 100, 120, 140, 160, 180, 190, 210, 230, 10, 5];
-const trialPortOffsetLengths = [15, 25, 35, 45, 55, 65, 75, 85, 95, 105, 115, 125, 135, 145, 155, 165, 175, 185, 195, 205, 215].map(x => x - 5);
+// Генератор диапазона (аналог range в Python)
+const range = (start: number, stop: number, step: number) =>
+    Array.from({ length: (stop - start) / step + 1 }, (_, i) => start + i * step);
 
+const trialLengths = [20, 30, ...range(40, 800, 20), 15, 10, 5];
+const trialPortOffsetLengths = range(10, 800, 10);
+
+// Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
 const directions = [
     { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
     { dx: 0, dy: -1, port_offset_y: 0 },  // top
     { dx: -1, dy: 0, port_offset_y: -1 },  // left
     { dx: 0, dy: 1, port_offset_y: 0 },    // bottom
 ];
+
+const selectPortForNet = (net: string) => {
+    const name = Object.keys(shortSymbolsMap).find(t => shortSymbolsMap[t as keyof typeof shortSymbolsMap].is(net));
+    if (!name) return shortSymbolsMap['NETPORT'].data;
+    else return shortSymbolsMap[name as keyof typeof shortSymbolsMap].data;
+}
 
 async function groupAndSortNetsByDesignator(nets: AddedNet[], placeComponents: PlacedComponents) {
     const grouped = new Map<string, AddedNet[]>();
@@ -77,6 +86,7 @@ const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_Primi
 
 async function place(group: AddedNet[], myIndex: number, placeComponents: PlacedComponents, makePort: boolean) {
     const net: AddedNet = group[myIndex];
+    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
 
     const pin = await findPin(net.designator, { num: net.pin_number, name: net.pin_name }, placeComponents);
     if (!pin) {
@@ -184,8 +194,14 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
     const allComponentPins = pin.pins?.[0] ?? [];
 
     // Функция проверки коллизии: возвращает true, если endY совпадает с Y любого пина компонента
-    const hasPinCollision = (checkY: number) => {
-        return allComponentPins.some(p => p.getState_Y() === checkY && p.getState_PinNumber() != net.pin_number && p.getState_Rotation() === rot);
+    const hasCollisionForPort = (checkX: number, checkY: number) => {
+        return allComponentPins.some(p => p.getState_Y() === checkY && p.getState_PinNumber() != net.pin_number && p.getState_Rotation() === rot) ||
+            allWires.some(w => {
+                const lineRaw = w.getState_Line();
+                const line = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+
+                return line.some(segment => isPointOnSegment({ x: checkX, y: checkY }, { originalIndex: -1, start: { x: segment[0], y: segment[1] }, end: { x: segment[2], y: segment[3] } }))
+            });
     };
 
     // Определение индекса основного направления на основе вращения
@@ -218,7 +234,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
         });
     }
 
-    let wireCreated = false;
+    let wire;
     let endX;
     let endY;
     let endYPort;
@@ -226,18 +242,18 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
     // Внешний цикл по длинам
     for (const dirIndex of directionsToTry) {
-        if (wireCreated) break;
+        if (wire) break;
         dir = directions[dirIndex];
 
         const portMakeVariants = makePortForThis ? [makePortForThis, !makePortForThis] : [false];
 
         for (const makePortForThis__ of portMakeVariants) {
-            if (wireCreated) break;
+            if (wire) break;
             makePortForThis = makePortForThis__;
 
             // Внутренний цикл по направлениям
             for (const wireLength of trialLengths) {
-                if (wireCreated) break;
+                if (wire) break;
 
                 let portOffsets = makePortForThis__ ? trialPortOffsetLengths : [0];
                 if (dir.port_offset_y === 0) {
@@ -245,21 +261,20 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
                 }
 
                 for (const portOffsetLen of portOffsets) {
-                    if (wireCreated) break;
+                    if (wire) break;
 
                     endX = pinX + dir.dx * wireLength;
                     endY = pinY + dir.dy * wireLength;
                     endYPort = endY + dir.port_offset_y * portOffsetLen;
 
                     // Проверка коллизии: endY не должен совпадать с Y любого пина компонента
-                    if (hasPinCollision(endYPort)) {
+                    if (hasCollisionForPort(endX, endYPort)) {
                         continue;
                     }
 
                     try {
-                        const wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY, endX, endYPort], net.net);
+                        wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY, endX, endYPort], net.net);
                         if (wire) {
-                            wireCreated = true;
                             break;
                         }
                     } catch (err) {
@@ -276,9 +291,12 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
         }
     }
 
-    if (wireCreated && makePortForThis && endX && endYPort && dir) {
-        const rotation = dir.dy === 1 ? 180 : 0;
-        const comp = await placeComponent(NET_PORT_COMPONENT, { x: endX, y: -endYPort, rotate: rotation }).catch(e => undefined);
+    if (wire && makePortForThis && endX && endYPort && dir) {
+        const portData = selectPortForNet(net.net);
+        let rotation = (dir.dy === 1 ? 180 : 0);
+        if (portData.rotateToIdle === -1) rotation += 180;
+
+        const comp = await placeComponent(portData, { x: endX, y: -endYPort, rotate: rotation }).catch(e => undefined);
 
         if (comp) {
             comp.setState_Name(net.net);
@@ -287,10 +305,14 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
             });
 
             await comp.done();
+
+            setTimeout(() => {
+                wire.done();
+            }, 100);
         }
     }
 
-    if (!wireCreated) {
+    if (!wire) {
         const msg = `Wire creation failed after all attempts: "${net.net}" at ${net.designator} ${net.pin_number}`;
         eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
         eda.sys_Log.add(msg);

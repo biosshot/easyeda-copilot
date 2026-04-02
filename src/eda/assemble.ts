@@ -6,7 +6,7 @@ import { ComponentReplacer } from "./replacer";
 import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections";
 import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
-import { AddedNet, ComponentToReplace, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
+import { AddedNet, ComponentToReplace, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
 import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout } from "./utils";
 import PQueue from 'p-queue';
 
@@ -28,10 +28,7 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset)
 
     if (partUuid === 'GND') {
-        comp = await placeComponent({
-            libraryUuid: 'f5af0881d090439f925343ec8aedf154',
-            uuid: '181f479f152643bbaa46a4b8cd92ed2e',
-        }, { x, y, rotate: pos.rotate });
+        comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate: pos.rotate });
 
         const s = (component.value || "GND").toUpperCase()
         comp.setState_Name(s);

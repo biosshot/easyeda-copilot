@@ -57,6 +57,14 @@
                             custom base URL, OpenAi or Anthropic's web_search will be used. If the key is tavily,
                             Tavily's web search will be used.</p>
                     </div>
+
+                    <div class="setting-group">
+                        <label for="maxToolParallel">Max Tool Parallel</label>
+                        <input id="maxToolParallel" :value="settings.maxToolParallel" type="number" min="1" max="10"
+                            placeholder="3"
+                            @change="onSettingChange('maxToolParallel', Math.max(1, Math.min(25, Number(($event.target as HTMLInputElement).value))))" />
+                        <p class="hint">Maximum number of tools that can run in parallel.</p>
+                    </div>
                 </Collapsible>
 
                 <Collapsible title="Agents" :default-open="true">
@@ -267,7 +275,7 @@ const onSettingInput = (key: string, value: string) => {
     }, 1000);
 };
 
-const onSettingChange = (key: string, value: string | boolean) => {
+const onSettingChange = (key: string, value: string | boolean | number) => {
     settingsStore.setSetting(key, value);
     showToastMessage('Settings saved', 'success');
 };

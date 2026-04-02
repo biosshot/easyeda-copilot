@@ -5,6 +5,7 @@ export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStor
         provider: settingsStore.getSetting('apiProvider'),
         apiKey: settingsStore.getSetting('apiKey'),
         'base-url': settingsStore.getSetting('llmBaseUrl').toString().trim() || undefined,
+        maxToolParallel: parseInt(settingsStore.getSetting('maxToolParallel').toString()) || undefined,
 
         base: {
             model: settingsStore.getSetting('agentBaseModel') || undefined,

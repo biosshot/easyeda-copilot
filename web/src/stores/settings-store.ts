@@ -17,19 +17,19 @@ const DEFAULT_SETTINGS = {
     showInlineButtons: true,
 
     // Agent Models - Base
-    agentBaseModel: 'gpt-5-mini',
+    agentBaseModel: 'gpt-5.4-mini',
 
     // Agent Models - Specialized
     agentBlockDiagramModel: 'gpt-5.4',
-    agentChatModel: 'gpt-5-mini',
+    agentChatModel: 'gpt-5.4-mini',
     agentCircuitExplainerModel: 'gpt-5.4',
     agentCircuitMakerModel: 'gpt-5.4',
     agentCompletionsModel: 'gpt-5.4',
-    agentListCompletionsModel: 'gpt-5-mini',
+    agentListCompletionsModel: 'gpt-5.4-mini',
     agentDiagnosticAlgorithmModel: 'gpt-5.4',
     agentPinDescriptionModel: 'gpt-5.4',
-    agentLcscSearchModel: 'gpt-5-mini',
-    agentLcscCatalogModel: 'gpt-5-mini',
+    agentLcscSearchModel: 'gpt-5.4-mini',
+    agentLcscCatalogModel: 'gpt-5.4-mini',
 
     agentBaseReasoning: 'medium',
 
@@ -48,6 +48,8 @@ const DEFAULT_SETTINGS = {
     agentLcscSearchUsePrefetch: true,
 
     tavilyApiKey: '',
+
+    maxToolParallel: 3,
 };
 
 type SettingsKey = keyof typeof DEFAULT_SETTINGS | (string & {});

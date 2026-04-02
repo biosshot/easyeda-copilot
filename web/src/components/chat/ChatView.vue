@@ -150,6 +150,7 @@ const {
   deleteMessage,
   onEditMessage,
   handleFileSelect,
+  handleClipboardPaste,
   removeAttachedFile,
   getAcceptString
 } = useChat();
@@ -273,6 +274,10 @@ function handleAttachClick(event: MouseEvent) {
   attachCtxMenu.value?.open(event);
 }
 
+function onPaste(event: ClipboardEvent) {
+  void handleClipboardPaste(event);
+}
+
 const attachMenuItems = [
   {
     icon: 'Cuboid',
@@ -292,6 +297,11 @@ const attachMenuItems = [
 
 onMounted(() => {
   blockDiagramHistoryStore.initializeHistory();
+  document.addEventListener('paste', onPaste);
+})
+
+onUnmounted(() => {
+  document.removeEventListener('paste', onPaste);
 })
 
 // Expose for parent

@@ -101,7 +101,7 @@ watchEffect(() => {
 .best-component h3,
 .other-components h3 {
     font-size: 1.1em;
-    margin-top: 0;
+    margin-top: 10px;
     margin-bottom: 12px;
     padding-bottom: 6px;
     border-bottom: 1px solid var(--color-border);
@@ -114,7 +114,7 @@ watchEffect(() => {
 
 .components-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(400x, 1fr));
     gap: 16px;
 }
 </style>

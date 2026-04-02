@@ -113,7 +113,7 @@ export const themes: Record<ThemeName, ThemeConfig> = {
  * Получить конфигурацию темы по названию
  */
 export function getTheme(themeName: ThemeName): ThemeConfig {
-    return themes[themeName] || darkTheme;
+    return themes[themeName] || lightTheme;
 }
 
 /**

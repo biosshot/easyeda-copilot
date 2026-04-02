@@ -301,7 +301,13 @@ async function removeWiresFromComponentToFirstJunction(
         if (newAllWires.length > 0 && mergedLines.length > 0) {
             if (!Object.values(countPoints(mergedLines)).find(x => x >= 4)) {
                 await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
-                    line: mergedLines
+                    line: mergedLines,
+                });
+
+                await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
+
+                await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
+                    net: wireWithPin.net
                 });
             }
             else {
