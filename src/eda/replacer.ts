@@ -240,7 +240,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                 let maked = false;
 
                 if (pin) {
-                    eda.sys_Log.add(`Replacer ${savedProps.designator} found pin in sch ${pinMiss.pinNumber}`);
+                    eda.sys_Log.add(`Replacer ${savedProps.designator} found pin in sch '${pinMiss.pinNumber}' ${JSON.stringify(componentCircuit)}`);
                     const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name);
                     let wire;
                     let wireData;
@@ -274,17 +274,19 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                         wireData![wireDataIndex!][wireIndex!] += pinMiss.missDX;
                         wireData![wireDataIndex!][wireIndex! + 1] -= pinMiss.missDY;
 
-                        if (validLine(wireData!)) {
+                        try {
+                            // if (validLine(wireData!)) {
                             eda.sys_Log.add(`Replacer ${savedProps.designator} modify wire ${wireDataIndex}; ${wireIndex}; ${wire.getState_PrimitiveId()}; ${JSON.stringify(wireData)}`);
 
                             await eda.sch_PrimitiveWire.modify(wire.getState_PrimitiveId(), {
                                 line: wireData
                             })
 
-                            wire.done();
+                            await wire.done();
                             maked = true;
                         }
-                        else {
+                        // else {
+                        catch (e) {
                             eda.sys_Log.add(`Replacer ${savedProps.designator} not valid modify data: ${wireDataIndex}; ${wireIndex}; ${JSON.stringify(wireData)}`);
                         }
                         // }
