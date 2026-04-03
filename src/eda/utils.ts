@@ -62,7 +62,7 @@ export async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_Primit
     for (const comp of components) {
         try {
             const primitiveId = comp.getState_PrimitiveId();
-            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId).catch(e => undefined);
 
             if (pins && pins.length > 0) {
                 for (const pin of pins) {

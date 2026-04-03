@@ -75,8 +75,8 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
         }
 
         const newCompId = newComp.getState_PrimitiveId();
-        const newPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(newCompId);
-        const oldpins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+        const newPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(newCompId).catch(e => undefined);
+        const oldpins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId).catch(e => undefined);
 
         if (!newPins || !oldpins) {
             throw new Error('Pins not found in replace');
@@ -163,7 +163,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
     } catch (error) {
         isAllow = false;
         cause = (error as Error).message;
-        if (newComp) await eda.sch_PrimitiveComponent.delete(newComp.getState_PrimitiveId());
+        if (newComp) await eda.sch_PrimitiveComponent.delete(newComp.getState_PrimitiveId()).catch(e => undefined);
     }
 
     return {
@@ -172,7 +172,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
         },
 
         async cancel() {
-            if (newComp) await eda.sch_PrimitiveComponent.delete(newComp.getState_PrimitiveId());
+            if (newComp) await eda.sch_PrimitiveComponent.delete(newComp.getState_PrimitiveId()).catch(e => undefined);
         },
 
         getNewPrimitive() {
@@ -191,7 +191,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                 componentCircuit = circuit.components.find(c => c.designator === savedProps.designator);
             }
 
-            await eda.sch_PrimitiveComponent.delete(primitiveId);
+            await eda.sch_PrimitiveComponent.delete(primitiveId).catch(e => undefined);
 
             // Error if you try it at once
             if (rotate !== undefined) {
@@ -241,7 +241,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
                 if (pin) {
                     eda.sys_Log.add(`Replacer ${savedProps.designator} found pin in sch '${pinMiss.pinNumber}' ${JSON.stringify(componentCircuit)}`);
-                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name);
+                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name).catch(e => []);
                     let wire;
                     let wireData;
                     let wireIndex;
@@ -310,7 +310,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
             if (!pinMissSizes.length && componentCircuit?.pins.length) {
                 for (const pin of componentCircuit.pins) {
-                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name);
+                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name).catch(e => []);
                     for (const wire of wires) {
                         await wire.done().catch(e => undefined);
                     }

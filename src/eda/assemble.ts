@@ -219,18 +219,23 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offset = { x: 0, y: 0 }) {
 
     for (const block of blocksRect ?? []) {
-        if (block.name === 'block___v_root__') continue;
-        const padding = 5;
+        try {
+            if (block.name === 'block___v_root__') continue;
+            const padding = 5;
 
-        const { x, y } = applyOffset(block.x - padding, block.y - padding, offset)
+            const { x, y } = applyOffset(block.x - padding, block.y - padding, offset)
 
-        const rect = await eda.sch_PrimitiveRectangle.create(x, y, block.width + (padding * 2), block.height + (padding * 2), 2);
+            const rect = await eda.sch_PrimitiveRectangle.create(x, y, block.width + (padding * 2), block.height + (padding * 2), 2);
 
-        const descArr = chunkArray(block.description.split(' '), 8).map(arr => arr.join(' '))
-        const desc = descArr.join('\n');
+            const descArr = chunkArray(block.description.split(' '), 8).map(arr => arr.join(' '))
+            const desc = descArr.join('\n');
 
-        const text = await eda.sch_PrimitiveText.create(x, y + 3 + (5 * descArr.length), desc, undefined, undefined, undefined, 5)
-        const text_2 = await eda.sch_PrimitiveText.create(x, y + 18 + (5 * descArr.length), block.name, undefined, undefined, undefined, 14);
+            const text = await eda.sch_PrimitiveText.create(x, y + 3 + (5 * descArr.length), desc, undefined, undefined, undefined, 5)
+            const text_2 = await eda.sch_PrimitiveText.create(x, y + 18 + (5 * descArr.length), block.name, undefined, undefined, undefined, 14);
+
+        } catch (error) {
+            // pass
+        }
     }
 }
 

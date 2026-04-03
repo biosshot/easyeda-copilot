@@ -351,7 +351,7 @@ export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent
     try {
         if (!primitiveId) throw new Error('Not prim id');
 
-        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId);
+        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveId).catch(e => undefined);
 
         if (pins?.length !== 1) return undefined;
 
@@ -359,7 +359,7 @@ export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent
         pinY = pins[0].getState_Y();
     }
     catch (error) {
-        if (!shortSymbol && primitiveId) shortSymbol = await eda.sch_PrimitiveComponent.get(primitiveId);
+        if (!shortSymbol && primitiveId) shortSymbol = await eda.sch_PrimitiveComponent.get(primitiveId).catch(e => undefined);
         if (!shortSymbol) return undefined;
 
         pinX = shortSymbol.getState_X();
@@ -379,7 +379,7 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
         ...await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.NET_PORT).catch(e => [])
     ]
 
-    const shortSymbols = await eda.sch_PrimitiveComponent.get(shortSymbolsIds);
+    const shortSymbols = await eda.sch_PrimitiveComponent.get(shortSymbolsIds).catch(e => []);
 
     for (let idx = 0; idx < shortSymbolsIds.length; idx++) {
         if (shortSymbols[idx].getState_Net() !== net
@@ -410,7 +410,7 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
     const addedNet: AddedNet[] = [];
 
     do {
-        const wire = await eda.sch_PrimitiveWire.getAll(net);
+        const wire = await eda.sch_PrimitiveWire.getAll(net).catch(e => []);
         // Передаём координаты всех пинов компонента для обработки узлов на проводах
         allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire, {
             pins: allPinsPos
@@ -437,7 +437,7 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
             )
 
             if (antagonistPin) {
-                const primitive = await eda.sch_PrimitiveComponent.get(antagonistPin.primitiveId);
+                const primitive = await eda.sch_PrimitiveComponent.get(antagonistPin.primitiveId).catch(e => undefined);
                 const designator = primitive?.getState_Designator();
 
                 if (!primitive || !designator || primitive.getState_ComponentType() !== ESCH_PrimitiveComponentType.COMPONENT) {
@@ -490,7 +490,7 @@ export async function removeComponent(designator: string, circuit?: ExplainCircu
     const pins = (await Promise.all(component.map(component => getPrimitiveComponentPins(component.primitiveId)))).flat();
 
     const allPinsPos = await getAllPinsPos();
-    await eda.sch_PrimitiveComponent.delete(primitiveIds);
+    await eda.sch_PrimitiveComponent.delete(primitiveIds).catch(e => undefined);
 
     const componentCircuit = circuit.components.find(c => c.designator === designator);
 

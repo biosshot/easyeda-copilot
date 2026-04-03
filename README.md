@@ -23,6 +23,11 @@ EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit
 
 ## Installation
 
+### Table of easyeda versions on which the functionality was tested.
+| Version                     | Status     |
+| --------------------------- | ---------- |
+| EasyEDA Pro Desktop V2.2.45 | ✅ Verified |
+
 To install the extension, download the latest release. In EasyEDA Pro, go to Settings → Extensions → Extensions Manager → Import Extensions, select the *.eext file, and be sure to check the External Interactions box.
 
 ## Generating Circuits

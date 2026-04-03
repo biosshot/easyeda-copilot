@@ -106,7 +106,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         const pins: ExplainCircuit['components'][0]['pins'] = [];
 
         // eda.sys_Log.add(`[getSchematic] Processing component: ${designator}, Value: ${value}`);
-        const rawPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveComponent.getState_PrimitiveId())
+        const rawPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitiveComponent.getState_PrimitiveId()).catch(e => undefined)
 
         if (Array.isArray(rawPins)) {
             for (const p of rawPins) {

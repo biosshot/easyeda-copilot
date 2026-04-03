@@ -5,8 +5,11 @@ export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
 
     // @ts-ignore
-    const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT);
-    const components = await eda.sch_PrimitiveComponent.get(promIdComponent);
+    const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT).catch(e => undefined);
+    if (!promIdComponent) return undefined;
+    const components = await eda.sch_PrimitiveComponent.get(promIdComponent).catch(e => undefined);
+    if (!components?.length) return undefined;
+
     const found = [];
 
     for (let index = 0; index < components.length; index++) {
@@ -19,7 +22,7 @@ export const searchComponentInSCH = async (designator: string) => {
 }
 
 export async function getPrimitiveComponentPins(id: string) {
-    const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id);
+    const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id).catch(e => undefined)
     if (!pins) throw new Error("Pins not found");
 
     return pins.sort((a, b) => {
@@ -35,7 +38,10 @@ const fuzzyRound = (x: number, y: number) => {
 
 export async function getAllPrimitivePins() {
     const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(e => []);
-    const pins = await Promise.allSettled(promIdComponent.map(async id => ({ primitiveId: id, pins: (await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id))! })));
+    const pins = await Promise.allSettled(promIdComponent.map(async id => ({
+        primitiveId: id,
+        pins: await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(id).then(p => p ?? []).catch(e => [])
+    })));
     return pins.filter(result => result.status === 'fulfilled').map(result => result.value!).filter(item => item.pins);
 }
 
@@ -68,7 +74,7 @@ export const findPin = async (designator: string, pin_: { num: number | string, 
         pdesignator = rmPartFromDesignator(pdesignator);
 
         if (pdesignator === designator) {
-            const c = await eda.sch_PrimitiveComponent.get(placedComp.primitive_id);
+            const c = await eda.sch_PrimitiveComponent.get(placedComp.primitive_id).catch(e => undefined);
             components.push(c);
             pins.push(placedComp.pins);
         }
