@@ -44,7 +44,7 @@ const DEFAULT_SETTINGS = {
     agentLcscSearchReasoning: 'low',
     agentLcscCatalogReasoning: 'minimal',
 
-    agentCircuitExplainerUseSpice: true,
+    agentCircuitExplainerUseSpice: false,
     agentLcscSearchUsePrefetch: true,
 
     tavilyApiKey: '',

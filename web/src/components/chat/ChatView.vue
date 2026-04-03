@@ -1,8 +1,8 @@
 <template>
   <div v-if="!showEditor" class="chat-view">
     <div class="messages" v-if="chatMessages?.length" ref="messagesContainer" @scroll="onScroll">
-      <ChatMessage v-for="(msg, idx) in chatMessages" :key="msg._id ?? cyrb53(msg.content)" :msg="msg" :idx="idx"
-        :isFirstInGroup="isFirstInAiGroup(idx)" :isLastInGroup="isLastInAiGroup(idx)"
+      <ChatMessage v-for="(msg, idx) in chatMessages" :key="msg._id ?? cyrb53(msg.content + msg.thinking)" :msg="msg"
+        :idx="idx" :isFirstInGroup="isFirstInAiGroup(idx)" :isLastInGroup="isLastInAiGroup(idx)"
         :firstInGroupIdx="getFirstInGroupIdx(idx)" @retry-send="retrySend" @edit-message="onEditMessage"
         @inline-buttons="onInlineButtons" @delete-message="deleteMessage" />
 
@@ -23,6 +23,15 @@
 
     <!-- Empty placeholder shown when there are no chat messages -->
     <div class="messages placeholder" v-else>
+      <div v-if="recentChats.length > 0" class="recent-chats">
+        <p class="recent-chats-title">Recent chats:</p>
+        <div class="recent-chats-list">
+          <div v-for="chat in recentChats" :key="chat.id" class="recent-chat-item" @click="switchToChat(chat.id)">
+            <span class="recent-chat-title">{{ chat.title + ': ' + (chat.messages[0]?.content ?? 'Empty') }}</span>
+          </div>
+        </div>
+      </div>
+
       <div class="placeholder-content">
         <p class="empty-title">No messages</p>
         <p class="empty-sub">Please enter your message in the box below.</p>
@@ -108,7 +117,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch, onActivated, onUnmounted } from 'vue';
+import { ref, onMounted, nextTick, watch, onActivated, onUnmounted, computed } from 'vue';
 import useChat from '../../composables/useChat';
 import Icon from '../shared/Icon.vue';
 import IconButton from '../shared/IconButton.vue';
@@ -121,6 +130,7 @@ import ErrorBanner from '../shared/ErrorBanner.vue';
 import Timer from '../shared/Timer.vue';
 import ChatMessage from './ChatMessage.vue';
 import { cyrb53 } from '../../utils/hash';
+import { useChatHistoryStore } from '../../stores/chat-history-store';
 import BlockDiagramEditor from '../block-diagram/BlockDiagramEditor.vue';
 import BlockDiagramHistory from '../block-diagram/BlockDiagramHistory.vue';
 import ContextMenu from '../shared/ContextMenu.vue';
@@ -131,6 +141,12 @@ import { formatFileSize } from '../../utils/file-size';
 
 const settingsStore = useSettingsStore();
 const blockDiagramHistoryStore = useBlockDiagramHistoryStore();
+const chatHistoryStore = useChatHistoryStore();
+
+const recentChats = computed(() => {
+  const allChats = chatHistoryStore.getAllChats();
+  return allChats.slice(1, 4);
+});
 
 const {
   chatMessages,
@@ -215,6 +231,10 @@ function loadDiagramFromHistory(data: any) {
 
 function toggleHistoryPanel() {
   showHistoryPanel.value = !showHistoryPanel.value;
+}
+
+function switchToChat(id: string) {
+  chatHistoryStore.switchToChat(id);
 }
 
 function scrollToBottom() {
@@ -337,7 +357,7 @@ defineExpose({
 /* Placeholder styles when there are no messages */
 .messages.placeholder {
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   padding: 2rem;
 }
 
@@ -345,6 +365,41 @@ defineExpose({
   text-align: center;
   color: var(--color-text-muted);
   max-width: 420px;
+  margin: auto;
+}
+
+.recent-chats {
+  margin-bottom: 1.5rem;
+  text-align: left;
+  width: 100%;
+}
+
+.recent-chats-title {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.recent-chats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.recent-chat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0rem;
+  cursor: pointer;
+}
+
+.recent-chat-title {
+  font-size: 0.875rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .empty-title {

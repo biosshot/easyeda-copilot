@@ -325,7 +325,7 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
     for (const group of groups) {
         for (let index = 0; index < group.length; index++) {
             const net = group[index];
-            await place(group, index, placeComponents, makePort)
+            await place(group, index, placeComponents, makePort ? group.length < 8 : makePort)
         }
     };
 }

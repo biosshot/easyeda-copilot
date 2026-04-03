@@ -1,5 +1,7 @@
 <template>
     <div class="completions-view">
+        <label style="text-align: center; font-size: 14px;">Completions is deprecated; I recommend using Chat.</label>
+
         <!-- Header section -->
         <div class="completions-header">
             <div class="header-content">
