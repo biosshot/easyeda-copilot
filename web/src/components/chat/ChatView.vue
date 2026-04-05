@@ -138,6 +138,7 @@ import { showToastMessage } from '../../eda/utils';
 import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-store';
 import ToDoList from '../shared/ToDoList.vue';
 import { formatFileSize } from '../../utils/file-size';
+import CustomSelect from '../shared/CustomSelect.vue';
 
 const settingsStore = useSettingsStore();
 const blockDiagramHistoryStore = useBlockDiagramHistoryStore();

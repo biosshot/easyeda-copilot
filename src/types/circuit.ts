@@ -121,7 +121,8 @@ const ExplainComponentSchema = () => z.object({
     pos: z.object({
         x: z.number(),
         y: z.number()
-    }).optional()
+    }).optional(),
+    footprint_name: z.string().nullish()
 });
 
 export const ExplainCircuitStruct = () => z.object({

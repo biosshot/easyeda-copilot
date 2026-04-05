@@ -103,10 +103,10 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                     const schematic = await getSchematic([primitiveId], { disableExtractPartUuid: true });
                     const circuitComponent = schematic.components.find(c => c.designator === savedProps.designator);
                     if (!circuitComponent) throw new Error('Replacer validate Not found circuit component');
-                    const newPin = component.pins.find(p => p.pin_number == npinNumber || p.name == npinName);
+                    const newPin = component.pins.find(p => p.pin_number == npinNumber);
                     if (!newPin) throw new Error('Replacer validate Not found newPin');
                     const circuitPin = circuitComponent.pins.find(cp => cp.signal_name === newPin.signal_name);
-                    opin = oldpins?.find(op => op.getState_PinNumber() == circuitPin?.pin_number)
+                    opin = oldpins?.find(op => op.getState_PinNumber() == circuitPin?.pin_number);
                 }
 
                 if (!opin) {
@@ -150,11 +150,13 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
         try {
             await validate('signal');
         } catch (error) {
+            eda.sys_Log.add(`Failed validate pins by signals: ${(error as Error).message}`);
             rotate = undefined;
             pinMissSizes = [];
             try {
                 await validate('num');
             } catch (error) {
+                eda.sys_Log.add(`Failed validate pins by num: ${(error as Error).message}`);
                 rotate = undefined;
                 pinMissSizes = [];
                 await validate('name');

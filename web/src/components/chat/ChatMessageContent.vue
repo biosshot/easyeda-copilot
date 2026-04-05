@@ -25,7 +25,7 @@
             <AdjTextarea v-model="editedContent" placeholder="Edit your message..." style="width: 100%;"
                 :max-height="360" @enter="saveEdit" />
             <div class="edit-controls">
-                <IconButton icon="PauseCircle" @click="cancelEdit" title="Stop edit message" />
+                <IconButton icon="Square" @click="cancelEdit" title="Stop edit message" />
                 <IconButton icon="SendHorizonal" @click="saveEdit" title="Send message" />
             </div>
         </div>
@@ -273,6 +273,7 @@ defineExpose({
 }
 
 .edit-mode {
+    max-width: 700px;
     width: 80vw;
 }
 

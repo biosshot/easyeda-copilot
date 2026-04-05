@@ -142,18 +142,18 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
     // eslint-disable-next-line no-async-promise-executor
     const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
-        let part_uuid: string | null = null;
+        let device: ILIB_DeviceSearchItem | null = null;
 
         if (!options?.disableExtractPartUuid) {
             const query = component.code || component.value;
 
             if (!query) {
                 eda.sys_Message.showToastMessage(`Fail get component ${component.designator}`, ESYS_ToastMessageType.ERROR);
-                part_uuid = null;
+                device = null;
             }
             else {
-                part_uuid = await eda.lib_Device.search(query).then(devices => {
-                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query)?.uuid ?? null
+                device = await eda.lib_Device.search(query).then(devices => {
+                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query) ?? null
                 }).catch(() => null);
             }
         }
@@ -163,7 +163,8 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             pins: component.pins,
             value: component.value,
             pos: component.pos,
-            part_uuid,
+            part_uuid: device?.uuid ?? null,
+            footprint_name: device?.footprint?.name
         });
     }));
 
