@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { getAllDesignators } from '../../eda/schematic';
 
 const model = defineModel<string>();
@@ -66,6 +66,24 @@ function adjustTextareaHeight() {
     textarea_.style.height = 'auto';
     const newHeight = Math.min(textarea_.scrollHeight, maxHeight);
     textarea_.style.height = `${newHeight}px`;
+
+    syncHighlightLayout();
+}
+
+function syncHighlightLayout() {
+    const textarea_ = textarea.value;
+    const highlight = highlightLayer.value;
+    if (!textarea_ || !highlight) return;
+
+    const style = window.getComputedStyle(textarea_);
+    const borderLeft = parsePx(style.borderLeftWidth);
+    const borderRight = parsePx(style.borderRightWidth);
+    const scrollbarWidth = Math.max(0, textarea_.offsetWidth - textarea_.clientWidth - borderLeft - borderRight);
+
+    highlight.style.paddingTop = style.paddingTop;
+    highlight.style.paddingBottom = style.paddingBottom;
+    highlight.style.paddingLeft = style.paddingLeft;
+    highlight.style.paddingRight = `calc(${style.paddingRight} + ${scrollbarWidth}px)`;
 }
 
 function closeSuggestions() {
@@ -273,6 +291,7 @@ function onTextareaScroll() {
     const highlight = highlightLayer.value;
     if (!textarea_ || !highlight) return;
 
+    syncHighlightLayout();
     highlight.scrollTop = textarea_.scrollTop;
     highlight.scrollLeft = textarea_.scrollLeft;
 }
@@ -320,11 +339,17 @@ function onTextareaKeydown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
+    window.addEventListener('resize', syncHighlightLayout);
+
     nextTick(() => {
         adjustTextareaHeight();
         onTextareaScroll();
     })
 })
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', syncHighlightLayout);
+});
 
 watch(model, () => {
     nextTick(() => {
@@ -364,6 +389,7 @@ textarea {
     font-size: 16px;
     resize: none;
     overflow: auto;
+    scrollbar-gutter: stable;
     outline: none;
     line-height: 1.2;
 }
