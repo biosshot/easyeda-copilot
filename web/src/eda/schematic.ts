@@ -58,3 +58,14 @@ export const waitForWireSelect = (signal?: AbortSignal) => {
 
     return activeWirePromise;
 }
+
+export const getAllDesignators = async () => {
+    if (isEasyEda()) {
+        // @ts-ignore
+        const components = await eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT);
+        return components.map(c => c.getState_Designator()!).filter(Boolean);
+    }
+    else {
+        throw new Error('Fail getAllDesignators');
+    }
+}
