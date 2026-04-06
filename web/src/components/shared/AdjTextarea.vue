@@ -423,7 +423,6 @@ textarea.has-content {
 
 :deep(.token-designator) {
     color: var(--color-primary);
-    font-weight: 600;
     background-color: rgb(from var(--color-primary) r g b / 12%);
 }
 
