@@ -7,12 +7,8 @@
         <div v-if="showChatHistory" class="chat-history-panel">
             <HistoryList title="Chat History" :items="historyItems" empty-message="No chats yet"
                 :active-item-id="historyStore.currentChatId" @select="switchToChat" @delete="deleteChat"
-                @clearAll="clearAllChats" @close="showChatHistory = false">
-                <template #item-content="{ item }">
-                    <span class="history-item-title">{{ item.label }}</span>
-                    <span class="history-item-count">{{ item.count }}</span>
-                </template>
-            </HistoryList>
+                @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats"
+                @close="showChatHistory = false" />
         </div>
     </div>
 </template>
@@ -85,6 +81,18 @@ async function clearAllChats() {
 
         showChatHistory.value = false;
     }
+}
+
+function duplicateChat(chatId: string) {
+    if (props.isLoading) return;
+    historyStore.duplicateChat(chatId);
+}
+
+function renameChat(chatId: string, title: string) {
+    if (props.isLoading) return;
+    const nextTitle = title.trim();
+    if (!nextTitle) return;
+    historyStore.updateChatTitle(chatId, nextTitle);
 }
 </script>
 

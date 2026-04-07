@@ -35,6 +35,14 @@ export interface ChatSession {
     cachedFiles: string[];
 }
 
+function cloneMessages(messages: ChatMessage[]): ChatMessage[] {
+    return messages.map((message) => ({
+        ...message,
+        options: message.options ? { ...message.options } : undefined,
+        attachments: message.attachments ? message.attachments.map((attachment) => ({ ...attachment })) : undefined
+    }));
+}
+
 export const useChatHistoryStore = defineStore('chatHistory', () => {
     const storage = defaultStorage;
     const STORAGE_KEY = 'chat_history';
@@ -249,12 +257,35 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
     function updateChatTitle(id: string, title: string): boolean {
         const chat = chatSessions.value.get(id);
         if (!chat) return false;
+        if (chat.title === title) return false;
 
         chat.title = title;
         chat.updatedAt = Date.now();
         saveToStorage();
 
         return true;
+    }
+
+    // Duplicate chat session
+    function duplicateChat(id: string): string | null {
+        const source = chatSessions.value.get(id);
+        if (!source) return null;
+
+        const newId = `chat_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`;
+        const duplicated: ChatSession = {
+            id: newId,
+            title: `${source.title} (copy)`,
+            messages: cloneMessages(source.messages),
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            cachedFiles: [...source.cachedFiles]
+        };
+
+        chatSessions.value.set(newId, duplicated);
+        currentChatId.value = newId;
+        saveToStorage();
+
+        return newId;
     }
 
     // Clear all chat history
@@ -314,6 +345,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
         addCachedFile,
         readCachedFile,
         updateChatTitle,
+        duplicateChat,
         clearAllChats,
         isCurrentChatEmpty,
         loadFromStorage,
