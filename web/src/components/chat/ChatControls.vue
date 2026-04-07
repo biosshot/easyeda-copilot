@@ -5,7 +5,7 @@
 
         <!-- Chat history panel -->
         <div v-if="showChatHistory" class="chat-history-panel">
-            <HistoryList title="Chat History" :items="historyItems" empty-message="No chats yet"
+            <HistoryList title="Sessions" :items="historyItems" empty-message="No chats yet"
                 :active-item-id="historyStore.currentChatId" @select="switchToChat" @delete="deleteChat"
                 @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats"
                 @close="showChatHistory = false" />
@@ -108,7 +108,7 @@ function renameChat(chatId: string, title: string) {
     position: absolute;
     top: 100%;
     right: 0;
-    width: 280px;
+    width: 380px;
     max-height: calc(100vh - 150px);
     margin-top: 0.25rem;
     z-index: 200;

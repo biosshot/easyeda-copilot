@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="history-list">
+        <div ref="historyListRef" class="history-list">
             <div v-if="items.length === 0" class="empty-history">
                 <p>{{ emptyMessage }}</p>
             </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import IconButton from './IconButton.vue';
 import ContextMenu, { type ContextMenuItem } from './ContextMenu.vue';
 
@@ -57,6 +57,7 @@ const props = defineProps<{
     items: HistoryItem[];
     emptyMessage?: string;
     activeItemId?: string | null;
+    showDuplicate?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -70,19 +71,22 @@ const emit = defineEmits<{
 
 const itemContextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null);
 const headerContextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null);
+const historyListRef = ref<HTMLElement | null>(null);
 const openedItemMenuId = ref<string | null>(null);
 const editingItemId = ref<string | null>(null);
 const editingTitle = ref('');
 
 const itemContextMenuItems = computed<ContextMenuItem[]>(() => [
-    {
-        label: 'Duplicate',
-        icon: 'Copy',
-        click: () => {
-            if (!openedItemMenuId.value) return;
-            emit('duplicate', openedItemMenuId.value);
-        }
-    },
+    ...(props.showDuplicate === false
+        ? []
+        : [{
+            label: 'Duplicate',
+            icon: 'Copy',
+            click: () => {
+                if (!openedItemMenuId.value) return;
+                emit('duplicate', openedItemMenuId.value);
+            }
+        } satisfies ContextMenuItem]),
     {
         label: 'Rename',
         icon: 'Pencil',
@@ -91,9 +95,7 @@ const itemContextMenuItems = computed<ContextMenuItem[]>(() => [
             startRename(openedItemMenuId.value);
         }
     },
-    {
-        divider: true
-    },
+    ...(props.showDuplicate === false ? [] : [{ divider: true } satisfies ContextMenuItem]),
     {
         label: 'Delete',
         icon: 'Trash2',
@@ -174,6 +176,26 @@ function onItemMenuClose() {
 function onHeaderMenuClose() {
     openedItemMenuId.value = null;
 }
+
+function scrollToActiveItem() {
+    if (!props.activeItemId) return;
+
+    nextTick(() => {
+        const container = historyListRef.value;
+        if (!container) return;
+
+        const activeItem = container.querySelector('.history-item.active') as HTMLElement | null;
+        activeItem?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    });
+}
+
+onMounted(() => {
+    scrollToActiveItem();
+});
+
+watch(() => props.activeItemId, () => {
+    scrollToActiveItem();
+});
 </script>
 
 <style scoped>
