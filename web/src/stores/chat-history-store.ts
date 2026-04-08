@@ -4,6 +4,7 @@ import AppDBClient, { type AppDBDocument } from 'appdb';
 import { defaultStorage } from './storage';
 import { AttachmentFileSchema, type AttachmentFile } from '../utils/file-parser';
 import { z } from 'zod';
+import PQueue from 'p-queue';
 
 export const ChatMessageSchema = z.object({
     _id: z.string().optional(),
@@ -68,7 +69,8 @@ function cloneMessages(messages: ChatMessage[]): ChatMessage[] {
 export const useChatHistoryStore = defineStore('chatHistory', () => {
     const chatSessions = ref<Map<string, ChatSession>>(new Map());
     const currentChatId = ref<string | null>(null);
-    let hydrationPromise: Promise<void> | null = null;
+    let hydrationPromise: Promise<void>;
+    const saveQueue = new PQueue({ concurrency: 1 });
 
     let cachedFilesStore: Promise<Cache | null>;
 
@@ -132,7 +134,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
                 currentChatId.value = null;
             }
 
-            await persistState();
+            saveToStorage();
 
             // defaultStorage.removeItem(LEGACY_STORAGE_KEY);
             // defaultStorage.removeItem(LEGACY_CURRENT_CHAT_KEY);
@@ -187,7 +189,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
 
     // Save to storage
     function saveToStorage() {
-        persistState();
+        hydrationPromise.then(() => saveQueue.add(() => persistState()));
     }
 
     // Create new chat session
