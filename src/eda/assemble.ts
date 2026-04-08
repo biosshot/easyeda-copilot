@@ -484,7 +484,8 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     const placedComp = await placeComponents(components, offset);
 
     await drawEdges(edges, components, placedComp, offset);
-    await drawRect(circuit.blocks_rect, offset);
+    if (circuit.assembly_options?.draw_blocks)
+        await drawRect(circuit.blocks_rect, offset);
 
     const netForUnusedPins = getNetForUnusedPins(components, edges);
 
