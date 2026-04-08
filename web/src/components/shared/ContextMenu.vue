@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show" class="context-menu" :style="{ left: x + 'px', top: y + 'px' }">
+    <div v-if="show" ref="menuRef" class="context-menu" :style="{ left: x + 'px', top: y + 'px' }">
         <template v-for="(item, index) in items" :key="index">
             <div v-if="item.divider" class="context-menu-divider"></div>
             <div v-else class="context-menu-item" :class="{ danger: item.danger }" @click="handleClick(item)">
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue'
+import { nextTick, onUnmounted, ref } from 'vue'
 import Icon from './Icon.vue'
 import { onMounted } from 'vue'
 import { MouseTouchEvent } from '@vue-flow/core'
@@ -33,6 +33,7 @@ const props = defineProps<Props>()
 const show = ref<boolean>(false);
 const x = ref<number>(0);
 const y = ref<number>(0);
+const menuRef = ref<HTMLElement | null>(null);
 
 const emit = defineEmits<{
     close: []
@@ -40,37 +41,65 @@ const emit = defineEmits<{
 
 const handleClick = (item: ContextMenuItem) => {
     item.click?.()
-    emit('close')
+    close()
 }
 
 const close = () => {
+    if (!show.value) return;
     show.value = false;
+    emit('close')
+}
+
+const handlePointerDownOutside = (event: PointerEvent) => {
+    if (!show.value) return;
+
+    const target = event.target as Node | null;
+    if (!target) return;
+
+    if (menuRef.value?.contains(target)) return;
+    close();
 }
 
 defineExpose({
-    open: (event: any) => {
-        const height = props.items.length * 24 + 10;
+    open: async (event: any) => {
+        const viewportPadding = 8;
+        const clientX = typeof event?.clientX === 'number' ? event.clientX : viewportPadding;
+        const clientY = typeof event?.clientY === 'number' ? event.clientY : viewportPadding;
 
-        let y_ = event.clientY;
-
-        if (y_ + height > window.innerHeight) {
-            y_ -= height;
-        }
-
-        x.value = event.clientX;
-        y.value = y_;
+        x.value = clientX;
+        y.value = clientY;
         show.value = true;
+
+        await nextTick();
+
+        const menuEl = menuRef.value;
+        if (!menuEl) return;
+
+        const menuWidth = menuEl.offsetWidth;
+        const menuHeight = menuEl.offsetHeight;
+
+        const maxX = window.innerWidth - menuWidth - viewportPadding;
+        const maxY = window.innerHeight - menuHeight - viewportPadding;
+
+        x.value = Math.max(viewportPadding, Math.min(clientX, maxX));
+        y.value = Math.max(viewportPadding, Math.min(clientY, maxY));
     },
 
     close
 })
 
 onMounted(() => {
+    window.addEventListener('pointerdown', handlePointerDownOutside, true);
     window.addEventListener('click', close);
+    window.addEventListener('scroll', close, true);
+    window.addEventListener('resize', close);
 })
 
 onUnmounted(() => {
+    window.removeEventListener('pointerdown', handlePointerDownOutside, true);
     window.removeEventListener('click', close);
+    window.removeEventListener('scroll', close, true);
+    window.removeEventListener('resize', close);
 })
 </script>
 

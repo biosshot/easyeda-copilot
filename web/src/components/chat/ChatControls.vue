@@ -5,14 +5,10 @@
 
         <!-- Chat history panel -->
         <div v-if="showChatHistory" class="chat-history-panel">
-            <HistoryList title="Chat History" :items="historyItems" empty-message="No chats yet"
+            <HistoryList title="Sessions" :items="historyItems" empty-message="No sessions yet"
                 :active-item-id="historyStore.currentChatId" @select="switchToChat" @delete="deleteChat"
-                @clearAll="clearAllChats" @close="showChatHistory = false">
-                <template #item-content="{ item }">
-                    <span class="history-item-title">{{ item.label }}</span>
-                    <span class="history-item-count">{{ item.count }}</span>
-                </template>
-            </HistoryList>
+                @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats" :show-duplicate="true"
+                @close="showChatHistory = false" />
         </div>
     </div>
 </template>
@@ -86,6 +82,18 @@ async function clearAllChats() {
         showChatHistory.value = false;
     }
 }
+
+function duplicateChat(chatId: string) {
+    if (props.isLoading) return;
+    historyStore.duplicateChat(chatId);
+}
+
+function renameChat(chatId: string, title: string) {
+    if (props.isLoading) return;
+    const nextTitle = title.trim();
+    if (!nextTitle) return;
+    historyStore.updateChatTitle(chatId, nextTitle);
+}
 </script>
 
 <style scoped>
@@ -100,7 +108,7 @@ async function clearAllChats() {
     position: absolute;
     top: 100%;
     right: 0;
-    width: 280px;
+    width: 380px;
     max-height: calc(100vh - 150px);
     margin-top: 0.25rem;
     z-index: 200;
