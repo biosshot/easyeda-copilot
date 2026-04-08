@@ -604,7 +604,7 @@ button[disabled],
   padding: 0px 10px;
   position: absolute;
   flex-direction: column-reverse;
-  width: calc(100% - 20px);
+  width: calc(100% - 35px);
   margin-right: 10px;
 }
 
