@@ -5,9 +5,9 @@
 
         <!-- Chat history panel -->
         <div v-if="showChatHistory" class="chat-history-panel">
-            <HistoryList title="Sessions" :items="historyItems" empty-message="No chats yet"
+            <HistoryList title="Sessions" :items="historyItems" empty-message="No sessions yet"
                 :active-item-id="historyStore.currentChatId" @select="switchToChat" @delete="deleteChat"
-                @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats"
+                @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats" :show-duplicate="true"
                 @close="showChatHistory = false" />
         </div>
     </div>
