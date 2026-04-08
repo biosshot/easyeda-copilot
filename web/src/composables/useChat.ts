@@ -397,55 +397,68 @@ export default function useChat() {
     }
 
     const prepareContext = (messages: ChatMessage[]) => {
-        messages = messages.slice(0, 128);
         const newmessages = [] as ChatMessage[];
+        const contextMaxNumberAttachedCircuit = Number(settingsStore.getSetting('contextMaxNumberAttachedCircuit')) || 8;
 
-        const process = (msg: ChatMessage): ChatMessage => {
-            try {
-                const json = JSON.parse(msg.content);
+        const process = (idx: number, msg: ChatMessage): ChatMessage | null => {
+            if (msg.role === 'ai') {
+                try {
+                    const json = JSON.parse(msg.content);
 
-                if (json.type === 'circuit_agent_result' && json.result) {
-                    return {
-                        ...msg,
-                        content: JSON.stringify({
-                            ...json,
-                            result: {
-                                circuit: {
-                                    ...json.result.circuit,
-                                    edges: undefined,
-                                    blocks_rect: undefined,
-                                    components: json.result.circuit.components?.map((comp: object) => ({
-                                        ...comp,
-                                        pos: undefined
-                                        // @ts-ignore
-                                    }))?.filter((comp: object) => !comp?.designator?.includes('|') && comp?.designator?.length < 10)
-                                },
-                                blockDiagram: undefined
+                    if (json.type === 'circuit_agent_result' && json.result) {
+                        if (messages.length - idx <= contextMaxNumberAttachedCircuit) {
+                            return {
+                                ...msg,
+                                content: JSON.stringify({
+                                    ...json,
+                                    result: {
+                                        circuit: {
+                                            ...json.result.circuit,
+                                            edges: undefined,
+                                            blocks_rect: undefined,
+                                            components: json.result.circuit.components?.map((comp: object) => ({
+                                                ...comp,
+                                                pos: undefined
+                                                // @ts-ignore
+                                            }))?.filter((comp: object) => !comp?.designator?.includes('|') && comp?.designator?.length < 10)
+                                        },
+                                        blockDiagram: undefined
+                                    }
+                                }),
                             }
-                        }),
+                        }
+                        else {
+                            return null;
+                        }
                     }
-                }
-                else if (json.type === 'image_url') {
-                    return {
-                        ...msg,
-                        content: JSON.stringify({
-                            ...json,
-                            result: {
-                                ...(json.result ?? {}),
-                                image_url: 'Image not sent for cost reasons'
-                            }
-                        })
+                    else if (json.type === 'image_url') {
+                        return {
+                            ...msg,
+                            content: JSON.stringify({
+                                ...json,
+                                result: {
+                                    ...(json.result ?? {}),
+                                    image_url: 'Image not sent for cost reasons'
+                                }
+                            })
+                        }
                     }
+                } catch (error) {
+                    return msg;
                 }
-            } catch (error) {
-                return msg;
+            }
+            else if (msg.role === 'human') {
+                if (msg.options?.["Selected circuit"] && messages.length - idx > contextMaxNumberAttachedCircuit) {
+                    msg.options["Selected circuit"] = undefined;
+                }
             }
 
             return msg;
         }
 
-        for (const msg of messages) {
-            newmessages.push(process(msg))
+        for (let index = 0; index < messages.length; index++) {
+            const nmsg = process(index, messages[index]);
+            if (nmsg) newmessages.push(nmsg);
         }
 
         return newmessages;

@@ -57,6 +57,7 @@ const DEFAULT_SETTINGS = {
     contextSummarizeThreshold: 64000,
     contextTrimThreshold: 128,
     contextSaveFirstMessages: 5,
+    contextMaxNumberAttachedCircuit: 8
 };
 
 type SettingsKey = keyof typeof DEFAULT_SETTINGS | (string & {});
