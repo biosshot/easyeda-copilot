@@ -248,6 +248,18 @@
                     <p class="hint">Display action buttons above the input area for the latest AI messages</p>
                 </div>
             </div>
+
+            <div class="settings-section">
+                <h2>Circuit Assembly</h2>
+
+                <div class="setting-group">
+                    <label for="assembleDrawRects">
+                        <input id="assembleDrawRects" type="checkbox" :checked="Boolean(settings.assembleDrawRects)"
+                            @change="onSettingChange('assembleDrawRects', ($event.target as HTMLInputElement).checked)" />
+                        Draw structural blocks and their descriptions
+                    </label>
+                </div>
+            </div>
         </div>
     </div>
 </template>

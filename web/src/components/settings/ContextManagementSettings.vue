@@ -42,6 +42,15 @@
             <p class="hint">Keep first messages for project context.</p>
         </div>
     </template>
+
+    <div class="setting-group">
+        <label for="contextMaxNumberAttachedCircuit">Max attached circuit</label>
+        <input id="contextMaxNumberAttachedCircuit" :value="Number(settings['contextMaxNumberAttachedCircuit'])"
+            type="number" min="1" max="256"
+            @change="onChange('contextMaxNumberAttachedCircuit', clampInt(($event.target as HTMLInputElement).value, 0, Infinity))" />
+        <p class="hint">Only the specified number of the most recent attached circuit will be kept; the rest will be
+            removed from the context before sending. (The same applies to AI-generated circuits)</p>
+    </div>
 </template>
 
 <script setup lang="ts">

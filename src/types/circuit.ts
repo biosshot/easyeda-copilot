@@ -91,7 +91,8 @@ export const CircuitAssemblyStruct = () => z.object({
         height: z.number(),
     })).optional(),
     assembly_options: z.object({
-        centered: z.boolean().optional()
+        centered: z.boolean().optional(),
+        draw_blocks: z.boolean().optional(),
     }).optional(),
     added_net: z.array(z.object({
         designator: z.string(),
