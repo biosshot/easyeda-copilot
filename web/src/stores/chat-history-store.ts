@@ -84,7 +84,8 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
         try {
             const db = await chatDbPromise;
 
-            const sessions = Array.from(chatSessions.value.values()).map(toRaw);
+            // @perf-warn
+            const sessions = Array.from(chatSessions.value.values()).map(o => JSON.parse(JSON.stringify(o)));
             const sessionById = new Set(sessions.map((session) => session.id));
 
             const existingSessions = await db[CHAT_STORE_NAME].find({ type: 'session' }).catch(() => []) as ChatSessionDocument[];
@@ -424,6 +425,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
     return {
         chatSessions: computed(() => chatSessions.value),
         currentChatId: computed(() => currentChatId.value),
+        waitForLoad: () => hydrationPromise,
         getCurrentChat,
         getAllChats,
         createNewChat,
@@ -437,7 +439,6 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
         duplicateChat,
         clearAllChats,
         isCurrentChatEmpty,
-        loadFromStorage,
         saveToStorage,
     };
 });

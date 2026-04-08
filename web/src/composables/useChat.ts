@@ -242,6 +242,8 @@ export default function useChat() {
         let saveInterval: ReturnType<typeof setInterval> | null = null;
         let lastEventId: string | undefined;
 
+        historyStore.saveToStorage();
+
         const saveProgress = () => {
             localStorage.setItem('chat-last-eventid', lastEventId ?? '');
             historyStore.saveToStorage();
@@ -555,8 +557,10 @@ export default function useChat() {
         }
     }
 
-    // continue last stream
-    sendMessage(undefined, undefined, true)
+    historyStore.waitForLoad().then(() => {
+        // continue last stream
+        sendMessage(undefined, undefined, true)
+    });
 
     return {
         // State
