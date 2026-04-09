@@ -1,5 +1,5 @@
-import AppDBClient, { AppDBDocument, AppDBStore } from 'appdb';
-import '../types/eda'
+import AppDBClient from 'appdb';
+import "@copilot/shared/types/eda";
 import { isEasyEda } from './utils';
 
 interface Checkpoint {

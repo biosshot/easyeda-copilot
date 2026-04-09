@@ -2,7 +2,7 @@ import { ref, computed, Ref } from 'vue';
 import { fetchWithTask } from '../api';
 import { getAllPrimitiveId, getSchematic } from '../eda/schematic';
 import { useSettingsStore } from '../stores/settings-store';
-import type { ExplainCircuit } from '../types/circuit';
+import { ExplainCircuit } from "@copilot/shared/types/circuit";
 import { isEasyEda, showToastMessage } from '../eda/utils';
 import { formatError } from '../utils/error';
 import { assembleCircuit } from '../eda/assemble-circuit';

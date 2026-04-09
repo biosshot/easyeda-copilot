@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { onMounted, watch, watchEffect } from 'vue';
-import type { Component } from '../../../types/component';
+import { Component } from '@copilot/shared/types/component';
 import ComponentCard from './ComponentCard.vue';
 import { InlineButton } from '../../../types/inline-button';
 import { showToastMessage } from '../../../eda/utils';

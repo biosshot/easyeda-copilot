@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import '../../../types/eda'
+import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from '../../../eda/utils'
-import type { Component } from '../../../types/component'
+import { Component } from '@copilot/shared/types/component'
 import IconButton from '../../shared/IconButton.vue'
 import { placeComponent } from './place';
 import ImageUrlView from '../img/ImageUrlView.vue';

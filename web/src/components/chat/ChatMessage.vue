@@ -66,7 +66,7 @@ import { getUserInfo } from '../../eda/user';
 import Collapsible from '../shared/Collapsible.vue';
 import { formatFileSize } from '../../utils/file-size';
 import IconButton from '../shared/IconButton.vue';
-import '../../types/eda';
+import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from '../../eda/utils';
 import { checkpointer } from '../../eda/checkpointer';
 

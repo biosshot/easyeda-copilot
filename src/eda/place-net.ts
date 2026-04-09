@@ -1,4 +1,3 @@
-import { CircuitAssembly } from "../types/circuit";
 import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";

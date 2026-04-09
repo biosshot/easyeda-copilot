@@ -186,7 +186,7 @@ import IconButton from '../../shared/IconButton.vue'
 import { onMounted } from 'vue'
 import { InlineButton } from '../../../types/inline-button'
 import { assembleCircuit } from '../../../eda/assemble-circuit'
-import { CircuitAssembly } from '../../../types/circuit'
+import { CircuitAssembly } from '@copilot/shared/types/circuit'
 
 const props = defineProps<{ result: { circuit: CircuitAssembly, blockDiagram?: string } }>()
 

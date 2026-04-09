@@ -537,13 +537,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watchEffect } from 'vue';
+import { ref, watchEffect } from 'vue';
 import IconButton from '../shared/IconButton.vue';
 import CustomSelect from '../shared/CustomSelect.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import Stepper from '../shared/Stepper.vue';
-import { apiUrl, fetchEda, fetchWithTask } from '../../api';
-import VoltageChart from '../shared/VoltageChart.vue';
+import { fetchWithTask } from '../../api';
 import { getSchematic } from '../../eda/schematic';
 import StepPanel from '../shared/StepPanel.vue';
 import StepPanels from '../shared/StepPanels.vue';
@@ -551,7 +550,7 @@ import TypingDots from '../shared/TypingDots.vue';
 import NetInput from '../shared/NetInput.vue';
 import UnitInput, { UnitValue } from '../shared/UnitInput.vue';
 import { isEasyEda, showToastMessage } from '../../eda/utils';
-import { SimulateResult, SimulateResultSchema } from '../../types/spice';
+import { SimulateResult, SimulateResultSchema } from "@copilot/shared/types/spice";
 import SimGraph from './SimGraph.vue';
 
 interface InputSource {

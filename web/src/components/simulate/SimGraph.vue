@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import VoltageChart from '../shared/VoltageChart.vue';
-import { SimulateResult } from '../../types/spice';
+import { SimulateResult } from "@copilot/shared/types/spice";
 
 const props = defineProps<{ simulationResult: SimulateResult }>()
 </script>
