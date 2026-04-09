@@ -1,8 +1,6 @@
-import { CircuitAssembly, ExplainCircuit } from "../types/circuit";
+import { ExplainCircuit } from "@copilot/shared/types/circuit";
+import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from "./utils";
-// @ts-ignore
-import type _ from '@jlceda/pro-api-types';
-import "../types/eda";
 
 export const getSchematic = async (primitiveIds?: string[]) => {
     if (isEasyEda() && typeof eda.getSchematic === 'function') {

@@ -1,4 +1,4 @@
-import { CircuitAssembly } from "../types/circuit";
+import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import { placeComponent } from "./place-component";
 import { getSchematic } from "./schematic";
 import { searchComponentInSCH } from "./search";

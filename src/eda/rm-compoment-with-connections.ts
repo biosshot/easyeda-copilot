@@ -1,4 +1,4 @@
-import { ExplainCircuit } from "../types/circuit";
+import { ExplainCircuit } from "@copilot/shared/types/circuit";
 import { getSchematic } from "./schematic";
 import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet } from "./types";

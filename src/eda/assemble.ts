@@ -1,4 +1,4 @@
-import type { CircuitAssembly, ExplainCircuit } from "./../types/circuit";
+import { CircuitAssembly, ExplainCircuit } from "@copilot/shared/types/circuit";
 import { searchFreePlaceV2 } from "./free-place-searcher";
 import { placeComponent } from "./place-component";
 import { placeNet, rmNet } from "./place-net";

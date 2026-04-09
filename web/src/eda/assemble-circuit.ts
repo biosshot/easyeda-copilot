@@ -1,8 +1,6 @@
-import { CircuitAssembly, ExplainCircuit } from "../types/circuit";
+import { CircuitAssembly } from "@copilot/shared/types/circuit";
+import "@copilot/shared/types/eda";
 import { isEasyEda } from "./utils";
-// @ts-ignore
-import type _ from '@jlceda/pro-api-types';
-import "../types/eda";
 import { useSettingsStore } from "../stores/settings-store";
 
 export const assembleCircuit = async (circuit: CircuitAssembly) => {

@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import SimGraph from './components/simulate/SimGraph.vue';
-import "./types/eda";
+import "@copilot/shared/types/eda";
 
 const simulationResult = eda.simulationResult;
 

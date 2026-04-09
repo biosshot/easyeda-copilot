@@ -1,4 +1,4 @@
-import type { ExplainCircuit } from '../types/circuit';
+import type { ExplainCircuit } from '@copilot/shared/types/circuit';
 
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {

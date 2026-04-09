@@ -9,7 +9,7 @@ import type { InlineButton } from '../types/inline-button';
 import { formatError } from '../utils/error';
 import { makeLLmSettings } from '../utils/llm-settings';
 import { FlowExportObject } from '@vue-flow/core';
-import { CircuitBlocks } from '../types/circuit';
+import { CircuitBlocks } from "@copilot/shared/types/circuit";
 import { parseFile, getAcceptString, AttachmentFile } from '../utils/file-parser';
 import { checkpointer } from '../eda/checkpointer';
 

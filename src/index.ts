@@ -19,18 +19,7 @@ import Papa from 'papaparse';
 import { assembleCircuit } from './eda/assemble';
 import extension from '../extension.json';
 import { getSchematic } from './eda/schematic';
-
-declare global {
-	interface EDA {
-		assembleCircuit: typeof assembleCircuit,
-		getSchematic: typeof getSchematic,
-		checkpointer: {
-			restore: (id?: string) => Promise<boolean>;
-			save: (minor: boolean) => Promise<string | null>;
-			hasCheckpoint: () => boolean;
-		},
-	}
-}
+import '@copilot/shared/types/eda';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
