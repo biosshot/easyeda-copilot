@@ -11,7 +11,7 @@ export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStor
 
     const s = {
         provider: settingsStore.getSetting('apiProvider'),
-        apiKey: isLocal ? 'unused' : settingsStore.getSetting('apiKey'),
+        apiKey: settingsStore.getSetting('apiKey'),
         'base-url': settingsStore.getSetting('llmBaseUrl').toString().trim() || undefined,
         'relay-id': isLocal ? getRelayId() : undefined,
         maxToolParallel: parseInt(settingsStore.getSetting('maxToolParallel').toString()) || undefined,

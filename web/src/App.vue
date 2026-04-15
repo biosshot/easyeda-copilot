@@ -58,6 +58,7 @@ import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
 import { checkpointer } from './eda/checkpointer';
+import { startRelay } from './api/relay';
 // import VoltageChart from './components/shared/VoltageChart.vue';
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
@@ -89,6 +90,10 @@ const chatViewRef = ref<typeof ChatView | null>(null);
 onMounted(() => {
   settingsStore.loadSettings();
   setTheme((settingsStore.getSetting('theme') || 'light') as ThemeName);
+
+  if (settingsStore.getSetting('apiProvider') === 'local') {
+    startRelay();
+  }
 
   watchEffect(() => {
     const theme = settingsStore.getSetting('theme') || 'light';

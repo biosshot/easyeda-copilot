@@ -115,7 +115,6 @@ export async function fetchModelsCached(
     const requestPromise = (async () => {
         try {
             const base = baseUrl || config.baseUrl();
-            console.log(baseUrl, config.baseUrl())
 
             const safeBase = base.endsWith('/') ? base : `${base}/`;
             const url = new URL(config.endpoint, safeBase).href;
