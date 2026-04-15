@@ -1,4 +1,5 @@
 import { useSettingsStore } from "../stores/settings-store"
+import { getRelayId } from "../api/relay"
 
 const pInt = (v: string | number | boolean) => {
     const val = parseInt(v.toString());
@@ -6,10 +7,13 @@ const pInt = (v: string | number | boolean) => {
 }
 
 export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStore>) => {
+    const isLocal = settingsStore.getSetting('apiProvider') === 'local';
+
     const s = {
         provider: settingsStore.getSetting('apiProvider'),
-        apiKey: settingsStore.getSetting('apiKey'),
+        apiKey: isLocal ? 'unused' : settingsStore.getSetting('apiKey'),
         'base-url': settingsStore.getSetting('llmBaseUrl').toString().trim() || undefined,
+        'relay-id': isLocal ? getRelayId() : undefined,
         maxToolParallel: parseInt(settingsStore.getSetting('maxToolParallel').toString()) || undefined,
         contextManagement: {
             mode: settingsStore.getSetting('contextManagementMode') || undefined,

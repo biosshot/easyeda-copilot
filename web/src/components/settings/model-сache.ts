@@ -1,5 +1,6 @@
 import { fetchEda } from '../../api';
 import { showToastMessage } from '../../eda/utils';
+import { useSettingsStore } from '../../stores/settings-store';
 
 export interface LlmModel {
     id: string;
@@ -26,12 +27,12 @@ function generateKey(provider: string, baseUrl?: string, apiKey?: string): Cache
 
 export const PROVIDER_CONFIGS = {
     openai: {
-        baseUrl: 'https://api.openai.com/v1/',
+        baseUrl: () => 'https://api.openai.com/v1/',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'openai' })
     },
     openrouter: {
-        baseUrl: 'https://openrouter.ai/api/v1',
+        baseUrl: () => 'https://openrouter.ai/api/v1',
         endpoint: 'models',
         normalize: (m: { id: string, pricing: number, name: string, context_length: number }) => ({
             id: m.id,
@@ -56,25 +57,33 @@ export const PROVIDER_CONFIGS = {
         ]
     },
     deepseek: {
-        baseUrl: 'https://api.deepseek.com',
+        baseUrl: () => 'https://api.deepseek.com',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'deepseek' })
     },
     ollamacloud: {
-        baseUrl: 'https://ollama.com/v1/',
+        baseUrl: () => 'https://ollama.com/v1/',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'ollama' })
     },
     zai: {
-        baseUrl: 'https://open.bigmodel.cn/api/paas/v4/',
+        baseUrl: () => 'https://open.bigmodel.cn/api/paas/v4/',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'zai' })
     },
     kimi: {
-        baseUrl: 'https://api.moonshot.ai/v1/',
+        baseUrl: () => 'https://api.moonshot.ai/v1/',
         endpoint: 'models',
         normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'kimi' })
-    }
+    },
+    local: {
+        baseUrl: () => {
+            const settings = useSettingsStore();
+            return String(settings.getSetting('llmBaseUrl'))
+        },
+        endpoint: 'models',
+        normalize: (m: { id: string }) => ({ id: m.id, name: m.id, contextLength: null, provider: 'local' })
+    },
 }
 
 
@@ -83,15 +92,14 @@ export async function fetchModelsCached(
     baseUrl?: string,
     apiKey?: string
 ): Promise<LlmModel[]> {
-    // @ts-ignore
-    const config = PROVIDER_CONFIGS[provider];
+    const config = PROVIDER_CONFIGS[provider as keyof typeof PROVIDER_CONFIGS];
     if (!config) return [];
 
-    if (config.staticModels) {
+    if ('staticModels' in config) {
         return [...config.staticModels];
     }
 
-    if (!apiKey) return [];
+    if (!apiKey && provider !== 'local') return [];
 
     const key = generateKey(provider, baseUrl, apiKey);
 
@@ -106,7 +114,9 @@ export async function fetchModelsCached(
 
     const requestPromise = (async () => {
         try {
-            const base = baseUrl || config.baseUrl;
+            const base = baseUrl || config.baseUrl();
+            console.log(baseUrl, config.baseUrl())
+
             const safeBase = base.endsWith('/') ? base : `${base}/`;
             const url = new URL(config.endpoint, safeBase).href;
 

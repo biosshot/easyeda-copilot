@@ -23,7 +23,7 @@
                             { label: 'Ollama (cloud)', value: 'ollamacloud' },
                             { label: 'ZAI', value: 'zai' },
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
-
+                            { label: 'Local (Relay)', value: 'local' },
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
                         <strong> If the provider you need is not listed here, openai compatible api url in a field "Base
@@ -37,6 +37,19 @@
                     <input id="apiKey" :value="settings.apiKey" type="text" placeholder="Enter your API key"
                         @input="onSettingInput('apiKey', ($event.target as HTMLInputElement).value)" />
                     <p class="hint">Your API key will be saved locally in browser storage</p>
+                </div>
+
+                <!-- Local Relay Info -->
+                <div class="setting-group" v-if="settings.apiProvider === 'local'">
+                    <label>Local Relay</label>
+                    <div class="relay-status" :class="relayStatusClass">
+                        <span class="relay-status-dot"></span>
+                        {{ relayStatusText }}
+                    </div>
+                    <p class="hint">
+                        Connects to a local Ollama instance via the relay server. <br>
+                        Make sure <strong>Ollama</strong> is running on <code>http://localhost:11434</code>
+                    </p>
                 </div>
 
 
@@ -265,9 +278,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import { showToastMessage } from '../../eda/utils';
+import { getRelayConnection, startRelay, stopRelay } from '../../api/relay';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
@@ -276,6 +290,59 @@ import ContextManagementSettings from './ContextManagementSettings.vue';
 
 const settingsStore = useSettingsStore();
 const settings = computed(() => settingsStore.getAllSettings);
+
+// Relay status
+const relayConnected = ref(false);
+const relayError = ref<string | null>(null);
+
+const relayStatusText = computed(() => {
+    if (relayConnected.value) return 'Connected';
+    if (relayError.value) return `Error: ${relayError.value}`;
+    return 'Disconnected';
+});
+
+const relayStatusClass = computed(() => ({
+    'relay-status--connected': relayConnected.value,
+    'relay-status--disconnected': !relayConnected.value && !relayError.value,
+    'relay-status--error': !relayConnected.value && !!relayError.value,
+}));
+
+let relayUnsub: (() => void) | null = null;
+
+function startRelayWatch() {
+    stopRelayWatch();
+    const relay = getRelayConnection();
+    relayConnected.value = relay.isConnected();
+    relayError.value = relay.getError();
+
+    relayUnsub = relay.onStatusChange((connected, error) => {
+        relayConnected.value = connected;
+        relayError.value = error;
+    });
+}
+
+function stopRelayWatch() {
+    if (relayUnsub) {
+        relayUnsub();
+        relayUnsub = null;
+    }
+}
+
+watch(() => settingsStore.getSetting('apiProvider') as string, (provider) => {
+    if (provider === 'local') {
+        startRelay();
+        startRelayWatch();
+    } else {
+        stopRelay();
+        stopRelayWatch();
+        relayConnected.value = false;
+        relayError.value = null;
+    }
+}, { immediate: true });
+
+onUnmounted(() => {
+    stopRelayWatch();
+});
 
 const showWebSearchWarn = computed(() =>
     !settingsStore.getSetting('tavilyApiKey') &&
@@ -367,5 +434,42 @@ onMounted(() => {
     border-radius: 4px;
     cursor: pointer;
     color: var(--color-text-on-primary);
+}
+
+.relay-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: var(--color-bg-secondary, #f0f0f0);
+}
+
+.relay-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.relay-status--connected .relay-status-dot {
+    background: #4caf50;
+}
+
+.relay-status--disconnected .relay-status-dot {
+    background: #9e9e9e;
+}
+
+.relay-status--error .relay-status-dot {
+    background: #f44336;
+}
+
+.relay-status--connected {
+    color: #4caf50;
+}
+
+.relay-status--error {
+    color: #f44336;
 }
 </style>
