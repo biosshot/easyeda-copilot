@@ -13,12 +13,13 @@
  *                     { type: "error", id, message }            (error)
  */
 
+import { authorization } from ".";
 import { __MODE__ } from "../mode";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 
 const RELAY_ID_STORAGE_KEY = 'relay-id';
-const GLOBAL_WS_HOST = __MODE__ === 'DEV' ? 'ws://localhost:5120' : 'wss://circuit.tech.ru.net';
+const GLOBAL_WS_HOST = __MODE__ === 'DEV' ? 'ws://localhost:5120' : `wss://${atob(authorization.split(' ').at(-1) ?? '')}@circuit.tech.ru.net`;
 const RECONNECT_DELAY_MS = 1000;
 const MAX_RECONNECT_DELAY_MS = 30000;
 
