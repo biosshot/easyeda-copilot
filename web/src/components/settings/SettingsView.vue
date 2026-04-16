@@ -23,7 +23,7 @@
                             { label: 'Ollama (cloud)', value: 'ollamacloud' },
                             { label: 'ZAI', value: 'zai' },
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
-                            { label: 'Local (Relay)', value: 'local' },
+                            { label: 'Local', value: 'local' },
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
                         <strong> If the provider you need is not listed here, openai compatible api url in a field "Base
@@ -38,20 +38,6 @@
                         @input="onSettingInput('apiKey', ($event.target as HTMLInputElement).value)" />
                     <p class="hint">Your API key will be saved locally in browser storage</p>
                 </div>
-
-                <!-- Local Relay Info -->
-                <div class="setting-group" v-if="settings.apiProvider === 'local'">
-                    <label>Local Relay</label>
-                    <div class="relay-status" :class="relayStatusClass">
-                        <span class="relay-status-dot"></span>
-                        {{ relayStatusText }}
-                    </div>
-                    <p class="hint">
-                        Connects to a local Ollama instance via the relay server. <br>
-                        Make sure <strong>Ollama</strong> is running on <code>http://localhost:11434</code>
-                    </p>
-                </div>
-
 
                 <Collapsible title="Advenced" :default-open="true">
                     <div class="setting-group">
@@ -295,54 +281,15 @@ const settings = computed(() => settingsStore.getAllSettings);
 const relayConnected = ref(false);
 const relayError = ref<string | null>(null);
 
-const relayStatusText = computed(() => {
-    if (relayConnected.value) return 'Connected';
-    if (relayError.value) return `Error: ${relayError.value}`;
-    return 'Disconnected';
-});
-
-const relayStatusClass = computed(() => ({
-    'relay-status--connected': relayConnected.value,
-    'relay-status--disconnected': !relayConnected.value && !relayError.value,
-    'relay-status--error': !relayConnected.value && !!relayError.value,
-}));
-
-let relayUnsub: (() => void) | null = null;
-
-function startRelayWatch() {
-    stopRelayWatch();
-    const relay = getRelayConnection();
-    relayConnected.value = relay.isConnected();
-    relayError.value = relay.getError();
-
-    relayUnsub = relay.onStatusChange((connected, error) => {
-        relayConnected.value = connected;
-        relayError.value = error;
-    });
-}
-
-function stopRelayWatch() {
-    if (relayUnsub) {
-        relayUnsub();
-        relayUnsub = null;
-    }
-}
-
 watch(() => settingsStore.getSetting('apiProvider') as string, (provider) => {
     if (provider === 'local') {
         startRelay();
-        startRelayWatch();
     } else {
         stopRelay();
-        stopRelayWatch();
         relayConnected.value = false;
         relayError.value = null;
     }
 }, { immediate: true });
-
-onUnmounted(() => {
-    stopRelayWatch();
-});
 
 const showWebSearchWarn = computed(() =>
     !settingsStore.getSetting('tavilyApiKey') &&
