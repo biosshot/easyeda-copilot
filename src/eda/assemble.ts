@@ -334,10 +334,6 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
     }
 
-    // const componentsOnSch = (await withTimeout(eda.sch_PrimitiveComponent.getAll(), 1500).catch(e => []))
-    //     .filter(c => c.getState_ComponentType() === ESCH_PrimitiveComponentType.COMPONENT ||
-    //         c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_PORT || c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_FLAG);
-
     let { components, rm_components, edges, added_net } = circuit;
 
     const componentsAllowReplace: ComponentToReplace[] = [];
@@ -346,9 +342,6 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
 
     if (circuit.replace_components) {
         // @ts-ignore
-        // schematic = await getSchematic(await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT), { disableExtractPartUuid: true });
-        // const componentsNotAllowReplace = components;
-
         const tasks = circuit.replace_components.map(async designator => {
             designator = rmPartFromDesignator(designator);
             const componentsToRep = components.filter(c => rmPartFromDesignator(c.designator) === designator).filter(c => c.part_uuid);

@@ -5,7 +5,9 @@ export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
 
     // @ts-ignore
-    const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT).catch(e => undefined);
+    // fix for easy eda pro v2.2.47
+    const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT)
+        .then(r => [...r]).catch(e => undefined);
     if (!promIdComponent) return undefined;
     const components = await eda.sch_PrimitiveComponent.get(promIdComponent).catch(e => undefined);
     if (!components?.length) return undefined;

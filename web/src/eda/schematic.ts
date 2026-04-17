@@ -13,7 +13,8 @@ export const getSchematic = async (primitiveIds?: string[]) => {
 
 export const getAllPrimitiveId = async () => {
     if (isEasyEda()) {
-        return await eda.sch_PrimitiveComponent.getAllPrimitiveId();
+        // fix for easy eda pro v2.2.47
+        return await eda.sch_PrimitiveComponent.getAllPrimitiveId().then(r => [...r]);
     }
     else {
         throw new Error('Fail getAllPrimitiveId');
