@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, watchEffect, Component, reactive, onScopeDispose } from 'vue';
+import { computed, ref, onMounted, watchEffect, Component, reactive, onScopeDispose, onUnmounted } from 'vue';
 import { useAppStore } from './stores/app-store';
 import { setTheme } from './composables/useTheme';
 import Navbar from './components/layout/Navbar.vue';
@@ -58,6 +58,7 @@ import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
 import { checkpointer } from './eda/checkpointer';
+import { startRelay, stopRelay } from './api/relay';
 // import VoltageChart from './components/shared/VoltageChart.vue';
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
@@ -90,10 +91,18 @@ onMounted(() => {
   settingsStore.loadSettings();
   setTheme((settingsStore.getSetting('theme') || 'light') as ThemeName);
 
+  if (settingsStore.getSetting('apiProvider') === 'local') {
+    startRelay();
+  }
+
   watchEffect(() => {
     const theme = settingsStore.getSetting('theme') || 'light';
     setTheme(theme as ThemeName);
   });
+});
+
+onUnmounted(() => {
+  stopRelay();
 });
 
 if (__MODE__ === 'DEV') {

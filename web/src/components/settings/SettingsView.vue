@@ -23,7 +23,7 @@
                             { label: 'Ollama (cloud)', value: 'ollamacloud' },
                             { label: 'ZAI', value: 'zai' },
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
-
+                            { label: 'Local (Beta)', value: 'local' },
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
                         <strong> If the provider you need is not listed here, openai compatible api url in a field "Base
@@ -38,7 +38,6 @@
                         @input="onSettingInput('apiKey', ($event.target as HTMLInputElement).value)" />
                     <p class="hint">Your API key will be saved locally in browser storage</p>
                 </div>
-
 
                 <Collapsible title="Advenced" :default-open="true">
                     <div class="setting-group">
@@ -265,9 +264,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import { showToastMessage } from '../../eda/utils';
+import { startRelay, stopRelay } from '../../api/relay';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
@@ -276,6 +276,20 @@ import ContextManagementSettings from './ContextManagementSettings.vue';
 
 const settingsStore = useSettingsStore();
 const settings = computed(() => settingsStore.getAllSettings);
+
+// Relay status
+const relayConnected = ref(false);
+const relayError = ref<string | null>(null);
+
+watch(() => settingsStore.getSetting('apiProvider') as string, (provider) => {
+    if (provider === 'local') {
+        startRelay();
+    } else {
+        stopRelay();
+        relayConnected.value = false;
+        relayError.value = null;
+    }
+});
 
 const showWebSearchWarn = computed(() =>
     !settingsStore.getSetting('tavilyApiKey') &&
@@ -367,5 +381,42 @@ onMounted(() => {
     border-radius: 4px;
     cursor: pointer;
     color: var(--color-text-on-primary);
+}
+
+.relay-status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    background: var(--color-bg-secondary, #f0f0f0);
+}
+
+.relay-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.relay-status--connected .relay-status-dot {
+    background: #4caf50;
+}
+
+.relay-status--disconnected .relay-status-dot {
+    background: #9e9e9e;
+}
+
+.relay-status--error .relay-status-dot {
+    background: #f44336;
+}
+
+.relay-status--connected {
+    color: #4caf50;
+}
+
+.relay-status--error {
+    color: #f44336;
 }
 </style>
