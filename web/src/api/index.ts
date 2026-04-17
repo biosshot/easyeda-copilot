@@ -258,6 +258,7 @@ export async function fetchSSETask({
         // 1) Create a stream on the server
         const startRes = await fetchEda(apiUrl + url + '/new', {
             method: 'POST',
+            signal,
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': authorization,

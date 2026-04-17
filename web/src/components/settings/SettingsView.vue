@@ -23,7 +23,7 @@
                             { label: 'Ollama (cloud)', value: 'ollamacloud' },
                             { label: 'ZAI', value: 'zai' },
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
-                            { label: 'Local', value: 'local' },
+                            { label: 'Local (Beta)', value: 'local' },
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
                     <p class="hint">Select your preferred LLM provider. <br>
                         <strong> If the provider you need is not listed here, openai compatible api url in a field "Base
@@ -267,7 +267,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useSettingsStore } from '../../stores/settings-store';
 import { showToastMessage } from '../../eda/utils';
-import { getRelayConnection, startRelay, stopRelay } from '../../api/relay';
+import { startRelay, stopRelay } from '../../api/relay';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
@@ -289,7 +289,7 @@ watch(() => settingsStore.getSetting('apiProvider') as string, (provider) => {
         relayConnected.value = false;
         relayError.value = null;
     }
-}, { immediate: true });
+});
 
 const showWebSearchWarn = computed(() =>
     !settingsStore.getSetting('tavilyApiKey') &&
