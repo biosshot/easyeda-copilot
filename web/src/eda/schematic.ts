@@ -62,7 +62,7 @@ export const getAllDesignators = async () => {
     if (isEasyEda()) {
         // @ts-ignore
         const components = await eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT);
-        return components.map(c => c.getState_Designator()!).filter(Boolean);
+        return components.map(c => c.getState_Designator?.() as string).filter(Boolean);
     }
     else {
         throw new Error('Fail getAllDesignators');

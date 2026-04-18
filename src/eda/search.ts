@@ -16,7 +16,7 @@ export const searchComponentInSCH = async (designator: string) => {
 
     for (let index = 0; index < components.length; index++) {
         const component = components[index];
-        if (rmPartFromDesignator(component.getState_Designator()?.trim() ?? '') === designator)
+        if (rmPartFromDesignator(component?.getState_Designator?.()?.trim() ?? '') === designator)
             found.push({ component, primitiveId: promIdComponent[index] });
     }
 

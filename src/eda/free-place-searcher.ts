@@ -11,7 +11,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
             c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_PORT || c.getState_ComponentType() === ESCH_PrimitiveComponentType.NET_FLAG)
 
     if (ignoreDisgnators?.length)
-        componentsOnSch = componentsOnSch.filter(c => !ignoreDisgnators.includes(c.getState_Designator()!));
+        componentsOnSch = componentsOnSch.filter(c => !ignoreDisgnators.includes(c.getState_Designator?.() ?? ''));
 
     const PADDING = 40;
 

@@ -438,7 +438,7 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
 
             if (antagonistPin) {
                 const primitive = await eda.sch_PrimitiveComponent.get(antagonistPin.primitiveId).catch(e => undefined);
-                const designator = primitive?.getState_Designator();
+                const designator = primitive?.getState_Designator?.();
 
                 if (!primitive || !designator || primitive.getState_ComponentType() !== ESCH_PrimitiveComponentType.COMPONENT) {
                     eda.sys_Log.add(`Rm net ${designator} ${pinNumber} ${net}; Not found antagonist pin primitive`);

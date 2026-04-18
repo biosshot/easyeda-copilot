@@ -1,5 +1,8 @@
 import type { ExplainCircuit } from '@copilot/shared/types/circuit';
 
+let lastToastTime = 0;
+const TOAST_THROTTLE_MS = 8000;
+
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {
     netlistText = netlistText.replaceAll('\r', '').replaceAll('\n\n', '\n').replaceAll(" ,\n", " ");
@@ -45,9 +48,14 @@ function parseAllegroNetlist(netlistText: string) {
 }
 
 export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
-    // 1. Получаем нетлист как строку
-    eda.sys_Message.showToastMessage(`Please make sure there are no duplicate designators or go to Design -> Annotate Designator`, ESYS_ToastMessageType.INFO);
+    const now = Date.now();
+    // @ts-ignore
+    if (now - lastToastTime > TOAST_THROTTLE_MS) {
+        eda.sys_Message.showToastMessage(`Please make sure there are no duplicate designators or go to Design -> Annotate Designator`, ESYS_ToastMessageType.INFO);
+        lastToastTime = now;
+    }
 
+    // 1. Получаем нетлист как строку
     const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
     const pinToSignal = parseAllegroNetlist(netlistText);
 
@@ -66,7 +74,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             continue;
         }
 
-        const designator = primitiveComponent.getState_Designator() ?? '';
+        const designator = primitiveComponent?.getState_Designator?.() ?? '';
 
         if (!designator.trim()) {
             // eda.sys_Log.add(`[getSchematic] Error Processing component`);

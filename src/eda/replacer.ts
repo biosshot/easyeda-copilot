@@ -40,7 +40,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
         y: primrive.getState_Y(),
         rotation: primrive.getState_Rotation(),
         mirror: primrive.getState_Mirror(),
-        designator: primrive.getState_Designator(),
+        designator: primrive.getState_Designator?.(),
         addIntoBom: primrive.getState_AddIntoBom(),
         addIntoPcb: primrive.getState_AddIntoPcb(),
         uniqueId: primrive.getState_UniqueId(),
@@ -200,7 +200,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                 if (rotate < 0)
                     rotate = 360 + rotate;
 
-                eda.sys_Log.add(`Replace need rotate ${primrive.getState_Designator()} ${rotate}`)
+                eda.sys_Log.add(`Replace need rotate ${primrive.getState_Designator?.()} ${rotate}`)
                 newComp.setState_Rotation(rotate);
 
             }

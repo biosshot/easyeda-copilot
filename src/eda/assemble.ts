@@ -207,7 +207,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                 // await wire?.done();
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
-                    `- srcpin: ${srcpin?.component?.getState_Designator()}; trgpin: ${trgpin?.component?.getState_Designator()}`;
+                    `- srcpin: ${srcpin?.component?.getState_Designator?.()}; trgpin: ${trgpin?.component?.getState_Designator?.()}`;
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
             }
@@ -461,7 +461,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         const addAddedNet = [];
         for (const designator of rm_components) {
             const added = await removeComponent(designator, schematic).catch(e => {
-                const msg = `Error with rm component ${designator}: ${(e as Error).message}`;
+                const msg = `Error with rm component ${designator}: ${(e as Error).message}; ${(e as Error).stack}`;
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
                 return [];

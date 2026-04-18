@@ -1,2 +1,2 @@
 
-export const __MODE__: string = 'PROD';
+export const __MODE__: string = 'DEV';
