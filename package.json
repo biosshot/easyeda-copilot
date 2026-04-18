@@ -13,7 +13,7 @@
 		"build": "node build.mjs && npm run compile && ts-node ./build/packaged.ts"
 	},
 	"devDependencies": {
-		"@jlceda/pro-api-types": "^0.1.175",
+		"@jlceda/pro-api-types": "^0.2.30",
 		"@microsoft/tsdoc": "^0.15.1",
 		"@types/fontkit": "^2.0.8",
 		"@types/fs-extra": "^11.0.4",

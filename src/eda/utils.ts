@@ -46,7 +46,7 @@ export function withTimeout<T>(
     return Promise.race([safePromise, timeoutPromise]);
 }
 
-export async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2)[]): Promise<{
+export async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1)[]): Promise<{
     minX: number;
     minY: number;
     maxX: number;
@@ -113,4 +113,14 @@ export const rmPartFromDesignator = (designator: string) => {
     }
 
     return designator;
+}
+
+export function getPrimitiveById(primitiveId: string): Promise<ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined>;
+export function getPrimitiveById(primitiveId: string[]): Promise<(ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1)[]>;
+
+export function getPrimitiveById(primitiveId: string | string[]) {
+    if (Array.isArray(primitiveId))
+        return eda.sch_PrimitiveComponent.get(primitiveId).then(r => Array.isArray(r) ? r : (r ? [r] : []));
+    else
+        return eda.sch_PrimitiveComponent.get(primitiveId).then(r => Array.isArray(r) ? r[0] : r);
 }

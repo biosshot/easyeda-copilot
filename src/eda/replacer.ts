@@ -32,7 +32,7 @@ const validLine = (values: number[][]) => {
     return true
 }
 
-export async function ComponentReplacer(primitiveId: string, primrive: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2, component: CircuitAssembly['components'][0]) {
+export async function ComponentReplacer(primitiveId: string, primrive: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1, component: CircuitAssembly['components'][0]) {
     const fakeX = - (10000 + Math.round(Math.random() * 10000))
 
     const savedProps = {
@@ -47,7 +47,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
     };
 
     let isAllow = true;
-    let newComp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+    let newComp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined;
     let rotate: number | undefined = undefined;
     let cause: string | undefined;
     let pinMissSizes: {

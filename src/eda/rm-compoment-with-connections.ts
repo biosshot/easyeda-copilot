@@ -2,7 +2,7 @@ import { ExplainCircuit } from "@copilot/shared/types/circuit";
 import { getSchematic } from "./schematic";
 import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet } from "./types";
-import { rmPartFromDesignator } from "./utils";
+import { getPrimitiveById, rmPartFromDesignator } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
 interface Point {
@@ -335,11 +335,11 @@ async function removeWiresFromComponentToFirstJunction(
     return { end: true, allWires, rmIsDirect: false };
 }
 
-export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2) {
+export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1) {
     let pinX;
     let pinY;
     let primitiveId: string | undefined;
-    let shortSymbol: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+    let shortSymbol: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined;
 
     if (typeof primitive === 'string') {
         primitiveId = primitive;
@@ -359,7 +359,7 @@ export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent
         pinY = pins[0].getState_Y();
     }
     catch (error) {
-        if (!shortSymbol && primitiveId) shortSymbol = await eda.sch_PrimitiveComponent.get(primitiveId).catch(e => undefined);
+        if (!shortSymbol && primitiveId) shortSymbol = await getPrimitiveById(primitiveId).catch(e => undefined);
         if (!shortSymbol) return undefined;
 
         pinX = shortSymbol.getState_X();
@@ -379,7 +379,7 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
         ...await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.NET_PORT).catch(e => [])
     ]
 
-    const shortSymbols = await eda.sch_PrimitiveComponent.get(shortSymbolsIds).catch(e => []);
+    const shortSymbols = await getPrimitiveById(shortSymbolsIds).catch(e => []);
 
     for (let idx = 0; idx < shortSymbolsIds.length; idx++) {
         if (shortSymbols[idx].getState_Net() !== net
@@ -437,11 +437,11 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
             )
 
             if (antagonistPin) {
-                const primitive = await eda.sch_PrimitiveComponent.get(antagonistPin.primitiveId).catch(e => undefined);
+                const primitive = await getPrimitiveById(antagonistPin.primitiveId).catch(e => undefined);
                 const designator = primitive?.getState_Designator?.();
 
                 if (!primitive || !designator || primitive.getState_ComponentType() !== ESCH_PrimitiveComponentType.COMPONENT) {
-                    eda.sys_Log.add(`Rm net ${designator} ${pinNumber} ${net}; Not found antagonist pin primitive`);
+                    eda.sys_Log.add(`Rm net ${designator} ${pinNumber} ${net} ${JSON.stringify(antagonistPin)}; Not found antagonist pin primitive`);
                 }
                 else {
 

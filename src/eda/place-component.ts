@@ -36,5 +36,5 @@ export const placeComponent = async (data: { libraryUuid: string, uuid: string }
 
     if (!comp) throw new Error("Component not found");
 
-    return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2;
+    return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
 };

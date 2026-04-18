@@ -1,4 +1,5 @@
 import type { ExplainCircuit } from '@copilot/shared/types/circuit';
+import { getPrimitiveById } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -67,7 +68,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     const componentsMap: Map<string, ExplainCircuit['components'][0] & { code?: string }> = new Map();
 
     for (const id of primitiveIds) {
-        const primitiveComponent: ISCH_PrimitiveComponent_2 | undefined = await eda.sch_PrimitiveComponent.get(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
+        const primitiveComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined = await getPrimitiveById(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
 
         if (!primitiveComponent || primitiveComponent.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) {
             // eda.sys_Log.add(`[getSchematic] Error Processing component ${JSON.stringify(primitiveComponent)}`);

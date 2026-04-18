@@ -21,7 +21,7 @@ const applyOffset = (x: number, y: number, offset: Offset) => {
 }
 
 async function createComponet(component: CircuitAssembly['components'][0], offset: Offset = { x: 0, y: 0 }) {
-    let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+    let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined;
     const { part_uuid: partUuid, designator, pos } = component;
     if (!partUuid) throw new Error("createComponet partUuid not found");
 
@@ -65,7 +65,7 @@ async function placeComponents(components: CircuitAssembly['components'], offset
         if (!partUuid) return undefined;
 
         try {
-            const placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 = await createComponet(component, offset);
+            const placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
             const primitiveId = placedComponent.getState_PrimitiveId();
 
             const pins = await getPrimitiveComponentPins(primitiveId);

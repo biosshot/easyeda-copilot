@@ -64,7 +64,7 @@ async function groupAndSortNetsByDesignator(nets: AddedNet[], placeComponents: P
     return result;
 }
 
-const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2)[], pin: ISCH_PrimitiveComponentPin, net: string) => {
+const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1)[], pin: ISCH_PrimitiveComponentPin, net: string) => {
     if (simComps.length) {
         const shortSymsPos = await Promise.all(simComps.map(simComp => getShortSymPos(simComp))).catch(e => undefined);
 
@@ -164,7 +164,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
     let makePortForThis = makePort;
 
-    let simComps: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2)[] | undefined;
+    let simComps: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1)[] | undefined;
 
     if (makePortForThis) {
         simComps = (await withTimeout(eda.sch_PrimitiveComponent.getAll(), 1500).catch(e => []))

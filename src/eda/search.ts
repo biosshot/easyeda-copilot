@@ -1,5 +1,5 @@
 import { PlacedComponents } from "./types";
-import { rmPartFromDesignator, to2 } from "./utils";
+import { getPrimitiveById, rmPartFromDesignator, to2 } from "./utils";
 
 export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
@@ -9,7 +9,7 @@ export const searchComponentInSCH = async (designator: string) => {
     const promIdComponent = await eda.sch_PrimitiveComponent.getAllPrimitiveId(ESCH_PrimitiveComponentType.COMPONENT)
         .then(r => [...r]).catch(e => undefined);
     if (!promIdComponent) return undefined;
-    const components = await eda.sch_PrimitiveComponent.get(promIdComponent).catch(e => undefined);
+    const components = await getPrimitiveById(promIdComponent).catch(e => undefined);
     if (!components?.length) return undefined;
 
     const found = [];
@@ -70,13 +70,13 @@ export const findPin = async (designator: string, pin_: { num: number | string, 
 
     let pins: ISCH_PrimitiveComponentPin[][] = [];
     let isExternal = false;
-    let components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined)[] = [];
+    let components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined)[] = [];
 
     await Promise.all(Object.entries(placeComponents).map(async ([pdesignator, placedComp]) => {
         pdesignator = rmPartFromDesignator(pdesignator);
 
         if (pdesignator === designator) {
-            const c = await eda.sch_PrimitiveComponent.get(placedComp.primitive_id).catch(e => undefined);
+            const c = await getPrimitiveById(placedComp.primitive_id).catch(e => undefined);
             components.push(c);
             pins.push(placedComp.pins);
         }
@@ -89,7 +89,7 @@ export const findPin = async (designator: string, pin_: { num: number | string, 
     }
 
     let pin: ISCH_PrimitiveComponentPin | undefined;
-    let component: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent_2 | undefined;
+    let component: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined;
 
     if (pinNumber == 1 && pins.length === 1 && pins[0].length === 1) { pin = pins[0][0]; component = components[0]; }
     else {
