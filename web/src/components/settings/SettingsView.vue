@@ -3,17 +3,17 @@
         <div class="settings-view">
             <div style="margin-bottom: 1rem;">
                 <ErrorBanner v-if="showWebSearchWarn" type="warn"
-                    message='Web search may not work because the "Tavily API Key" is not specified and the provider does not support native web search.'>
+                    :message="t('settings.webSearchWarn')">
                 </ErrorBanner>
             </div>
             <!-- LLM API Configuration Section -->
             <div class="settings-section">
-                <h2>LLM API Configuration</h2>
-                <p class="section-description">Configure your LLM API provider and credentials</p>
+                <h2>{{ t('settings.llmApiConfig') }}</h2>
+                <p class="section-description">{{ t('settings.llmApiConfigDesc') }}</p>
 
                 <!-- API Provider -->
                 <div class="setting-group">
-                    <label for="apiProvider">API Provider</label>
+                    <label for="apiProvider">{{ t('settings.apiProvider') }}</label>
                     <CustomSelect id="apiProvider" :value="settings.apiProvider"
                         :model-value="String(settings['apiProvider'])" :options="[
                             { label: 'OpenAI', value: 'openai' },
@@ -25,102 +25,98 @@
                             { label: 'Moonshot (Kimi)', value: 'kimi' },
                             { label: 'Local (Beta)', value: 'local' },
                         ]" @update:model-value="onSettingChange('apiProvider', $event)" />
-                    <p class="hint">Select your preferred LLM provider. <br>
-                        <strong> If the provider you need is not listed here, openai compatible api url in a field "Base
-                            URL"</strong>
+                    <p class="hint">{{ t('settings.apiProviderHint') }} <br>
+                        <strong>{{ t('settings.apiProviderHintExtra') }}</strong>
                     </p>
                 </div>
 
                 <!-- API Key -->
                 <div class="setting-group">
-                    <label for="apiKey">API Key</label>
-                    <input id="apiKey" :value="settings.apiKey" type="text" placeholder="Enter your API key"
+                    <label for="apiKey">{{ t('settings.apiKey') }}</label>
+                    <input id="apiKey" :value="settings.apiKey" type="text" :placeholder="t('settings.apiKeyPlaceholder')"
                         @input="onSettingInput('apiKey', ($event.target as HTMLInputElement).value)" />
-                    <p class="hint">Your API key will be saved locally in browser storage</p>
+                    <p class="hint">{{ t('settings.apiKeyHint') }}</p>
                 </div>
 
-                <Collapsible title="Advenced" :default-open="true">
+                <Collapsible :title="t('settings.advanced')" :default-open="true">
                     <div class="setting-group">
-                        <label for="llmBaseUrl">Base URL</label>
+                        <label for="llmBaseUrl">{{ t('settings.baseUrl') }}</label>
                         <input id="llmBaseUrl" :value="settings.llmBaseUrl" type="text"
                             placeholder="https://api.example.com/v1"
                             @input="onSettingInput('llmBaseUrl', ($event.target as HTMLInputElement).value)" />
-                        <p class="hint">Override default API endpoint. Leave empty for provider defaults</p>
+                        <p class="hint">{{ t('settings.baseUrlHint') }}</p>
                     </div>
 
                     <div class="setting-group">
-                        <label for="tavilyApiKey">Tavily Api Key</label>
-                        <input id="tavilyApiKey" :value="settings.tavilyApiKey" type="text" placeholder="Tavily Api Key"
+                        <label for="tavilyApiKey">{{ t('settings.tavilyApiKey') }}</label>
+                        <input id="tavilyApiKey" :value="settings.tavilyApiKey" type="text" :placeholder="t('settings.tavilyApiKey')"
                             @input="onSettingInput('tavilyApiKey', ($event.target as HTMLInputElement).value)" />
-                        <p class="hint">If the key is not specified and the provider is openai or Anthropic without a
-                            custom base URL, OpenAi or Anthropic's web_search will be used. If the key is tavily,
-                            Tavily's web search will be used.</p>
+                        <p class="hint">{{ t('settings.tavilyApiKeyHint') }}</p>
                     </div>
 
                     <div class="setting-group">
-                        <label for="maxToolParallel">Max Tool Parallel</label>
+                        <label for="maxToolParallel">{{ t('settings.maxToolParallel') }}</label>
                         <input id="maxToolParallel" :value="settings.maxToolParallel" type="number" min="1" max="10"
                             placeholder="3"
                             @change="onSettingChange('maxToolParallel', Math.max(1, Math.min(25, Number(($event.target as HTMLInputElement).value))))" />
-                        <p class="hint">Maximum number of tools that can run in parallel.</p>
+                        <p class="hint">{{ t('settings.maxToolParallelHint') }}</p>
                     </div>
 
                     <div class="setting-group">
-                        <label for="maxToolParallel">Context management</label>
+                        <label for="maxToolParallel">{{ t('settings.contextManagement') }}</label>
                         <ContextManagementSettings :settings="settings"
                             @setting-change="(key, value) => onSettingChange(key, value)" />
                     </div>
                 </Collapsible>
 
-                <Collapsible title="Agents" :default-open="true">
+                <Collapsible :title="t('settings.agents')" :default-open="true">
 
                     <p class="hint" style="margin-bottom: 1rem;">
-                        Here you can configure the models to be used. How does it work? Chat loads the skill and
-                        simultaneously changes the LLM to the specified one. This is to reduce costs. <br>
-                        <strong>!ATTENTION! IF YOU DO NOT SPECIFY A MODEL, OPENAI MODELS WILL BE USED</strong>
+                        {{ t('settings.agentsDesc') }} <br>
+                        <strong>{{ t('settings.agentsWarning') }}</strong>
                     </p>
 
-                    <AgentSettings title="Base Agent" :model="settings.agentBaseModel as string"
+                    <AgentSettings :title="t('settings.baseAgent')" :model="settings.agentBaseModel as string"
                         :reasoning="settings.agentBaseReasoning as string"
                         @reasoning-change="onSettingChange('agentBaseReasoning', $event)"
                         @model-change="onSettingChange('agentBaseModel', $event)"
                         :model-features="['json', 'tools', 'image']"
-                        desc="Fallback model used when specific agent models are not configured. Recommended: balanced-performance model like gpt-5-mini.">
+                        :desc="t('settings.baseAgentDesc')">
 
                         <template #custom-header>
                             <button @click="applyBaseAgentToAll" class="apply-to-all-btn"
-                                title="Copy base model settings to all specialized agents">
-                                Apply to all
+                                :title="t('settings.applyToAll')">
+                                {{ t('settings.applyToAll') }}
                             </button>
                         </template>
                     </AgentSettings>
 
                     <!-- Specialized Agent Configurations -->
-                    <Collapsible title="Block Diagram" :default-open="false">
-                        <AgentSettings title="Block Diagram" :model="settings.agentBlockDiagramModel as string"
+                    <Collapsible :title="t('settings.blockDiagram')" :default-open="false">
+                        <AgentSettings :title="t('settings.blockDiagram')" :model="settings.agentBlockDiagramModel as string"
                             :reasoning="settings.agentBlockDiagramReasoning as string"
                             @reasoning-change="onSettingChange('agentBlockDiagramReasoning', $event)"
                             @model-change="onSettingChange('agentBlockDiagramModel', $event)"
                             :model-features="['tools', 'json']"
-                            desc="Generates structural diagrams, system architectures, and visual block representations. Recommended: gpt-5.4 for complex diagram logic.">
+                            :desc="t('settings.blockDiagramDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="Chat" :default-open="false">
-                        <AgentSettings title="Chat" :model="settings.agentChatModel as string"
+                    <Collapsible :title="t('nav.chat')" :default-open="false">
+                        <AgentSettings :title="t('nav.chat')" :model="settings.agentChatModel as string"
                             @model-change="onSettingChange('agentChatModel', $event)"
                             :reasoning="settings.agentChatReasoning as string" :model-features="['tools']"
                             @reasoning-change="onSettingChange('agentChatReasoning', $event)"
-                            desc="Handles general conversations, contextual queries, and iterative design discussions. Recommended: gpt-5-mini for responsive dialogue.">
+                            :desc="t('settings.chatDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="Circuit Explainer" :default-open="false">
-                        <AgentSettings title="Circuit Explainer" :model="settings.agentCircuitExplainerModel as string"
+                    <Collapsible :title="t('settings.circuitExplainer')" :default-open="false">
+                        <AgentSettings :title="t('settings.circuitExplainer')" :model="settings.agentCircuitExplainerModel as string"
                             @model-change="onSettingChange('agentCircuitExplainerModel', $event)"
                             :reasoning="settings.agentCircuitExplainerReasoning as string"
                             @reasoning-change="onSettingChange('agentCircuitExplainerReasoning', $event)"
-                            desc="Analyzes and explains circuit functionality, signal flow, and component interactions. Recommended: gpt-5.4 for deep technical analysis.">
+                            :desc="t('settings.circuitExplainerDesc')">
 
                             <template #custom-settings>
                                 <div class="setting-group">
@@ -128,72 +124,71 @@
                                         <input id="agentCircuitExplainerUseSpice" type="checkbox"
                                             :checked="settings.agentCircuitExplainerUseSpice as boolean"
                                             @change="onSettingChange('agentCircuitExplainerUseSpice', ($event.target as HTMLInputElement).checked)" />
-                                        Add spice-simulation to agent tools
+                                        {{ t('settings.addSpiceTool') }}
                                     </label>
 
-                                    <p class="hint">Adds a spice-simulation tool to the agent and the ability to display
-                                        simulation results. REQUIRES VISION</p>
+                                    <p class="hint">{{ t('settings.addSpiceToolHint') }}</p>
                                 </div>
                             </template>
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="Circuit Maker" :default-open="false">
-                        <AgentSettings title="Circuit Maker" :model="settings.agentCircuitMakerModel as string"
+                    <Collapsible :title="t('settings.circuitMaker')" :default-open="false">
+                        <AgentSettings :title="t('settings.circuitMaker')" :model="settings.agentCircuitMakerModel as string"
                             @model-change="onSettingChange('agentCircuitMakerModel', $event)"
                             :reasoning="settings.agentCircuitMakerReasoning as string"
                             @reasoning-change="onSettingChange('agentCircuitMakerReasoning', $event)"
                             :model-features="['tools', 'json']"
-                            desc="Creates new schematics, modifies existing circuits. Recommended: gpt-5.4 for precision and complexity handling.">
+                            :desc="t('settings.circuitMakerDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="Completions" :default-open="false">
-                        <AgentSettings title="Completions" :model="settings.agentCompletionsModel as string"
+                    <Collapsible :title="t('nav.completions')" :default-open="false">
+                        <AgentSettings :title="t('nav.completions')" :model="settings.agentCompletionsModel as string"
                             @model-change="onSettingChange('agentCompletionsModel', $event)"
                             :reasoning="settings.agentCompletionsReasoning as string"
                             @reasoning-change="onSettingChange('agentCompletionsReasoning', $event)"
-                            :model-features="['tools', 'json']" desc="Collects the completions. Recommended: gpt-5.4.">
+                            :model-features="['tools', 'json']" :desc="t('settings.completionsDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="List Completions" :default-open="false">
-                        <AgentSettings title="Completions" :model="settings.agentListCompletionsModel as string"
+                    <Collapsible :title="t('settings.listCompletions')" :default-open="false">
+                        <AgentSettings :title="t('nav.completions')" :model="settings.agentListCompletionsModel as string"
                             @model-change="onSettingChange('agentListCompletionsModel', $event)"
                             :reasoning="settings.agentListCompletionsReasoning as string" :model-features="['json']"
                             @reasoning-change="onSettingChange('agentListCompletionsReasoning', $event)"
-                            desc="Model for generating a list of possible additions. Recommended: gpt-5-mini for low-latency inference.">
+                            :desc="t('settings.listCompletionsDesc')">
                         </AgentSettings>
                     </Collapsible>
 
 
-                    <Collapsible title="Diagnostic Algorithms" :default-open="false">
-                        <AgentSettings title="Diagnostic Algorithms"
+                    <Collapsible :title="t('settings.diagnosticAlgorithms')" :default-open="false">
+                        <AgentSettings :title="t('settings.diagnosticAlgorithms')"
                             :model="settings.agentDiagnosticAlgorithmModel as string"
                             :model-features="['tools', 'json']"
                             @model-change="onSettingChange('agentDiagnosticAlgorithmModel', $event)"
                             :reasoning="settings.agentDiagnosticAlgorithmReasoning as string"
                             @reasoning-change="onSettingChange('agentDiagnosticAlgorithmReasoning', $event)"
-                            desc="Generates fault-finding procedures, test sequences, and troubleshooting workflows. Recommended: gpt-5.4 for logical flow generation.">
+                            :desc="t('settings.diagnosticAlgorithmsDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="Pin Descriptions" :default-open="false">
-                        <AgentSettings title="Pin Descriptions" :model="settings.agentPinDescriptionModel as string"
+                    <Collapsible :title="t('settings.pinDescriptions')" :default-open="false">
+                        <AgentSettings :title="t('settings.pinDescriptions')" :model="settings.agentPinDescriptionModel as string"
                             @model-change="onSettingChange('agentPinDescriptionModel', $event)"
                             :reasoning="settings.agentPinDescriptionReasoning as string"
                             :model-features="['json', 'image']"
                             @reasoning-change="onSettingChange('agentPinDescriptionReasoning', $event)"
-                            desc="Sometimes in LCSC pins are designated only by numbers and in order to determine the correct names of pins and their functions, a vision model is required. Recommended: gpt-5.4.">
+                            :desc="t('settings.pinDescriptionsDesc')">
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="LCSC Component Search" :default-open="false">
-                        <AgentSettings title="LCSC Component Search" :model="settings.agentLcscSearchModel as string"
+                    <Collapsible :title="t('settings.lcscSearch')" :default-open="false">
+                        <AgentSettings :title="t('settings.lcscSearch')" :model="settings.agentLcscSearchModel as string"
                             @model-change="onSettingChange('agentLcscSearchModel', $event)"
                             :reasoning="settings.agentLcscSearchReasoning as string" :model-features="['json', 'tools']"
                             @reasoning-change="onSettingChange('agentLcscSearchReasoning', $event)"
-                            desc="Translates design requirements into precise LCSC catalog queries and filters results. Recommended: gpt-5-mini query optimization.">
+                            :desc="t('settings.lcscSearchDesc')">
 
                             <template #custom-settings>
                                 <div class="setting-group">
@@ -201,19 +196,19 @@
                                         <input id="agentLcscSearchUsePrefetch" type="checkbox"
                                             :checked="settings.agentLcscSearchUsePrefetch as boolean"
                                             @change="onSettingChange('agentLcscSearchUsePrefetch', ($event.target as HTMLInputElement).checked)" />
-                                        Performs a preliminary web search
+                                        {{ t('settings.prefetchWebSearch') }}
                                     </label>
                                 </div>
                             </template>
                         </AgentSettings>
                     </Collapsible>
 
-                    <Collapsible title="LCSC Catalog Matcher" :default-open="false">
-                        <AgentSettings title="LCSC Catalog Matcher" :model="settings.agentLcscCatalogModel as string"
+                    <Collapsible :title="t('settings.lcscCatalog')" :default-open="false">
+                        <AgentSettings :title="t('settings.lcscCatalog')" :model="settings.agentLcscCatalogModel as string"
                             @model-change="onSettingChange('agentLcscCatalogModel', $event)"
                             :reasoning="settings.agentLcscCatalogReasoning as string" :model-features="['json']"
                             @reasoning-change="onSettingChange('agentLcscCatalogReasoning', $event)"
-                            desc="Identifies the most relevant directories for searching complex components. Recommended: gpt-5-mini.">
+                            :desc="t('settings.lcscCatalogDesc')">
                         </AgentSettings>
                     </Collapsible>
                 </Collapsible>
@@ -222,19 +217,19 @@
 
             <!-- Theme Section (остается без изменений) -->
             <div class="settings-section">
-                <h2>Theme</h2>
-                <p class="section-description">Customize the appearance</p>
+                <h2>{{ t('settings.theme') }}</h2>
+                <p class="section-description">{{ t('settings.themeDesc') }}</p>
 
                 <!-- Theme Select -->
                 <div class="setting-group">
-                    <label for="theme">Theme</label>
+                    <label for="theme">{{ t('settings.theme') }}</label>
 
                     <CustomSelect id="theme" :value="settings.theme" :model-value="String(settings['theme'])" :options="[
                         { label: 'Dark', value: 'dark' },
                         { label: 'Light', value: 'light' },
                     ]" @update:model-value="onSettingChange('theme', $event)" />
 
-                    <p class="hint">Select your preferred theme</p>
+                    <p class="hint">{{ t('settings.selectTheme') }}</p>
                 </div>
 
                 <!-- Show Inline Buttons -->
@@ -242,20 +237,33 @@
                     <label for="showInlineButtons">
                         <input id="showInlineButtons" type="checkbox" :checked="settings.showInlineButtons as boolean"
                             @change="onSettingChange('showInlineButtons', ($event.target as HTMLInputElement).checked)" />
-                        Show Inline Buttons
+                        {{ t('settings.showInlineButtons') }}
                     </label>
-                    <p class="hint">Display action buttons above the input area for the latest AI messages</p>
+                    <p class="hint">{{ t('settings.showInlineButtonsDesc') }}</p>
+                </div>
+
+                <!-- Language Select -->
+                <div class="setting-group">
+                    <label for="language">{{ t('settings.language') }}</label>
+                    <CustomSelect id="language" :value="(settings.language as string) || ''"
+                        :model-value="String(settings.language || '')"
+                        :options="[
+                            { label: 'Auto', value: '' },
+                            ...Object.entries(localeLabels).map(([value, label]) => ({ label, value }))
+                        ]"
+                        @update:model-value="onLanguageChange($event)" />
+                    <p class="hint">{{ t('settings.languageHint') }}</p>
                 </div>
             </div>
 
             <div class="settings-section">
-                <h2>Circuit Assembly</h2>
+                <h2>{{ t('settings.circuitAssembly') }}</h2>
 
                 <div class="setting-group">
                     <label for="assembleDrawRects">
                         <input id="assembleDrawRects" type="checkbox" :checked="Boolean(settings.assembleDrawRects)"
                             @change="onSettingChange('assembleDrawRects', ($event.target as HTMLInputElement).checked)" />
-                        Draw structural blocks and their descriptions
+                        {{ t('settings.drawStructuralBlocks') }}
                     </label>
                 </div>
             </div>
@@ -273,6 +281,7 @@ import Collapsible from '../shared/Collapsible.vue';
 import AgentSettings from './AgentSettings.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import ContextManagementSettings from './ContextManagementSettings.vue';
+import { t, setLocale, localeLabels, type Locale } from '../../i18n';
 
 const settingsStore = useSettingsStore();
 const settings = computed(() => settingsStore.getAllSettings);
@@ -304,13 +313,19 @@ const onSettingInput = (key: string, value: string) => {
     if (saveTimeout) clearTimeout(saveTimeout);
     saveTimeout = window.setTimeout(() => {
         settingsStore.saveSettings();
-        showToastMessage('Settings saved', 'success');
+        showToastMessage(t('settings.settingsSaved'), 'success');
     }, 1000);
 };
 
 const onSettingChange = (key: string, value: string | boolean | number) => {
     settingsStore.setSetting(key, value);
-    showToastMessage('Settings saved', 'success');
+    showToastMessage(t('settings.settingsSaved'), 'success');
+};
+
+const onLanguageChange = (value: string) => {
+    settingsStore.setSetting('language', value);
+    setLocale(value as Locale);
+    showToastMessage(t('settings.settingsSaved'), 'success');
 };
 
 const applyBaseAgentToAll = () => {
@@ -348,7 +363,7 @@ const applyBaseAgentToAll = () => {
         }
     });
 
-    showToastMessage('Applied base model settings to all agents', 'success');
+    showToastMessage(t('settings.appliedBaseModel'), 'success');
 };
 
 onMounted(() => {

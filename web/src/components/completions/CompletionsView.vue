@@ -1,15 +1,15 @@
 <template>
     <div class="completions-view">
-        <label style="text-align: center; font-size: 14px;">Completions is deprecated; I recommend using Chat.</label>
+        <label style="text-align: center; font-size: 14px;">{{ t('completions.deprecated') }}</label>
 
         <!-- Header section -->
         <div class="completions-header">
             <div class="header-content">
-                <h2>Circuit Completions</h2>
-                <p class="header-description">Generate and apply suggestions to complete your circuit</p>
+                <h2>{{ t('completions.title') }}</h2>
+                <p class="header-description">{{ t('completions.description') }}</p>
             </div>
             <IconButton class="refresh-button" @click="generateCompletions" :disabled="isLoading" variant="ghost"
-                :title="isLoading ? 'Generating completions...' : 'Generate new completions'" :size="18"
+                :title="isLoading ? t('completions.generating') : t('completions.title')" :size="18"
                 icon="RotateCw" />
         </div>
 
@@ -21,10 +21,10 @@
         <div v-if="isLoading" class="loading-container">
             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                 <div class="loading-spinner">
-                    <TypingDots :status="progressStatus || 'Generating suggestions...'" />
+                    <TypingDots :status="progressStatus || t('completions.generating')" />
                 </div>
 
-                <IconButton icon="Square" variant="cancel" @click="cancelRequest">Cancel</IconButton>
+                <IconButton icon="Square" variant="cancel" @click="cancelRequest">{{ t('completions.cancel') }}</IconButton>
 
                 <Timer />
             </div>
@@ -34,11 +34,11 @@
         <div v-else class="completions-content">
             <!-- Suggestions list -->
             <div class="suggestions-section">
-                <h3>Suggestions</h3>
+                <h3>{{ t('completions.suggestions') }}</h3>
                 <div v-if="suggestions.length === 0" class="empty-state">
                     <Icon name="Lightbulb" size="32" />
-                    <p>No suggestions available</p>
-                    <p class="hint">Click the refresh button above to generate suggestions</p>
+                    <p>{{ t('completions.noSuggestions') }}</p>
+                    <p class="hint">{{ t('completions.clickRefresh') }}</p>
                 </div>
 
                 <div v-else class="suggestions-list">
@@ -55,16 +55,16 @@
 
             <!-- Custom action section -->
             <div class="action-section">
-                <h3>Custom Action</h3>
+                <h3>{{ t('completions.customAction') }}</h3>
                 <div class="input-group">
                     <!-- <textarea v-model="customAction" class="action-input"
                         placeholder="Enter a custom action or modification for your circuit..."
                         :disabled="isLoading"></textarea> -->
                     <AdjTextarea style="width: 100%;" v-model="customAction" :disabled="isLoading"
-                        placeholder="Enter a custom action or modification for your circuit..." />
+                        :placeholder="t('completions.customActionPlaceholder')" />
 
                     <div class=" input-info">
-                        <span class="char-count">{{ customAction.length }} characters</span>
+                        <span class="char-count">{{ t('completions.characters', { count: customAction.length }) }}</span>
                     </div>
                 </div>
             </div>
@@ -73,7 +73,7 @@
             <div class="action-buttons">
                 <IconButton :size="16" icon="Play" variant="primary" class="apply-button"
                     :disabled="!canApply || isLoading" @click="applyAction">
-                    Apply
+                    {{ t('completions.apply') }}
                 </IconButton>
             </div>
         </div>
@@ -88,6 +88,7 @@ import IconButton from '../shared/IconButton.vue';
 import Timer from '../shared/Timer.vue';
 import ErrorBanner from '../shared/ErrorBanner.vue';
 import AdjTextarea from '../shared/AdjTextarea.vue';
+import { t } from '../../i18n';
 
 const {
     suggestions,

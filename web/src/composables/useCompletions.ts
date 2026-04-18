@@ -7,6 +7,7 @@ import { isEasyEda, showToastMessage } from '../eda/utils';
 import { formatError } from '../utils/error';
 import { assembleCircuit } from '../eda/assemble-circuit';
 import { makeLLmSettings } from '../utils/llm-settings';
+import { t } from '../i18n';
 
 export interface Suggestion {
     title: string;
@@ -33,14 +34,14 @@ export function useCompletions() {
         if (isLoading.value) return;
 
         isLoading.value = true;
-        progressStatus.value = 'Loading circuit...';
+        progressStatus.value = t('completions.loadingCircuit');
         currentAbortController.value = new AbortController();
         errorMessage.value = '';
 
         try {
             const circuit: ExplainCircuit = await getSchematic(await getAllPrimitiveId());
 
-            progressStatus.value = 'Generating suggestions...';
+            progressStatus.value = t('completions.generatingSuggestions');
 
             const result = await fetchWithTask({
                 url: '/v1/completions/list',
@@ -75,7 +76,7 @@ export function useCompletions() {
         if (!canApply.value) return;
 
         isLoading.value = true;
-        progressStatus.value = 'Processing action...';
+        progressStatus.value = t('completions.processingAction');
         currentAbortController.value = new AbortController();
         errorMessage.value = '';
 
@@ -92,7 +93,7 @@ export function useCompletions() {
                     suggestions.value[selectedSuggestion.value].title;
             }
 
-            progressStatus.value = 'Sending request to server...';
+            progressStatus.value = t('completions.sendingRequest');
 
             const result = await fetchWithTask({
                 url: '/v1/completions/make',

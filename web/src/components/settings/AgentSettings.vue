@@ -8,14 +8,14 @@
 
     <div class="setting-group">
         <div style="display: flex; align-items: center;">
-            <label>Model</label>
+            <label>{{ t('agentSettings.model') }}</label>
             <div style="margin-left: auto; display: flex; gap: 0.5rem; align-items: center;">
                 <Icon v-if="props.modelFeatures?.includes('json')" name="CodeXml" :size="14"
-                    title="The model must be able to use structured output" />
+                    :title="t('agentSettings.structuredOutput')" />
                 <Icon v-if="props.modelFeatures?.includes('image')" name="Image" :size="14"
-                    title="The model must be able to use image/vision" />
+                    :title="t('agentSettings.imageVision')" />
                 <Icon v-if="props.modelFeatures?.includes('tools')" name="Wrench" :size="14"
-                    title="The model must be able to use tools" />
+                    :title="t('agentSettings.tools')" />
             </div>
         </div>
 
@@ -27,9 +27,9 @@
     </div>
 
     <div class="setting-group">
-        <label>Reasoning effort</label>
-        <CustomSelect :model-value="reasoning" @update:model-value="emits('reasoningChange', $event)" :options="[{ label: 'Minimal', value: 'minimal' }, { label: 'Low', value: 'low' },
-        { label: 'Medium', value: 'medium' }, { label: 'High', value: 'high' }]" />
+        <label>{{ t('agentSettings.reasoningEffort') }}</label>
+        <CustomSelect :model-value="reasoning" @update:model-value="emits('reasoningChange', $event)" :options="[{ label: t('agentSettings.minimal'), value: 'minimal' }, { label: t('agentSettings.low'), value: 'low' },
+        { label: t('agentSettings.medium'), value: 'medium' }, { label: t('agentSettings.high'), value: 'high' }]" />
     </div>
 
     <slot name="custom-settings"></slot>
@@ -41,6 +41,7 @@ import { useSettingsStore } from '../../stores/settings-store';
 import CustomSelect from '../shared/CustomSelect.vue';
 import Icon from '../shared/Icon.vue';
 import ModelSelect from './ModelSelect.vue';
+import { t } from '../../i18n';
 
 const settingsStore = useSettingsStore();
 

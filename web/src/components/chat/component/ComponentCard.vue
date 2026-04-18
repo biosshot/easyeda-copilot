@@ -32,6 +32,7 @@ import IconButton from '../../shared/IconButton.vue'
 import { placeComponent } from './place';
 import ImageUrlView from '../img/ImageUrlView.vue';
 import { ref } from 'vue';
+import { t } from '../../../i18n';
 
 const props = defineProps<{ component: Component }>();
 
@@ -39,10 +40,12 @@ const imageUrl = ref<string | undefined>();
 
 if (isEasyEda()) {
   eda.lib_Device.get(props.component.part_uuid).then((device) => {
-    if (device?.association.images?.length) {
-      imageUrl.value = device?.association.images[0];
+    if (device?.association?.images?.length) {
+      imageUrl.value = device.association.images[0];
     }
-  })
+  }).catch(() => {
+    // Silently fail — image will remain undefined
+  });
 }
 else {
   imageUrl.value = 'https://alimg.szlcsc.com/upload/public/product/middle/20230129/E8FFCCD5B90EC603DB3AC2C2407F319F.jpg'
@@ -52,7 +55,7 @@ const onClick = async () => {
   try {
     await placeComponent(props.component.part_uuid);
   } catch (error) {
-    showToastMessage('Error place component: ' + (error as Error).message, 'error');
+    showToastMessage(t('common.errorPlaceComponent', { error: (error as Error).message }), 'error');
   }
 }
 </script>

@@ -12,6 +12,7 @@ import { FlowExportObject } from '@vue-flow/core';
 import { CircuitBlocks } from "@copilot/shared/types/circuit";
 import { parseFile, getAcceptString, AttachmentFile } from '../utils/file-parser';
 import { checkpointer } from '../eda/checkpointer';
+import { t } from '../i18n';
 
 function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['blocks'] {
     const { nodes, edges } = flowData;
@@ -114,7 +115,7 @@ export default function useChat() {
                 } catch (e: unknown) {
                     const eMes = e instanceof Error ? e.message : 'Error';
                     console.warn('Failed to load selected circuit', e);
-                    showToastMessage('Failed to load selected circuit: ' + eMes, 'error');
+                    showToastMessage(t('chat.failLoadSelected', { error: eMes }), 'error');
                 }
             }
             else if (opt.label === 'Upload all' && isEasyEda()) {
@@ -127,7 +128,7 @@ export default function useChat() {
                 } catch (e: unknown) {
                     const eMes = e instanceof Error ? e.message : 'Error';
                     console.warn('Failed to load all circuit', e);
-                    showToastMessage('Failed to load all circuit: ' + eMes, 'error');
+                    showToastMessage(t('chat.failLoadAll', { error: eMes }), 'error');
                 }
             }
             else if (opt.attachId === 'Block diagram' && opt.value && typeof opt.value === 'object') {
@@ -184,13 +185,13 @@ export default function useChat() {
 
             if (parsedFile) {
                 if (attachedFiles.value.length > 8) {
-                    showToastMessage(`Max 8 files at time`, 'error');
+                    showToastMessage(t('chat.maxFiles', { max: '8' }), 'error');
                     break
                 }
 
                 attachedFiles.value.push(parsedFile);
             } else {
-                showToastMessage(`File "${file.name}" not supported`, 'warn');
+                showToastMessage(t('chat.fileNotSupported', { name: file.name }), 'warn');
             }
         }
     }
@@ -347,7 +348,7 @@ export default function useChat() {
                             historyStore.addMessageToCurrentChat(data);
                             writeToLastMessage = false;
                         } catch (error) {
-                            showToastMessage('Fail process message ai', 'error')
+                            showToastMessage(t('chat.failProcessMessage'), 'error')
                         }
 
                         break;
@@ -356,8 +357,11 @@ export default function useChat() {
                         break;
 
                     case 'update-todos':
-                        // @ need fix is unsafe
-                        todos.value = JSON.parse(ev.data);
+                        try {
+                            todos.value = JSON.parse(ev.data);
+                        } catch {
+                            console.error('Failed to parse todos data');
+                        }
                         break;
 
                     case 'end':
@@ -378,7 +382,9 @@ export default function useChat() {
             },
 
             onerror(err) {
-                console.error(err)
+                console.error(err);
+                isLoading.value = false;
+                errorMessage.value = t('chat.failProcessMessage');
             },
         }).finally(() => {
             if (writeToLastMessage) {
@@ -560,6 +566,8 @@ export default function useChat() {
     historyStore.waitForLoad().then(() => {
         // continue last stream
         sendMessage(undefined, undefined, true)
+    }).catch((err) => {
+        console.error('Failed to resume stream:', err);
     });
 
     return {

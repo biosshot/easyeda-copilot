@@ -22,7 +22,7 @@
                     </div>
                 </div>
 
-                <Collapsible v-if="msg.thinking" title="Thinking" :default-open="false">
+                <Collapsible v-if="msg.thinking" :title="t('chatMessage.thinking')" :default-open="false">
                     <p class="thinking">{{ msg.thinking }}</p>
                 </Collapsible>
 
@@ -43,7 +43,7 @@
 
             <div v-if="msg.role === 'human' && msg.checkpoint" class="backwards-nav">
                 <span class="line"></span>
-                <IconButton @click="restoreCheckpoint" icon="Bookmark" class="backward" :size="11">Restore checkpoint
+                <IconButton @click="restoreCheckpoint" icon="Bookmark" class="backward" :size="11">{{ t('chatMessage.restoreCheckpoint') }}
                 </IconButton>
                 <span class="line"></span>
             </div>
@@ -69,6 +69,7 @@ import IconButton from '../shared/IconButton.vue';
 import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from '../../eda/utils';
 import { checkpointer } from '../../eda/checkpointer';
+import { t } from '../../i18n';
 
 const props = defineProps<{ msg: ChatMessage, idx: number, isFirstInGroup: boolean, isLastInGroup: boolean, firstInGroupIdx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);
@@ -93,17 +94,17 @@ const restoreCheckpoint = () => {
         if (props.msg.checkpoint)
             checkpointer.restore(props.msg.checkpoint)
         else
-            showToastMessage('Checkpoint not found', 'error');
+            showToastMessage(t('chatMessage.checkpointNotFound'), 'error');
     else
-        showToastMessage('Checkpointer not allowed', 'error');
+        showToastMessage(t('chatMessage.checkpointerNotAllowed'), 'error');
 }
 
 const copy = async () => {
     try {
         await navigator.clipboard.writeText(props.msg.content);
-        showToastMessage('Copied', 'success')
+        showToastMessage(t('common.copied'), 'success')
     } catch (err) {
-        showToastMessage('Error with copy', 'warn')
+        showToastMessage(t('common.errorCopy'), 'warn')
     }
 }
 

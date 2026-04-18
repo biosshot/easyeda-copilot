@@ -1,10 +1,6 @@
 <template>
   <div id="app">
-    <label v-if="!isOnlineMode" style="text-align: center; font-size: 14px;">You are in Half
-      Offline or Full Offline mode. This
-      extension
-      only works in EasyEDA Pro Full Online
-      Mode!</label>
+    <label v-if="!isOnlineMode" style="text-align: center; font-size: 14px;">{{ t('app.offlineWarning') }}</label>
     <Navbar>
       <template #controls v-if="activeTab === 'chat'">
         <ChatControls :is-loading="chatViewRef?.isLoading || false" />
@@ -18,7 +14,7 @@
 
     <div v-if="hasCheckpoint" class="backwards-nav" :style="{ top: isOnlineMode ? '35px' : '75px' }">
       <span class="line"></span>
-      <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">Cancel last changes</IconButton>
+      <IconButton @click="backward" icon="Bookmark" class="backward" :size="11">{{ t('app.cancelLastChanges') }}</IconButton>
       <span class="line"></span>
     </div>
 
@@ -59,6 +55,7 @@ import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
 import { checkpointer } from './eda/checkpointer';
 import { startRelay, stopRelay } from './api/relay';
+import { t } from './i18n';
 // import VoltageChart from './components/shared/VoltageChart.vue';
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
@@ -77,7 +74,7 @@ const backward = () => {
   if (hasCheckpoint.value)
     checkpointer.restore();
   else
-    showToastMessage('Checkpoint not found', 'info');
+    showToastMessage(t('app.checkpointNotFound'), 'info');
 }
 
 const store = useAppStore();

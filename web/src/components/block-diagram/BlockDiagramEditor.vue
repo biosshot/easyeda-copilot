@@ -27,35 +27,35 @@
 
         <div v-if="isDigitizing" class="loading-overlay" @click.stop>
             <div class="loading-content">
-                <TypingDots :status="progressText || 'Processing image…'" />
-                <IconButton icon="Square" variant="cancel" @click="cancelDigitization">Cancel</IconButton>
+                <TypingDots :status="progressText || t('blockDiagram.processingImage')" />
+                <IconButton icon="Square" variant="cancel" @click="cancelDigitization">{{ t('common.cancel') }}</IconButton>
             </div>
         </div>
 
         <div v-if="showEditModal" class="modal-overlay">
             <div class="modal-content" @click.stop>
                 <div class="modal-header">
-                    <h3>Edit Block</h3>
+                    <h3>{{ t('blockDiagram.editBlock') }}</h3>
                     <button class="close-button" @click="closeEditModal">×</button>
                 </div>
 
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="block-name">Block Name:</label>
+                        <label for="block-name">{{ t('blockDiagram.blockName') }}</label>
                         <input type="text" id="block-name" v-model="editingBlock.label" class="input-field"
-                            placeholder="Enter block name" @keyup.enter="saveBlock" />
+                            :placeholder="t('blockDiagram.enterBlockName')" @keyup.enter="saveBlock" />
                     </div>
 
                     <div class="form-group">
-                        <label for="block-description">Description:</label>
+                        <label for="block-description">{{ t('blockDiagram.description') }}</label>
                         <textarea id="block-description" v-model="editingBlock.description" class="input-field textarea"
-                            placeholder="Enter block description" rows="3"></textarea>
+                            :placeholder="t('blockDiagram.enterDescription')" rows="3"></textarea>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button class="button secondary" @click="closeEditModal">Cancel</button>
-                    <button class="button primary" @click="saveBlock">Save</button>
+                    <button class="button secondary" @click="closeEditModal">{{ t('blockDiagram.cancel') }}</button>
+                    <button class="button primary" @click="saveBlock">{{ t('blockDiagram.save') }}</button>
                 </div>
             </div>
         </div>
@@ -69,6 +69,7 @@ import IconButton from '../shared/IconButton.vue'
 import ContextMenu from '../shared/ContextMenu.vue'
 import TypingDots from '../shared/TypingDots.vue'
 import { useBlockDiagramEditor } from '../../composables/useBlockDiagramEditor'
+import { t } from '../../i18n'
 
 const contextMenuComponent = ref<InstanceType<typeof ContextMenu> | null>(null)
 

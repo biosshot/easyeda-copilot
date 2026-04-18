@@ -11,11 +11,11 @@
         <div class="stepper-footer">
             <button v-if="currentStep > 0" class="back-button" @click="prevStep">
                 <Icon name="ArrowLeft" size="16" />
-                Back
+                {{ t('stepper.back') }}
             </button>
             <span class="footer-spacer"></span>
             <button class="next-button" @click="nextStep">
-                {{ isLastStep ? (props.finishButtonText || "Finish") : "Next" }}
+                {{ isLastStep ? (props.finishButtonText || t('stepper.finish')) : t('stepper.next') }}
                 <Icon :name="isLastStep ? (finishButtonIcon ?? 'ArrowRight') : 'ArrowRight'" size="16" />
             </button>
         </div>
@@ -27,6 +27,7 @@ import { computed, provide, ref, watch } from 'vue';
 import StepList from './StepList.vue';
 import Step from './Step.vue';
 import Icon from './Icon.vue';
+import { t } from '../../i18n';
 
 const props = defineProps<{
     steps: {

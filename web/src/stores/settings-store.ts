@@ -59,7 +59,10 @@ const DEFAULT_SETTINGS = {
     contextSaveFirstMessages: 5,
     contextMaxNumberAttachedCircuit: 8,
 
-    assembleDrawRects: true
+    assembleDrawRects: true,
+
+    // Language
+    language: '',
 };
 
 type SettingsKey = keyof typeof DEFAULT_SETTINGS | (string & {});

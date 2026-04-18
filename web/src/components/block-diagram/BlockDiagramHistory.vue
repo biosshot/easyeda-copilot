@@ -1,5 +1,5 @@
 <template>
-  <HistoryList title="Block Diagram History" :items="diagramItems" empty-message="No saved diagrams yet"
+  <HistoryList :title="t('blockDiagram.history')" :items="diagramItems" :empty-message="t('blockDiagram.noSavedDiagrams')"
     :show-duplicate="false" @select="loadDiagram" @delete="deleteDiagram" @rename="renameDiagram"
     @clearAll="clearAllHistory" @close="$emit('close')" />
 </template>
@@ -8,6 +8,7 @@
 import { computed } from 'vue';
 import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-store';
 import HistoryList from '../shared/HistoryList.vue';
+import { t } from '../../i18n';
 
 const emit = defineEmits<{
   load: [data: any];
@@ -44,7 +45,7 @@ const deleteDiagram = (id: string) => {
 };
 
 const clearAllHistory = () => {
-  if (confirm('Are you sure you want to clear all history? This cannot be undone.')) {
+  if (confirm(t('blockDiagram.confirmClearHistory'))) {
     historyStore.clearHistory();
   }
 };

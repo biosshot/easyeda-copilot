@@ -35,6 +35,7 @@ import ComponentCard from './ComponentCard.vue';
 import { InlineButton } from '../../../types/inline-button';
 import { showToastMessage } from '../../../eda/utils';
 import { placeComponent } from './place';
+import { t } from '../../../i18n';
 
 const props = defineProps<{
     result: {
@@ -49,7 +50,7 @@ const place = async (part_uuid: string) => {
     try {
         await placeComponent(part_uuid);
     } catch (error) {
-        showToastMessage('Error place component: ' + (error as Error).message, 'error');
+        showToastMessage(t('common.errorPlaceComponent', { error: (error as Error).message }), 'error');
     }
 }
 

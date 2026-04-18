@@ -3,19 +3,19 @@
     <div class="tabs">
       <IconButton :class="['tab', { active: activeTab === 'chat' }]" @click="store.setActiveTab('chat')"
         icon="MessageSquare">
-        <span>Chat</span>
+        <span>{{ t('nav.chat') }}</span>
       </IconButton>
       <IconButton :class="['tab', { active: activeTab === 'completions' }]" @click="store.setActiveTab('completions')"
         icon="CircleCheckBig">
-        <span>Completions</span>
+        <span>{{ t('nav.completions') }}</span>
       </IconButton>
       <IconButton :class="['tab', { active: activeTab === 'simulate' }]" @click="store.setActiveTab('simulate')"
         icon="Play">
-        <span>Simulate</span>
+        <span>{{ t('nav.simulate') }}</span>
       </IconButton>
       <IconButton :class="['tab', { active: activeTab === 'settings' }]" @click="store.setActiveTab('settings')"
         icon="Settings">
-        <span>Settings</span>
+        <span>{{ t('nav.settings') }}</span>
       </IconButton>
     </div>
 
@@ -29,6 +29,7 @@
 import { computed } from 'vue';
 import { useAppStore } from '../../stores/app-store';
 import IconButton from '../shared/IconButton.vue';
+import { t } from '../../i18n';
 
 const store = useAppStore();
 

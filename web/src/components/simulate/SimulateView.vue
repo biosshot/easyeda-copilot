@@ -1,8 +1,7 @@
 <template>
     <div class="simulate-view-container">
         <div v-if="!isSettingsOpen" class="container">
-            <IconButton variant="primary" class="simulate" icon="Play" @click="openSettings">Run spice simulate with
-                selected</IconButton>
+            <IconButton variant="primary" class="simulate" icon="Play" @click="openSettings">{{ t('simulate.runWithSelected') }}</IconButton>
         </div>
 
         <div v-else class="settings-full-page">
@@ -10,7 +9,7 @@
                 <ErrorBanner :message="errorMessage" :type="errorType" />
             </div>
 
-            <Stepper :steps="steps" :finish-button-text="isRunning ? 'Stop' : 'Run simulate'"
+            <Stepper :steps="steps" :finish-button-text="isRunning ? t('simulate.stop') : t('simulate.runSimulate')"
                 :finish-button-icon="isRunning ? 'Square' : 'Play'"
                 @finish="isRunning ? stopSimulation() : runSimulation()">
                 <StepPanels>
@@ -18,21 +17,20 @@
                         <div class="settings-content">
                             <div class="sources-section">
                                 <div class="section-header">
-                                    <h3>Input Sources</h3>
+                                    <h3>{{ t('simulate.inputSources') }}</h3>
                                     <!-- <IconButton icon="Plus" :size="16" variant="primary"
                                         @click="autoDetectInputSources">Auto
                                         detect</IconButton> -->
-                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addInputSource">Add
-                                        Input Source</IconButton>
+                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addInputSource">{{ t('simulate.addInputSource') }}</IconButton>
                                 </div>
 
                                 <div v-if="inputSources.length === 0" class="empty-list">
-                                    No input sources added. Click "Add Input Source" to begin.
+                                    {{ t('simulate.noInputSources') }}
                                 </div>
 
                                 <div v-for="(source, index) in inputSources" :key="source.id" class="source-item">
                                     <div class="source-header">
-                                        <span class="source-label">Source {{ index + 1 }}</span>
+                                        <span class="source-label">{{ t('simulate.source', { index: index + 1 }) }}</span>
                                         <IconButton variant="remove" icon="Trash2" :size="16"
                                             @click="removeInputSource(source.id)"></IconButton>
                                     </div>
@@ -42,7 +40,7 @@
                                             <NetInput v-model="source.signalName" />
                                         </div>
                                         <div class="form-group">
-                                            <label>Signal Type</label>
+                                            <label>{{ t('simulate.signalType') }}</label>
                                             <CustomSelect :model-value="source.type" :options="[
                                                 { label: 'DC', value: 'dc' },
                                                 { label: 'Sine', value: 'sin' },
@@ -54,7 +52,7 @@
 
                                         <div v-if="source.type === 'dc'" class="source-fields">
                                             <div class="form-group">
-                                                <label :for="`dc-voltage-${source.id}`">Voltage (V)</label>
+                                                <label :for="`dc-voltage-${source.id}`">{{ t('simulate.voltage') }}</label>
 
                                                 <UnitInput :id="`dc-voltage-${source.id}`" variant="voltage"
                                                     v-model="source.amplitude" placeholder="0" />
@@ -63,17 +61,17 @@
 
                                         <div v-if="source.type === 'sin'" class="source-fields">
                                             <div class="form-group">
-                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <label :for="`sin-amplitude-${source.id}`">{{ t('simulate.amplitude') }}</label>
                                                 <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
                                                     v-model="source.amplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <label :for="`sin-offset-${source.id}`">{{ t('simulate.offset') }}</label>
                                                 <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
                                                     v-model="source.offset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <label :for="`sin-frequency-${source.id}`">{{ t('simulate.frequency') }}</label>
                                                 <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
                                                     v-model="source.frequency" />
                                             </div>
@@ -81,22 +79,22 @@
 
                                         <div v-if="source.type === 'pulse'" class="source-fields">
                                             <div class="form-group">
-                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <label :for="`sin-amplitude-${source.id}`">{{ t('simulate.amplitude') }}</label>
                                                 <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
                                                     v-model="source.amplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <label :for="`sin-offset-${source.id}`">{{ t('simulate.offset') }}</label>
                                                 <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
                                                     v-model="source.offset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <label :for="`sin-frequency-${source.id}`">{{ t('simulate.frequency') }}</label>
                                                 <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
                                                     v-model="source.frequency" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-fill-${source.id}`">Fill (%)</label>
+                                                <label :for="`sin-fill-${source.id}`">{{ t('simulate.fill') }}</label>
                                                 <input type="number" :id="`sin-frequency-${source.id}`"
                                                     v-model="source.fill">
                                             </div>
@@ -104,17 +102,17 @@
 
                                         <div v-if="source.type === 'saw'" class="source-fields">
                                             <div class="form-group">
-                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <label :for="`sin-amplitude-${source.id}`">{{ t('simulate.amplitude') }}</label>
                                                 <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
                                                     v-model="source.amplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <label :for="`sin-offset-${source.id}`">{{ t('simulate.offset') }}</label>
                                                 <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
                                                     v-model="source.offset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <label :for="`sin-frequency-${source.id}`">{{ t('simulate.frequency') }}</label>
                                                 <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
                                                     v-model="source.frequency" />
                                             </div>
@@ -122,17 +120,17 @@
 
                                         <div v-if="source.type === 'rsaw'" class="source-fields">
                                             <div class="form-group">
-                                                <label :for="`sin-amplitude-${source.id}`">Amplitude (V)</label>
+                                                <label :for="`sin-amplitude-${source.id}`">{{ t('simulate.amplitude') }}</label>
                                                 <UnitInput :id="`sin-amplitude-${source.id}`" variant="voltage"
                                                     v-model="source.amplitude" placeholder="1" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-offset-${source.id}`">Offset (V)</label>
+                                                <label :for="`sin-offset-${source.id}`">{{ t('simulate.offset') }}</label>
                                                 <UnitInput :id="`sin-offset-${source.id}`" variant="voltage"
                                                     v-model="source.offset" placeholder="0" />
                                             </div>
                                             <div class="form-group">
-                                                <label :for="`sin-frequency-${source.id}`">Frequency (Hz)</label>
+                                                <label :for="`sin-frequency-${source.id}`">{{ t('simulate.frequency') }}</label>
                                                 <UnitInput :id="`sin-frequency-${source.id}`" variant="freq"
                                                     v-model="source.frequency" />
                                             </div>
@@ -147,18 +145,17 @@
                         <div class="settings-content">
                             <div class="outputs-section">
                                 <div class="section-header">
-                                    <h3>Output Signals</h3>
-                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addOutputSignal">Add
-                                        Output Signal</IconButton>
+                                    <h3>{{ t('simulate.outputSignals') }}</h3>
+                                    <IconButton icon="Plus" :size="16" variant="primary" @click="addOutputSignal">{{ t('simulate.addOutputSignal') }}</IconButton>
                                 </div>
 
                                 <div v-if="outputSignals.length === 0" class="empty-list">
-                                    No output signals added. Click "Add Output Signal" to begin.
+                                    {{ t('simulate.noOutputSignals') }}
                                 </div>
 
                                 <div v-for="(signal, index) in outputSignals" :key="signal.id" class="output-item">
                                     <div class="output-header">
-                                        <span class="output-label">Output {{ index + 1 }}</span>
+                                        <span class="output-label">{{ t('simulate.output', { index: index + 1 }) }}</span>
                                         <IconButton variant="remove" icon="Trash2" :size="16"
                                             @click="removeOutputSignal(signal.id)"></IconButton>
                                     </div>
@@ -174,12 +171,12 @@
                         <div class="settings-content">
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Simulation Settings</h3>
+                                    <h3>{{ t('simulate.simulationSettings') }}</h3>
                                 </div>
 
                                 <div class="settings-form">
                                     <div class="form-group">
-                                        <label for="simulation-type">Simulation Type</label>
+                                        <label for="simulation-type">{{ t('simulate.simulationType') }}</label>
                                         <CustomSelect :model-value="simulationType" :options="[
                                             { label: 'Transient (TRAN)', value: 'tran' },
                                             { label: 'AC Analysis', value: 'ac' },
@@ -191,13 +188,13 @@
                                     <!-- Transient Settings -->
                                     <div v-if="simulationType === 'tran'" class="form-row">
                                         <div class="form-group">
-                                            <label for="step-time">Step Time</label>
+                                            <label for="step-time">{{ t('simulate.stepTime') }}</label>
                                             <UnitInput id="step-time" variant="time" v-model="stepTime"
                                                 placeholder="1" />
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="end-time">End Time</label>
+                                            <label for="end-time">{{ t('simulate.endTime') }}</label>
                                             <UnitInput id="end-time" variant="time" v-model="endTime" placeholder="5" />
                                         </div>
                                     </div>
@@ -205,24 +202,24 @@
                                     <!-- AC Analysis Settings -->
                                     <div v-if="simulationType === 'ac'" class="form-row">
                                         <div class="form-group">
-                                            <label for="start-freq">Start Frequency (Hz)</label>
+                                            <label for="start-freq">{{ t('simulate.startFreq') }}</label>
                                             <UnitInput id="start-freq" variant="freq" v-model="acStartFreq"
                                                 placeholder="10" />
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="end-freq">End Frequency (Hz)</label>
+                                            <label for="end-freq">{{ t('simulate.endFreq') }}</label>
                                             <UnitInput id="end-freq" variant="freq" v-model="acEndFreq"
                                                 placeholder="1e6" />
                                         </div>
                                     </div>
                                     <div v-if="simulationType === 'ac'" class="form-group">
-                                        <label for="points-per-decade">Points per Decade</label>
+                                        <label for="points-per-decade">{{ t('simulate.pointsPerDecade') }}</label>
                                         <input type="number" id="points-per-decade" v-model="acPointsPerDecade" step="1"
                                             placeholder="100" />
                                     </div>
                                     <div v-if="simulationType === 'ac'" class="form-group">
-                                        <label for="sweep-type">Sweep Type</label>
+                                        <label for="sweep-type">{{ t('simulate.sweepType') }}</label>
                                         <CustomSelect :model-value="acSweepType" :options="[
                                             { label: 'Decade (dec)', value: 'dec' },
                                             { label: 'Octave (oct)', value: 'oct' },
@@ -236,19 +233,19 @@
                                     </div>
                                     <div v-if="simulationType === 'dc'" class="form-row">
                                         <div class="form-group">
-                                            <label for="dc-start">Start Value (V)</label>
+                                            <label for="dc-start">{{ t('simulate.startValue') }}</label>
                                             <UnitInput id="dc-start" variant="voltage" v-model="dcStartValue"
                                                 placeholder="0" />
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="dc-end">End Value (V)</label>
+                                            <label for="dc-end">{{ t('simulate.endValue') }}</label>
                                             <UnitInput id="dc-end" variant="voltage" v-model="dcEndValue"
                                                 placeholder="5" />
                                         </div>
                                     </div>
                                     <div v-if="simulationType === 'dc'" class="form-group">
-                                        <label for="dc-step">Step Value (V)</label>
+                                        <label for="dc-step">{{ t('simulate.stepValue') }}</label>
                                         <UnitInput id="dc-step" variant="voltage" v-model="dcStepValue"
                                             placeholder="0.1" />
                                     </div>
@@ -259,12 +256,11 @@
 
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Error Tolerances</h3>
+                                    <h3>{{ t('simulate.errorTolerances') }}</h3>
                                 </div>
 
                                 <p class="section-description">
-                                    Control the accuracy of the simulation. Lower values increase accuracy but slow down
-                                    computation.
+                                    {{ t('simulate.errorTolerancesDesc') }}
                                 </p>
 
                                 <div class="settings-form">
@@ -330,11 +326,11 @@
 
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Iteration Limits</h3>
+                                    <h3>{{ t('simulate.iterationLimits') }}</h3>
                                 </div>
 
                                 <p class="section-description">
-                                    Define when the simulator should stop iterating or adjust the calculation step.
+                                    {{ t('simulate.iterationLimitsDesc') }}
                                 </p>
 
                                 <div class="settings-form">
@@ -381,11 +377,11 @@
 
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Analysis Methods</h3>
+                                    <h3>{{ t('simulate.analysisMethods') }}</h3>
                                 </div>
 
                                 <p class="section-description">
-                                    Configure numerical integration methods and convergence aids.
+                                    {{ t('simulate.analysisMethodsDesc') }}
                                 </p>
 
                                 <div class="settings-form">
@@ -431,11 +427,11 @@
 
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Temperature</h3>
+                                    <h3>{{ t('simulate.temperature') }}</h3>
                                 </div>
 
                                 <p class="section-description">
-                                    Set the operating and nominal temperatures for the simulation.
+                                    {{ t('simulate.temperatureDesc') }}
                                 </p>
 
                                 <div class="settings-form">
@@ -459,11 +455,11 @@
 
                             <div class="settings-section">
                                 <div class="section-header">
-                                    <h3>Stability (Shunts)</h3>
+                                    <h3>{{ t('simulate.stability') }}</h3>
                                 </div>
 
                                 <p class="section-description">
-                                    Add shunt elements to improve simulation stability and convergence.
+                                    {{ t('simulate.stabilityDesc') }}
                                 </p>
 
                                 <div class="settings-form">
@@ -492,12 +488,12 @@
                     <StepPanel :value="3">
                         <div class="settings-content">
                             <div class="results-header">
-                                <h3>Simulation Results</h3>
+                                <h3>{{ t('simulate.results') }}</h3>
                                 <IconButton :size="18" icon="ExternalLink" variant="ghost" @click="openGraphInNewWindow"
-                                    title="Open in new window" />
+                                    :title="t('simulate.openNewWindow')" />
                             </div>
 
-                            <TypingDots v-if="isRunning" status="Running simulation..." />
+                            <TypingDots v-if="isRunning" :status="t('simulate.running')" />
 
                             <div v-else-if="simulationResult" class="results-content">
                                 <div style="height: 400px;">
@@ -552,6 +548,7 @@ import UnitInput, { UnitValue } from '../shared/UnitInput.vue';
 import { isEasyEda, showToastMessage } from '../../eda/utils';
 import { SimulateResult, SimulateResultSchema } from "@copilot/shared/types/spice";
 import SimGraph from './SimGraph.vue';
+import { t } from '../../i18n';
 
 interface InputSource {
     id: string;
@@ -694,21 +691,25 @@ const stopSimulation = () => {
 
 const openGraphInNewWindow = async () => {
     if (!simulationResult.value) {
-        showToastMessage('No simulation data to display', 'error');
+        showToastMessage(t('common.noSimulationData'), 'error');
         return;
     }
 
-    await eda.sys_IFrame.openIFrame(
-        '/iframe/graph.html',
-        800,
-        600,
-        undefined,
-        {
-            maximizeButton: true,
-            minimizeButton: true,
-            grayscaleMask: false
-        }
-    );
+    try {
+        await eda.sys_IFrame.openIFrame(
+            '/iframe/graph.html',
+            800,
+            600,
+            undefined,
+            {
+                maximizeButton: true,
+                minimizeButton: true,
+                grayscaleMask: false
+            }
+        );
+    } catch (error) {
+        console.error('Failed to open graph window:', error);
+    }
 };
 
 const runSimulation = async () => {

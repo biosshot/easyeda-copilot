@@ -1,10 +1,12 @@
+import { t } from '../i18n';
+
 export const formatError = (e: unknown) => {
     const eMessage = e instanceof Error ? e.message : String(e);
     const isAbort = /aborted|AbortError/i.test(eMessage);
     const errMsg = isAbort
-        ? 'Request cancelled by user.'
+        ? t('error.requestCancelled')
         : eMessage.startsWith('Request failed')
             ? eMessage
-            : `Request failed: ${eMessage}`;
+            : t('error.requestFailed', { error: eMessage });
     return errMsg;
 }

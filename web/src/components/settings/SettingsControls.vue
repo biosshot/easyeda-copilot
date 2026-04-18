@@ -1,8 +1,8 @@
 <template>
     <div class="controls-wrapper">
-        <IconButton icon="FileDown" @click="loadSettings" title="Load settings from file" />
-        <IconButton icon="Save" @click="saveSettings" title="Save settings to file" />
-        <IconButton icon="ListRestart" @click="resetSettings" title="Reset settings to default" />
+        <IconButton icon="FileDown" @click="loadSettings" :title="t('settingsControls.loadFromFile')" />
+        <IconButton icon="Save" @click="saveSettings" :title="t('settingsControls.saveToFile')" />
+        <IconButton icon="ListRestart" @click="resetSettings" :title="t('settingsControls.resetDefaults')" />
     </div>
 </template>
 
@@ -11,13 +11,14 @@ import { showToastMessage } from '../../eda/utils';
 import { useSettingsStore } from '../../stores/settings-store';
 import IconButton from '../shared/IconButton.vue';
 import { ref } from 'vue';
+import { t } from '../../i18n';
 
 const settingsStore = useSettingsStore();
 const fileInput = ref<HTMLInputElement | null>(null);
 
 // Load settings from user-selected JSON file
 const loadSettings = () => {
-    if (!confirm('This will overwrite your current settings with data from the file. Continue?')) {
+    if (!confirm(t('settingsControls.confirmOverwrite'))) {
         return;
     }
 
@@ -33,20 +34,20 @@ const loadSettings = () => {
         const file = target.files?.[0];
 
         if (!file) {
-            showToastMessage('No file selected.', 'error');
+            showToastMessage(t('settingsControls.noFileSelected'), 'error');
             cleanupInput();
             return;
         }
 
         // Security/validation: Check file size (<5MB) and type
         if (file.size > 5 * 1024 * 1024) {
-            showToastMessage('File too large. Maximum size is 5MB.', 'error');
+            showToastMessage(t('settingsControls.fileTooLarge'), 'error');
             cleanupInput();
             return;
         }
 
         if (!file.name.toLowerCase().endsWith('.json')) {
-            showToastMessage('Invalid file type. Please select a JSON file.', 'error');
+            showToastMessage(t('settingsControls.invalidFileType'), 'error');
             cleanupInput();
             return;
         }
@@ -61,10 +62,10 @@ const loadSettings = () => {
             settingsStore.loadSettings(parsed); // Requires corresponding action in Pinia store
             settingsStore.saveSettings();
 
-            showToastMessage('Settings loaded successfully!', 'success');
+            showToastMessage(t('settingsControls.settingsLoaded'), 'success');
         } catch (error) {
             console.error('Settings load error:', error);
-            showToastMessage(`Failed to load settings:\n${error instanceof Error ? error.message : 'Invalid JSON format'}`, 'error');
+            showToastMessage(`${t('settingsControls.settingsSaveFailed')}\n${error instanceof Error ? error.message : 'Invalid JSON format'}`, 'error');
         } finally {
             cleanupInput();
         }
@@ -97,7 +98,7 @@ const saveSettings = () => {
         // Cleanup
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-        showToastMessage('Settings saved successfully!', 'success');
+        showToastMessage(t('settingsControls.settingsSaved'), 'success');
     } catch (error) {
         console.error('Settings save error:', error);
         showToastMessage(`Failed to save settings:\n${error instanceof Error ? error.message : 'Unknown error'}`, 'error');
@@ -106,9 +107,9 @@ const saveSettings = () => {
 
 // Reset confirmation (existing implementation)
 const resetSettings = () => {
-    if (confirm('Are you sure you want to reset all settings to default?')) {
+    if (confirm(t('settingsControls.confirmReset'))) {
         settingsStore.resetSettings();
-        showToastMessage('Settings reset to default values.', 'success');
+        showToastMessage(t('settingsControls.settingsReset'), 'success');
     }
 };
 

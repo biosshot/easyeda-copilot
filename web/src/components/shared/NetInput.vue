@@ -1,7 +1,7 @@
 <template>
-    <label>Signal Name / Node</label>
+    <label>{{ t('netInput.signalName') }}</label>
     <div class="group">
-        <input type="text" v-model="model" placeholder="e.g., VCC, INP_SIN" />
+        <input type="text" v-model="model" :placeholder="t('netInput.placeholder')" />
         <IconButton @click="selNet" :icon="inSelProgress ? 'LoaderCircle' : 'Send'" :size="16" :class="{ 'rotating': inSelProgress }" />
     </div>
 </template>
@@ -11,6 +11,7 @@ import { ref } from 'vue';
 import { waitForWireSelect } from '../../eda/schematic';
 import { showToastMessage } from '../../eda/utils';
 import IconButton from './IconButton.vue';
+import { t } from '../../i18n';
 
 const model = defineModel<string>();
 const inSelProgress = ref<boolean>(false)
@@ -20,10 +21,10 @@ const selNet = async () => {
 
     try {
         const net = await waitForWireSelect(AbortSignal.timeout(5000));
-        if (!net) return showToastMessage('Fail get net name not selected', 'warn');;
+        if (!net) return showToastMessage(t('netInput.failGetNetNameNotSelected'), 'warn');;
         model.value = net;
     } catch (error) {
-        showToastMessage('Fail get net name ' + (error as Error).message, 'warn');
+        showToastMessage(t('netInput.failGetNetName', { error: (error as Error).message }), 'warn');
     }
 
     inSelProgress.value = false;

@@ -3,7 +3,7 @@
         <div class="todos-header" @click="showTodos = !showTodos">
             <IconButton variant="ghost" :size="12" :icon="showTodos ? 'ChevronUp' : 'ChevronDown'"
                 class="collapse-btn" />
-            <span>Todos ({{ todos.length }})</span>
+            <span>{{ t('todoList.todos', { count: todos.length }) }}</span>
         </div>
         <div v-if="showTodos" class="todos-list">
             <div v-for="(todo, idx) in todos" :key="idx" class="todo-item" :class="['status-' + todo.status]">
@@ -24,6 +24,7 @@
 import { ref } from 'vue';
 import IconButton from './IconButton.vue';
 import Icon from './Icon.vue';
+import { t } from '../../i18n';
 
 const showTodos = ref<boolean>(false);
 const props = defineProps<{

@@ -24,7 +24,7 @@
     <!-- Empty placeholder shown when there are no chat messages -->
     <div class="messages placeholder" v-else>
       <div v-if="recentChats.length > 0" class="recent-chats">
-        <p class="recent-chats-title">Recent chats:</p>
+        <p class="recent-chats-title">{{ t('chat.recentChats') }}</p>
         <div class="recent-chats-list">
           <div v-for="chat in recentChats" :key="chat.id" class="recent-chat-item" @click="switchToChat(chat.id)">
             <span class="recent-chat-title">{{ chat.title + ': ' + (chat.messages[0]?.content ?? 'Empty') }}</span>
@@ -33,9 +33,9 @@
       </div>
 
       <div class="placeholder-content">
-        <p class="empty-title">No messages</p>
-        <p class="empty-sub">Please enter your message in the box below.</p>
-        <p class="empty-hint">Hint: Enable "Upload selected" to attach the selected schema to the request.</p>
+        <p class="empty-title">{{ t('chat.noMessages') }}</p>
+        <p class="empty-sub">{{ t('chat.enterMessage') }}</p>
+        <p class="empty-hint">{{ t('chat.hint') }}</p>
       </div>
     </div>
 
@@ -87,7 +87,7 @@
           <input ref="fileInput" type="file" multiple :accept="getAcceptString()" @change="handleFileSelect"
             style="display: none;" />
 
-          <AdjTextarea v-model="newMessage" placeholder="Ask about components, specifications, or circuits..."
+          <AdjTextarea v-model="newMessage" :placeholder="t('chat.placeholder')"
             @enter="sendMessage" />
 
           <IconButton class="send-btn" @click="isLoading ? cancelRequest() : sendMessage()"
@@ -139,6 +139,7 @@ import { useBlockDiagramHistoryStore } from '../../stores/block-diagram-history-
 import ToDoList from '../shared/ToDoList.vue';
 import { formatFileSize } from '../../utils/file-size';
 import CustomSelect from '../shared/CustomSelect.vue';
+import { t } from '../../i18n';
 
 const settingsStore = useSettingsStore();
 const blockDiagramHistoryStore = useBlockDiagramHistoryStore();
@@ -197,20 +198,20 @@ watch(chatMessages, () => {
 
 function attachBlockDiagram() {
   if (!blockDiagramEditor.value) {
-    showToastMessage("BlockDiagramEditor not found", 'error');
+    showToastMessage(t('chat.diagramNotFound'), 'error');
     return;
   }
 
   const data = blockDiagramEditor.value.getData();
   if (!data || !data.nodes.length) {
-    showToastMessage("Block diagram is empty", 'error');
+    showToastMessage(t('chat.diagramEmpty'), 'error');
     return;
   }
 
   const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const defaultName = `Diagram - ${timestamp}`;
   blockDiagramHistoryStore.addOrUpdateEntry(defaultName, data);
-  showToastMessage("Diagram saved to history", 'success');
+  showToastMessage(t('chat.diagramSaved'), 'success');
 
   showEditor.value = false;
   showHistoryPanel.value = false;
@@ -221,13 +222,13 @@ function attachBlockDiagram() {
 
 function loadDiagramFromHistory(data: any) {
   if (!blockDiagramEditor.value) {
-    showToastMessage("BlockDiagramEditor not found", 'error');
+    showToastMessage(t('chat.diagramNotFound'), 'error');
     return;
   }
 
   blockDiagramEditor.value.setData(data);
   showHistoryPanel.value = false;
-  showToastMessage("Diagram loaded from history", 'success');
+  showToastMessage(t('chat.diagramLoaded'), 'success');
 }
 
 function toggleHistoryPanel() {
@@ -302,14 +303,14 @@ function onPaste(event: ClipboardEvent) {
 const attachMenuItems = [
   {
     icon: 'Cuboid',
-    label: 'Draw Block Diagram',
+    label: t('chat.drawBlockDiagram'),
     click: () => {
       showEditor.value = true;
     }
   },
   {
     icon: 'Upload',
-    label: 'Upload File',
+    label: t('chat.uploadFile'),
     click: () => {
       fileInput.value?.click();
     }

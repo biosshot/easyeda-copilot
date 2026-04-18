@@ -22,11 +22,11 @@
             </div>
         </div>
         <div v-else class="content edit-mode" :class="props.message.role">
-            <AdjTextarea v-model="editedContent" placeholder="Edit your message..." style="width: 100%;"
+            <AdjTextarea v-model="editedContent" :placeholder="t('chatMessage.editPlaceholder')" style="width: 100%;"
                 :max-height="360" @enter="saveEdit" />
             <div class="edit-controls">
-                <IconButton icon="Square" @click="cancelEdit" title="Stop edit message" />
-                <IconButton icon="SendHorizonal" @click="saveEdit" title="Send message" />
+                <IconButton icon="Square" @click="cancelEdit" :title="t('chatMessage.stopEdit')" />
+                <IconButton icon="SendHorizonal" @click="saveEdit" :title="t('chatMessage.sendMessage')" />
             </div>
         </div>
         <div v-if="message.options && Object.keys(message.options).length > 0" class="message-options">
@@ -50,6 +50,7 @@ import AdjTextarea from '../shared/AdjTextarea.vue'
 import IconButton from '../shared/IconButton.vue'
 import ImageUrlView from './img/ImageUrlView.vue'
 import { ChatMessage } from '../../stores/chat-history-store'
+import { t } from '../../i18n'
 
 const props = defineProps<{ message: ChatMessage, isLast?: boolean, idx: number }>()
 const emit = defineEmits<{

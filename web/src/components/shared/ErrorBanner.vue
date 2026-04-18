@@ -10,6 +10,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import Icon from './Icon.vue';
+import { t } from '../../i18n';
 
 const props = withDefaults(defineProps<{
     message: string;
@@ -24,7 +25,7 @@ const iconName = computed(() =>
 );
 
 const ariaLabel = computed(() =>
-    props.type === 'warn' ? 'Предупреждение' : 'Ошибка'
+    props.type === 'warn' ? t('errorBanner.warning') : t('errorBanner.error')
 );
 </script>
 

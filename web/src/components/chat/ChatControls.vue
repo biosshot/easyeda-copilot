@@ -1,11 +1,11 @@
 <template>
     <div class="chat-controls-wrapper">
-        <IconButton :disabled="newChatDisabled" @click="createNewChat" title="New chat" icon="Plus" />
-        <IconButton @click="toggleChatHistory" title="Chat history" icon="History" />
+        <IconButton :disabled="newChatDisabled" @click="createNewChat" :title="t('chatControls.newChat')" icon="Plus" />
+        <IconButton @click="toggleChatHistory" :title="t('chatControls.chatHistory')" icon="History" />
 
         <!-- Chat history panel -->
         <div v-if="showChatHistory" class="chat-history-panel">
-            <HistoryList title="Sessions" :items="historyItems" empty-message="No sessions yet"
+            <HistoryList :title="t('chatControls.sessions')" :items="historyItems" :empty-message="t('chatControls.noSessionsYet')"
                 :active-item-id="historyStore.currentChatId" @select="switchToChat" @delete="deleteChat"
                 @rename="renameChat" @duplicate="duplicateChat" @clearAll="clearAllChats" :show-duplicate="true"
                 @close="showChatHistory = false" />
@@ -18,6 +18,7 @@ import { ref, computed } from 'vue';
 import { useChatHistoryStore } from '../../stores/chat-history-store';
 import IconButton from '../shared/IconButton.vue';
 import HistoryList from '../shared/HistoryList.vue';
+import { t } from '../../i18n';
 
 const historyStore = useChatHistoryStore();
 const allChats = computed(() => historyStore.getAllChats());
@@ -72,7 +73,7 @@ async function deleteChat(chatId: string) {
 async function clearAllChats() {
     if (props.isLoading) return;
 
-    if (confirm('Are you sure you want to delete all chats?')) {
+    if (confirm(t('chatControls.confirmDeleteAll'))) {
         try {
             await historyStore.clearAllChats();
         } catch (e) {
