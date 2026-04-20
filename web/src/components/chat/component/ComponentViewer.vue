@@ -18,8 +18,8 @@
                     <div v-if="result.components && result.components.length > 0" class="other-components">
                         <h3>Other suitable components ({{ result.components.length }})</h3>
                         <div class="components-grid">
-                            <ComponentCard v-for="(comp, cIdx) in result.components" :key="cIdx" :component="comp"
-                                class="component-card" />
+                            <ComponentCard v-for="(comp, cIdx) in result.components.filter(Boolean)" :key="cIdx"
+                                :component="comp" class="component-card" />
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@ watchEffect(() => {
             )
         }
         else if (Array.isArray(result.components)) {
-            result.components.slice(0, 2).map(comp => {
+            result.components.filter(Boolean).slice(0, 2).map(comp => {
                 inlineButtons.push(
                     {
                         icon: 'Play',
