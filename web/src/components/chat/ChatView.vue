@@ -88,9 +88,9 @@
             style="display: none;" />
 
           <AdjTextarea v-model="newMessage" placeholder="Ask about components, specifications, or circuits..."
-            @enter="sendMessage" />
+            @enter="sendMessageAndScroll" />
 
-          <IconButton class="send-btn" @click="isLoading ? cancelRequest() : sendMessage()"
+          <IconButton class="send-btn" @click="isLoading ? cancelRequest() : sendMessageAndScroll()"
             :disabled="newMessage.trim() === '' && !isLoading" :size="20"
             :icon="isLoading ? 'Square' : 'SendHorizonal'" />
         </div>
@@ -174,6 +174,8 @@ const {
 
 const messagesContainer = ref<HTMLElement | null>(null);
 const showScrollButton = ref(false);
+const isScrollAnchored = ref(true);
+const SCROLL_ANCHOR_THRESHOLD = 100;
 const showEditor = ref(false);
 const showHistoryPanel = ref(false);
 const blockDiagramEditor = ref<InstanceType<typeof BlockDiagramEditor> | null>(null);
@@ -192,8 +194,14 @@ watch(chatMessages, () => {
   errorMessage.value = '';
   inlineButtons.value = [];
   lastInlineBtnIdx.value = -1;
-  nextTick(() => { scrollToBottom(); onScroll(); });
+  nextTick(() => { scrollToBottom(); });
 });
+
+const sendMessageAndScroll = (...args: Parameters<typeof sendMessage>): void => {
+  sendMessage(...args);
+  isScrollAnchored.value = true;
+  nextTick(() => { scrollToBottom(); });
+};
 
 function attachBlockDiagram() {
   if (!blockDiagramEditor.value) {
@@ -242,6 +250,7 @@ function scrollToBottom() {
   const container = messagesContainer.value;
   if (container) {
     container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
+    isScrollAnchored.value = true;
     showScrollButton.value = false;
   }
   else {
@@ -282,7 +291,9 @@ function onScroll() {
   const container = messagesContainer.value;
   if (container) {
     const { scrollTop, scrollHeight, clientHeight } = container;
-    showScrollButton.value = scrollTop + clientHeight < scrollHeight - 10;
+    const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+    isScrollAnchored.value = distanceFromBottom <= SCROLL_ANCHOR_THRESHOLD;
+    showScrollButton.value = !isScrollAnchored.value;
   } else {
     showScrollButton.value = false;
   }
@@ -316,12 +327,43 @@ const attachMenuItems = [
   }
 ];
 
+// Auto-scroll during AI streaming
+let streamScrollInterval: ReturnType<typeof setInterval> | null = null;
+
+watch(isLoading, (loading) => {
+  nextTick(() => {
+    if (loading && isScrollAnchored.value) {
+      streamScrollInterval = setInterval(() => {
+        if (isScrollAnchored.value) {
+          scrollToBottomInstant();
+        }
+      }, 300);
+    } else {
+      if (streamScrollInterval) {
+        clearInterval(streamScrollInterval);
+        streamScrollInterval = null;
+      }
+    }
+  })
+});
+
+function scrollToBottomInstant() {
+  const container = messagesContainer.value;
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
+}
+
 onMounted(() => {
   blockDiagramHistoryStore.initializeHistory();
   document.addEventListener('paste', onPaste);
 })
 
 onUnmounted(() => {
+  if (streamScrollInterval) {
+    clearInterval(streamScrollInterval);
+    streamScrollInterval = null;
+  }
   document.removeEventListener('paste', onPaste);
 })
 
