@@ -284,6 +284,11 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
         return deleted;
     }
 
+    const normMessage = (message: ChatMessage) => {
+        if (!message._id) message._id = crypto.randomUUID();
+        return message;
+    }
+
     // Add message to current chat
     function addMessageToCurrentChat(message: ChatMessage): boolean {
         const chat = getCurrentChat();
@@ -293,6 +298,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
             chat.title = generateChatTitle(chat.messages);
         }
 
+        message = normMessage(message);
         chat.messages.push(message);
         chat.updatedAt = Date.now();
         saveToStorage();
@@ -308,7 +314,7 @@ export const useChatHistoryStore = defineStore('chatHistory', () => {
             chat.title = generateChatTitle(chat.messages);
         }
 
-        chat.messages = message;
+        chat.messages = message.map(normMessage);
         chat.updatedAt = Date.now();
         saveToStorage();
 
