@@ -164,11 +164,17 @@
                 </Collapsible>
             </div>
 
-            <!-- Правая часть: структурная схема в PDF -->
-            <div v-if="result?.blockDiagram" class="pdf-section">
-                <h3>Block diagram</h3>
-                <PdfFileViewer :result="result.blockDiagram" />
-            </div>
+            <Collapsible v-if="result?.blockDiagram" class="pdf-section">
+                <template #title>
+                    <span class="custom-collapsible-title">
+                        <span class="label">Block diagram</span>
+                    </span>
+                </template>
+
+                <div class="pdf-section">
+                    <PdfFileViewer :result="result.blockDiagram" />
+                </div>
+            </Collapsible>
 
             <div class="project-footer">
                 <IconButton class="assemble-button" variant="primary" @click="assembleCircuitHandler" icon="Play">
@@ -469,6 +475,7 @@ onMounted(() => {
 
 .rm-components-section,
 .added-net-section,
+.pdf-section,
 .replace-components-section {
     margin-top: 0.1rem;
 }

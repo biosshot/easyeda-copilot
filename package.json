@@ -1,6 +1,6 @@
 {
 	"name": "easyeda-copilot",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
 	"author": "echosystem",
 	"license": "Apache-2.0",
