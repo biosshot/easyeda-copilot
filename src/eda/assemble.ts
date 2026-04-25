@@ -71,11 +71,11 @@ async function placeComponents(components: CircuitAssembly['components'], offset
         if (!partUuid) return undefined;
 
         try {
-            const placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
-            const primitiveId = placedComponent.getState_PrimitiveId();
+            let placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
+            placedComponent = await placedComponent.done();
 
+            const primitiveId = placedComponent.getState_PrimitiveId();
             const pins = await getPrimitiveComponentPins(primitiveId);
-            await placedComponent.done();
 
             return { primitive_id: primitiveId, pins, designator };
         } catch (err) {

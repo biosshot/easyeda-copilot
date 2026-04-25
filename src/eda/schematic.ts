@@ -164,7 +164,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                 device = null;
             }
             else {
-                device = await eda.lib_Device.search(query).then(devices => {
+                device = await eda.lib_Device.search(query, undefined, undefined, undefined, 100).then(devices => {
                     return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query) ?? null
                 }).catch(() => null);
             }
