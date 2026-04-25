@@ -52,6 +52,11 @@
 								"id": "ExportBomGOST",
 								"title": "Elements List GOST",
 								"registerFn": "exportBomGOST"
+							},
+							{
+								"id": "ExportAsmCircuit",
+								"title": "Export asm circuit",
+								"registerFn": "exportAsmCircuit"
 							}
 						]
 					},

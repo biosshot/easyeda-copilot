@@ -1,5 +1,6 @@
-import type { ExplainCircuit } from '@copilot/shared/types/circuit';
-import { getPrimitiveById } from './utils';
+import type { CircuitAssembly, ExplainCircuit } from '@copilot/shared/types/circuit';
+import { searchComponentInSCH } from './search';
+import { getBBox, getPrimitiveById, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -143,7 +144,8 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             value,
             pos: {
                 x: primitiveComponent.getState_X(),
-                y: primitiveComponent.getState_Y()
+                y: primitiveComponent.getState_Y(),
+                rotate: primitiveComponent.getState_Rotation()
             },
             code: primitiveComponent.getState_SupplierId()?.toString() || undefined
         })
@@ -182,4 +184,336 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     const explainCircuit: ExplainCircuit = { components };
 
     return explainCircuit;
+}
+
+export async function getAsmCircuit(primitiveIds: string[]) {
+    const circuit = await getSchematic(primitiveIds, { disableExtractPartUuid: false });
+    const allPrimitive = await getPrimitiveById(primitiveIds).catch(e => []);
+    const bbox = await getBBox(allPrimitive).then(bbox => bbox ? ({
+        height: bbox.height + 60,
+        width: bbox.width + 60,
+    }) : undefined);
+
+    if (!bbox) {
+        eda.sys_Message.showToastMessage(`Error with get circuit BBOX`, ESYS_ToastMessageType.ERROR);
+        return;
+    }
+
+    const ssMap = new Map<string, {
+        component: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1,
+        primitiveId: string
+    }>();
+
+    for (let index = 0; index < allPrimitive.length; index++) {
+        const shortSymbol = allPrimitive[index];
+
+        if (shortSymbol.getState_ComponentType() !== ESCH_PrimitiveComponentType.NET_FLAG &&
+            shortSymbol.getState_ComponentType() !== ESCH_PrimitiveComponentType.NET_PORT) {
+            continue;
+        }
+
+        const net = shortSymbol.getState_Net() || shortSymbol.getState_OtherProperty()?.['Global Net Name'];
+
+        if (typeof net !== 'string') continue;
+
+        const designator = `${net}|${crypto.randomUUID().slice(0, 4)}`;
+
+        ssMap.set(designator, {
+            component: shortSymbol,
+            primitiveId: primitiveIds[index]
+        });
+
+        circuit.components.push({
+            designator,
+            part_uuid: shortSymbol.getState_Component()?.uuid ?? null,
+            pins: [{
+                name: '',
+                pin_number: 1,
+                signal_name: net
+            }],
+            pos: {
+                x: shortSymbol.getState_X(),
+                y: shortSymbol.getState_Y(),
+                rotate: shortSymbol.getState_Rotation()
+            },
+            value: 'SS'
+        })
+    }
+
+    const searchComponent = async (designator: string) => {
+        if (ssMap.has(designator)) {
+            return [ssMap.get(designator)!];
+        }
+        return await searchComponentInSCH(designator).catch(() => []);
+    }
+
+    // Формирование edges из проводов на схеме: извлекаем реальные провода с их маршрутами
+    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
+
+    // Строим мапу координат пинов: "x,y" → { designator, pin_number }
+    const pinCoordMap = new Map<string, { designator: string; pin_number: string | number }>();
+    for (const component of circuit.components) {
+        const primitives = await searchComponent(component.designator);
+        for (const prim of primitives ?? []) {
+            const compPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(prim.primitiveId).catch(() => []);
+            for (const p of compPins ?? []) {
+                const px = p.getState_X();
+                const py = p.getState_Y();
+                pinCoordMap.set(`${px},${py}`, {
+                    designator: component.designator,
+                    pin_number: p.getState_PinNumber(),
+                });
+            }
+        }
+    }
+
+    // Группируем пины по signal_name (для sources/targets)
+    const signalToPins = new Map<string, Array<{ designator: string; pin_number: string | number }>>();
+    for (const component of circuit.components) {
+        for (const pin of component.pins) {
+            const signalName = pin.signal_name?.trim();
+            if (!signalName || signalName.toLowerCase() === 'nc') continue;
+            if (!signalToPins.has(signalName)) {
+                signalToPins.set(signalName, []);
+            }
+            signalToPins.get(signalName)!.push({
+                designator: component.designator,
+                pin_number: pin.pin_number,
+            });
+        }
+    }
+
+    // Группируем секции проводов по net (signal_name)
+    const netToWireSections = new Map<string, Array<{
+        incomingShape?: string;
+        outgoingShape?: string;
+        startPoint: { x: number; y: number };
+        endPoint: { x: number; y: number };
+        bendPoints: Array<{ x: number; y: number }>;
+    }>>();
+
+    for (const wire of allWires) {
+        const lineRaw = wire.getState_Line();
+        if (!lineRaw || !Array.isArray(lineRaw)) continue;
+
+        const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+
+        // Парсим сегменты провода
+        const segments: Array<{ start: { x: number; y: number }; end: { x: number; y: number } }> = [];
+        for (const seg of wireData) {
+            if (seg.length < 4) continue;
+            segments.push({
+                start: { x: seg[0], y: seg[1] },
+                end: { x: seg[2], y: seg[3] },
+            });
+        }
+
+        if (segments.length === 0) continue;
+
+        // Строим непрерывные цепочки из сегментов (сегменты могут быть неупорядочены или реверсированы)
+        const ptKey = (p: { x: number; y: number }) => `${p.x},${p.y}`;
+        const usedSegments = new Set<number>();
+        const subPaths: Array<Array<{ x: number; y: number }>> = [];
+
+        for (let startIdx = 0; startIdx < segments.length; startIdx++) {
+            if (usedSegments.has(startIdx)) continue;
+
+            // Начинаем новый путь с этого сегмента
+            usedSegments.add(startIdx);
+            const path: Array<{ x: number; y: number }> = [segments[startIdx].start, segments[startIdx].end];
+
+            // Расширяем путь вперёд
+            let extended = true;
+            while (extended) {
+                extended = false;
+                const lastPt = path[path.length - 1];
+                const lastKey = ptKey(lastPt);
+
+                for (let i = 0; i < segments.length; i++) {
+                    if (usedSegments.has(i)) continue;
+                    const seg = segments[i];
+
+                    if (ptKey(seg.start) === lastKey) {
+                        path.push(seg.end);
+                        usedSegments.add(i);
+                        extended = true;
+                        break;
+                    } else if (ptKey(seg.end) === lastKey) {
+                        path.push(seg.start);
+                        usedSegments.add(i);
+                        extended = true;
+                        break;
+                    }
+                }
+            }
+
+            // Расширяем путь назад
+            extended = true;
+            while (extended) {
+                extended = false;
+                const firstPt = path[0];
+                const firstKey = ptKey(firstPt);
+
+                for (let i = 0; i < segments.length; i++) {
+                    if (usedSegments.has(i)) continue;
+                    const seg = segments[i];
+
+                    if (ptKey(seg.end) === firstKey) {
+                        path.unshift(seg.start);
+                        usedSegments.add(i);
+                        extended = true;
+                        break;
+                    } else if (ptKey(seg.start) === firstKey) {
+                        path.unshift(seg.end);
+                        usedSegments.add(i);
+                        extended = true;
+                        break;
+                    }
+                }
+            }
+
+            if (path.length >= 2) {
+                subPaths.push(path);
+            }
+        }
+
+        // Обрабатываем каждый непрерывный подпуть отдельно
+        for (const allPoints of subPaths) {
+
+            // Определяем net по пинам на точках провода
+            let wireNet = '';
+            for (const pt of allPoints) {
+                const pinInfo = pinCoordMap.get(`${pt.x},${pt.y}`);
+                if (pinInfo) {
+                    const comp = circuit.components.find(c => c.designator === pinInfo.designator);
+                    const pin = comp?.pins.find(p => p.pin_number == pinInfo.pin_number);
+                    if (pin?.signal_name) {
+                        wireNet = pin.signal_name;
+                        break;
+                    }
+                }
+            }
+
+            if (!wireNet) continue;
+
+            // Находим пины на каждой точке провода
+            const pinAtPoint: Array<string | undefined> = allPoints.map(pt => {
+                const pinInfo = pinCoordMap.get(`${pt.x},${pt.y}`);
+                if (pinInfo) return `${pinInfo.designator}_pin_${pinInfo.pin_number}`;
+                return undefined;
+            });
+
+            // Разбиваем провод на sections по пинам, через которые он проходит
+            let sectionStartIdx = 0;
+
+            for (let i = 1; i < allPoints.length; i++) {
+                const isLastPoint = i === allPoints.length - 1;
+                const pinAtCurrent = pinAtPoint[i];
+
+                if (pinAtCurrent || isLastPoint) {
+                    const bendPoints = allPoints.slice(sectionStartIdx + 1, i).map(pt => ({
+                        x: pt.x,
+                        y: bbox.height + pt.y,
+                    }));
+
+                    const section = {
+                        incomingShape: pinAtPoint[sectionStartIdx],
+                        outgoingShape: pinAtCurrent,
+                        startPoint: {
+                            x: allPoints[sectionStartIdx].x,
+                            y: bbox.height + allPoints[sectionStartIdx].y,
+                        },
+                        endPoint: {
+                            x: allPoints[i].x,
+                            y: bbox.height + allPoints[i].y,
+                        },
+                        bendPoints,
+                    };
+
+                    if (!netToWireSections.has(wireNet)) {
+                        netToWireSections.set(wireNet, []);
+                    }
+                    netToWireSections.get(wireNet)!.push(section);
+
+                    sectionStartIdx = i;
+                }
+            }
+        }
+    }
+
+    const edges: CircuitAssembly['edges'] = [];
+    for (const [signalName, pins] of signalToPins) {
+        if (pins.length < 2) continue;
+
+        const pinIds = pins.map(p => `${p.designator}_pin_${p.pin_number}`);
+
+        // Собираем все sections для данного net из проводов
+        const wireSections = netToWireSections.get(signalName) ?? [];
+
+        const allSections = wireSections.map((sec, idx) => ({
+            id: `${signalName}_${idx}`,
+            startPoint: sec.startPoint,
+            endPoint: sec.endPoint,
+            bendPoints: sec.bendPoints.length ? sec.bendPoints : undefined,
+            incomingShape: sec.incomingShape,
+            outgoingShape: sec.outgoingShape,
+        }));
+
+        // Если sections из проводов не найдены, создаём пустые sections по пинам
+        if (!allSections.length) {
+            for (let i = 1; i < pinIds.length; i++) {
+                allSections.push({
+                    id: `${signalName}_${i}`,
+                    startPoint: { x: 0, y: 0 },
+                    bendPoints: [],
+                    endPoint: { x: 0, y: 0 },
+                    incomingShape: pinIds[0],
+                    outgoingShape: pinIds[i],
+                });
+            }
+        }
+
+        edges.push({
+            sources: [pinIds[0]],
+            targets: pinIds.slice(1),
+            container: '__v_root__',
+            sections: allSections,
+        });
+    }
+
+    const amsCircuit: CircuitAssembly = {
+        metadata: { description: '', project_name: '' },
+        components: circuit.components.map((component): CircuitAssembly['components'][0] => ({
+            block_name: '__v_root__',
+            designator: component.designator,
+            part_uuid: component.part_uuid,
+            pins: component.pins,
+            search_query: component.value,
+            value: component.value,
+            sub_part_name: undefined,
+            pos: {
+                center: {
+                    x: 0,
+                    y: 0
+                },
+                height: 0,
+                width: 0,
+                x: component.pos!.x,
+                y: bbox.height - component.pos!.y,
+                rotate: component.pos!.rotate
+            }
+        })),
+        blocks_rect: [{
+            description: '',
+            height: bbox.height,
+            width: bbox.width,
+            name: 'block___v_root__',
+            x: 0,
+            y: 0
+        }],
+        blocks: [],
+        edges,
+    }
+
+    return amsCircuit;
 }
