@@ -303,7 +303,7 @@ function getNetForUnusedPins(components: CircuitAssembly['components'], edges: C
     const netForUnusedPins: AddedNet[] = [];
     for (const component of components) {
         for (const pin of component.pins) {
-            if (!isUsedPin(component.designator, pin.pin_number) && pin.signal_name.length) {
+            if (!isUsedPin(component.designator, pin.pin_number) && pin.signal_name.length && pin.signal_name.toLowerCase().trim() !== 'nc') {
                 netForUnusedPins.push({
                     designator: component.designator,
                     net: pin.signal_name,
