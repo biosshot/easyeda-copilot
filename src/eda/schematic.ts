@@ -145,7 +145,8 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             pos: {
                 x: primitiveComponent.getState_X(),
                 y: primitiveComponent.getState_Y(),
-                rotate: primitiveComponent.getState_Rotation()
+                rotate: primitiveComponent.getState_Rotation(),
+                mirror: primitiveComponent.getState_Mirror()
             },
             code: primitiveComponent.getState_SupplierId()?.toString() || undefined
         })
@@ -231,7 +232,8 @@ export async function getAsmCircuit(primitiveIds: string[]) {
             pos: {
                 x: shortSymbol.getState_X(),
                 y: shortSymbol.getState_Y(),
-                rotate: shortSymbol.getState_Rotation()
+                rotate: shortSymbol.getState_Rotation(),
+                mirror: shortSymbol.getState_Mirror()
             },
             value: 'SS'
         })
@@ -514,7 +516,8 @@ export async function getAsmCircuit(primitiveIds: string[]) {
                 width: 0,
                 x: component.pos!.x,
                 y: bbox.height - component.pos!.y,
-                rotate: component.pos!.rotate
+                rotate: component.pos!.rotate,
+                mirror: component.pos!.mirror
             }
         })),
         blocks_rect: [{
