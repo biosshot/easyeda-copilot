@@ -235,7 +235,7 @@ export async function getAsmCircuit(primitiveIds: string[]) {
                 rotate: shortSymbol.getState_Rotation(),
                 mirror: shortSymbol.getState_Mirror()
             },
-            value: 'SS'
+            value: 'unknown_shortsym'
         })
     }
 

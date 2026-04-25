@@ -47,6 +47,18 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
             "Global Net Name": s
         });
     }
+    else if (component.value === 'unknown_shortsym') {
+        comp = await placeComponent({
+            libraryUuid: 'lcsc',
+            uuid: partUuid
+        }, { x, y, rotate });
+
+        const s = component.pins[0]?.signal_name ?? 'Unknown';
+        comp.setState_Name(s);
+        comp.setState_OtherProperty({
+            "Global Net Name": s
+        });
+    }
     else {
         comp = await placeComponent({
             libraryUuid: 'lcsc',
