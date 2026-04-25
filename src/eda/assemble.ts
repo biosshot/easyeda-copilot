@@ -179,7 +179,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                     const [x, y] = pointToArr(bend);
                     // values.push(x, y);
 
-                    const merge = (a: number, b: number) => Math.abs(a - b) <= 5 ? b : a;
+                    const merge = (a: number, b: number) => Math.abs(a - b) < 5 ? b : a;
                     values.push(merge(merge(x, srcpx), trgpx), merge(merge(y, srcpy), trgpy));
                 }
             }

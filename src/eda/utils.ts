@@ -1,4 +1,6 @@
-export const to2 = (x: number) => { x = Math.round(x); return x - (x % 5); }
+export const to2 = (x: number) => {
+    return Math.round(x / 5) * 5;
+};
 
 export const getPageSize = async () => {
     try {
