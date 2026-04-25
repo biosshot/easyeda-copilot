@@ -189,10 +189,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 export async function getAsmCircuit(primitiveIds: string[]) {
     const circuit = await getSchematic(primitiveIds, { disableExtractPartUuid: false });
     const allPrimitive = await getPrimitiveById(primitiveIds).catch(e => []);
-    const bbox = await getBBox(allPrimitive).then(bbox => bbox ? ({
-        height: bbox.height + 60,
-        width: bbox.width + 60,
-    }) : undefined);
+    const bbox = await getBBox(allPrimitive);
 
     if (!bbox) {
         eda.sys_Message.showToastMessage(`Error with get circuit BBOX`, ESYS_ToastMessageType.ERROR);
@@ -508,11 +505,35 @@ export async function getAsmCircuit(primitiveIds: string[]) {
             height: bbox.height,
             width: bbox.width,
             name: 'block___v_root__',
-            x: 0,
-            y: 0
+            x: 5,
+            y: 5
         }],
         blocks: [],
         edges,
+    }
+
+    const offsetX = -bbox.minX;
+    const offsetY = -bbox.maxY;
+
+    const applyPoint = <T extends { x: number, y: number }>(p: T) => {
+        return {
+            ...p,
+            x: p.x + offsetX,
+            y: p.y + offsetY
+        }
+    }
+
+    for (const component of amsCircuit.components) {
+        component.pos = applyPoint(component.pos);
+    }
+
+    for (const edge of amsCircuit.edges) {
+        edge.sections = edge.sections?.map(section => ({
+            ...section,
+            endPoint: applyPoint(section.endPoint),
+            startPoint: applyPoint(section.startPoint),
+            bendPoints: section.bendPoints?.map(applyPoint)
+        }))
     }
 
     return amsCircuit;
