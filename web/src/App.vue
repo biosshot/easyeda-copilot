@@ -164,10 +164,6 @@ body {
   border-radius: 10px;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--scrollbar-hover);
-}
-
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
