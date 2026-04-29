@@ -25,10 +25,12 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
     const { part_uuid: partUuid, designator, pos } = component;
     if (!partUuid) throw new Error("createComponet partUuid not found");
 
-    const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset)
+    const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset);
+    const mirror = component.pos.mirror ?? false;
+    const rotate = pos.rotate;
 
     if (partUuid === 'GND') {
-        comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate: pos.rotate });
+        comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate });
 
         const s = (component.value || "GND").toUpperCase()
         comp.setState_Name(s);
@@ -37,9 +39,21 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         });
     }
     else if (partUuid === 'VCC') {
-        comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate: pos.rotate });
+        comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate });
 
         const s = (component.value || "VCC").toUpperCase()
+        comp.setState_Name(s);
+        comp.setState_OtherProperty({
+            "Global Net Name": s
+        });
+    }
+    else if (component.value === 'unknown_shortsym') {
+        comp = await placeComponent({
+            libraryUuid: 'lcsc',
+            uuid: partUuid
+        }, { x, y, rotate });
+
+        const s = component.pins[0]?.signal_name ?? 'Unknown';
         comp.setState_Name(s);
         comp.setState_OtherProperty({
             "Global Net Name": s
@@ -49,12 +63,16 @@ async function createComponet(component: CircuitAssembly['components'][0], offse
         comp = await placeComponent({
             libraryUuid: 'lcsc',
             uuid: partUuid
-        }, { x, y, rotate: pos.rotate, subPartName: component.sub_part_name });
+        }, { x, y, rotate, subPartName: component.sub_part_name });
 
         comp.setState_Designator(rmPartFromDesignator(designator));
     }
 
-    eda.sys_Log.add(`Place component ${designator} ${partUuid} at ${x} ${y} rot: ${pos.rotate}`)
+    eda.sys_Log.add(`Place component ${designator} ${partUuid} at ${x} ${y} rot: ${pos.rotate}`);
+
+    if (mirror) {
+        comp.setState_Mirror(mirror);
+    }
 
     return comp;
 }
@@ -65,11 +83,11 @@ async function placeComponents(components: CircuitAssembly['components'], offset
         if (!partUuid) return undefined;
 
         try {
-            const placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
-            const primitiveId = placedComponent.getState_PrimitiveId();
+            let placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
+            placedComponent = await placedComponent.done();
 
+            const primitiveId = placedComponent.getState_PrimitiveId();
             const pins = await getPrimitiveComponentPins(primitiveId);
-            await placedComponent.done();
 
             return { primitive_id: primitiveId, pins, designator };
         } catch (err) {
@@ -179,7 +197,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                     const [x, y] = pointToArr(bend);
                     // values.push(x, y);
 
-                    const merge = (a: number, b: number) => Math.abs(a - b) <= 5 ? b : a;
+                    const merge = (a: number, b: number) => Math.abs(a - b) < 5 ? b : a;
                     values.push(merge(merge(x, srcpx), trgpx), merge(merge(y, srcpy), trgpy));
                 }
             }

@@ -18,7 +18,7 @@ import * as fontkit from 'fontkit';
 import Papa from 'papaparse';
 import { assembleCircuit } from './eda/assemble';
 import extension from '../extension.json';
-import { getSchematic } from './eda/schematic';
+import { getAsmCircuit, getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 
 eda.assembleCircuit = assembleCircuit;
@@ -501,4 +501,9 @@ export async function exportBomGOST() {
 
 	// @ts-ignore
 	eda.sys_FileSystem.saveFile(new Blob([modifiedPdfBytes]), `${projectName}_LE.pdf`);
+}
+
+export async function exportAsmCircuit() {
+	const asmCircuit = await getAsmCircuit(await eda.sch_PrimitiveComponent.getAllPrimitiveId().then(r => [...r]));
+	eda.sys_FileSystem.saveFile(new Blob([JSON.stringify(asmCircuit, null, 2)], { type: 'text/plain' }), `asm_circuit.json`);
 }

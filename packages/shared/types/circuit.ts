@@ -27,7 +27,8 @@ const ComponentWithPosSchema = () => BaseComponentSchema().extend({
         }),
         width: z.number().describe("width position"),
         height: z.number().describe("height position"),
-        rotate: z.number().optional()
+        rotate: z.number().optional(),
+        mirror: z.boolean().optional()
     }).describe("Position of the component on the Circuit"),
 });
 
@@ -121,7 +122,9 @@ const ExplainComponentSchema = () => z.object({
     part_uuid: LCSC_uuid().nullable().describe('Unique component identifier.'),
     pos: z.object({
         x: z.number(),
-        y: z.number()
+        y: z.number(),
+        rotate: z.number().optional(),
+        mirror: z.boolean().optional()
     }).optional(),
     footprint_name: z.string().nullish()
 });
