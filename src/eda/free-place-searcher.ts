@@ -1,4 +1,4 @@
-import { getBBox } from "./utils";
+import { getBBox, to2 } from "./utils";
 
 interface Offset {
     x: number | undefined;
@@ -83,7 +83,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
 
     // Если начальная точка свободна — возвращаем её
     if (isFree(targetPoint.x, targetPoint.y)) {
-        return targetPoint;
+        return { x: to2(targetPoint.x), y: to2(targetPoint.y) };
     }
 
     // Поиск по расширяющемуся квадрату
@@ -100,7 +100,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
                 const candidateX = targetPoint.x + dx;
                 const candidateY = targetPoint.y + dy;
                 if (isFree(candidateX, candidateY)) {
-                    return { x: candidateX, y: candidateY };
+                    return { x: to2(candidateX), y: to2(candidateY) };
                 }
             }
         }
