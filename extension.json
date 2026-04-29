@@ -57,6 +57,11 @@
 								"id": "ExportAsmCircuit",
 								"title": "Export asm circuit",
 								"registerFn": "exportAsmCircuit"
+							},
+							{
+								"id": "ExportReused",
+								"title": "Export reused blocks",
+								"registerFn": "exportReused"
 							}
 						]
 					},

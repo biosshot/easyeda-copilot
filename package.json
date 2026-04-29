@@ -7,6 +7,7 @@
 	"homepage": "https://echosystem.ru/",
 	"scripts": {
 		"dev": "vite",
+		"dev:export-reused": "vite --open /iframe/exports-reused.html",
 		"build:vite": "vite build --mode development",
 		"compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
 		"eslint": "eslint ./web ./src",

@@ -16,7 +16,7 @@ export const BaseComponentSchema = () => z.object({
     part_uuid: LCSC_uuid().nullable().describe("If you know the part_uuid of the lcsc component, be sure to fill in this field; otherwise, fill in null.")
 });
 
-const ComponentWithPosSchema = () => BaseComponentSchema().extend({
+export const ComponentAsmSchema = () => BaseComponentSchema().extend({
     sub_part_name: z.string().optional(),
     pos: z.object({
         x: z.number().describe("X position"),
@@ -66,7 +66,7 @@ const ElkPoint = () => z.object({
 
 export const CircuitAssemblyStruct = () => z.object({
     metadata: MetadataSchema().describe('Metadata'),
-    components: z.array(ComponentWithPosSchema()).describe('Components'),
+    components: z.array(ComponentAsmSchema()).describe('Components'),
     edges: z.array(z.object({
         sources: z.array(z.string()),
         targets: z.array(z.string()),
