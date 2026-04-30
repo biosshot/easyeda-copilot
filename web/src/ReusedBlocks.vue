@@ -5,6 +5,7 @@
             <div class="header-actions">
                 <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
                 <IconButton icon="Save" @click="saveToFile" title="Save to file" />
+                <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
             </div>
         </header>
 
@@ -54,9 +55,7 @@
                 </Collapsible>
             </div>
 
-            <button class="btn-add" @click="addPort">
-                <Icon name="Plus" :size="14" /> Add Port
-            </button>
+            <IconButton icon="Plus" variant="primary" :size="14" @click="addPort">Add Port </IconButton>
         </section>
 
         <!-- PARAMETERS TAB -->
@@ -76,20 +75,20 @@
                     </template>
                     <div class="field-row">
                         <div class="setting-group">
-                            <label for="param-min-{{ key }}">Min</label>
+                            <label :for="`param-min-${key}`">Min</label>
                             <input :id="'param-min-' + key" type="number" v-model.number="param.min" placeholder="—" />
                         </div>
                         <div class="setting-group">
-                            <label for="param-nom-{{ key }}">Nominal</label>
+                            <label :for="`param-nom-${key}`">Nominal</label>
                             <input :id="'param-nom-' + key" type="number" v-model.number="param.nominal"
                                 placeholder="Required" />
                         </div>
                         <div class="setting-group">
-                            <label for="param-max-{{ key }}">Max</label>
+                            <label :for="`param-max-${key}`">Max</label>
                             <input :id="'param-max-' + key" type="number" v-model.number="param.max" placeholder="—" />
                         </div>
-                        <div class="setting-group checkbox-group">
-                            <label for="param-recalc-{{ key }}">
+                        <div class="setting-group checkbox-group" style="margin: auto;">
+                            <label :for="`param-recalc-${key}`">
                                 <input :id="'param-recalc-' + key" type="checkbox" v-model="param.allow_recalc" />
                                 Allow recalc
                             </label>
@@ -103,9 +102,10 @@
                     <label for="new-param-name">New Parameter Name</label>
                     <input id="new-param-name" type="text" v-model="newParamName" placeholder="e.g. Vout" />
                 </div>
-                <button class="btn-add" @click="addParameter" :disabled="!newParamName.trim()">
-                    <Icon name="Plus" :size="14" /> Add Parameter
-                </button>
+                <IconButton icon="Plus" variant="primary" :size="14" :disabled="!newParamName.trim()"
+                    @click="addParameter">Add
+                    Constraint
+                </IconButton>
             </div>
         </section>
 
@@ -123,9 +123,7 @@
                 <IconButton icon="Trash2" variant="remove" @click="removeConstraint(idx)" title="Remove" :size="14" />
             </div>
 
-            <button class="btn-add" @click="addConstraint">
-                <Icon name="Plus" :size="14" /> Add Constraint
-            </button>
+            <IconButton icon="Plus" variant="primary" :size="14" @click="addConstraint">Add Constraint</IconButton>
         </section>
 
         <!-- COMPONENTS TAB -->
@@ -133,11 +131,38 @@
             <h2>Components</h2>
             <p class="section-description">
                 Edit nets (signal_name) and recalculation formulas for components.
-                Use the <code>{PORT_XXX}</code> template to bind a net to a port — all identical signal_names will be
+                Use the <code>{PORT_XXX}</code> or <code>{PARAM_XXX}</code> or <code>{PARAM_XXX_min}</code> or
+                <code>{PARAM_XXX_max}</code> template to bind a net to a port — all
+                identical
+                signal_names will be
                 replaced simultaneously.
             </p>
 
-            <div v-for="(comp, cIdx) in data.components" :key="cIdx" class="card">
+            <!-- Global Signal Name Replacement -->
+            <div class="card global-replace-card">
+                <Collapsible title="Replace Signal Names (Global)" :default-open="true">
+                    <div class="field-row">
+                        <div class="setting-group flex-grow">
+                            <label for="select-signal-name">Select Signal Name</label>
+                            <CustomSelect id="select-signal-name" v-model="selectedSignalName"
+                                :options="signalNameOptions" />
+                        </div>
+                        <div class="setting-group flex-grow">
+                            <label for="new-signal-name">New Signal Name</label>
+                            <input id="new-signal-name" v-model="newSignalName" type="text"
+                                placeholder="Enter new signal name" />
+                        </div>
+                        <div class="button-group">
+                            <IconButton icon="Replace" variant="primary" :size="14"
+                                :disabled="!selectedSignalName || !newSignalName.trim()"
+                                @click="replaceSignalName(selectedSignalName, newSignalName)"
+                                title="Replace all occurrences" />
+                        </div>
+                    </div>
+                </Collapsible>
+            </div>
+
+            <div v-for="(comp, cIdx) in filteredComponents" :key="cIdx" class="card">
                 <Collapsible :default-open="false">
                     <template #title>
                         <div class="card-title-row">
@@ -191,9 +216,9 @@
                             <IconButton icon="Trash2" variant="remove" @click="comp.recalc = undefined"
                                 title="Remove recalc" :size="14" />
                         </div>
-                        <button v-else class="btn-add" @click="addRecalc(comp)">
-                            <Icon name="Plus" :size="14" /> Add Recalc
-                        </button>
+
+                        <IconButton icon="Plus" variant="primary" :size="14" @click="addRecalc(comp)">Add Recalc
+                        </IconButton>
                     </div>
                 </Collapsible>
             </div>
@@ -209,16 +234,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watchEffect } from 'vue';
+import { ref, reactive, computed, onMounted, watchEffect } from 'vue';
 import Icon from './components/shared/Icon.vue';
 import IconButton from './components/shared/IconButton.vue';
 import Collapsible from './components/shared/Collapsible.vue';
+import CustomSelect from './components/shared/CustomSelect.vue';
 import { CircuitAssemblyStructWithRecalc, type CircuitAssemblyWithRecalc } from '@copilot/shared/types/recalc';
 import { useSettingsStore } from './stores/settings-store';
 import { setTheme } from './composables/useTheme';
 import { ThemeName } from './theme/themes';
+import { fetchEda, apiUrl } from './api/index';
+import { makeLLmSettings } from './utils/llm-settings';
 
 const settingsStore = useSettingsStore();
+
+// Constants
+const unknown_shortsym = 'unknown_shortsym';
 
 // Инициализировать тему при загрузке приложения
 onMounted(() => {
@@ -234,6 +265,7 @@ onMounted(() => {
 // ─── State ───────────────────────────────────────────────────────────
 const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('ports');
 const newParamName = ref('');
+const isAutoFilling = ref(false);
 
 const data = reactive<CircuitAssemblyWithRecalc>({
     recalculation_meta: {
@@ -246,6 +278,30 @@ const data = reactive<CircuitAssemblyWithRecalc>({
     blocks: [],
     edges: [],
 });
+
+// Filtered components (skip unknown_shortsym and designators with |)
+const filteredComponents = computed(() => {
+    return data.components.filter(
+        comp => comp.value !== unknown_shortsym && !comp.designator.includes('|')
+    );
+});
+
+// Get all unique signal names as options for CustomSelect
+const signalNameOptions = computed(() => {
+    const names = new Set<string>();
+    for (const comp of data.components) {
+        for (const pin of comp.pins) {
+            if (pin.signal_name) {
+                names.add(pin.signal_name);
+            }
+        }
+    }
+    return Array.from(names).sort().map(name => ({ value: name, label: name }));
+});
+
+// State for global signal name replacement
+const selectedSignalName = ref('');
+const newSignalName = ref('');
 
 // ─── Ports ───────────────────────────────────────────────────────────
 function addPort() {
@@ -265,9 +321,9 @@ function addParameter() {
     const name = newParamName.value.trim();
     if (!name) return;
     data.recalculation_meta.parameters[name] = {
-        min: null,
+        min: 0,
         nominal: 0,
-        max: null,
+        max: 0,
         allow_recalc: false,
     };
     newParamName.value = '';
@@ -322,6 +378,64 @@ function addRecalc(comp: CircuitAssemblyWithRecalc['components'][0]) {
         unit: '',
         lcsc_query_template: '',
     };
+}
+
+function replaceSignalName(oldSignal: string, newSignal: string) {
+    if (!oldSignal || !newSignal.trim()) return;
+    const trimmedNewSignal = newSignal.trim();
+
+    for (const comp of data.components) {
+        for (const pin of comp.pins) {
+            if (pin.signal_name === oldSignal) {
+                pin.signal_name = trimmedNewSignal;
+            }
+        }
+    }
+
+    // Reset the form
+    selectedSignalName.value = '';
+    newSignalName.value = '';
+}
+
+// ─── File I/O ────────────────────────────────────────────────────────
+async function autoFill() {
+    if (isAutoFilling.value) return;
+    isAutoFilling.value = true;
+
+    try {
+        const llmSettings = makeLLmSettings(settingsStore);
+        const payload = {
+            llmSettings,
+            circuit: {
+                ...data,
+                metadata: {
+                    project_name: '',
+                    description: ''
+                }
+            },
+        };
+
+        const res = await fetchEda(apiUrl + '/fill-reused-params', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to auto fill: ${res.status} ${errorText}`);
+        }
+
+        const result = await res.json();
+        applyData(result.result);
+        alert('Auto fill completed successfully');
+    } catch (err) {
+        alert('Error during auto fill: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+        isAutoFilling.value = false;
+    }
 }
 
 // ─── File I/O ────────────────────────────────────────────────────────
@@ -516,30 +630,6 @@ function saveToFile() {
     cursor: pointer;
 }
 
-/* ─── Buttons ──────────────────────────────────────────────────────── */
-.btn-add {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    padding: 0.5rem 1rem;
-    background: var(--color-primary);
-    color: var(--color-text-on-primary);
-    border: none;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-add:hover {
-    background: var(--color-primary-dark);
-}
-
-.btn-add:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
 .btn-icon {
     background: transparent;
     border: none;
@@ -724,5 +814,19 @@ function saveToFile() {
     border-radius: 3px;
     font-size: 0.8rem;
     color: var(--color-primary);
+}
+
+/* ─── Global Replace Card ──────────────────────────────────────────── */
+.global-replace-card {
+    margin-bottom: 1.5rem;
+    overflow: visible;
+    position: relative;
+    z-index: 10;
+}
+
+.button-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
 }
 </style>

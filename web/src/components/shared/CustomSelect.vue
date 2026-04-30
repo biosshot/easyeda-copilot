@@ -24,6 +24,8 @@
                             </svg>
                         </span>
                     </button>
+
+                    <span v-if="!props.options.length" class="item-label" style="margin: auto;">Empty</span>
                 </div>
             </div>
         </transition>
