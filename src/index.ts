@@ -23,6 +23,7 @@ import '@copilot/shared/types/eda';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
+eda.getAsmCircuit = getAsmCircuit;
 
 export function activate(status?: 'onStartupFinished', arg?: string) { }
 

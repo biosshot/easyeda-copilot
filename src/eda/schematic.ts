@@ -187,14 +187,17 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     return explainCircuit;
 }
 
-export async function getAsmCircuit(primitiveIds: string[]) {
+export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAssembly> {
+    if (!primitiveIds) primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().then(r => [...r]);
+    if (!primitiveIds) throw new Error("Failed get primitives for export asm circuit")
+
     const circuit = await getSchematic(primitiveIds, { disableExtractPartUuid: false });
     const allPrimitive = await getPrimitiveById(primitiveIds).catch(e => []);
     const bbox = await getBBox(allPrimitive);
 
     if (!bbox) {
         eda.sys_Message.showToastMessage(`Error with get circuit BBOX`, ESYS_ToastMessageType.ERROR);
-        return;
+        throw new Error("Failed get bbox for export asm circuit")
     }
 
     const ssMap = new Map<string, {

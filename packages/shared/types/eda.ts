@@ -9,6 +9,7 @@ declare global {
     interface EDA {
         assembleCircuit?: (circuit: CircuitAssembly) => Promise<void>,
         getSchematic?: (primitiveIds?: string[]) => Promise<ExplainCircuit>,
+        getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
         checkpointer?: {
             restore: (id?: string) => Promise<boolean>;
             save: (minor: boolean) => Promise<string | null>;

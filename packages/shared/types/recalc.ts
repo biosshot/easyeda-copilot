@@ -18,7 +18,7 @@ export const RecalParameters = () => z.record(z.string(), z.object({
 // Глобальные параметры и ограничения
 const RecalculationMetaSchema = () => z.object({
     parameters: RecalParameters(),
-    constraints: z.array(z.string()),
+    // constraints: z.array(z.string()),
     ports: z.array(z.object({
         port_number: z.string(),
         description: z.string(),

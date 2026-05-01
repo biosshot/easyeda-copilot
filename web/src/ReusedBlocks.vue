@@ -3,6 +3,7 @@
         <header class="editor-header">
             <h1>Reused Blocks Editor</h1>
             <div class="header-actions">
+                <IconButton icon="Download" @click="loadFromEasyEDA" title="Load from EasyEDA" />
                 <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
                 <IconButton icon="Save" @click="saveToFile" title="Save to file" />
                 <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
@@ -14,8 +15,8 @@
             <button :class="['tab', { active: activeTab === 'ports' }]" @click="activeTab = 'ports'">Ports</button>
             <button :class="['tab', { active: activeTab === 'parameters' }]"
                 @click="activeTab = 'parameters'">Parameters</button>
-            <button :class="['tab', { active: activeTab === 'constraints' }]"
-                @click="activeTab = 'constraints'">Constraints</button>
+            <!-- <button :class="['tab', { active: activeTab === 'constraints' }]"
+                @click="activeTab = 'constraints'">Constraints</button> -->
             <button :class="['tab', { active: activeTab === 'components' }]"
                 @click="activeTab = 'components'">Components</button>
         </div>
@@ -110,7 +111,7 @@
         </section>
 
         <!-- CONSTRAINTS TAB -->
-        <section v-if="activeTab === 'constraints'" class="tab-content">
+        <!-- <section v-if="activeTab === 'constraints'" class="tab-content">
             <h2>Constraints</h2>
             <p class="section-description">Constraints as string expressions (e.g. "Vout &lt; 8").</p>
 
@@ -124,7 +125,7 @@
             </div>
 
             <IconButton icon="Plus" variant="primary" :size="14" @click="addConstraint">Add Constraint</IconButton>
-        </section>
+        </section> -->
 
         <!-- COMPONENTS TAB -->
         <section v-if="activeTab === 'components'" class="tab-content">
@@ -245,6 +246,7 @@ import { setTheme } from './composables/useTheme';
 import { ThemeName } from './theme/themes';
 import { fetchEda, apiUrl } from './api/index';
 import { makeLLmSettings } from './utils/llm-settings';
+import "@copilot/shared/types/eda";
 
 const settingsStore = useSettingsStore();
 
@@ -267,17 +269,18 @@ const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('po
 const newParamName = ref('');
 const isAutoFilling = ref(false);
 
-const data = reactive<CircuitAssemblyWithRecalc>({
+const EMPTY_DATA = Object.freeze({
     recalculation_meta: {
         parameters: {},
-        constraints: [],
+        // constraints: [],
         ports: [],
     },
     components: [],
     blocks_rect: [],
     blocks: [],
     edges: [],
-});
+})
+let data = reactive<CircuitAssemblyWithRecalc>(structuredClone(EMPTY_DATA));
 
 // Filtered components (skip unknown_shortsym and designators with |)
 const filteredComponents = computed(() => {
@@ -334,13 +337,13 @@ function removeParameter(key: string) {
 }
 
 // ─── Constraints ─────────────────────────────────────────────────────
-function addConstraint() {
-    data.recalculation_meta.constraints.push('');
-}
+// function addConstraint() {
+//     data.recalculation_meta.constraints.push('');
+// }
 
-function removeConstraint(idx: number) {
-    data.recalculation_meta.constraints.splice(idx, 1);
-}
+// function removeConstraint(idx: number) {
+//     data.recalculation_meta.constraints.splice(idx, 1);
+// }
 
 // ─── Components ──────────────────────────────────────────────────────
 function onSignalNameChange(oldSignal: string, newSignal: string) {
@@ -439,6 +442,27 @@ async function autoFill() {
 }
 
 // ─── File I/O ────────────────────────────────────────────────────────
+async function loadFromEasyEDA() {
+    try {
+        const eda = (window as any).eda;
+        if (!eda?.getAsmCircuit) {
+            alert('EasyEDA API not available');
+            return;
+        }
+
+        const circuit = await eda.getAsmCircuit();
+        if (!circuit) {
+            alert('No circuit data received from EasyEDA');
+            return;
+        }
+
+        applyData(circuit, true);
+        alert('Loaded circuit from EasyEDA successfully');
+    } catch (err) {
+        alert('Failed to load from EasyEDA: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    }
+}
+
 function loadFromFile() {
     const input = document.createElement('input');
     input.type = 'file';
@@ -453,7 +477,7 @@ function loadFromFile() {
         try {
             const content = await file.text();
             const parsed = JSON.parse(content);
-            applyData(parsed);
+            applyData(parsed, true);
         } catch (err) {
             alert('Failed to load file: ' + (err instanceof Error ? err.message : 'Invalid format'));
         } finally {
@@ -465,11 +489,14 @@ function loadFromFile() {
     input.click();
 }
 
-function applyData(parsed: Partial<CircuitAssemblyWithRecalc>) {
+function applyData(parsed: Partial<CircuitAssemblyWithRecalc>, clean?: boolean) {
+    if (clean) {
+        data = reactive<CircuitAssemblyWithRecalc>(structuredClone(EMPTY_DATA))
+    }
     if (parsed.recalculation_meta) {
         const meta = parsed.recalculation_meta;
         data.recalculation_meta.parameters = meta.parameters ?? {};
-        data.recalculation_meta.constraints = meta.constraints ?? [];
+        // data.recalculation_meta.constraints = meta.constraints ?? [];
         data.recalculation_meta.ports = meta.ports ?? [];
     }
     if (Array.isArray(parsed.components)) {
@@ -522,7 +549,7 @@ function saveToFile() {
 
 .header-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
 }
 
 /* ─── Tabs ─────────────────────────────────────────────────────────── */
