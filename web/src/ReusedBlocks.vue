@@ -10,6 +10,33 @@
             </div>
         </header>
 
+        <!-- METADATA SECTION -->
+        <section class="metadata-section">
+            <Collapsible title="Block Metadata" :default-open="true">
+                <div class="setting-group">
+                    <label for="block-name">Block Name</label>
+                    <input id="block-name" type="text" v-model="data.name" placeholder="e.g. Buck Converter" />
+                </div>
+                <div class="setting-group">
+                    <label for="block-desc">Description</label>
+                    <input id="block-desc" type="text" v-model="data.description"
+                        placeholder="e.g. 5V/3A buck converter circuit" />
+                </div>
+
+                <div class="setting-group">
+                    <label for="block-category">Category</label>
+                    <input id="block-category" type="text" v-model="data.category"
+                        placeholder="e.g. Power Management" />
+                </div>
+                <div class="setting-group">
+                    <label for="block-tags">Tags (comma separated)</label>
+                    <input id="block-tags" type="text" :value="data.tags.join(', ')"
+                        @input="data.tags = ($event.target as HTMLInputElement).value.split(',').map(t => t.trim()).filter(t => t)"
+                        placeholder="e.g. buck, converter, 5V" />
+                </div>
+            </Collapsible>
+        </section>
+
         <!-- TABS -->
         <div class="tabs">
             <button :class="['tab', { active: activeTab === 'ports' }]" @click="activeTab = 'ports'">Ports</button>
@@ -27,7 +54,7 @@
             <p class="section-description">Define circuit ports. Ports are bound to nets (signal_name) via the
                 {PORT_XXX} template.</p>
 
-            <div v-for="(port, idx) in data.recalculation_meta.ports" :key="idx" class="card">
+            <div v-for="(port, idx) in data.circuit.recalculation_meta.ports" :key="idx" class="card">
                 <Collapsible :default-open="true">
                     <template #title>
                         <div class="card-title-row">
@@ -65,7 +92,7 @@
             <p class="section-description">Global circuit parameters with value ranges. Parameters with allow_recalc
                 enabled are available for recalculation.</p>
 
-            <div v-for="(param, key) in data.recalculation_meta.parameters" :key="key" class="card">
+            <div v-for="(param, key) in data.circuit.recalculation_meta.parameters" :key="key" class="card">
                 <Collapsible :default-open="true">
                     <template #title>
                         <div class="card-title-row">
@@ -115,10 +142,10 @@
             <h2>Constraints</h2>
             <p class="section-description">Constraints as string expressions (e.g. "Vout &lt; 8").</p>
 
-            <div v-for="(constraint, idx) in data.recalculation_meta.constraints" :key="idx" class="constraint-row">
+            <div v-for="(constraint, idx) in data.circuit.recalculation_meta.constraints" :key="idx" class="constraint-row">
                 <div class="setting-group flex-grow">
                     <label for="constraint-{{ idx }}">Constraint</label>
-                    <input :id="'constraint-' + idx" type="text" v-model="data.recalculation_meta.constraints[idx]"
+                    <input :id="'constraint-' + idx" type="text" v-model="data.circuit.recalculation_meta.constraints[idx]"
                         placeholder="Vout < 8" />
                 </div>
                 <IconButton icon="Trash2" variant="remove" @click="removeConstraint(idx)" title="Remove" :size="14" />
@@ -269,22 +296,30 @@ const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('po
 const newParamName = ref('');
 const isAutoFilling = ref(false);
 
-const EMPTY_DATA = Object.freeze({
-    recalculation_meta: {
-        parameters: {},
-        // constraints: [],
-        ports: [],
-    },
-    components: [],
-    blocks_rect: [],
-    blocks: [],
-    edges: [],
-})
-let data = reactive<CircuitAssemblyWithRecalc>(structuredClone(EMPTY_DATA));
+const EMPTY_DATA = {
+    name: '',
+    description: '',
+    category: '',
+    tags: [] as string[],
+
+    circuit: {
+        recalculation_meta: {
+            parameters: {},
+            // constraints: [],
+            ports: [],
+        },
+        components: [],
+        blocks_rect: [],
+        blocks: [],
+        edges: [],
+    } as CircuitAssemblyWithRecalc
+};
+
+let data = reactive(structuredClone(EMPTY_DATA));
 
 // Filtered components (skip unknown_shortsym and designators with |)
 const filteredComponents = computed(() => {
-    return data.components.filter(
+    return data.circuit.components.filter(
         comp => comp.value !== unknown_shortsym && !comp.designator.includes('|')
     );
 });
@@ -292,7 +327,7 @@ const filteredComponents = computed(() => {
 // Get all unique signal names as options for CustomSelect
 const signalNameOptions = computed(() => {
     const names = new Set<string>();
-    for (const comp of data.components) {
+    for (const comp of data.circuit.components) {
         for (const pin of comp.pins) {
             if (pin.signal_name) {
                 names.add(pin.signal_name);
@@ -308,7 +343,7 @@ const newSignalName = ref('');
 
 // ─── Ports ───────────────────────────────────────────────────────────
 function addPort() {
-    data.recalculation_meta.ports.push({
+    data.circuit.recalculation_meta.ports.push({
         port_number: '',
         description: '',
         related_parameter: undefined,
@@ -316,14 +351,14 @@ function addPort() {
 }
 
 function removePort(idx: number) {
-    data.recalculation_meta.ports.splice(idx, 1);
+    data.circuit.recalculation_meta.ports.splice(idx, 1);
 }
 
 // ─── Parameters ──────────────────────────────────────────────────────
 function addParameter() {
     const name = newParamName.value.trim();
     if (!name) return;
-    data.recalculation_meta.parameters[name] = {
+    data.circuit.recalculation_meta.parameters[name] = {
         min: 0,
         nominal: 0,
         max: 0,
@@ -333,21 +368,21 @@ function addParameter() {
 }
 
 function removeParameter(key: string) {
-    delete data.recalculation_meta.parameters[key];
+    delete data.circuit.recalculation_meta.parameters[key];
 }
 
 // ─── Constraints ─────────────────────────────────────────────────────
 // function addConstraint() {
-//     data.recalculation_meta.constraints.push('');
+//     data.circuit.recalculation_meta.constraints.push('');
 // }
 
 // function removeConstraint(idx: number) {
-//     data.recalculation_meta.constraints.splice(idx, 1);
+//     data.circuit.recalculation_meta.constraints.splice(idx, 1);
 // }
 
 // ─── Components ──────────────────────────────────────────────────────
 function onSignalNameChange(oldSignal: string, newSignal: string) {
-    for (const c of data.components) {
+    for (const c of data.circuit.components) {
         for (const pin of c.pins) {
             if (pin.signal_name === oldSignal) {
                 pin.signal_name = newSignal;
@@ -366,9 +401,9 @@ function extractPortName(signalName: string): string {
 
 function assignToPort(pin: CircuitAssemblyWithRecalc['components'][0]['pins'][0]) {
     const portName = extractPortName(pin.signal_name);
-    const port = data.recalculation_meta.ports.find(p => p.port_number === portName);
+    const port = data.circuit.recalculation_meta.ports.find(p => p.port_number === portName);
     if (port) return;
-    data.recalculation_meta.ports.push({
+    data.circuit.recalculation_meta.ports.push({
         port_number: portName,
         description: '',
         related_parameter: undefined,
@@ -387,7 +422,7 @@ function replaceSignalName(oldSignal: string, newSignal: string) {
     if (!oldSignal || !newSignal.trim()) return;
     const trimmedNewSignal = newSignal.trim();
 
-    for (const comp of data.components) {
+    for (const comp of data.circuit.components) {
         for (const pin of comp.pins) {
             if (pin.signal_name === oldSignal) {
                 pin.signal_name = trimmedNewSignal;
@@ -410,7 +445,7 @@ async function autoFill() {
         const payload = {
             llmSettings,
             circuit: {
-                ...data,
+                ...data.circuit,
                 metadata: {
                     project_name: '',
                     description: ''
@@ -489,22 +524,28 @@ function loadFromFile() {
     input.click();
 }
 
-function applyData(parsed: Partial<CircuitAssemblyWithRecalc>, clean?: boolean) {
+function applyData(parsed: Partial<CircuitAssemblyWithRecalc & { name: string, description: string, category: string, tags: string[] }>, clean?: boolean) {
     if (clean) {
-        data = reactive<CircuitAssemblyWithRecalc>(structuredClone(EMPTY_DATA))
+        data = reactive(structuredClone(EMPTY_DATA))
     }
     if (parsed.recalculation_meta) {
         const meta = parsed.recalculation_meta;
-        data.recalculation_meta.parameters = meta.parameters ?? {};
-        // data.recalculation_meta.constraints = meta.constraints ?? [];
-        data.recalculation_meta.ports = meta.ports ?? [];
+        data.circuit.recalculation_meta.parameters = meta.parameters ?? {};
+        // data.circuit.recalculation_meta.constraints = meta.constraints ?? [];
+        data.circuit.recalculation_meta.ports = meta.ports ?? [];
     }
     if (Array.isArray(parsed.components)) {
-        data.components = parsed.components;
+        data.circuit.components = parsed.components;
     }
-    if (parsed.blocks_rect) data.blocks_rect = parsed.blocks_rect;
-    if (parsed.blocks) data.blocks = parsed.blocks;
-    if (parsed.edges) data.edges = parsed.edges;
+    if (parsed.blocks_rect) data.circuit.blocks_rect = parsed.blocks_rect;
+    if (parsed.blocks) data.circuit.blocks = parsed.blocks;
+    if (parsed.edges) data.circuit.edges = parsed.edges;
+
+    if (parsed.name) data.name = parsed.name;
+    if (parsed.description) data.description = parsed.description;
+    if (parsed.category) data.category = parsed.category;
+    if (parsed.tags) data.tags = parsed.tags;
+
 }
 
 function saveToFile() {
@@ -550,6 +591,29 @@ function saveToFile() {
 .header-actions {
     display: flex;
     gap: 0.3rem;
+}
+
+/* ─── Metadata Section ─────────────────────────────────────────────── */
+.metadata-section {
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+
+.metadata-section :deep(.collapsible-section) {
+    margin: 0;
+}
+
+.metadata-section :deep(.collapsible-header) {
+    padding: 0.6rem 1rem;
+    background: var(--color-background-tertiary);
+}
+
+.metadata-section :deep(.collapsible-content) {
+    padding: 0.75rem 1rem;
+    border-left: none;
 }
 
 /* ─── Tabs ─────────────────────────────────────────────────────────── */
