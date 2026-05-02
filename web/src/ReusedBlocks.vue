@@ -7,6 +7,7 @@
                 <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
                 <IconButton icon="Save" @click="saveToFile" title="Save to file" />
                 <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
+                <IconButton icon="Database" @click="addBlock" title="Add to database" :disabled="isAddingBlock" />
             </div>
         </header>
 
@@ -295,6 +296,7 @@ onMounted(() => {
 const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('ports');
 const newParamName = ref('');
 const isAutoFilling = ref(false);
+const isAddingBlock = ref(false);
 
 const EMPTY_DATA = {
     name: '',
@@ -476,6 +478,47 @@ async function autoFill() {
     }
 }
 
+async function addBlock() {
+    if (isAddingBlock.value) return;
+
+    if (!data.name.trim()) {
+        alert('Please enter block name before adding to database');
+        return;
+    }
+
+    isAddingBlock.value = true;
+
+    try {
+        const payload = {
+            name: data.name,
+            description: data.description,
+            category: data.category,
+            tags: data.tags,
+            circuit: data.circuit,
+        };
+
+        const res = await fetchEda(apiUrl + '/add-block', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+            const errorText = await res.text();
+            throw new Error(`Failed to add block: ${res.status} ${errorText}`);
+        }
+
+        const result = await res.json();
+        alert('Block added to database successfully');
+    } catch (err) {
+        alert('Error adding block: ' + (err instanceof Error ? err.message : 'Unknown error'));
+    } finally {
+        isAddingBlock.value = false;
+    }
+}
+
 // ─── File I/O ────────────────────────────────────────────────────────
 async function loadFromEasyEDA() {
     try {
@@ -526,8 +569,13 @@ function loadFromFile() {
 
 function applyData(parsed: Partial<CircuitAssemblyWithRecalc & { name: string, description: string, category: string, tags: string[] }>, clean?: boolean) {
     if (clean) {
-        data = reactive(structuredClone(EMPTY_DATA))
+        data.category = EMPTY_DATA.category;
+        data.circuit = EMPTY_DATA.circuit;
+        data.description = EMPTY_DATA.description;
+        data.name = EMPTY_DATA.name;
+        data.tags = EMPTY_DATA.tags;
     }
+
     if (parsed.recalculation_meta) {
         const meta = parsed.recalculation_meta;
         data.circuit.recalculation_meta.parameters = meta.parameters ?? {};
