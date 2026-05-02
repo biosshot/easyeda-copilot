@@ -555,7 +555,7 @@ function loadFromFile() {
         try {
             const content = await file.text();
             const parsed = JSON.parse(content);
-            applyData(parsed, true);
+            applyData({ ...parsed, ...parsed.circuit }, true);
         } catch (err) {
             alert('Failed to load file: ' + (err instanceof Error ? err.message : 'Invalid format'));
         } finally {
