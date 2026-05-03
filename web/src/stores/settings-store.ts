@@ -44,6 +44,7 @@ const DEFAULT_SETTINGS = {
     agentLcscSearchReasoning: 'low',
     agentLcscCatalogReasoning: 'minimal',
 
+    agentCircuitMakerUseReusedBlocks: true,
     agentCircuitExplainerUseSpice: false,
     agentLcscSearchUsePrefetch: true,
 
