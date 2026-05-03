@@ -497,7 +497,7 @@ async function addBlock() {
             circuit: data.circuit,
         };
 
-        const res = await fetchEda(apiUrl + '/add-block', {
+        const res = await fetchEda(apiUrl + '/add-reused-block', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
