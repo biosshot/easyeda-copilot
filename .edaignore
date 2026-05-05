@@ -20,3 +20,6 @@
 /tsconfig.json
 debug.log
 /docs
+/examples
+/images
+/locales
