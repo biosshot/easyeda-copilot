@@ -145,6 +145,20 @@
                             @reasoning-change="onSettingChange('agentCircuitMakerReasoning', $event)"
                             :model-features="['tools', 'json']"
                             desc="Creates new schematics, modifies existing circuits. Recommended: gpt-5.4 for precision and complexity handling.">
+
+                            <template #custom-settings>
+                                <div class="setting-group">
+                                    <label for="agentCircuitMakerUseReusedBlocks">
+                                        <input id="agentCircuitMakerUseReusedBlocks" type="checkbox"
+                                            :checked="Boolean(settings.agentCircuitMakerUseReusedBlocks)"
+                                            @change="onSettingChange('agentCircuitMakerUseReusedBlocks', ($event.target as HTMLInputElement).checked)" />
+                                        Add reused block to agent tools (Beta)
+                                    </label>
+
+                                    <p class="hint">Connects a database of standard blocks for their quick inclusion.
+                                    </p>
+                                </div>
+                            </template>
                         </AgentSettings>
                     </Collapsible>
 

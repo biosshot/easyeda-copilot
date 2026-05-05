@@ -15,7 +15,7 @@ import {
   FileDown, TriangleAlert, ClipboardPaste, ClipboardCopy, Scissors,
   Undo, Redo, Scaling, Minus, Paperclip, Cuboid, Upload,
   CircleDashed, LoaderCircle, CircleCheck, Lightbulb, ArrowRight, ArrowLeft,
-  ExternalLink, Copy, MoreHorizontal
+  ExternalLink, Copy, MoreHorizontal, Sparkles, Download, Database
 } from 'lucide-vue-next';
 
 const icons: Record<string, FunctionalComponent> = {
@@ -26,7 +26,7 @@ const icons: Record<string, FunctionalComponent> = {
   CircleCheckBig, Pencil, Bookmark, Square, Pause, Trash, CodeXml, Image, Wrench, Save,
   FileDown, TriangleAlert, ClipboardCopy, ClipboardPaste, Scissors, Undo, Redo, Scaling,
   Minus, Paperclip, Cuboid, Upload, CircleDashed, LoaderCircle, CircleCheck, Lightbulb, ArrowRight, ArrowLeft,
-  ExternalLink, Copy, MoreHorizontal
+  ExternalLink, Copy, MoreHorizontal, Sparkles, Download, Database
 };
 
 const props = defineProps<{

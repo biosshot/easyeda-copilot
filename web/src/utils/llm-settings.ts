@@ -43,6 +43,7 @@ export const makeLLmSettings = (settingsStore: ReturnType<typeof useSettingsStor
         'circuit-maker': {
             model: settingsStore.getSetting('agentCircuitMakerModel') || undefined,
             reasoning: settingsStore.getSetting('agentCircuitMakerReasoning') || undefined,
+            useReusedBlocks: Boolean(settingsStore.getSetting('agentCircuitMakerUseReusedBlocks') || false)
         },
         completions: {
             model: settingsStore.getSetting('agentCompletionsModel') || undefined,

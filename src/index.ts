@@ -23,6 +23,7 @@ import '@copilot/shared/types/eda';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
+eda.getAsmCircuit = getAsmCircuit;
 
 export function activate(status?: 'onStartupFinished', arg?: string) { }
 
@@ -506,4 +507,8 @@ export async function exportBomGOST() {
 export async function exportAsmCircuit() {
 	const asmCircuit = await getAsmCircuit(await eda.sch_PrimitiveComponent.getAllPrimitiveId().then(r => [...r]));
 	eda.sys_FileSystem.saveFile(new Blob([JSON.stringify(asmCircuit, null, 2)], { type: 'text/plain' }), `asm_circuit.json`);
+}
+
+export async function exportReused() {
+	eda.sys_IFrame.openIFrame('/iframe/exports-reused.html', 900, 700);
 }

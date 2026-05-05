@@ -10,6 +10,7 @@ const __dirname = dirname(__filename);
 const pages = [
     { name: 'main', html: 'web/index.html' },
     { name: 'graph', html: 'web/graph.html' },
+    { name: 'exports-reused', html: 'web/exports-reused.html' },
 ];
 
 async function buildAll() {
