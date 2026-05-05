@@ -272,7 +272,7 @@ import { CircuitAssemblyStructWithRecalc, type CircuitAssemblyWithRecalc } from 
 import { useSettingsStore } from './stores/settings-store';
 import { setTheme } from './composables/useTheme';
 import { ThemeName } from './theme/themes';
-import { fetchEda, apiUrl } from './api/index';
+import { fetchEda, apiUrl, authorization } from './api/index';
 import { makeLLmSettings } from './utils/llm-settings';
 import "@copilot/shared/types/eda";
 
@@ -459,6 +459,7 @@ async function autoFill() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': authorization,
             },
             body: JSON.stringify(payload),
         });
@@ -501,6 +502,7 @@ async function addBlock() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': authorization,
             },
             body: JSON.stringify(payload),
         });
