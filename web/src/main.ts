@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';
 // @ts-ignore
-import 'katex/dist/katex.min.css';
+import './katex-lite.css';
 
 const app = createApp(App);
 const pinia = createPinia();

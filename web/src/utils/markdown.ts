@@ -1,6 +1,18 @@
-import { marked, TokenizerExtension } from 'marked'
-import hljs from 'highlight.js';
+import { marked, TokenizerExtension } from 'marked';
+import hljs from 'highlight.js/lib/core';
+import bash from 'highlight.js/lib/languages/bash';
+import cpp from 'highlight.js/lib/languages/cpp';
+import css from 'highlight.js/lib/languages/css';
+import javascript from 'highlight.js/lib/languages/javascript';
+import json from 'highlight.js/lib/languages/json';
 import katex from 'katex';
+import plaintext from 'highlight.js/lib/languages/plaintext';
+import python from 'highlight.js/lib/languages/python';
+import typescript from 'highlight.js/lib/languages/typescript';
+import xml from 'highlight.js/lib/languages/xml';
+import yaml from 'highlight.js/lib/languages/yaml';
+// @ts-ignore
+import 'highlight.js/styles/atom-one-light.css';
 
 declare global {
     interface Window {
@@ -10,9 +22,27 @@ declare global {
 
 window.hljs = hljs;
 
-const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1(?=[\s?!\.,:？！。，：]|$)/;
-const inlineRuleNonStandard = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1/; // Non-standard, even if there are no spaces before and after $ or $$, try to parse
+hljs.registerLanguage('bash', bash);
+hljs.registerLanguage('sh', bash);
+hljs.registerLanguage('css', css);
+hljs.registerLanguage('javascript', javascript);
+hljs.registerLanguage('js', javascript);
+hljs.registerLanguage('json', json);
+hljs.registerLanguage('plaintext', plaintext);
+hljs.registerLanguage('text', plaintext);
+hljs.registerLanguage('python', python);
+hljs.registerLanguage('py', python);
+hljs.registerLanguage('cpp', cpp);
+hljs.registerLanguage('c++', cpp);
+hljs.registerLanguage('typescript', typescript);
+hljs.registerLanguage('ts', typescript);
+hljs.registerLanguage('html', xml);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('yaml', yaml);
+hljs.registerLanguage('yml', yaml);
 
+const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1(?=[\s?!.,:;]|$)/;
+const inlineRuleNonStandard = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1/;
 const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/;
 
 function markedKatex(options = {}) {
@@ -27,7 +57,7 @@ function markedKatex(options = {}) {
 }
 
 function createRenderer(options: object, newlineAfter: boolean) {
-    return (token: { text: string, displayMode: boolean }) => katex.renderToString(token.text, { ...options, displayMode: token.displayMode }) + (newlineAfter ? '\n' : '');
+    return (token: { text: string; displayMode: boolean }) => katex.renderToString(token.text, { ...options, displayMode: token.displayMode }) + (newlineAfter ? '\n' : '');
 }
 
 function inlineKatex(options: object, renderer: unknown): TokenizerExtension {
@@ -45,8 +75,8 @@ function inlineKatex(options: object, renderer: unknown): TokenizerExtension {
                 if (index === -1) {
                     return;
                 }
-                const f = nonStandard ? index > -1 : index === 0 || indexSrc.charAt(index - 1) === ' ';
-                if (f) {
+                const found = nonStandard ? index > -1 : index === 0 || indexSrc.charAt(index - 1) === ' ';
+                if (found) {
                     const possibleKatex = indexSrc.substring(index);
 
                     if (possibleKatex.match(ruleReg)) {
@@ -57,7 +87,7 @@ function inlineKatex(options: object, renderer: unknown): TokenizerExtension {
                 indexSrc = indexSrc.substring(index + 1).replace(/^\$+/, '');
             }
         },
-        tokenizer(src: string, tokens: unknown) {
+        tokenizer(src: string) {
             const match = src.match(ruleReg);
 
             if (match) {
@@ -77,7 +107,7 @@ function blockKatex(options: object, renderer: unknown): TokenizerExtension {
     return {
         name: 'blockKatex',
         level: 'block',
-        tokenizer(src: string, tokens: unknown) {
+        tokenizer(src: string) {
             const match = src.match(blockRule);
             if (match) {
                 return {
@@ -96,18 +126,18 @@ marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
 
 marked.use({
     renderer: {
-
         code({ text, lang }) {
             const code = text;
+            const normalizedLang = lang?.toLowerCase().trim();
             const header = `
             <div class="code-header">
-                <span>${lang ?? 'plaintext'}</span>
+                <span>${normalizedLang ?? 'plaintext'}</span>
             </div>`;
 
-            if (lang) {
+            if (normalizedLang) {
                 try {
-                    if (window.hljs.getLanguage(lang)) {
-                        return `<div class="code-block">${header}<pre><code class="language-${lang} hljs">${window.hljs.highlight(code, { language: lang }).value}</code></pre></div>`;
+                    if (window.hljs.getLanguage(normalizedLang)) {
+                        return `<div class="code-block">${header}<pre><code class="language-${normalizedLang} hljs">${window.hljs.highlight(code, { language: normalizedLang }).value}</code></pre></div>`;
                     }
                 } catch (err) {
                     console.error('Highlight error:', err);
@@ -121,23 +151,23 @@ marked.use({
         },
     },
     gfm: true,
-    pedantic: false
-})
+    pedantic: false,
+});
 
 export const markdown = (content: string) => {
     content = content.replace(
         /\\\[(.*?)\\\]|\\\((.*?)\\\)|\((.*?)\)/gms,
-        (match, displayFormula, inlineFormula, inlineFormula_2) => {
+        (match, displayFormula, inlineFormula, inlineFormula2) => {
             if (displayFormula !== undefined && displayFormula.includes('\\')) {
                 return `\n$$${displayFormula}$$\n`;
             }
             if (inlineFormula !== undefined) {
                 return `$${inlineFormula}$`;
             }
-            if (inlineFormula_2 !== undefined && inlineFormula_2.length < 16 && inlineFormula_2.includes('{') && inlineFormula_2.includes('}')) {
-                return `$${inlineFormula_2}$`;
+            if (inlineFormula2 !== undefined && inlineFormula2.length < 16 && inlineFormula2.includes('{') && inlineFormula2.includes('}')) {
+                return `$${inlineFormula2}$`;
             }
-            return match; // не содержит LaTeX — оставляем без изменений
+            return match;
         }
     );
 

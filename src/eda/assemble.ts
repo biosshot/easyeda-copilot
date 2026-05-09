@@ -339,10 +339,11 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
     eda.sys_Log.add(`Assemble circuit...`);
 
-    const root = (circuit.blocks_rect ?? []).find(block => block.name === 'block___v_root__');
+    const root = (circuit.blocks_rect ?? []).find(block => block.name.includes('__v_root__'));
 
     if (!root) {
         eda.sys_Log.add(`Root not found in asm circuit`);
+        eda.sys_Message.showToastMessage(`Root not found in asm circuit`, ESYS_ToastMessageType.ERROR);
         throw new Error('Root not found in asm circuit')
     }
 
