@@ -527,7 +527,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
             description: '',
             height: bbox.height,
             width: bbox.width,
-            name: 'block___v_root__',
+            name: '__v_root__',
             x: 5,
             y: 5
         }],

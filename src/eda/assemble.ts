@@ -238,7 +238,7 @@ async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offs
 
     for (const block of blocksRect ?? []) {
         try {
-            if (block.name === 'block___v_root__') continue;
+            if (block.name.includes('__v_root__')) continue;
             const padding = 5;
 
             const { x, y } = applyOffset(block.x - padding, block.y - padding, offset)
