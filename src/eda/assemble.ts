@@ -221,7 +221,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
             values = filterUniqueCoordinatePairs(values);
 
             try {
-                const wire = await eda.sch_PrimitiveWire.create(values, netName);
+                const wire = await eda.sch_PrimitiveWire.create(values, netName.startsWith('$') ? undefined : netName);
                 // await wire?.done();
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
