@@ -45,7 +45,19 @@ hljs.registerLanguage('yml', yaml);
 const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1(?=[\s?!.,:;]|$)/;
 const inlineRuleNonStandard = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1/;
 const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/;
-const specialTokenRule = /(?<=^|\s)(#(?:[A-Za-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*)|\/(?:block_diagram|diagnostic_algorithm|component_search|circuit_maker|circuit_explainer|planning|user_quide)\b)/
+const SLASH_COMMANDS = [
+    'block_diagram',
+    'diagnostic_algorithm',
+    'component_search',
+    'circuit_maker',
+    'circuit_explainer',
+    'planning',
+    'user_quide'
+] as const;
+const specialTokenRule = new RegExp(
+    `(?:#[A-Za-z][A-Za-z0-9]*(?:\\.[A-Za-z0-9]+)*)|(?:\\/(?:${SLASH_COMMANDS.join('|')})\\b)`,
+    'g'
+);
 
 function markedKatex(options = {}) {
     return {
@@ -125,27 +137,6 @@ function blockKatex(options: object, renderer: unknown): TokenizerExtension {
 }
 
 marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
-marked.use({
-    extensions: [
-        {
-            name: 'specialToken',
-            level: 'inline',
-
-            tokenizer(src: string) {
-                const match = src.match(specialTokenRule);
-                if (!match) return;
-                return {
-                    type: 'specialToken',
-                    raw: match[0],
-                    text: match[0],
-                };
-            },
-            renderer(token: { text: string }) {
-                return `<span class="token-designator">${token.text}</span>`;
-            },
-        } as TokenizerExtension,
-    ],
-});
 
 marked.use({
     renderer: {
@@ -194,5 +185,58 @@ export const markdown = (content: string) => {
         }
     );
 
-    return marked.parse(content, { async: false });
+    const html = marked.parse(content, { async: false });
+    return highlightSpecialTokens(html);
 };
+
+function highlightSpecialTokens(html: string) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT);
+    const textNodes: Text[] = [];
+
+    while (walker.nextNode()) {
+        const node = walker.currentNode as Text;
+        const parentTag = node.parentElement?.tagName;
+
+        if (!node.textContent?.trim()) continue;
+        if (parentTag && ['CODE', 'PRE', 'SCRIPT', 'STYLE', 'TEXTAREA'].includes(parentTag)) continue;
+
+        specialTokenRule.lastIndex = 0;
+        if (!specialTokenRule.test(node.textContent)) continue;
+        textNodes.push(node);
+    }
+
+    for (const node of textNodes) {
+        const text = node.textContent ?? '';
+        specialTokenRule.lastIndex = 0;
+
+        const fragment = doc.createDocumentFragment();
+        let lastIndex = 0;
+        let match: RegExpExecArray | null;
+
+        while ((match = specialTokenRule.exec(text)) !== null) {
+            const [token] = match;
+            const start = match.index;
+
+            if (start > lastIndex) {
+                fragment.appendChild(doc.createTextNode(text.slice(lastIndex, start)));
+            }
+
+            const span = doc.createElement('span');
+            span.className = 'token-designator';
+            span.textContent = token;
+            fragment.appendChild(span);
+
+            lastIndex = start + token.length;
+        }
+
+        if (lastIndex < text.length) {
+            fragment.appendChild(doc.createTextNode(text.slice(lastIndex)));
+        }
+
+        node.parentNode?.replaceChild(fragment, node);
+    }
+
+    return doc.body.innerHTML;
+}

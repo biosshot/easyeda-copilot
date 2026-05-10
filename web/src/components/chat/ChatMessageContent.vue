@@ -238,6 +238,11 @@ defineExpose({
         border: 1px solid var(--color-border);
         word-break: break-word;
     }
+
+    .token-designator {
+        color: var(--color-primary);
+        background-color: rgb(from var(--color-primary) r g b / 12%);
+    }
 }
 </style>
 
