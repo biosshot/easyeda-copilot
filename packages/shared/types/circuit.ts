@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { LCSC_uuid } from "./lcsc";
+import { ReusedTags, ReusedCategory } from "./reused";
 
 const PinSchema = () => z.object({
     pin_number: z.number().or(z.string()).describe('Pin number.'),
@@ -67,6 +68,13 @@ const ElkPoint = () => z.object({
 export const CircuitAssemblyStruct = () => z.object({
     metadata: MetadataSchema().describe('Metadata'),
     components: z.array(ComponentAsmSchema()).describe('Components'),
+    reused_blocks: z.array(z.object({
+        id: z.string().uuid(),
+        name: z.string().min(1),
+        description: z.string(),
+        category: ReusedCategory(),
+        tags: z.array(ReusedTags()),
+    })).optional(),
     edges: z.array(z.object({
         sources: z.array(z.string()),
         targets: z.array(z.string()),
