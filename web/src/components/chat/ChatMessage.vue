@@ -49,9 +49,9 @@
             </div>
         </div>
 
-        <div v-if="msg.role === 'human'" class="avatar">
+        <!-- <div v-if="msg.role === 'human'" class="avatar">
             <Icon :name="getUserInfo()?.avatar ?? 'User'" fail-name="User" size="20" />
-        </div>
+        </div> -->
     </div>
 </template>
 
@@ -227,7 +227,9 @@ const copy = async () => {
 }
 
 .message.ai .content-inner {
-    width: 100%;
+    width: calc(100% - 1rem);
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 
 .avatar-placeholder {
