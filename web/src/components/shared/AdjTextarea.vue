@@ -12,7 +12,7 @@
             <button v-for="(item, idx) in filteredSuggestions" :key="item" type="button"
                 :class="['suggestion-item', { active: idx === activeSuggestionIndex }]"
                 @mousedown.prevent="applySuggestion(idx)">
-                #{{ item }}
+                {{ suggestionPrefix }}{{ item }}
             </button>
         </div>
     </div>
@@ -31,12 +31,23 @@ const suggestionsEl = ref<HTMLDivElement | null>(null);
 const emit = defineEmits(['enter'])
 
 const DESIGNATORS = ref<string[]>([]);
+const SLASH_COMMANDS = [
+    'block_diagram',
+    'diagnostic_algorithm',
+    'component_search',
+    'circuit_maker',
+    'circuit_explainer',
+    'planning',
+    'user_quide'
+] as const;
 const showSuggestions = ref(false);
 const filteredSuggestions = ref<string[]>([]);
 const activeSuggestionIndex = ref(0);
 const triggerStartIndex = ref<number | null>(null);
+const activeTrigger = ref<'#' | '/' | null>(null);
 const suggestionsStyle = ref<Record<string, string>>({});
 const designatorsSet = computed(() => new Set(DESIGNATORS.value.map(v => v.toLowerCase())));
+const suggestionPrefix = computed(() => activeTrigger.value ?? '');
 
 function escapeHtml(value: string) {
     return value
@@ -48,11 +59,15 @@ function escapeHtml(value: string) {
 const highlightedHtml = computed(() => {
     const source = model.value ?? '';
     const escaped = escapeHtml(source);
-    const highlighted = escaped.replace(
+    const highlightedDesignators = escaped.replace(
         /#[A-Za-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*/g,
         (match) => designatorsSet.value.has(match.slice(1).toLowerCase())
             ? `<span class="token-designator">${match}</span>`
             : match
+    );
+    const highlighted = highlightedDesignators.replace(
+        /\/(?:block_diagram|diagnostic_algorithm|component_search|circuit_maker|circuit_explainer|planning|user_quide)\b/g,
+        (match) => `<span class="token-designator">${match}</span>`
     );
 
     return highlighted + '\n';
@@ -91,6 +106,7 @@ function closeSuggestions() {
     filteredSuggestions.value = [];
     activeSuggestionIndex.value = 0;
     triggerStartIndex.value = null;
+    activeTrigger.value = null;
     suggestionsStyle.value = {};
 }
 
@@ -142,7 +158,7 @@ function getCaretCoordinates(textarea_: HTMLTextAreaElement, position: number) {
     return { top, left };
 }
 
-function getSuggestionsWidth(textarea_: HTMLTextAreaElement, items: string[]) {
+function getSuggestionsWidth(textarea_: HTMLTextAreaElement, items: string[], prefix: string) {
     const style = window.getComputedStyle(textarea_);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -152,14 +168,14 @@ function getSuggestionsWidth(textarea_: HTMLTextAreaElement, items: string[]) {
 
     ctx.font = font;
     const maxTextWidth = items.reduce((max, item) => {
-        const metrics = ctx.measureText(`#${item}`);
+        const metrics = ctx.measureText(`${prefix}${item}`);
         return Math.max(max, metrics.width);
     }, 0);
 
     return Math.ceil(maxTextWidth + 100);
 }
 
-function updateSuggestionsPosition(items: string[]) {
+function updateSuggestionsPosition(items: string[], prefix: string) {
     const textarea_ = textarea.value;
     if (!textarea_) return;
 
@@ -173,7 +189,7 @@ function updateSuggestionsPosition(items: string[]) {
     const popupGap = 4;
 
     const lineHeight = parsePx(window.getComputedStyle(textarea_).lineHeight) || 19;
-    const rawWidth = getSuggestionsWidth(textarea_, items);
+    const rawWidth = getSuggestionsWidth(textarea_, items, prefix);
     const width = Math.min(rawWidth, viewportWidth - viewportPadding * 2);
 
     const rawLeft = rect.left + caret.left;
@@ -215,20 +231,42 @@ async function updateSuggestions() {
     const text = model.value ?? '';
     const caretPos = textarea_?.selectionStart ?? text.length;
     const textBeforeCaret = text.slice(0, caretPos);
-    const match = textBeforeCaret.match(/#([a-zA-Z0-9_]*)$/);
+    const hashMatch = textBeforeCaret.match(/#([a-zA-Z0-9_]*)$/);
+    const slashMatch = textBeforeCaret.match(/\/([a-zA-Z0-9_]*)$/);
     const prevSelected = filteredSuggestions.value[activeSuggestionIndex.value];
 
-    if (!match) {
+    if (!hashMatch && !slashMatch) {
         closeSuggestions();
         return;
     }
 
-    if (showSuggestions.value === false) {
-        DESIGNATORS.value = await getAllDesignators().catch(e => ['R1']);
+    if (hashMatch) {
+        if (showSuggestions.value === false || activeTrigger.value !== '#') {
+            DESIGNATORS.value = await getAllDesignators().catch(() => ['R1']);
+        }
+
+        const query = hashMatch[1].toLowerCase();
+        const nextSuggestions = DESIGNATORS.value.filter(item => item.toLowerCase().startsWith(query));
+
+        if (!nextSuggestions.length) {
+            closeSuggestions();
+            return;
+        }
+
+        showSuggestions.value = true;
+        activeTrigger.value = '#';
+        filteredSuggestions.value = nextSuggestions;
+        const prevIdx = prevSelected ? nextSuggestions.indexOf(prevSelected) : -1;
+        activeSuggestionIndex.value = prevIdx >= 0 ? prevIdx : 0;
+        triggerStartIndex.value = caretPos - hashMatch[0].length;
+        updateSuggestionsPosition(nextSuggestions, '#');
+
+        nextTick(() => ensureActiveSuggestionVisible());
+        return;
     }
 
-    const query = match[1].toLowerCase();
-    const nextSuggestions = DESIGNATORS.value.filter(item => item.toLowerCase().startsWith(query));
+    const query = slashMatch?.[1].toLowerCase() ?? '';
+    const nextSuggestions = SLASH_COMMANDS.filter(item => item.toLowerCase().startsWith(query));
 
     if (!nextSuggestions.length) {
         closeSuggestions();
@@ -236,11 +274,12 @@ async function updateSuggestions() {
     }
 
     showSuggestions.value = true;
-    filteredSuggestions.value = nextSuggestions;
+    activeTrigger.value = '/';
+    filteredSuggestions.value = [...nextSuggestions];
     const prevIdx = prevSelected ? nextSuggestions.indexOf(prevSelected) : -1;
     activeSuggestionIndex.value = prevIdx >= 0 ? prevIdx : 0;
-    triggerStartIndex.value = caretPos - match[0].length;
-    updateSuggestionsPosition(nextSuggestions);
+    triggerStartIndex.value = caretPos - (slashMatch?.[0].length ?? 0);
+    updateSuggestionsPosition(nextSuggestions, '/');
 
     nextTick(() => ensureActiveSuggestionVisible());
 }
@@ -258,9 +297,10 @@ function ensureActiveSuggestionVisible() {
 function applySuggestion(index: number) {
     const textarea_ = textarea.value;
     const triggerStart = triggerStartIndex.value;
+    const trigger = activeTrigger.value;
     const selected = filteredSuggestions.value[index];
 
-    if (!textarea_ || triggerStart === null || !selected) {
+    if (!textarea_ || triggerStart === null || !selected || !trigger) {
         closeSuggestions();
         return;
     }
@@ -269,7 +309,7 @@ function applySuggestion(index: number) {
     const caretPos = textarea_.selectionStart ?? text.length;
     const before = text.slice(0, triggerStart);
     const after = text.slice(caretPos);
-    const insertText = `#${selected} `;
+    const insertText = `${trigger}${selected} `;
     model.value = `${before}${insertText}${after}`;
 
     closeSuggestions();
