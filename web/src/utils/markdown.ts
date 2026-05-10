@@ -13,6 +13,7 @@ import xml from 'highlight.js/lib/languages/xml';
 import yaml from 'highlight.js/lib/languages/yaml';
 // @ts-ignore
 import 'highlight.js/styles/atom-one-light.css';
+import './markdown.css';
 
 declare global {
     interface Window {
@@ -44,6 +45,7 @@ hljs.registerLanguage('yml', yaml);
 const inlineRule = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1(?=[\s?!.,:;]|$)/;
 const inlineRuleNonStandard = /^(\${1,2})(?!\$)((?:\\.|[^\\\n])*?(?:\\.|[^\\\n\$]))\1/;
 const blockRule = /^(\${1,2})\n((?:\\[^]|[^\\])+?)\n\1(?:\n|$)/;
+const specialTokenRule = /^(#(?:[A-Za-z][A-Za-z0-9]*(?:\.[A-Za-z0-9]+)*)|\/(?:block_diagram|diagnostic_algorithm|component_search|circuit_maker|circuit_explainer|planning|user_quide)\b)/;
 
 function markedKatex(options = {}) {
     return {
@@ -123,6 +125,31 @@ function blockKatex(options: object, renderer: unknown): TokenizerExtension {
 }
 
 marked.use(markedKatex({ throwOnError: false, nonStandard: true }));
+marked.use({
+    extensions: [
+        {
+            name: 'specialToken',
+            level: 'inline',
+            start(src: string) {
+                const index = src.search(/[#/]/);
+                return index >= 0 ? index : undefined;
+            },
+            tokenizer(src: string) {
+                const match = src.match(specialTokenRule);
+                if (!match) return;
+
+                return {
+                    type: 'specialToken',
+                    raw: match[0],
+                    text: match[0],
+                };
+            },
+            renderer(token: { text: string }) {
+                return `<span class="token-designator">${token.text}</span>`;
+            },
+        } as TokenizerExtension,
+    ],
+});
 
 marked.use({
     renderer: {
