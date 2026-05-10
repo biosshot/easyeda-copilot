@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div class="typing-dots" :style="{ marginLeft: dotsPosition === 'left' ? 0 : undefined }">
+        <div v-if="showDots" class="typing-dots" :style="{ marginLeft: dotsPosition === 'left' ? 0 : undefined }">
             <span class="dot"></span>
             <span class="dot"></span>
             <span class="dot"></span>
@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps<{ status: string, dotsPosition?: 'left' }>();
+const props = defineProps<{ status: string, dotsPosition?: 'left', showDots?: boolean }>();
 
 const status = computed(() => {
     const MAX = 320;
@@ -27,7 +27,7 @@ const status = computed(() => {
 .container {
     display: flex;
     flex-direction: column;
-    padding: 0.6rem 0.8rem;
+    /* padding: 0.6rem 0.8rem; */
     color: var(--color-text);
     font-size: 0.9rem;
     max-width: 90%;

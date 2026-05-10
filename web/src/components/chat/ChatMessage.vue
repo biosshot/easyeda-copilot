@@ -1,9 +1,9 @@
 <template>
     <div :class="['message', msg.role]">
-        <div v-if="msg.role === 'ai' && isFirstInGroup" class="avatar">
+        <!-- <div v-if="msg.role === 'ai' && isFirstInGroup" class="avatar">
             <Icon name="Cpu" size="20" />
         </div>
-        <div v-else-if="msg.role === 'ai' && !isFirstInGroup" class="avatar-placeholder"></div>
+        <div v-else-if="msg.role === 'ai' && !isFirstInGroup" class="avatar-placeholder"></div> -->
 
         <div class="message-content-wrapper">
             <div class="content-inner">

@@ -7,10 +7,10 @@
         @inline-buttons="onInlineButtons" @delete-message="deleteMessage" />
 
       <div v-if="isLoading" class="message ai typing-indicator">
-        <div v-if="!isLastInAiGroup(chatMessages.length - 1)" class="avatar">
+        <!-- <div v-if="!isLastInAiGroup(chatMessages.length - 1)" class="avatar">
           <Icon name="Cpu" size="20" />
-        </div>
-        <TypingDots dots-position="left" :status="progressStatus" />
+        </div> -->
+        <TypingDots dots-position="left" :status="progressStatus" :show-dots="false" />
         <Timer style="margin-left: auto;" />
       </div>
 
