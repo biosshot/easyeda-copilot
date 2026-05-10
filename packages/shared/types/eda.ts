@@ -15,6 +15,10 @@ declare global {
             save: (minor: boolean) => Promise<string | null>;
             hasCheckpoint: () => boolean;
         }
-        simulationResult?: SimulateResult
+        simulationResult?: SimulateResult,
+        searchComponentInSCH: (designator: string) => Promise<{
+            component: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
+            primitiveId: string;
+        }[] | undefined>
     }
 }

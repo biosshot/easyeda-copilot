@@ -17,10 +17,12 @@ import { assembleCircuit } from './eda/assemble';
 import extension from '../extension.json';
 import { getAsmCircuit, getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
+import { searchComponentInSCH } from './eda/search';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
 eda.getAsmCircuit = getAsmCircuit;
+eda.searchComponentInSCH = searchComponentInSCH;
 
 export function activate(status?: 'onStartupFinished', arg?: string) { }
 

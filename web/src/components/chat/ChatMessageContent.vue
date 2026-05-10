@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div class="content" :class="props.message.role" v-if="!isEditing">
-            <div class="mes-content" @dblclick="message.role === 'human' && startEditing()"
+            <div class="mes-content" @click="onContentClick" @dblclick="message.role === 'human' && startEditing()"
                 :class="{ 'editable-text': message.role === 'human' }">
                 <template v-if="message.role === 'human'">
                     <div v-html="safeHtml"></div>
@@ -50,6 +50,7 @@ import AdjTextarea from '../shared/AdjTextarea.vue'
 import IconButton from '../shared/IconButton.vue'
 import ImageUrlView from './img/ImageUrlView.vue'
 import { ChatMessage } from '../../stores/chat-history-store'
+import { isEasyEda, showToastMessage } from '../../eda/utils'
 
 const props = defineProps<{ message: ChatMessage, isLast?: boolean, idx: number }>()
 const emit = defineEmits<{
@@ -103,6 +104,38 @@ function saveEdit() {
         emit('edit-message', editedContent.value)
         isEditing.value = false
         editedContent.value = ''
+    }
+}
+
+async function onContentClick(event: MouseEvent) {
+    if (!event.ctrlKey) return;
+
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const tokenEl = target.closest('.token-designator');
+    if (!(tokenEl instanceof HTMLElement)) return;
+
+    const token = tokenEl.textContent?.trim() ?? '';
+    if (!token.startsWith('#')) return;
+    if (!isEasyEda() || typeof eda.searchComponentInSCH !== 'function') return;
+
+    event.preventDefault();
+
+    const designator = token.slice(1);
+
+    try {
+        const results = await eda.searchComponentInSCH(designator);
+        const primitiveIds = results?.map(item => item.primitiveId).filter(Boolean) ?? [];
+
+        if (!primitiveIds.length) {
+            showToastMessage(`Component ${designator} not found in schematic`, 'info');
+            return;
+        }
+
+        await eda.sch_SelectControl.doSelectPrimitives(primitiveIds);
+    } catch (error) {
+        showToastMessage(`Failed to select ${designator}: ${(error as Error).message}`, 'error');
     }
 }
 
@@ -242,6 +275,7 @@ defineExpose({
     .token-designator {
         color: var(--color-primary);
         background-color: rgb(from var(--color-primary) r g b / 12%);
+        cursor: pointer;
     }
 }
 </style>
