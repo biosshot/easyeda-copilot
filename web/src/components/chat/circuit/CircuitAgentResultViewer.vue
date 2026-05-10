@@ -41,6 +41,41 @@
                 </Collapsible>
 
                 <!-- Компоненты -->
+                <Collapsible v-if="result?.circuit?.reused_blocks?.length" class="reused-blocks-section">
+                    <template #title>
+                        <span class="custom-collapsible-title">
+                            <span class="label">{{ result.circuit.reused_blocks.length }} Reused blocks</span>
+                        </span>
+                    </template>
+
+                    <div class="blocks-grid">
+                        <div v-for="block in result.circuit.reused_blocks" :key="block.id" class="block-card">
+                            <div class="block-header">
+                                <span class="block-name">{{ block.name }}</span>
+                            </div>
+                            <pre class="block-description">{{ block.description }}</pre>
+                            <div class="reused-block-details">
+                                <div class="detail-row">
+                                    <span class="label">Category:</span>
+                                    <span class="value">{{ formatCategory(block.category) }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">UUID:</span>
+                                    <span class="value uuid">{{ block.id }}</span>
+                                </div>
+                            </div>
+                            <div v-if="block.tags?.length" class="next-blocks">
+                                <span class="label">Tags:</span>
+                                <div class="tags">
+                                    <span v-for="tag in block.tags" :key="tag" class="tag">
+                                        {{ formatTag(tag) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Collapsible>
+
                 <Collapsible v-if="components.length" class="components-section">
                     <template #title>
                         <span class="custom-collapsible-title add">
@@ -204,6 +239,14 @@ const assembleCircuitHandler = async () => {
     assembleCircuit(props.result.circuit);
 }
 
+const formatDisplayToken = (value: string) => value
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+
+const formatCategory = (category: string) => formatDisplayToken(category);
+const formatTag = (tag: string) => formatDisplayToken(tag);
+
 onMounted(() => {
     emit('inline-buttons', [{
         icon: 'Play',
@@ -268,7 +311,8 @@ onMounted(() => {
 
 /* === Блоки === */
 .blocks-section,
-.components-section {
+.components-section,
+.reused-blocks-section {
     margin-top: 0.1rem;
 }
 
@@ -308,6 +352,22 @@ onMounted(() => {
     border: none;
     margin: 0;
     padding: 0;
+}
+
+.reused-block-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+}
+
+.reused-block-details .detail-row {
+    grid-template-columns: 72px 1fr;
+    font-size: 0.75rem;
+}
+
+.reused-block-details .label {
+    white-space: nowrap;
 }
 
 .next-blocks {
