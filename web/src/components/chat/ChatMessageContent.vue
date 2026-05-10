@@ -108,8 +108,6 @@ function saveEdit() {
 }
 
 async function onContentClick(event: MouseEvent) {
-    if (!event.ctrlKey) return;
-
     const target = event.target;
     if (!(target instanceof HTMLElement)) return;
 
