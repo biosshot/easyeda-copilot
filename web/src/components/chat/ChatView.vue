@@ -51,7 +51,7 @@
         </div>
 
         <IconButton class="scroll-to-bottom-btn" v-if="showScrollButton" @click="scrollToBottom" icon="ChevronDown"
-          :size="20" />
+          :size="14" />
       </div>
 
       <div class="input-container">
@@ -664,8 +664,8 @@ button[disabled],
 .scroll-to-bottom-btn {
   margin: 0 auto;
   left: 50%;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   border: 1px solid var(--color-border);
   background-color: var(--color-background);
