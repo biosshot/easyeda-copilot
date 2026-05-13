@@ -1,15 +1,85 @@
 <template>
     <div class="recalc-editor">
         <header class="editor-header">
-            <h1>Reused Blocks Editor</h1>
+            <h1>Reused Blocks</h1>
             <div class="header-actions">
-                <IconButton icon="Download" @click="loadFromEasyEDA" title="Load from EasyEDA" />
-                <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
-                <IconButton icon="Save" @click="saveToFile" title="Save to file" />
-                <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
-                <IconButton icon="Database" @click="addBlock" title="Add to database" :disabled="isAddingBlock" />
+                <template v-if="activeMainTab === 'export'">
+                    <IconButton icon="Download" @click="loadFromEasyEDA" title="Load from EasyEDA" />
+                    <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
+                    <IconButton icon="Save" @click="saveToFile" title="Save to file" />
+                    <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
+                    <IconButton icon="Database" @click="addBlock" title="Add to database" :disabled="isAddingBlock" />
+                </template>
             </div>
         </header>
+
+        <div class="main-tabs">
+            <IconButton :class="['main-tab', { active: activeMainTab === 'browse' }]" icon="Database"
+                @click="activeMainTab = 'browse'">Browse</IconButton>
+            <IconButton :class="['main-tab', { active: activeMainTab === 'export' }]" icon="FileDown"
+                @click="activeMainTab = 'export'">Export</IconButton>
+        </div>
+
+        <section v-if="activeMainTab === 'browse'" class="browse-view">
+            <section class="browse-panel">
+                <h2>Reused Blocks</h2>
+                <p>Read-only catalog of reusable recalculation blocks.</p>
+                <div class="browse-toolbar">
+                    <input v-model="browseSearch" type="search"
+                        placeholder="Filter current page by name, id, category or tag" />
+                    <CustomSelect v-model="browseValidatedFilter" :options="browseValidatedOptions" />
+                    <CustomSelect v-model="browseLimit" :options="browseLimitOptions"
+                        @update:model-value="changeBrowseLimit" />
+                    <IconButton icon="RotateCw" variant="primary" :disabled="browseState.busy"
+                        @click="loadBrowseBlocks">Refresh</IconButton>
+                </div>
+                <div class="browse-pager">
+                    <IconButton icon="ArrowLeft" :disabled="browseState.offset <= 0 || browseState.busy"
+                        @click="prevBrowsePage">Prev</IconButton>
+                    <div class="browse-pager-info">{{ browsePageInfo }}</div>
+                    <IconButton icon="ArrowRight"
+                        :disabled="browseState.offset + browseState.limit >= browseState.total || browseState.busy"
+                        @click="nextBrowsePage">Next</IconButton>
+                </div>
+                <div class="browse-hint">
+                    Read-only mode. The page requests data from the server with offset/limit. Search and status filter
+                    are applied to the loaded page.
+                </div>
+            </section>
+
+            <section class="browse-stats">
+                <div class="browse-card browse-stat"><strong>{{ browseState.total }}</strong><span>Total blocks in DB</span></div>
+                <div class="browse-card browse-stat"><strong>{{ browseState.blocks.length }}</strong><span>Loaded this page</span></div>
+                <div class="browse-card browse-stat"><strong>{{ visibleBrowseBlocks.length }}</strong><span>Visible after filter</span></div>
+            </section>
+
+            <section class="browse-list">
+                <article v-for="block in visibleBrowseBlocks" :key="block.id" class="browse-card browse-block-card">
+                    <div class="browse-block-head">
+                        <div>
+                            <h3>{{ block.name }}</h3>
+                            <div class="browse-meta">{{ block.id }}; {{ block.category }}; updated {{ formatDate(block.updated_at) }}</div>
+                        </div>
+                        <div class="browse-actions">
+                            <span class="browse-tag">{{ block.validated ? 'validated' : 'not validated' }}</span>
+                            <IconButton icon="Download" @click="downloadBlock(block.id, 'asm')">ASM JSON</IconButton>
+                            <IconButton icon="FileDown" @click="downloadBlock(block.id)">DB JSON</IconButton>
+                        </div>
+                    </div>
+                    <p class="browse-description">{{ block.description || 'No description' }}</p>
+                    <div class="browse-tags">
+                        <span v-for="item in browseBlockTags(block)" :key="item" class="browse-tag">{{ item }}</span>
+                    </div>
+                </article>
+
+                <div v-if="!visibleBrowseBlocks.length" class="browse-card browse-empty">
+                    No blocks found for the current page/filter.
+                </div>
+            </section>
+            <p class="browse-status">{{ browseStatus }}</p>
+        </section>
+
+        <template v-else>
 
         <!-- METADATA SECTION -->
         <section class="metadata-section">
@@ -270,6 +340,7 @@
                 <pre class="json-content">{{ JSON.stringify(data, null, 2) }}</pre>
             </Collapsible>
         </div>
+        </template>
     </div>
 </template>
 
@@ -292,6 +363,18 @@ const settingsStore = useSettingsStore();
 
 // Constants
 const unknown_shortsym = 'unknown_shortsym';
+const reusedBlocksApiBasePath = '/reused-blocks/api';
+
+type BrowseBlock = {
+    id: string;
+    name: string;
+    description?: string;
+    category: string;
+    tags?: string[];
+    validated: boolean;
+    updated_at?: number;
+    parameterNames?: string[];
+};
 
 // Инициализировать тему при загрузке приложения
 onMounted(() => {
@@ -302,14 +385,37 @@ onMounted(() => {
         const theme = settingsStore.getSetting('theme') || 'light';
         setTheme(theme as ThemeName);
     });
+
+    loadBrowseBlocks();
 });
 
 // ─── State ───────────────────────────────────────────────────────────
+const activeMainTab = ref<'browse' | 'export'>('browse');
 const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('ports');
 const newParamName = ref('');
 const isAutoFilling = ref(false);
 const isAddingBlock = ref(false);
 const selectedTag = ref('');
+const browseSearch = ref('');
+const browseValidatedFilter = ref<'all' | 'true' | 'false'>('all');
+const browseStatus = ref('');
+const browseState = reactive({
+    blocks: [] as BrowseBlock[],
+    total: 0,
+    offset: 0,
+    limit: 25,
+    busy: false,
+});
+const browseValidatedOptions = [
+    { value: 'all', label: 'All statuses' },
+    { value: 'true', label: 'Validated only' },
+    { value: 'false', label: 'Not validated' },
+];
+const browseLimitOptions = [
+    { value: '25', label: '25 per page' },
+    { value: '50', label: '50 per page' },
+    { value: '100', label: '100 per page' },
+];
 
 const reusedCategoryValues = ReusedCategory().options;
 const reusedTagValues = ReusedTags().options;
@@ -377,6 +483,45 @@ const availableTagOptions = computed(() => {
     return reusedTagOptions.filter(option => !selected.has(option.value));
 });
 
+const visibleBrowseBlocks = computed(() => {
+    const query = browseSearch.value.trim().toLowerCase();
+    const validatedFilter = browseValidatedFilter.value;
+
+    return browseState.blocks.filter((block) => {
+        const matchesValidated =
+            validatedFilter === 'all' ||
+            String(block.validated) === validatedFilter;
+
+        if (!matchesValidated) return false;
+        if (!query) return true;
+
+        const haystack = [
+            block.id,
+            block.name,
+            block.description,
+            block.category,
+            ...(block.tags || []),
+            ...(block.parameterNames || []),
+        ].join(' ').toLowerCase();
+
+        return haystack.includes(query);
+    });
+});
+
+const browsePageInfo = computed(() => {
+    const page = Math.floor(browseState.offset / browseState.limit) + 1;
+    const from = browseState.total === 0 ? 0 : browseState.offset + 1;
+    const to = Math.min(browseState.offset + browseState.blocks.length, browseState.total);
+    return `Page ${page} - showing ${from}-${to} of ${browseState.total}`;
+});
+
+const browseLimit = computed({
+    get: () => String(browseState.limit),
+    set: (value: string) => {
+        browseState.limit = Number(value);
+    },
+});
+
 function addSelectedTag() {
     if (!selectedTag.value || !reusedTagSet.has(selectedTag.value) || data.tags.includes(selectedTag.value)) return;
     data.tags.push(selectedTag.value);
@@ -390,6 +535,70 @@ function removeTag(tag: string) {
 function normalizeTags(tags: string[] | undefined): string[] {
     if (!Array.isArray(tags)) return [];
     return Array.from(new Set(tags.filter(tag => reusedTagSet.has(tag))));
+}
+
+function formatDate(timestamp?: number) {
+    if (!timestamp) return 'unknown';
+    return new Date(timestamp).toLocaleString();
+}
+
+function browseBlockTags(block: BrowseBlock) {
+    return [block.category, ...(block.tags || []), ...(block.parameterNames || [])].filter(Boolean);
+}
+
+function downloadBlockHref(id: string, type?: 'asm') {
+    const suffix = type ? '?type=asm' : '';
+    return `${apiUrl}${reusedBlocksApiBasePath}/blocks/${encodeURIComponent(id)}/download${suffix}`;
+}
+
+function downloadBlock(id: string, type?: 'asm') {
+    window.location.href = downloadBlockHref(id, type);
+}
+
+async function loadBrowseBlocks() {
+    if (browseState.busy) return;
+    browseState.busy = true;
+    browseStatus.value = 'Loading blocks...';
+
+    try {
+        const params = new URLSearchParams({
+            offset: String(browseState.offset),
+            limit: String(browseState.limit),
+        });
+        const response = await fetchEda(`${apiUrl}${reusedBlocksApiBasePath}/blocks?${params.toString()}`, {
+            headers: { 'Authorization': authorization },
+        });
+        if (!response.ok) {
+            throw new Error('Failed to load blocks');
+        }
+        const payload = await response.json();
+        browseState.blocks = payload.blocks || [];
+        browseState.total = payload.total || 0;
+        browseState.offset = payload.offset || 0;
+        browseState.limit = payload.limit || browseState.limit;
+        browseStatus.value = `Loaded ${browseState.blocks.length} blocks.`;
+    } catch (error) {
+        browseStatus.value = error instanceof Error ? error.message : 'Failed to load blocks';
+    } finally {
+        browseState.busy = false;
+    }
+}
+
+function changeBrowseLimit() {
+    browseState.offset = 0;
+    loadBrowseBlocks();
+}
+
+function prevBrowsePage() {
+    if (browseState.offset <= 0 || browseState.busy) return;
+    browseState.offset = Math.max(0, browseState.offset - browseState.limit);
+    loadBrowseBlocks();
+}
+
+function nextBrowsePage() {
+    if (browseState.offset + browseState.limit >= browseState.total || browseState.busy) return;
+    browseState.offset += browseState.limit;
+    loadBrowseBlocks();
 }
 
 // State for global signal name replacement
@@ -698,6 +907,205 @@ function saveToFile() {
 .header-actions {
     display: flex;
     gap: 0.3rem;
+}
+
+.main-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 2px solid var(--color-border);
+    margin-bottom: 1.5rem;
+}
+
+.main-tab {
+    padding: 0.7rem 1.4rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    color: var(--color-text-tertiary);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.main-tab:hover {
+    color: var(--color-text);
+    background: var(--color-surface-hover);
+}
+
+.main-tab.active {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+
+.browse-view {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.browse-panel,
+.browse-card {
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+}
+
+.browse-panel {
+    padding: 1rem;
+}
+
+.browse-panel h2,
+.browse-block-card h3 {
+    margin: 0 0 0.4rem;
+    color: var(--color-text);
+}
+
+.browse-panel p {
+    margin: 0;
+    color: var(--color-text-secondary);
+}
+
+.browse-toolbar,
+.browse-pager,
+.browse-actions,
+.browse-tags,
+.browse-stats {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.browse-toolbar,
+.browse-pager {
+    margin-top: 1rem;
+}
+
+.browse-toolbar input,
+.browse-toolbar button,
+.browse-pager button {
+    font: inherit;
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    padding: 0.55rem 0.75rem;
+    background: var(--color-background);
+    color: var(--color-text);
+}
+
+.browse-toolbar :deep(.custom-select-wrapper) {
+    width: auto;
+    min-width: 150px;
+}
+
+.browse-toolbar :deep(.custom-select-button) {
+    min-height: 37px;
+}
+
+.browse-toolbar input {
+    min-width: 240px;
+    flex: 1 1 320px;
+}
+
+.browse-toolbar button,
+.browse-pager button {
+    cursor: pointer;
+}
+
+.browse-toolbar button {
+    background: var(--color-primary);
+    color: var(--color-primary-text, #fff);
+    border-color: var(--color-primary);
+}
+
+.browse-pager button:disabled,
+.browse-toolbar button:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.browse-pager-info,
+.browse-hint,
+.browse-meta,
+.browse-description,
+.browse-status,
+.browse-empty {
+    color: var(--color-text-secondary);
+}
+
+.browse-pager-info {
+    min-width: 180px;
+}
+
+.browse-hint {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.browse-stat {
+    padding: 0.85rem 1rem;
+    min-width: 150px;
+}
+
+.browse-stat strong {
+    display: block;
+    font-size: 1.35rem;
+    margin-bottom: 0.25rem;
+}
+
+.browse-stat span {
+    color: var(--color-text-secondary);
+    font-size: 0.85rem;
+}
+
+.browse-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.browse-block-card {
+    padding: 1rem;
+}
+
+.browse-block-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.browse-actions {
+    justify-content: flex-end;
+}
+
+.browse-description {
+    margin: 0.65rem 0 0.85rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.browse-tag {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 999px;
+    background: var(--color-background-tertiary);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+}
+
+.browse-empty {
+    text-align: center;
+    padding: 2.5rem 1rem;
+}
+
+@media (max-width: 720px) {
+    .browse-block-head {
+        flex-direction: column;
+    }
+
+    .browse-actions {
+        justify-content: flex-start;
+    }
 }
 
 /* ─── Metadata Section ─────────────────────────────────────────────── */

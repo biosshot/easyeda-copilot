@@ -49,5 +49,5 @@ export async function exportAsmCircuit() {
 }
 
 export async function exportReused() {
-	eda.sys_IFrame.openIFrame('/iframe/exports-reused.html', 900, 700);
+	eda.sys_IFrame.openIFrame('/iframe/reused.html', 900, 700);
 }
