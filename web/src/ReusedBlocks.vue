@@ -31,7 +31,8 @@
                     <CustomSelect v-model="browseLimit" :options="browseLimitOptions"
                         @update:model-value="changeBrowseLimit" />
                     <IconButton icon="RotateCw" variant="primary" :disabled="browseState.busy"
-                        @click="loadBrowseBlocks">Refresh</IconButton>
+                        @click="loadBrowseBlocks">Refresh
+                    </IconButton>
                 </div>
                 <div class="browse-pager">
                     <IconButton icon="ArrowLeft" :disabled="browseState.offset <= 0 || browseState.busy"
@@ -48,9 +49,14 @@
             </section>
 
             <section class="browse-stats">
-                <div class="browse-card browse-stat"><strong>{{ browseState.total }}</strong><span>Total blocks in DB</span></div>
-                <div class="browse-card browse-stat"><strong>{{ browseState.blocks.length }}</strong><span>Loaded this page</span></div>
-                <div class="browse-card browse-stat"><strong>{{ visibleBrowseBlocks.length }}</strong><span>Visible after filter</span></div>
+                <div class="browse-card browse-stat"><strong>{{ browseState.total }}</strong><span>Total blocks in
+                        DB</span>
+                </div>
+                <div class="browse-card browse-stat"><strong>{{ browseState.blocks.length }}</strong><span>Loaded this
+                        page</span></div>
+                <div class="browse-card browse-stat"><strong>{{ visibleBrowseBlocks.length }}</strong><span>Visible
+                        after
+                        filter</span></div>
             </section>
 
             <section class="browse-list">
@@ -58,7 +64,8 @@
                     <div class="browse-block-head">
                         <div>
                             <h3>{{ block.name }}</h3>
-                            <div class="browse-meta">{{ block.id }}; {{ block.category }}; updated {{ formatDate(block.updated_at) }}</div>
+                            <div class="browse-meta">{{ block.id }}; {{ block.category }}; updated {{
+                                formatDate(block.updated_at) }}</div>
                         </div>
                         <div class="browse-actions">
                             <span class="browse-tag">{{ block.validated ? 'validated' : 'not validated' }}</span>
@@ -81,146 +88,148 @@
 
         <template v-else>
 
-        <!-- METADATA SECTION -->
-        <section class="metadata-section">
-            <Collapsible title="Block Metadata" :default-open="true">
-                <div class="setting-group">
-                    <label for="block-name">Block Name</label>
-                    <input id="block-name" type="text" v-model="data.name" placeholder="e.g. Buck Converter" />
-                </div>
-                <div class="setting-group">
-                    <label for="block-desc">Description</label>
-                    <!-- <input id="block-desc" type="text" v-model="data.description"
+            <!-- METADATA SECTION -->
+            <section class="metadata-section">
+                <Collapsible title="Block Metadata" :default-open="true">
+                    <div class="setting-group">
+                        <label for="block-name">Block Name</label>
+                        <input id="block-name" type="text" v-model="data.name" placeholder="e.g. Buck Converter" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="block-desc">Description</label>
+                        <!-- <input id="block-desc" type="text" v-model="data.description"
                         placeholder="e.g. 5V/3A buck converter circuit" /> -->
 
-                    <AdjTextarea id="block-desc" v-model="data.description"
-                        placeholder="e.g. 5V/3A buck converter circuit" />
-                </div>
-
-                <div class="setting-group">
-                    <label for="block-category">Category</label>
-                    <CustomSelect id="block-category" v-model="data.category" :options="reusedCategoryOptions" />
-                </div>
-                <div class="setting-group">
-                    <label for="block-tags">Tags</label>
-                    <div class="tag-picker">
-                        <CustomSelect id="block-tags" v-model="selectedTag" :options="availableTagOptions" />
-                        <IconButton icon="Plus" variant="ghost" :size="14" :disabled="!selectedTag"
-                            @click="addSelectedTag" title="Add tag" />
+                        <AdjTextarea id="block-desc" v-model="data.description"
+                            placeholder="e.g. 5V/3A buck converter circuit" />
                     </div>
-                    <div v-if="data.tags.length" class="selected-tags">
-                        <button v-for="tag in data.tags" :key="tag" type="button" class="tag-chip"
-                            @click="removeTag(tag)" :title="`Remove ${formatDisplayToken(tag)}`">
-                            <span>{{ formatDisplayToken(tag) }}</span>
-                            <Icon name="X" :size="12" />
-                        </button>
-                    </div>
-                </div>
-            </Collapsible>
-        </section>
 
-        <!-- TABS -->
-        <div class="tabs">
-            <button :class="['tab', { active: activeTab === 'ports' }]" @click="activeTab = 'ports'">Ports</button>
-            <button :class="['tab', { active: activeTab === 'parameters' }]"
-                @click="activeTab = 'parameters'">Parameters</button>
-            <!-- <button :class="['tab', { active: activeTab === 'constraints' }]"
+                    <div class="setting-group">
+                        <label for="block-category">Category</label>
+                        <CustomSelect id="block-category" v-model="data.category" :options="reusedCategoryOptions" />
+                    </div>
+                    <div class="setting-group">
+                        <label for="block-tags">Tags</label>
+                        <div class="tag-picker">
+                            <CustomSelect id="block-tags" v-model="selectedTag" :options="availableTagOptions" />
+                            <IconButton icon="Plus" variant="ghost" :size="14" :disabled="!selectedTag"
+                                @click="addSelectedTag" title="Add tag" />
+                        </div>
+                        <div v-if="data.tags.length" class="selected-tags">
+                            <button v-for="tag in data.tags" :key="tag" type="button" class="tag-chip"
+                                @click="removeTag(tag)" :title="`Remove ${formatDisplayToken(tag)}`">
+                                <span>{{ formatDisplayToken(tag) }}</span>
+                                <Icon name="X" :size="12" />
+                            </button>
+                        </div>
+                    </div>
+                </Collapsible>
+            </section>
+
+            <!-- TABS -->
+            <div class="tabs">
+                <button :class="['tab', { active: activeTab === 'ports' }]" @click="activeTab = 'ports'">Ports</button>
+                <button :class="['tab', { active: activeTab === 'parameters' }]"
+                    @click="activeTab = 'parameters'">Parameters</button>
+                <!-- <button :class="['tab', { active: activeTab === 'constraints' }]"
                 @click="activeTab = 'constraints'">Constraints</button> -->
-            <button :class="['tab', { active: activeTab === 'components' }]"
-                @click="activeTab = 'components'">Components</button>
-        </div>
-
-        <!-- PORTS TAB -->
-        <section v-if="activeTab === 'ports'" class="tab-content">
-            <h2>Ports</h2>
-            <p class="section-description">Define circuit ports. Ports are bound to nets (signal_name) via the
-                {PORT_XXX} template.</p>
-
-            <div v-for="(port, idx) in data.circuit.recalculation_meta.ports" :key="idx" class="card">
-                <Collapsible :default-open="true">
-                    <template #title>
-                        <div class="card-title-row">
-                            <span class="card-title">Port #{{ idx + 1 }}</span>
-                            <IconButton icon="Trash2" variant="remove" @click="removePort(idx)" title="Remove port"
-                                :size="14" />
-                        </div>
-                    </template>
-                    <div class="field-row">
-                        <div class="setting-group">
-                            <label for="port-name-{{ idx }}">Port Name</label>
-                            <input :id="'port-name-' + idx" type="text" v-model="port.port_number"
-                                placeholder="e.g. VIN" />
-                        </div>
-                        <div class="setting-group">
-                            <label for="port-desc-{{ idx }}">Description</label>
-                            <input :id="'port-desc-' + idx" type="text" v-model="port.description"
-                                placeholder="e.g. INPUT VOLTAGE" />
-                        </div>
-                        <div class="setting-group">
-                            <label for="port-param-{{ idx }}">Related Parameter</label>
-                            <input :id="'port-param-' + idx" type="text" v-model="port.related_parameter"
-                                placeholder="e.g. vin (optional)" />
-                        </div>
-                    </div>
-                </Collapsible>
+                <button :class="['tab', { active: activeTab === 'components' }]"
+                    @click="activeTab = 'components'">Components</button>
             </div>
 
-            <IconButton icon="Plus" variant="primary" :size="14" @click="addPort">Add Port </IconButton>
-        </section>
+            <!-- PORTS TAB -->
+            <section v-if="activeTab === 'ports'" class="tab-content">
+                <h2>Ports</h2>
+                <p class="section-description">Define circuit ports. Ports are bound to nets (signal_name) via the
+                    {PORT_XXX} template.</p>
 
-        <!-- PARAMETERS TAB -->
-        <section v-if="activeTab === 'parameters'" class="tab-content">
-            <h2>Parameters</h2>
-            <p class="section-description">Global circuit parameters with value ranges. Parameters with allow_recalc
-                enabled are available for recalculation.</p>
-
-            <div v-for="(param, key) in data.circuit.recalculation_meta.parameters" :key="key" class="card">
-                <Collapsible :default-open="true">
-                    <template #title>
-                        <div class="card-title-row">
-                            <span class="card-title">{{ key }}</span>
-                            <IconButton icon="Trash2" variant="remove" @click="removeParameter(key as string)"
-                                title="Remove parameter" :size="14" />
+                <div v-for="(port, idx) in data.circuit.recalculation_meta.ports" :key="idx" class="card">
+                    <Collapsible :default-open="true">
+                        <template #title>
+                            <div class="card-title-row">
+                                <span class="card-title">Port #{{ idx + 1 }}</span>
+                                <IconButton icon="Trash2" variant="remove" @click="removePort(idx)" title="Remove port"
+                                    :size="14" />
+                            </div>
+                        </template>
+                        <div class="field-row">
+                            <div class="setting-group">
+                                <label for="port-name-{{ idx }}">Port Name</label>
+                                <input :id="'port-name-' + idx" type="text" v-model="port.port_number"
+                                    placeholder="e.g. VIN" />
+                            </div>
+                            <div class="setting-group">
+                                <label for="port-desc-{{ idx }}">Description</label>
+                                <input :id="'port-desc-' + idx" type="text" v-model="port.description"
+                                    placeholder="e.g. INPUT VOLTAGE" />
+                            </div>
+                            <div class="setting-group">
+                                <label for="port-param-{{ idx }}">Related Parameter</label>
+                                <input :id="'port-param-' + idx" type="text" v-model="port.related_parameter"
+                                    placeholder="e.g. vin (optional)" />
+                            </div>
                         </div>
-                    </template>
-                    <div class="field-row">
-                        <div class="setting-group">
-                            <label :for="`param-min-${key}`">Min</label>
-                            <input :id="'param-min-' + key" type="number" v-model.number="param.min" placeholder="—" />
-                        </div>
-                        <div class="setting-group">
-                            <label :for="`param-nom-${key}`">Nominal</label>
-                            <input :id="'param-nom-' + key" type="number" v-model.number="param.nominal"
-                                placeholder="Required" />
-                        </div>
-                        <div class="setting-group">
-                            <label :for="`param-max-${key}`">Max</label>
-                            <input :id="'param-max-' + key" type="number" v-model.number="param.max" placeholder="—" />
-                        </div>
-                        <div class="setting-group checkbox-group" style="margin: auto;">
-                            <label :for="`param-recalc-${key}`">
-                                <input :id="'param-recalc-' + key" type="checkbox" v-model="param.allow_recalc" />
-                                Allow recalc
-                            </label>
-                        </div>
-                    </div>
-                </Collapsible>
-            </div>
-
-            <div class="add-parameter-row">
-                <div class="setting-group">
-                    <label for="new-param-name">New Parameter Name</label>
-                    <input id="new-param-name" type="text" v-model="newParamName" placeholder="e.g. Vout" />
+                    </Collapsible>
                 </div>
-                <IconButton icon="Plus" variant="primary" :size="14" :disabled="!newParamName.trim()"
-                    @click="addParameter">Add
-                    Constraint
-                </IconButton>
-            </div>
-        </section>
 
-        <!-- CONSTRAINTS TAB -->
-        <!-- <section v-if="activeTab === 'constraints'" class="tab-content">
+                <IconButton icon="Plus" variant="primary" :size="14" @click="addPort">Add Port </IconButton>
+            </section>
+
+            <!-- PARAMETERS TAB -->
+            <section v-if="activeTab === 'parameters'" class="tab-content">
+                <h2>Parameters</h2>
+                <p class="section-description">Global circuit parameters with value ranges. Parameters with allow_recalc
+                    enabled are available for recalculation.</p>
+
+                <div v-for="(param, key) in data.circuit.recalculation_meta.parameters" :key="key" class="card">
+                    <Collapsible :default-open="true">
+                        <template #title>
+                            <div class="card-title-row">
+                                <span class="card-title">{{ key }}</span>
+                                <IconButton icon="Trash2" variant="remove" @click="removeParameter(key as string)"
+                                    title="Remove parameter" :size="14" />
+                            </div>
+                        </template>
+                        <div class="field-row">
+                            <div class="setting-group">
+                                <label :for="`param-min-${key}`">Min</label>
+                                <input :id="'param-min-' + key" type="number" v-model.number="param.min"
+                                    placeholder="—" />
+                            </div>
+                            <div class="setting-group">
+                                <label :for="`param-nom-${key}`">Nominal</label>
+                                <input :id="'param-nom-' + key" type="number" v-model.number="param.nominal"
+                                    placeholder="Required" />
+                            </div>
+                            <div class="setting-group">
+                                <label :for="`param-max-${key}`">Max</label>
+                                <input :id="'param-max-' + key" type="number" v-model.number="param.max"
+                                    placeholder="—" />
+                            </div>
+                            <div class="setting-group checkbox-group" style="margin: auto;">
+                                <label :for="`param-recalc-${key}`">
+                                    <input :id="'param-recalc-' + key" type="checkbox" v-model="param.allow_recalc" />
+                                    Allow recalc
+                                </label>
+                            </div>
+                        </div>
+                    </Collapsible>
+                </div>
+
+                <div class="add-parameter-row">
+                    <div class="setting-group">
+                        <label for="new-param-name">New Parameter Name</label>
+                        <input id="new-param-name" type="text" v-model="newParamName" placeholder="e.g. Vout" />
+                    </div>
+                    <IconButton icon="Plus" variant="primary" :size="14" :disabled="!newParamName.trim()"
+                        @click="addParameter">Add
+                        Constraint
+                    </IconButton>
+                </div>
+            </section>
+
+            <!-- CONSTRAINTS TAB -->
+            <!-- <section v-if="activeTab === 'constraints'" class="tab-content">
             <h2>Constraints</h2>
             <p class="section-description">Constraints as string expressions (e.g. "Vout &lt; 8").</p>
 
@@ -236,110 +245,110 @@
             <IconButton icon="Plus" variant="primary" :size="14" @click="addConstraint">Add Constraint</IconButton>
         </section> -->
 
-        <!-- COMPONENTS TAB -->
-        <section v-if="activeTab === 'components'" class="tab-content">
-            <h2>Components</h2>
-            <p class="section-description">
-                Edit nets (signal_name) and recalculation formulas for components.
-                Use the <code>{PORT_XXX}</code> or <code>{PARAM_XXX}</code> or <code>{PARAM_XXX_min}</code> or
-                <code>{PARAM_XXX_max}</code> template to bind a net to a port — all
-                identical
-                signal_names will be
-                replaced simultaneously.
-            </p>
+            <!-- COMPONENTS TAB -->
+            <section v-if="activeTab === 'components'" class="tab-content">
+                <h2>Components</h2>
+                <p class="section-description">
+                    Edit nets (signal_name) and recalculation formulas for components.
+                    Use the <code>{PORT_XXX}</code> or <code>{PARAM_XXX}</code> or <code>{PARAM_XXX_min}</code> or
+                    <code>{PARAM_XXX_max}</code> template to bind a net to a port — all
+                    identical
+                    signal_names will be
+                    replaced simultaneously.
+                </p>
 
-            <!-- Global Signal Name Replacement -->
-            <div class="card global-replace-card">
-                <Collapsible title="Replace Signal Names (Global)" :default-open="true">
-                    <div class="field-row">
-                        <div class="setting-group flex-grow">
-                            <label for="select-signal-name">Select Signal Name</label>
-                            <CustomSelect id="select-signal-name" v-model="selectedSignalName"
-                                :options="signalNameOptions" />
-                        </div>
-                        <div class="setting-group flex-grow">
-                            <label for="new-signal-name">New Signal Name</label>
-                            <input id="new-signal-name" v-model="newSignalName" type="text"
-                                placeholder="Enter new signal name" />
-                        </div>
-                        <div class="button-group">
-                            <IconButton icon="Replace" variant="primary" :size="14"
-                                :disabled="!selectedSignalName || !newSignalName.trim()"
-                                @click="replaceSignalName(selectedSignalName, newSignalName)"
-                                title="Replace all occurrences" />
-                        </div>
-                    </div>
-                </Collapsible>
-            </div>
-
-            <div v-for="(comp, cIdx) in filteredComponents" :key="cIdx" class="card">
-                <Collapsible :default-open="false">
-                    <template #title>
-                        <div class="card-title-row">
-                            <span class="card-title">{{ comp.designator }} — {{ comp.value }}</span>
-                            <span v-if="comp.recalc" class="badge">recalc</span>
-                        </div>
-                    </template>
-
-                    <!-- Pins -->
-                    <div class="sub-section">
-                        <h3>Nets (Pins)</h3>
-                        <div v-for="(pin, pIdx) in comp.pins" :key="pIdx" class="pin-row">
-                            <span class="pin-label">Pin {{ pin.pin_number }} ({{ pin.name }})</span>
-                            <div class="signal-input-wrapper">
-                                <input type="text" :value="pin.signal_name"
-                                    @input="onSignalNameChange(pin.signal_name, ($event.target as HTMLInputElement).value)"
-                                    placeholder="signal_name" />
-                                <button v-if="isPortSignal(pin.signal_name)" class="btn-icon btn-port-link"
-                                    @click="assignToPort(pin)" title="Link to port">
-                                    <Icon name="Replace" :size="12" />
-                                </button>
+                <!-- Global Signal Name Replacement -->
+                <div class="card global-replace-card">
+                    <Collapsible title="Replace Signal Names (Global)" :default-open="true">
+                        <div class="field-row">
+                            <div class="setting-group flex-grow">
+                                <label for="select-signal-name">Select Signal Name</label>
+                                <CustomSelect id="select-signal-name" v-model="selectedSignalName"
+                                    :options="signalNameOptions" />
                             </div>
-                            <span v-if="isPortSignal(pin.signal_name)" class="port-badge">
-                                → {{ extractPortName(pin.signal_name) }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Recalc -->
-                    <div class="sub-section">
-                        <h3>Recalculation</h3>
-                        <div v-if="comp.recalc" class="recalc-fields">
-                            <div class="setting-group">
-                                <label for="recalc-formula-{{ cIdx }}">Formula</label>
-                                <input :id="'recalc-formula-' + cIdx" type="text" v-model="comp.recalc.formula"
-                                    placeholder="100000 * (Vout / 0.5 - 1)" />
+                            <div class="setting-group flex-grow">
+                                <label for="new-signal-name">New Signal Name</label>
+                                <input id="new-signal-name" v-model="newSignalName" type="text"
+                                    placeholder="Enter new signal name" />
                             </div>
-                            <div class="field-row">
+                            <div class="button-group">
+                                <IconButton icon="Replace" variant="primary" :size="14"
+                                    :disabled="!selectedSignalName || !newSignalName.trim()"
+                                    @click="replaceSignalName(selectedSignalName, newSignalName)"
+                                    title="Replace all occurrences" />
+                            </div>
+                        </div>
+                    </Collapsible>
+                </div>
+
+                <div v-for="(comp, cIdx) in filteredComponents" :key="cIdx" class="card">
+                    <Collapsible :default-open="false">
+                        <template #title>
+                            <div class="card-title-row">
+                                <span class="card-title">{{ comp.designator }} — {{ comp.value }}</span>
+                                <span v-if="comp.recalc" class="badge">recalc</span>
+                            </div>
+                        </template>
+
+                        <!-- Pins -->
+                        <div class="sub-section">
+                            <h3>Nets (Pins)</h3>
+                            <div v-for="(pin, pIdx) in comp.pins" :key="pIdx" class="pin-row">
+                                <span class="pin-label">Pin {{ pin.pin_number }} ({{ pin.name }})</span>
+                                <div class="signal-input-wrapper">
+                                    <input type="text" :value="pin.signal_name"
+                                        @input="onSignalNameChange(pin.signal_name, ($event.target as HTMLInputElement).value)"
+                                        placeholder="signal_name" />
+                                    <button v-if="isPortSignal(pin.signal_name)" class="btn-icon btn-port-link"
+                                        @click="assignToPort(pin)" title="Link to port">
+                                        <Icon name="Replace" :size="12" />
+                                    </button>
+                                </div>
+                                <span v-if="isPortSignal(pin.signal_name)" class="port-badge">
+                                    → {{ extractPortName(pin.signal_name) }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Recalc -->
+                        <div class="sub-section">
+                            <h3>Recalculation</h3>
+                            <div v-if="comp.recalc" class="recalc-fields">
                                 <div class="setting-group">
-                                    <label for="recalc-unit-{{ cIdx }}">Unit</label>
-                                    <input :id="'recalc-unit-' + cIdx" type="text" v-model="comp.recalc.unit"
-                                        placeholder="Ohm" />
+                                    <label for="recalc-formula-{{ cIdx }}">Formula</label>
+                                    <input :id="'recalc-formula-' + cIdx" type="text" v-model="comp.recalc.formula"
+                                        placeholder="100000 * (Vout / 0.5 - 1)" />
                                 </div>
-                                <div class="setting-group flex-grow">
-                                    <label for="recalc-lcsc-{{ cIdx }}">LCSC Query Template</label>
-                                    <input :id="'recalc-lcsc-' + cIdx" type="text"
-                                        v-model="comp.recalc.lcsc_query_template"
-                                        placeholder="resistor {value}Ohm smd 0603" />
+                                <div class="field-row">
+                                    <div class="setting-group">
+                                        <label for="recalc-unit-{{ cIdx }}">Unit</label>
+                                        <input :id="'recalc-unit-' + cIdx" type="text" v-model="comp.recalc.unit"
+                                            placeholder="Ohm" />
+                                    </div>
+                                    <div class="setting-group flex-grow">
+                                        <label for="recalc-lcsc-{{ cIdx }}">LCSC Query Template</label>
+                                        <input :id="'recalc-lcsc-' + cIdx" type="text"
+                                            v-model="comp.recalc.lcsc_query_template"
+                                            placeholder="resistor {value}Ohm smd 0603" />
+                                    </div>
                                 </div>
+                                <IconButton icon="Trash2" variant="remove" @click="comp.recalc = undefined"
+                                    title="Remove recalc" :size="14" />
                             </div>
-                            <IconButton icon="Trash2" variant="remove" @click="comp.recalc = undefined"
-                                title="Remove recalc" :size="14" />
-                        </div>
 
-                        <IconButton icon="Plus" variant="primary" :size="14" @click="addRecalc(comp)">Add Recalc
-                        </IconButton>
-                    </div>
+                            <IconButton icon="Plus" variant="primary" :size="14" @click="addRecalc(comp)">Add Recalc
+                            </IconButton>
+                        </div>
+                    </Collapsible>
+                </div>
+            </section>
+
+            <!-- JSON Preview -->
+            <div class="json-preview">
+                <Collapsible title="JSON Preview" :default-open="false">
+                    <pre class="json-content">{{ JSON.stringify(data, null, 2) }}</pre>
                 </Collapsible>
             </div>
-        </section>
-
-        <!-- JSON Preview -->
-        <div class="json-preview">
-            <Collapsible title="JSON Preview" :default-open="false">
-                <pre class="json-content">{{ JSON.stringify(data, null, 2) }}</pre>
-            </Collapsible>
-        </div>
         </template>
     </div>
 </template>
@@ -363,7 +372,7 @@ const settingsStore = useSettingsStore();
 
 // Constants
 const unknown_shortsym = 'unknown_shortsym';
-const reusedBlocksApiBasePath = '/reused-blocks/api';
+const reusedBlocksApiBasePath = '/reused-blocks';
 
 type BrowseBlock = {
     id: string;
@@ -717,7 +726,7 @@ async function autoFill() {
             },
         };
 
-        const res = await fetchEda(apiUrl + '/fill-reused-params', {
+        const res = await fetchEda(`${apiUrl}${reusedBlocksApiBasePath}/fill-params`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -764,7 +773,7 @@ async function addBlock() {
             circuit: data.circuit,
         };
 
-        const res = await fetchEda(apiUrl + '/add-reused-block', {
+        const res = await fetchEda(apiUrl + '/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
