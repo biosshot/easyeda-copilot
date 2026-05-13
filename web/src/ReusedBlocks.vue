@@ -20,20 +20,31 @@
                 </div>
                 <div class="setting-group">
                     <label for="block-desc">Description</label>
-                    <input id="block-desc" type="text" v-model="data.description"
+                    <!-- <input id="block-desc" type="text" v-model="data.description"
+                        placeholder="e.g. 5V/3A buck converter circuit" /> -->
+
+                    <AdjTextarea id="block-desc" v-model="data.description"
                         placeholder="e.g. 5V/3A buck converter circuit" />
                 </div>
 
                 <div class="setting-group">
                     <label for="block-category">Category</label>
-                    <input id="block-category" type="text" v-model="data.category"
-                        placeholder="e.g. Power Management" />
+                    <CustomSelect id="block-category" v-model="data.category" :options="reusedCategoryOptions" />
                 </div>
                 <div class="setting-group">
-                    <label for="block-tags">Tags (comma separated)</label>
-                    <input id="block-tags" type="text" :value="data.tags.join(', ')"
-                        @input="data.tags = ($event.target as HTMLInputElement).value.split(',').map(t => t.trim()).filter(t => t)"
-                        placeholder="e.g. buck, converter, 5V" />
+                    <label for="block-tags">Tags</label>
+                    <div class="tag-picker">
+                        <CustomSelect id="block-tags" v-model="selectedTag" :options="availableTagOptions" />
+                        <IconButton icon="Plus" variant="ghost" :size="14" :disabled="!selectedTag"
+                            @click="addSelectedTag" title="Add tag" />
+                    </div>
+                    <div v-if="data.tags.length" class="selected-tags">
+                        <button v-for="tag in data.tags" :key="tag" type="button" class="tag-chip"
+                            @click="removeTag(tag)" :title="`Remove ${formatDisplayToken(tag)}`">
+                            <span>{{ formatDisplayToken(tag) }}</span>
+                            <Icon name="X" :size="12" />
+                        </button>
+                    </div>
                 </div>
             </Collapsible>
         </section>
@@ -268,13 +279,14 @@ import Icon from './components/shared/Icon.vue';
 import IconButton from './components/shared/IconButton.vue';
 import Collapsible from './components/shared/Collapsible.vue';
 import CustomSelect from './components/shared/CustomSelect.vue';
-import { CircuitAssemblyStructWithRecalc, type CircuitAssemblyWithRecalc } from '@copilot/shared/types/recalc';
+import { ReusedCategory, ReusedTags, type CircuitAssemblyWithRecalc } from '@copilot/shared/types/reused';
 import { useSettingsStore } from './stores/settings-store';
 import { setTheme } from './composables/useTheme';
 import { ThemeName } from './theme/themes';
 import { fetchEda, apiUrl, authorization } from './api/index';
 import { makeLLmSettings } from './utils/llm-settings';
 import "@copilot/shared/types/eda";
+import AdjTextarea from './components/shared/AdjTextarea.vue';
 
 const settingsStore = useSettingsStore();
 
@@ -297,6 +309,27 @@ const activeTab = ref<'ports' | 'parameters' | 'constraints' | 'components'>('po
 const newParamName = ref('');
 const isAutoFilling = ref(false);
 const isAddingBlock = ref(false);
+const selectedTag = ref('');
+
+const reusedCategoryValues = ReusedCategory().options;
+const reusedTagValues = ReusedTags().options;
+const reusedCategorySet = new Set<string>(reusedCategoryValues);
+const reusedTagSet = new Set<string>(reusedTagValues);
+
+const formatDisplayToken = (value: string) => value
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+
+const reusedCategoryOptions = reusedCategoryValues.map(value => ({
+    value,
+    label: formatDisplayToken(value),
+}));
+
+const reusedTagOptions = reusedTagValues.map(value => ({
+    value,
+    label: formatDisplayToken(value),
+}));
 
 const EMPTY_DATA = {
     name: '',
@@ -339,6 +372,26 @@ const signalNameOptions = computed(() => {
     return Array.from(names).sort().map(name => ({ value: name, label: name }));
 });
 
+const availableTagOptions = computed(() => {
+    const selected = new Set(data.tags);
+    return reusedTagOptions.filter(option => !selected.has(option.value));
+});
+
+function addSelectedTag() {
+    if (!selectedTag.value || !reusedTagSet.has(selectedTag.value) || data.tags.includes(selectedTag.value)) return;
+    data.tags.push(selectedTag.value);
+    selectedTag.value = '';
+}
+
+function removeTag(tag: string) {
+    data.tags = data.tags.filter(value => value !== tag);
+}
+
+function normalizeTags(tags: string[] | undefined): string[] {
+    if (!Array.isArray(tags)) return [];
+    return Array.from(new Set(tags.filter(tag => reusedTagSet.has(tag))));
+}
+
 // State for global signal name replacement
 const selectedSignalName = ref('');
 const newSignalName = ref('');
@@ -348,7 +401,7 @@ function addPort() {
     data.circuit.recalculation_meta.ports.push({
         port_number: '',
         description: '',
-        related_parameter: undefined,
+        related_parameter: null,
     });
 }
 
@@ -408,7 +461,7 @@ function assignToPort(pin: CircuitAssemblyWithRecalc['components'][0]['pins'][0]
     data.circuit.recalculation_meta.ports.push({
         port_number: portName,
         description: '',
-        related_parameter: undefined,
+        related_parameter: null,
     });
 }
 
@@ -484,6 +537,10 @@ async function addBlock() {
 
     if (!data.name.trim()) {
         alert('Please enter block name before adding to database');
+        return;
+    }
+    if (!reusedCategorySet.has(data.category)) {
+        alert('Please select a valid category before adding to database');
         return;
     }
 
@@ -572,10 +629,10 @@ function loadFromFile() {
 function applyData(parsed: Partial<CircuitAssemblyWithRecalc & { name: string, description: string, category: string, tags: string[] }>, clean?: boolean) {
     if (clean) {
         data.category = EMPTY_DATA.category;
-        data.circuit = EMPTY_DATA.circuit;
+        data.circuit = structuredClone(EMPTY_DATA.circuit);
         data.description = EMPTY_DATA.description;
         data.name = EMPTY_DATA.name;
-        data.tags = EMPTY_DATA.tags;
+        data.tags = [];
     }
 
     if (parsed.recalculation_meta) {
@@ -593,8 +650,8 @@ function applyData(parsed: Partial<CircuitAssemblyWithRecalc & { name: string, d
 
     if (parsed.name) data.name = parsed.name;
     if (parsed.description) data.description = parsed.description;
-    if (parsed.category) data.category = parsed.category;
-    if (parsed.tags) data.tags = parsed.tags;
+    if (parsed.category && reusedCategorySet.has(parsed.category)) data.category = parsed.category;
+    if (parsed.tags) data.tags = normalizeTags(parsed.tags);
 
 }
 
@@ -649,11 +706,14 @@ function saveToFile() {
     border: 1px solid var(--color-border);
     border-radius: 8px;
     margin-bottom: 1.5rem;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
+    z-index: 30;
 }
 
 .metadata-section :deep(.collapsible-section) {
     margin: 0;
+    position: relative;
 }
 
 .metadata-section :deep(.collapsible-header) {
@@ -664,6 +724,7 @@ function saveToFile() {
 .metadata-section :deep(.collapsible-content) {
     padding: 0.75rem 1rem;
     border-left: none;
+    overflow: visible;
 }
 
 /* ─── Tabs ─────────────────────────────────────────────────────────── */
@@ -969,5 +1030,60 @@ function saveToFile() {
     display: flex;
     align-items: flex-end;
     gap: 0.5rem;
+}
+
+.tag-picker {
+    display: flex;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+.tag-picker :deep(.custom-select-wrapper) {
+    flex: 1;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+}
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    max-width: 100%;
+    padding: 0.2rem 0.45rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-background-tertiary);
+    color: var(--color-text);
+    font: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.tag-chip:hover {
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+
+.tag-chip span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#block-desc {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-text);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 </style>
