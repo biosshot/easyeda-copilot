@@ -45,6 +45,11 @@
 						"registerFn": "openInterface"
 					},
 					{
+						"id": "Reused",
+						"title": "Reused blocks",
+						"registerFn": "openReused"
+					},
+					{
 						"id": "Export",
 						"title": "Export",
 						"menuItems": [
@@ -52,11 +57,6 @@
 								"id": "ExportAsmCircuit",
 								"title": "Export asm circuit",
 								"registerFn": "exportAsmCircuit"
-							},
-							{
-								"id": "ExportReused",
-								"title": "Export reused blocks",
-								"registerFn": "exportReused"
 							}
 						]
 					},

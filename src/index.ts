@@ -48,6 +48,6 @@ export async function exportAsmCircuit() {
 	eda.sys_FileSystem.saveFile(new Blob([JSON.stringify(asmCircuit, null, 2)], { type: 'text/plain' }), `asm_circuit.json`);
 }
 
-export async function exportReused() {
+export async function openReused() {
 	eda.sys_IFrame.openIFrame('/iframe/reused.html', 900, 700);
 }

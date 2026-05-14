@@ -1,23 +1,25 @@
 <template>
     <div class="recalc-editor">
-        <header class="editor-header">
-            <h1>Reused Blocks</h1>
-            <div class="header-actions">
-                <template v-if="activeMainTab === 'export'">
-                    <IconButton icon="Download" @click="loadFromEasyEDA" title="Load from EasyEDA" />
-                    <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
-                    <IconButton icon="Save" @click="saveToFile" title="Save to file" />
-                    <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI" :disabled="isAutoFilling" />
-                    <IconButton icon="Database" @click="addBlock" title="Add to database" :disabled="isAddingBlock" />
-                </template>
-            </div>
-        </header>
+
 
         <div class="main-tabs">
             <IconButton :class="['main-tab', { active: activeMainTab === 'browse' }]" icon="Database"
                 @click="activeMainTab = 'browse'">Browse</IconButton>
             <IconButton :class="['main-tab', { active: activeMainTab === 'export' }]" icon="FileDown"
                 @click="activeMainTab = 'export'">Export</IconButton>
+            <header class="editor-header">
+                <div class="header-actions">
+                    <template v-if="activeMainTab === 'export'">
+                        <IconButton icon="Download" @click="loadFromEasyEDA" title="Load from EasyEDA" />
+                        <IconButton icon="FileDown" @click="loadFromFile" title="Load from file" />
+                        <IconButton icon="Save" @click="saveToFile" title="Save to file" />
+                        <IconButton icon="Sparkles" @click="autoFill" title="Auto fill with AI"
+                            :disabled="isAutoFilling" />
+                        <IconButton icon="Database" @click="addBlock" title="Add to database"
+                            :disabled="isAddingBlock" />
+                    </template>
+                </div>
+            </header>
         </div>
 
         <section v-if="activeMainTab === 'browse'" class="browse-view">
@@ -773,7 +775,7 @@ async function addBlock() {
             circuit: data.circuit,
         };
 
-        const res = await fetchEda(apiUrl + '/add', {
+        const res = await fetchEda(`${apiUrl}${reusedBlocksApiBasePath}/add`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -903,7 +905,7 @@ function saveToFile() {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.5rem;
+    margin-left: auto;
 }
 
 .editor-header h1 {
