@@ -310,25 +310,61 @@ async function calculateTargetPlace(root: { width: number, height: number }, com
     return placeTarget;
 }
 
-function getNetForUnusedPins(components: CircuitAssembly['components'], edges: CircuitAssembly['edges']) {
-    const isUsedPin = (d: string, p: number | string) => {
-        const l = `${d}_pin_${p}`;
-        if (edges.some(e => e.sections?.some(s => s.incomingShape === l || s.outgoingShape === l))) {
-            return true
+function getNetForUnusedPins(components: CircuitAssembly['components'], edges: CircuitAssembly['edges'], placedComponents: PlacedComponents) {
+    const getPinId = (d: string, p: number | string) => `${d}_pin_${p}`;
+    const usedPinIds = new Set<string>();
+
+    for (const edge of edges) {
+        for (const section of edge.sections ?? []) {
+            if (section.incomingShape) usedPinIds.add(section.incomingShape);
+            if (section.outgoingShape) usedPinIds.add(section.outgoingShape);
         }
+    }
+
+    const isUsedPin = (d: string, p: number | string) => usedPinIds.has(getPinId(d, p));
+
+    const getPlacedPin = (d: string, p: number | string) => {
+        return placedComponents[d]?.pins.find(pin => pin.getState_PinNumber() == p);
+    }
+
+    const getPinCoordKey = (d: string, p: number | string) => {
+        const placedPin = getPlacedPin(d, p);
+        if (!placedPin) return undefined;
+
+        return `${to2(placedPin.getState_X())},${to2(placedPin.getState_Y())}`;
+    }
+
+    const getPinRef = (pinId: string) => {
+        const [designator, pinNumber] = pinId.split("_pin_");
+        if (!designator || pinNumber === undefined) return undefined;
+
+        return { designator, pinNumber };
+    }
+
+    const usedPinCoordKeys = new Set<string>();
+    for (const pinId of usedPinIds) {
+        const pinRef = getPinRef(pinId);
+        if (!pinRef) continue;
+
+        const coordKey = getPinCoordKey(pinRef.designator, pinRef.pinNumber);
+        if (coordKey) usedPinCoordKeys.add(coordKey);
     }
 
     const netForUnusedPins: AddedNet[] = [];
     for (const component of components) {
         for (const pin of component.pins) {
-            if (!isUsedPin(component.designator, pin.pin_number) && pin.signal_name.length && pin.signal_name.toLowerCase().trim() !== 'nc') {
-                netForUnusedPins.push({
-                    designator: component.designator,
-                    net: pin.signal_name,
-                    pin_number: pin.pin_number,
-                    pin_name: pin.name
-                });
-            }
+            if (!pin.signal_name.length || pin.signal_name.toLowerCase().trim() === 'nc') continue;
+            if (isUsedPin(component.designator, pin.pin_number)) continue;
+
+            const coordKey = getPinCoordKey(component.designator, pin.pin_number);
+            if (coordKey && usedPinCoordKeys.has(coordKey)) continue;
+
+            netForUnusedPins.push({
+                designator: component.designator,
+                net: pin.signal_name,
+                pin_number: pin.pin_number,
+                pin_name: pin.name
+            });
         }
     }
 
@@ -507,7 +543,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     if (circuit.assembly_options?.draw_blocks)
         await drawRect(circuit.blocks_rect, offset);
 
-    const netForUnusedPins = getNetForUnusedPins(components, edges);
+    const netForUnusedPins = getNetForUnusedPins(components, edges, placedComp);
 
     await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 2000)));
 
