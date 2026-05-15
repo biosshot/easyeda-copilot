@@ -221,7 +221,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
             values = filterUniqueCoordinatePairs(values);
 
             try {
-                const wire = await eda.sch_PrimitiveWire.create(values, netName.startsWith('$') ? undefined : netName);
+                const wire = await eda.sch_PrimitiveWire.create(values, netName);
                 // await wire?.done();
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
@@ -545,7 +545,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
 
     const netForUnusedPins = getNetForUnusedPins(components, edges, placedComp);
 
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 2000)));
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 1000)));
 
     const needAddNet = await rmNet(circuit.rm_net ?? [], placedComp);
 
