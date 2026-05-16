@@ -229,6 +229,8 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
             }
+
+            await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
         }
     }
 
@@ -574,9 +576,9 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     const netForUnusedPins = getNetForUnusedPins(components, edges, placedComp);
     logTiming('Get net for unused', timenNetForUnusedPins);
 
-    const timeForTimeount = Date.now();
+    const timeForTimeout = Date.now();
     await new Promise<void>((resolve, reject) => setTimeout(resolve, 300));
-    logTiming('Timeount', timeForTimeount);
+    logTiming('Timeout', timeForTimeout);
 
     const timeRmNet = Date.now();
     const needAddNet = await rmNet(circuit.rm_net ?? [], placedComp);

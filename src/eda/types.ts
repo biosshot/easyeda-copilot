@@ -22,7 +22,19 @@ export const NET_PORT_COMPONENT = {
 export const shortSymbolsMap = {
     'VCC': {
         name: 'VCC',
-        is: (signalName: string) => /^(?:[+-]?\d+(?:\.\d+)?V|V(?:CC|DD|BAT|IN|OUT|REF|REG|\+?|-?)|AVDD|DVDD|VBUS|V[0-9]+)$/i.test(signalName),
+        is: (signalName: string) => {
+            if (!signalName) return false;
+            const s = signalName.toUpperCase();
+            if (s.includes('GND')) return false;
+            if (s === 'BATTERY') return true;
+            if (/^USB_[V\d]/i.test(signalName)) return true;
+            if (/^V(?:CC|DD|BAT|IN|OUT|REF|REG|PP|SS|EE|BUS|[0-9])/i.test(signalName)) return true;
+            if (/^[AVDG]?V(?:DD|CC)/i.test(signalName)) return true;
+            if (/^[+-]?V[+-]?$|^V$/i.test(signalName)) return true;
+            if (/^[+-]?\d+(?:\.\d+)?V/i.test(signalName)) return true;
+            if (/^\d+V\d+$/i.test(signalName)) return true;
+            return false;
+        },
         data: VCC_PORT_COMPONENT,
     },
     'GND': {
