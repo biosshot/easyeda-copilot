@@ -58,9 +58,9 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     }
 
     const STEP = 80;
-    eda.sys_Log.add(`${JSON.stringify(busyRects)}`)
-    eda.sys_Log.add(`${JSON.stringify(targetPoint)}`)
-    eda.sys_Log.add(`${JSON.stringify(tagetSize)}`)
+    eda.sys_Log.add(`Busy rects: ${JSON.stringify(busyRects)}`)
+    eda.sys_Log.add(`Place target point: ${JSON.stringify(targetPoint)}`)
+    eda.sys_Log.add(`Place target size: ${JSON.stringify(tagetSize)}`)
 
     // Функция проверки пересечения двух прямоугольников
     function isOverlap(rect1: { x: number, y: number, w: number, h: number }, rect2: { x: number, y: number, w: number, h: number }): boolean {

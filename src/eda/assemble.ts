@@ -20,10 +20,10 @@ const applyOffset = (x: number, y: number, offset: Offset) => {
     return { x, y };
 }
 
-async function createComponet(component: CircuitAssembly['components'][0], offset: Offset = { x: 0, y: 0 }) {
+async function createComponent(component: CircuitAssembly['components'][0], offset: Offset = { x: 0, y: 0 }) {
     let comp: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined;
     const { part_uuid: partUuid, designator, pos } = component;
-    if (!partUuid) throw new Error("createComponet partUuid not found");
+    if (!partUuid) throw new Error("createComponent partUuid not found");
 
     const { x, y } = applyOffset(pos.x + (pos.center?.x ?? (pos.width / 2)), (pos.y + (pos.center?.y ?? (pos.height / 2))), offset);
     const mirror = component.pos.mirror ?? false;
@@ -83,7 +83,7 @@ async function placeComponents(components: CircuitAssembly['components'], offset
         if (!partUuid) return undefined;
 
         try {
-            let placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponet(component, offset);
+            let placedComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 = await createComponent(component, offset);
             placedComponent = await placedComponent.done();
 
             const primitiveId = placedComponent.getState_PrimitiveId();
@@ -372,6 +372,13 @@ function getNetForUnusedPins(components: CircuitAssembly['components'], edges: C
 }
 
 async function assembleCircuitTask(circuit: CircuitAssembly) {
+    const startTimeTotal = Date.now();
+    const logTiming = (label: string, startTime: number) => {
+        const duration = Date.now() - startTime;
+        const totalElapsed = Date.now() - startTimeTotal;
+        eda.sys_Log.add(`Time for ${label}: ${duration}ms (total: ${totalElapsed}ms)`, ESYS_LogType.INFO);
+    };
+
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
     eda.sys_Log.add(`Assemble circuit...`);
 
@@ -391,11 +398,13 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         }
     }
 
+    const timeCheckpoint = Date.now();
     if (eda.checkpointer) await eda.checkpointer.save(true);
     else {
         eda.sys_Log.add(`Checkpointer is null`);
         eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
     }
+    logTiming('Checkpoint save', timeCheckpoint);
 
     let { components, rm_components, edges, added_net } = circuit;
 
@@ -404,6 +413,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     let schematic: ExplainCircuit | undefined;
 
     if (circuit.replace_components) {
+        const timeReplace = Date.now();
         // @ts-ignore
         const tasks = circuit.replace_components.map(async designator => {
             designator = rmPartFromDesignator(designator);
@@ -458,9 +468,11 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         });
 
         await Promise.all(tasks);
+        logTiming('Prepare components for replacement', timeReplace);
     }
 
     if (componentsAllowReplace.length) {
+        const timeReplaceExecute = Date.now();
         const tasks = componentsAllowReplace.map(async ({ component, replacer }) => {
             if (!component.part_uuid) return;
             const primitive = replacer.getOldPrimitive();
@@ -499,6 +511,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         eda.sys_Log.add('Replace start...')
         await Promise.all(tasks);
         eda.sys_Log.add('Replace done')
+        logTiming('Execute component replacement', timeReplaceExecute);
 
         components = components.filter(component => {
             const designator = rmPartFromDesignator(component.designator);
@@ -515,12 +528,17 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         added_net = added_net?.filter(an => components.some(c => c.pins.some(p => p.signal_name === an.net)));
     }
 
+    const timeCalcPlace = Date.now();
     const placeTarget = await calculateTargetPlace(root, componentsAllowReplace, rm_components, added_net);
+    logTiming('Calculate target place', timeCalcPlace);
 
+    const timeSearchPlace = Date.now();
     const offset = await searchFreePlaceV2(placeTarget, { w: root.width, h: root.height })
+    logTiming('Search free place', timeSearchPlace);
     eda.sys_Log.add(`Place at: ${JSON.stringify(offset)}`);
 
     if (rm_components?.length && await confirmationMessage('The following components will be removed:\n' + rm_components.join(', '), 'Confirm deletion')) {
+        const timeRemoveComp = Date.now();
         const addAddedNet = [];
         for (const designator of rm_components) {
             const added = await removeComponent(designator, schematic).catch(e => {
@@ -535,30 +553,48 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
 
         if (!added_net) added_net = addAddedNet;
         else added_net = [...added_net, ...addAddedNet];
+        logTiming('Remove components', timeRemoveComp);
     }
 
+    const timePlace = Date.now();
     const placedComp = await placeComponents(components, offset);
+    logTiming('Place components', timePlace);
 
+    const timeDrawEdges = Date.now();
     await drawEdges(edges, components, placedComp, offset);
-    if (circuit.assembly_options?.draw_blocks)
+    logTiming('Draw edges', timeDrawEdges);
+
+    if (circuit.assembly_options?.draw_blocks) {
+        const timeDrawRect = Date.now();
         await drawRect(circuit.blocks_rect, offset);
+        logTiming('Draw rectangles', timeDrawRect);
+    }
 
+    const timenNetForUnusedPins = Date.now();
     const netForUnusedPins = getNetForUnusedPins(components, edges, placedComp);
+    logTiming('Get net for unused', timenNetForUnusedPins);
 
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, Math.min((edges?.length ?? 10) * 50, 1000)));
+    const timeForTimeount = Date.now();
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, 300));
+    logTiming('Timeount', timeForTimeount);
 
+    const timeRmNet = Date.now();
     const needAddNet = await rmNet(circuit.rm_net ?? [], placedComp);
+    logTiming('Remove nets', timeRmNet);
 
     if (!added_net) added_net = needAddNet;
     else added_net = [...added_net, ...needAddNet];
 
+    const timePlaceNet = Date.now();
     await placeNet(added_net ?? [], placedComp, true);
     await placeNet(netForUnusedPins, placedComp, true);
+    logTiming('Place nets', timePlaceNet);
 
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, 500));
+    await new Promise<void>((resolve, reject) => setTimeout(resolve, 300));
 
+    const totalDuration = Date.now() - startTimeTotal;
     eda.sys_Message.showToastMessage(`Assemble complete.`, ESYS_ToastMessageType.SUCCESS);
-    eda.sys_Log.add(`Assemble complete.`);
+    eda.sys_Log.add(`Assemble complete. Total time: ${totalDuration}ms`);
 }
 
 export function assembleCircuit(...args: Parameters<typeof assembleCircuitTask>) {
