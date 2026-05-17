@@ -54,7 +54,7 @@
           :size="14" />
       </div>
 
-      <div class="input-container">
+      <div class="input-container" :class="{ 'input-container-loading': isLoading }">
         <div class="input-options">
           <IconButton class="input-option" v-for="opt in options.filter(o => o.showIfValue ? o.value : true)"
             :key="opt.label" :icon="opt.icon" :size="10" :class="['option-btn', { active: opt.value }]"
@@ -518,6 +518,58 @@ defineExpose({
   border: 1px solid var(--color-border);
   margin: 5px;
   border-radius: 5px;
+  position: relative;
+  overflow: hidden;
+  --input-border-angle: 0turn;
+}
+
+.input-container>* {
+  position: relative;
+  z-index: 2;
+}
+
+.input-container-loading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: conic-gradient(from var(--input-border-angle),
+      transparent 0deg,
+      transparent 245deg,
+      var(--color-border) 285deg,
+      var(--color-border) 325deg,
+      transparent 360deg);
+  animation: input-border-spin 1.4s linear infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.input-container-loading::after {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 3px;
+  background: var(--color-background);
+  pointer-events: none;
+  z-index: 1;
+}
+
+@property --input-border-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0turn;
+}
+
+@keyframes input-border-spin {
+  to {
+    --input-border-angle: 1turn;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input-container-loading::before {
+    animation: none;
+  }
 }
 
 /* Disabled controls when loading */
