@@ -65,19 +65,11 @@
 
         <div v-if="attachedFiles.length > 0" class="attached-files">
           <div v-for="file in attachedFiles" :key="file.id" class="attached-file">
-            <div class="attached-file-preview" v-if="file.type === 'image'">
-              <img :src="file.content" :alt="file.name" />
-            </div>
-            <div class="attached-file-icon" v-else>
-              <Icon name="FileText" size="24" />
-            </div>
-            <div class="attached-file-info">
-              <span class="attached-file-name">{{ file.name }}</span>
-              <span class="attached-file-size">{{ formatFileSize(file.size) }}</span>
-            </div>
-            <button class="attached-file-remove" @click="removeAttachedFile(file.id)">
-              <Icon name="X" size="16" />
-            </button>
+            <Icon :name="file.type === 'image' ? 'Image' : 'FileText'" size="12" />
+            <span class="attached-file-name">{{ file.name }}</span>
+            <span class="attached-file-size">{{ formatFileSize(file.size) }}</span>
+            <IconButton icon="X" variant="ghost" class="attached-file-remove" @click="removeAttachedFile(file.id)"
+              title="Remove file" />
           </div>
         </div>
 
@@ -95,8 +87,9 @@
             :icon="isLoading ? 'Square' : 'SendHorizonal'" />
         </div>
 
-        <ContextMenu ref="attachCtxMenu" :items="attachMenuItems" />
       </div>
+
+      <ContextMenu ref="attachCtxMenu" :items="attachMenuItems" />
     </div>
   </div>
 
@@ -590,8 +583,7 @@ button[disabled],
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  padding: 0.5rem;
-  margin-bottom: 0.5rem;
+  padding: 0;
   max-height: 18vh;
   overflow: auto;
 }
@@ -599,69 +591,39 @@ button[disabled],
 .attached-file {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  background-color: var(--color-background-secondary);
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  max-width: 200px;
-}
-
-.attached-file-preview {
-  width: 40px;
-  height: 40px;
-  border-radius: 0.25rem;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
-.attached-file-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.attached-file-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-surface);
-  border-radius: 0.25rem;
-  flex-shrink: 0;
-  color: var(--color-text);
-}
-
-.attached-file-info {
-  display: flex;
-  flex-direction: column;
+  gap: 0.35rem;
   min-width: 0;
-  flex: 1;
+  max-width: 240px;
+  padding: 0.25rem 0.45rem;
+  background-color: var(--color-background-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: 5px;
+  color: var(--color-text);
+  font-size: 10px;
 }
 
 .attached-file-name {
-  font-size: 0.85rem;
-  font-weight: 500;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--color-text);
 }
 
 .attached-file-size {
-  font-size: 0.75rem;
   color: var(--color-text-tertiary);
+  flex-shrink: 0;
 }
 
 .attached-file-remove {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem;
+  width: 20px;
+  height: 20px;
+  padding: 0;
   background: transparent;
   border: none;
-  border-radius: 0.25rem;
+  border-radius: 3px;
   cursor: pointer;
   color: var(--color-text-tertiary);
   flex-shrink: 0;
