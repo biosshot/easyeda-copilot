@@ -65,7 +65,7 @@
 
         <div v-if="attachedFiles.length > 0" class="attached-files">
           <div v-for="file in attachedFiles" :key="file.id" class="attached-file">
-            <Icon :name="file.type === 'image' ? 'Image' : 'FileText'" size="12" />
+            <Icon :name="file.type === 'image' ? 'Image' : 'FileText'" size="14" />
             <span class="attached-file-name">{{ file.name }}</span>
             <span class="attached-file-size">{{ formatFileSize(file.size) }}</span>
             <IconButton icon="X" variant="ghost" class="attached-file-remove" @click="removeAttachedFile(file.id)"
@@ -684,7 +684,7 @@ button[disabled],
   border: 1px solid var(--color-border);
   background-color: var(--color-background);
   color: var(--color-text);
-  z-index: 10;
+  z-index: 2;
   transition: background-color 0.2s ease, opacity 0.2s ease;
 }
 
