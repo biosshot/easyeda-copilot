@@ -7,7 +7,7 @@
 
 EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit design workflow with intelligent assistance. This extension provides AI-powered schematic creation tools and interactive chat features to assist you with your electronic design projects.
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i1.png)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/i1.png)
 
 <!-- ## Features
 
@@ -34,13 +34,13 @@ To install the extension, download the latest release. In EasyEDA Pro, go to Set
 
 Generate сircuits from descriptions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-make.gif)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/video-make.gif)
 
 ## Circuits Completions
 
 Complete your svemas with completions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/video-compl.gif)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/video-compl.gif)
 
 ## Component Selection
 
@@ -60,12 +60,12 @@ Search for components in LCSC by description or characteristics
 Automatically selects SPICE models from a library of 50,000 components.
 !CRITICAL: ALWAYS VERIFY THE SPICE MODELS USED TO REPLACE YOUR COMPONENTS. YOU CAN FIND THEM BELOW THE GRAPH AFTER THE SIMULATION!
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/spice.gif)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/spice.gif)
 
 
 ## Generating Documentation
 
-![Structural Diagram](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i3.png)
+![Structural Diagram](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/i3.png)
 *Structural diagram generation for a complex circuit, showing both the schematic and the generated PDF output*
 
 ![Diagnostic Algorithm](https://imgur.com/ucYhxQE.jpeg)
