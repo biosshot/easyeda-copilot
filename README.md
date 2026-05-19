@@ -7,7 +7,7 @@ AI-powered assistant for EasyEDA Pro and JLCEDA. Generate schematics from natura
     <img src="https://img.shields.io/github/v/release/biosshot/easyeda-copilot?label=release" alt="Latest release">
   </a>
   <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-Apache--2.0-blue" alt="License">
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
   </a>
   <a href="https://discord.gg/AXCGjTDYkq">
     <img src="https://img.shields.io/badge/Discord-7289DA?logo=discord&logoColor=white" alt="Discord">
