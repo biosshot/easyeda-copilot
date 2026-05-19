@@ -1,5 +1,7 @@
 # Reusable blocks
 
+![Examples](https://oshwlab.com/biosshot/project_ebpyirmq)
+
 A reusable block is a verified schematic fragment that EasyEDA Copilot can find, adapt and insert into a generated circuit. It is useful for repeated standard solutions: DC/DC converters, LDO blocks, level shifters, sensor front ends, interfaces, filters, protection circuits and other blocks where the topology stays the same, but several values or external connections change from project to project.
 
 The core idea is simple: create a good reference schematic once, describe its ports and recalculation parameters, then save it as a reusable block. Later, the AI agent can find this block, select it for a suitable task, recalculate allowed values and connect it to the rest of the circuit.
@@ -135,12 +137,12 @@ Each parameter has:
 
 Examples:
 
-| Parameter | Meaning | Allow recalc |
-| --- | --- | --- |
-| `VIN` | input voltage | sometimes |
-| `VOUT` | output voltage | yes |
-| `ILOAD` | output current | sometimes |
-| `FREQ` | switching frequency | only if formulas and components support it |
+| Parameter | Meaning             | Allow recalc                               |
+| --------- | ------------------- | ------------------------------------------ |
+| `VIN`     | input voltage       | sometimes                                  |
+| `VOUT`    | output voltage      | yes                                        |
+| `ILOAD`   | output current      | sometimes                                  |
+| `FREQ`    | switching frequency | only if formulas and components support it |
 
 Enable `Allow recalc` only when the formulas and selected components really support the whole declared range.
 
