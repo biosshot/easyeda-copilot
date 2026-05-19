@@ -7,16 +7,7 @@
 
 EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit design workflow with intelligent assistance. This extension provides AI-powered schematic creation tools and interactive chat features to assist you with your electronic design projects.
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/i1.png)
-
-<!-- ## Features
-
-- **AI Circuit Generation**: Generate circuit schematics based on natural language descriptions
-- **AI Circuit Completions**: Generate circuit completions schematics based on natural language descriptions
-- **Interactive Chat**: Chat with AI assistant for circuit design guidance and troubleshooting
-- **Component Searcher**: Browse and select electronic components from LCSC database
-- **Diagnostic Tools**: Generate diagnostic algorithms for circuit analysis
-- **Structural Diagrams**: Create comprehensive structural diagrams for complex circuits -->
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png)
 
 # More examples:
 [Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples)
@@ -27,6 +18,7 @@ EasyEda Copilot is an AI-powered extension for EasyEDA that improves the circuit
 | Version                     | Status     |
 | --------------------------- | ---------- |
 | EasyEDA Pro Desktop V2.2.45 | ✅ Verified |
+| EasyEDA Pro Desktop V2.2.47 | ✅ Verified |
 
 To install the extension, download the latest release. In EasyEDA Pro, go to Settings → Extensions → Extensions Manager → Import Extensions, select the *.eext file, and be sure to check the External Interactions box.
 
@@ -34,26 +26,31 @@ To install the extension, download the latest release. In EasyEDA Pro, go to Set
 
 Generate сircuits from descriptions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/video-make.gif)
+![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/use-reused.gif)
 
 ## Circuits Completions
 
-Complete your svemas with completions
+Complete your circuit with completions
 
-![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/video-compl.gif)
+<div align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/circuit-compl-ex1.gif">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/circuit-compl-ex2.gif">
+</div>
 
 ## Component Selection
 
 Search for components in LCSC by description or characteristics
 
 <div align="center">
-  <img src="https://imgur.com/2sSWl3A.jpeg" alt="100Ω 10W resistor" width="300">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/i2.png" alt="10 MHz low-noise op-amp" width="300">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex1.png" alt="find 5V relay" width="300">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex2.png" alt="Find DC-DC chip 5V and 10A current" width="300">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex3.png" alt="find capacitor 22uF murata smd 1210" width="300">
 </div>
 
 <div align="center">
-  <em>100Ω 10W resistor</em>&nbsp;&nbsp;&nbsp;&nbsp;
-  <em>10 MHz low-noise operational amplifier</em>
+  <em>find 5V relay</em>&nbsp;&nbsp;&nbsp;&nbsp;
+  <em>Find DC-DC chip 5V and 10A current</em>&nbsp;&nbsp;&nbsp;&nbsp;
+  <em>find capacitor 22uF murata smd 1210</em>
 </div>
 
 ## SPICE Circuit Simulation
@@ -61,15 +58,6 @@ Automatically selects SPICE models from a library of 50,000 components.
 !CRITICAL: ALWAYS VERIFY THE SPICE MODELS USED TO REPLACE YOUR COMPONENTS. YOU CAN FIND THEM BELOW THE GRAPH AFTER THE SIMULATION!
 
 ![](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/spice.gif)
-
-
-## Generating Documentation
-
-![Structural Diagram](https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/i3.png)
-*Structural diagram generation for a complex circuit, showing both the schematic and the generated PDF output*
-
-![Diagnostic Algorithm](https://imgur.com/ucYhxQE.jpeg)
-*Diagnostic algorithm generation for circuit analysis, with visual flowchart representation*
 
 ## Support
 
