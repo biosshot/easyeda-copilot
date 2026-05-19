@@ -37,7 +37,7 @@ const props = defineProps<{
 
 <style scoped>
 .todos-section {
-    z-index: 100;
+    z-index: 2;
     max-height: 200px;
     display: flex;
     flex-direction: column;
