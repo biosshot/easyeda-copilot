@@ -1,6 +1,6 @@
 # Reusable blocks
 
-![Examples](https://oshwlab.com/biosshot/project_ebpyirmq)
+[Examples](https://oshwlab.com/biosshot/project_ebpyirmq)
 
 A reusable block is a verified schematic fragment that EasyEDA Copilot can find, adapt and insert into a generated circuit. It is useful for repeated standard solutions: DC/DC converters, LDO blocks, level shifters, sensor front ends, interfaces, filters, protection circuits and other blocks where the topology stays the same, but several values or external connections change from project to project.
 
