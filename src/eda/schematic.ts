@@ -4,6 +4,52 @@ import { getBBox, getPrimitiveById, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
+const SEARCH_BY_CODES_CHUNK_SIZE = 50;
+
+function getFootprintNameFromOtherProperty(otherProperty?: Record<string, unknown> | null) {
+    const footprint = Object.entries(otherProperty ?? {}).find(([key, value]) => {
+        return key.toLowerCase().includes('footprint') && value !== null && value !== undefined && value.toString().trim();
+    });
+
+    return footprint?.[1]?.toString() ?? null;
+}
+
+type SearchByCodesDevice = {
+    uuid: string;
+    product_code: string;
+    attributes?: Record<string, unknown>;
+    footprint?: {
+        display_title?: string;
+        title?: string;
+    };
+};
+
+type SearchByCodesResponse = {
+    success?: boolean;
+    result?: SearchByCodesDevice[];
+};
+
+async function searchDevicesByCodes(codes: string[]) {
+    const devices: SearchByCodesDevice[] = [];
+
+    for (let index = 0; index < codes.length; index += SEARCH_BY_CODES_CHUNK_SIZE) {
+        const chunk = codes.slice(index, index + SEARCH_BY_CODES_CHUNK_SIZE);
+        const response = await eda.sys_ClientUrl.request('https://pro.easyeda.com/api/devices/searchByCodes', 'POST', JSON.stringify({ codes: chunk }), {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+
+        if (!response.ok) continue;
+
+        const data = await response.json() as SearchByCodesResponse;
+        if (data.success && Array.isArray(data.result)) {
+            devices.push(...data.result);
+        }
+    }
+
+    return devices;
+}
 
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {
@@ -99,11 +145,13 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
         const name = primitiveComponent.getState_Name() ?? '';
 
+        const otherProperty = primitiveComponent.getState_OtherProperty();
+
         if (name.includes("Manufacturer Part")) {
             value = primitiveComponent.getState_ManufacturerId() ?? '';
         }
         else if (name.includes("Value")) {
-            value = primitiveComponent.getState_OtherProperty()?.Value?.toString() ?? null;
+            value = otherProperty?.Value?.toString() ?? null;
         }
         else if (name[0] !== '=') {
             value = name;
@@ -148,39 +196,70 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                 rotate: primitiveComponent.getState_Rotation(),
                 mirror: primitiveComponent.getState_Mirror()
             },
-            code: primitiveComponent.getState_SupplierId()?.toString() || undefined
+            code: primitiveComponent.getState_SupplierId()?.toString() || undefined,
+            footprint_name: component?.footprint_name ?? getFootprintNameFromOtherProperty(otherProperty)
         })
     }
 
-    // eslint-disable-next-line no-async-promise-executor
-    const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
-        let device: ILIB_DeviceSearchItem | null = null;
+    // const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
+    //     let device: ILIB_DeviceSearchItem | null = null;
 
-        if (!options?.disableExtractPartUuid) {
-            const query = component.code || component.value;
+    //     if (!options?.disableExtractPartUuid) {
+    //         const query = component.code || component.value;
 
-            if (!query) {
-                eda.sys_Message.showToastMessage(`Fail get component ${component.designator}`, ESYS_ToastMessageType.ERROR);
-                device = null;
-            }
-            else {
-                device = await eda.lib_Device.search(query, undefined, undefined, undefined, 100).then(devices => {
-                    return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query) ?? null
-                }).catch(() => null);
-            }
+    //         if (!query) {
+    //             eda.sys_Message.showToastMessage(`Fail get component ${component.designator}`, ESYS_ToastMessageType.ERROR);
+    //             device = null;
+    //         }
+    //         else {
+    //             device = await eda.lib_Device.search(query, undefined, undefined, undefined, 100).then(devices => {
+    //                 return devices.find(d => d.supplierId === query || d.manufacturerId === query || d.name === query) ?? null
+    //             }).catch(() => null);
+    //         }
+    //     }
+
+    //     resolve({
+    //         designator: component.designator,
+    //         pins: component.pins,
+    //         value: component.value,
+    //         pos: component.pos,
+    //         part_uuid: device?.uuid ?? null,
+    //         footprint_name: device?.footprint?.name
+    //     });
+    // }));
+
+    // const components = await Promise.all(componentsPromises)
+
+    const lcscIds = [...new Set([...componentsMap.values()]
+        .map(component => component.code)
+        .filter((code): code is string => Boolean(code)))];
+
+    const devices = !options?.disableExtractPartUuid && lcscIds.length
+        ? await searchDevicesByCodes(lcscIds).catch(() => [])
+        : [];
+
+    const deviceByLcscId = new Map<string, SearchByCodesDevice>();
+    for (const device of devices) {
+        if (device.product_code && !deviceByLcscId.has(device.product_code)) {
+            deviceByLcscId.set(device.product_code, device);
         }
+    }
 
-        resolve({
+    const components: ExplainCircuit['components'] = [...componentsMap.values()].map(component => {
+        const device = component.code ? deviceByLcscId.get(component.code) : null;
+
+        return {
             designator: component.designator,
             pins: component.pins,
             value: component.value,
             pos: component.pos,
             part_uuid: device?.uuid ?? null,
-            footprint_name: device?.footprint?.name
-        });
-    }));
-
-    const components = await Promise.all(componentsPromises)
+            footprint_name: device?.footprint?.display_title
+                ?? device?.footprint?.title
+                ?? device?.attributes?.['Supplier Footprint']?.toString()
+                ?? component.footprint_name
+        };
+    });
 
     const explainCircuit: ExplainCircuit = { components };
 
