@@ -11,7 +11,6 @@ const pages = [
     { name: 'main', html: 'web/index.html' },
     { name: 'graph', html: 'web/graph.html' },
     { name: 'reused', html: 'web/reused.html' },
-    { name: 'mcp', html: 'web/mcp.html' },
 ];
 
 async function buildAll() {

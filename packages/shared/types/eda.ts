@@ -19,6 +19,12 @@ declare global {
                 pageId?: string;
                 isCurrentPage: boolean;
             }[]>;
+            read: (id: string) => Promise<{
+                _id: string;
+                timestamp: number;
+                pageId?: string;
+                content: string;
+            } | null>;
             hasCheckpoint: () => boolean;
         }
         simulationResult?: SimulateResult,

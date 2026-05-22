@@ -18,11 +18,14 @@ import extension from '../extension.json';
 import { getAsmCircuit, getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 import { searchComponentInSCH } from './eda/search';
+import { checkpointer } from './eda/checkpointer';
+import { connectMcp } from './mcp-client';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
 eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
+eda.checkpointer = checkpointer;
 
 export function activate(status?: 'onStartupFinished', arg?: string) { }
 
@@ -35,7 +38,7 @@ export async function openInterface() {
 }
 
 export async function openMcp() {
-	eda.sys_IFrame.openIFrame('/iframe/mcp.html', 360, 420);
+	connectMcp();
 }
 
 export async function importAsmCircuit() {

@@ -1,48 +1,24 @@
-import { assembleCircuit } from './eda/assemble-circuit';
+import { assembleCircuit } from './eda/assemble';
 import { checkpointer } from './eda/checkpointer';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
-
-export type McpConnectionState = 'disconnected' | 'connecting' | 'connected' | 'error';
-
-export type McpLog = {
-    timestamp: number;
-    event: string;
-    message: string;
-};
 
 type McpMessage = {
     event: string;
     body: string;
 };
 
-type StateListener = (state: McpConnectionState) => void;
-type LogListener = (log: McpLog) => void;
+const MCP_WS_ID = 'easyeda-copilot-mcp';
+const MCP_WS_URL = 'ws://127.0.0.1:8787';
 
-const WS_URL = 'ws://127.0.0.1:8787';
-
-let socket: WebSocket | undefined;
-let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-let shouldReconnect = true;
-const stateListeners = new Set<StateListener>();
-const logListeners = new Set<LogListener>();
-
-function emitState(state: McpConnectionState) {
-    for (const listener of stateListeners) listener(state);
-}
-
-function emitLog(event: string, message: string) {
-    for (const listener of logListeners) {
-        listener({ timestamp: Date.now(), event, message });
-    }
-}
+let isRegistered = false;
 
 function parseBody<T = Record<string, unknown>>(message: McpMessage): T {
     return message.body ? JSON.parse(message.body) as T : {} as T;
 }
 
 function send(event: string, body: Record<string, unknown>) {
-    socket?.send(JSON.stringify({
+    eda.sys_WebSocket.send(MCP_WS_ID, JSON.stringify({
         event,
         body: JSON.stringify(body),
     } satisfies McpMessage));
@@ -50,7 +26,7 @@ function send(event: string, body: Record<string, unknown>) {
 
 async function handleMessage(message: McpMessage) {
     if (message.event === 'connected') {
-        emitLog(message.event, 'MCP WebSocket connected');
+        eda.sys_Log.add('MCP WebSocket connected', ESYS_LogType.INFO);
         return;
     }
 
@@ -68,7 +44,7 @@ async function handleMessage(message: McpMessage) {
     };
 
     try {
-        emitLog(message.event, 'Handling event');
+        eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
 
         if (message.event === 'get-schematic') {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
@@ -98,6 +74,13 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'checkpoint-read') {
+            const checkpoint = await checkpointer.read(String(body.checkpointId));
+            if (!checkpoint) throw new Error('Checkpoint not found');
+            reply(true, checkpoint);
+            return;
+        }
+
         if (message.event === 'checkpoint-restore') {
             const restored = await checkpointer.restore(typeof body.checkpointId === 'string' ? body.checkpointId : undefined);
             reply(true, { restored });
@@ -106,61 +89,37 @@ async function handleMessage(message: McpMessage) {
 
         throw new Error(`Unknown MCP event: ${message.event}`);
     } catch (error) {
-        console.error(error)
-        emitLog(message.event, error instanceof Error ? error.message : String(error));
+        eda.sys_Log.add(`MCP event error: ${message.event}: ${(error as Error).message}`, ESYS_LogType.ERROR);
         reply(false, undefined, error);
     }
 }
 
 export function connectMcp() {
-    shouldReconnect = true;
-
-    if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+    if (isRegistered) {
+        eda.sys_WebSocket.register(MCP_WS_ID, MCP_WS_URL);
         return;
     }
 
-    emitState('connecting');
-    socket = new WebSocket(WS_URL);
-
-    socket.addEventListener('open', () => {
-        emitState('connected');
-        emitLog('open', WS_URL);
-    });
-
-    socket.addEventListener('message', event => {
-        try {
-            handleMessage(JSON.parse(String(event.data)) as McpMessage);
-        } catch (error) {
-            emitLog('message-error', error instanceof Error ? error.message : String(error));
+    isRegistered = true;
+    eda.sys_WebSocket.register(
+        MCP_WS_ID,
+        MCP_WS_URL,
+        async (event) => {
+            try {
+                const data = typeof event.data === 'string' ? event.data : String(event.data);
+                await handleMessage(JSON.parse(data) as McpMessage);
+            } catch (error) {
+                eda.sys_Log.add(`MCP message error: ${(error as Error).message}`, ESYS_LogType.ERROR);
+            }
+        },
+        () => {
+            eda.sys_Log.add(`MCP WebSocket opened: ${MCP_WS_URL}`, ESYS_LogType.INFO);
+            eda.sys_Message.showToastMessage('MCP connected', ESYS_ToastMessageType.SUCCESS);
         }
-    });
-
-    socket.addEventListener('close', () => {
-        emitState('disconnected');
-        emitLog('close', 'MCP WebSocket closed');
-        if (shouldReconnect) reconnectTimer = setTimeout(connectMcp, 1500);
-    });
-
-    socket.addEventListener('error', () => {
-        emitState('error');
-        emitLog('error', 'Failed to connect MCP WebSocket');
-    });
+    );
 }
 
 export function disconnectMcp() {
-    shouldReconnect = false;
-    if (reconnectTimer) clearTimeout(reconnectTimer);
-    socket?.close();
-    socket = undefined;
-    emitState('disconnected');
-}
-
-export function onMcpState(listener: StateListener) {
-    stateListeners.add(listener);
-    return () => stateListeners.delete(listener);
-}
-
-export function onMcpLog(listener: LogListener) {
-    logListeners.add(listener);
-    return () => logListeners.delete(listener);
+    eda.sys_WebSocket.close(MCP_WS_ID, 1000, 'Closed by EasyEDA Copilot');
+    isRegistered = false;
 }
