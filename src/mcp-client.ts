@@ -62,6 +62,7 @@ async function handleMessage(message: McpMessage) {
             const filterSchPage = (page: IDMT_SchematicPageItem) => {
                 return {
                     name: page.name,
+                    itemType: page.itemType,
                     uuid: page.uuid
                 }
             };
@@ -69,7 +70,9 @@ async function handleMessage(message: McpMessage) {
             const filterSch = (sch: IDMT_SchematicItem) => {
                 return {
                     name: sch.name,
-                    page: sch.page.map(filterSchPage)
+                    itemType: sch.itemType,
+                    page: sch.page.map(filterSchPage),
+                    uuid: sch.uuid
                 }
             };
 
@@ -78,13 +81,16 @@ async function handleMessage(message: McpMessage) {
 
                     project_data.push({
                         name: item.name,
-                        schematic: filterSch(item.schematic)
+                        itemType: item.itemType,
+                        schematic: filterSch(item.schematic),
                     })
                 }
                 else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
                     project_data.push({
                         name: item.name,
-                        page: filterSch(item).page
+                        itemType: item.itemType,
+                        page: filterSch(item).page,
+                        uuid: item.uuid
                     })
                 }
             }
