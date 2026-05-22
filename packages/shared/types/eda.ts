@@ -13,6 +13,12 @@ declare global {
         checkpointer?: {
             restore: (id?: string) => Promise<boolean>;
             save: (minor: boolean) => Promise<string | null>;
+            list: () => Promise<{
+                _id: string;
+                timestamp: number;
+                pageId?: string;
+                isCurrentPage: boolean;
+            }[]>;
             hasCheckpoint: () => boolean;
         }
         simulationResult?: SimulateResult,

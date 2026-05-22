@@ -121,9 +121,26 @@ async function restoreCheckpoint(id?: string) {
     }
 }
 
+async function listCheckpoints() {
+    const db = await checkpointsDb;
+    if (!db) return [];
+
+    const checkpoints = await db.checkpoints.find({}).catch(() => []) as Checkpoint[];
+    const currentPageId = await getCurrentPageId();
+    return checkpoints
+        .map(checkpoint => ({
+            _id: checkpoint._id,
+            timestamp: checkpoint.timestamp,
+            pageId: checkpoint.pageId,
+            isCurrentPage: !checkpoint.pageId || checkpoint.pageId === currentPageId,
+        }))
+        .sort((a, b) => b.timestamp - a.timestamp);
+}
+
 export const checkpointer = {
     restore: restoreCheckpoint,
     save: saveCheckpoint,
+    list: listCheckpoints,
     hasCheckpoint: () => !!lastCheckpoint
 }
 

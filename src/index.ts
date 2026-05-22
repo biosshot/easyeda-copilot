@@ -34,6 +34,10 @@ export async function openInterface() {
 	eda.sys_IFrame.openIFrame('/iframe/index.html', 520, 700);
 }
 
+export async function openMcp() {
+	eda.sys_IFrame.openIFrame('/iframe/mcp.html', 360, 420);
+}
+
 export async function importAsmCircuit() {
 	eda.sys_FileSystem.openReadFileDialog(undefined, false).then(async (file) => {
 		if (!file) return eda.sys_Message.showToastMessage("No file", ESYS_ToastMessageType.ERROR);

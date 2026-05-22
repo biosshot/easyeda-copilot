@@ -11,6 +11,7 @@ const pages = [
     { name: 'main', html: 'web/index.html' },
     { name: 'graph', html: 'web/graph.html' },
     { name: 'reused', html: 'web/reused.html' },
+    { name: 'mcp', html: 'web/mcp.html' },
 ];
 
 async function buildAll() {
@@ -26,7 +27,7 @@ async function buildAll() {
                 outDir: resolve(__dirname, 'iframe'),  // теперь __dirname определена
                 emptyOutDir: emptyDir,
                 sourcemap: false,
-                minify: "terser",
+                minify: false,
                 terserOptions: { format: { comments: false } },
                 rollupOptions: {
                     input: { [page.name]: resolve(__dirname, page.html) },

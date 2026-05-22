@@ -50,6 +50,11 @@
 						"registerFn": "openReused"
 					},
 					{
+						"id": "MCP",
+						"title": "MCP",
+						"registerFn": "openMcp"
+					},
+					{
 						"id": "Export",
 						"title": "Export",
 						"menuItems": [
