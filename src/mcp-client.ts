@@ -53,6 +53,63 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'get-current-project-info') {
+            const projectInfo = await eda.dmt_Project.getCurrentProjectInfo();
+            if (!projectInfo) throw new Error('Current project info not found');
+
+            const project_data = [];
+
+            const filterSchPage = (page: IDMT_SchematicPageItem) => {
+                return {
+                    name: page.name,
+                    uuid: page.uuid
+                }
+            };
+
+            const filterSch = (sch: IDMT_SchematicItem) => {
+                return {
+                    name: sch.name,
+                    page: sch.page.map(filterSchPage)
+                }
+            };
+
+            for (const item of projectInfo.data) {
+                if (item.itemType === EDMT_ItemType.BOARD) {
+
+                    project_data.push({
+                        name: item.name,
+                        schematic: filterSch(item.schematic)
+                    })
+                }
+                else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
+                    project_data.push({
+                        name: item.name,
+                        page: filterSch(item).page
+                    })
+                }
+            }
+
+            reply(true, {
+                data: project_data,
+                project_name: projectInfo.friendlyName,
+                description: projectInfo.description
+            });
+            return;
+        }
+
+        if (message.event === 'open-document') {
+            const documentUuid = body.documentUuid;
+            if (typeof documentUuid !== 'string' || !documentUuid) {
+                throw new Error('Missing documentUuid');
+            }
+
+            const tabId = await eda.dmt_EditorControl.openDocument(documentUuid);
+            if (!tabId) throw new Error(`Failed to open document: ${documentUuid}`);
+
+            reply(true, { tabId, documentUuid });
+            return;
+        }
+
         if (message.event === 'assemble-circuit') {
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');
