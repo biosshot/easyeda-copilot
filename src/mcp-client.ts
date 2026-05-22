@@ -116,6 +116,58 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'create-schematic') {
+            const boardName = typeof body.boardName === 'string' ? body.boardName : undefined;
+            const schematicUuid = await eda.dmt_Schematic.createSchematic(boardName);
+            if (!schematicUuid) throw new Error('Failed to create schematic');
+
+            reply(true, { schematicUuid });
+            return;
+        }
+
+        if (message.event === 'create-schematic-page') {
+            const schematicUuid = body.schematicUuid;
+            if (typeof schematicUuid !== 'string' || !schematicUuid) {
+                throw new Error('Missing schematicUuid');
+            }
+
+            const schematicPageUuid = await eda.dmt_Schematic.createSchematicPage(schematicUuid);
+            if (!schematicPageUuid) throw new Error(`Failed to create schematic page for schematic: ${schematicUuid}`);
+
+            reply(true, { schematicUuid, schematicPageUuid });
+            return;
+        }
+
+        if (message.event === 'modify-schematic-name') {
+            const schematicUuid = body.schematicUuid;
+            const schematicName = body.schematicName;
+            if (typeof schematicUuid !== 'string' || !schematicUuid) {
+                throw new Error('Missing schematicUuid');
+            }
+            if (typeof schematicName !== 'string' || !schematicName) {
+                throw new Error('Missing schematicName');
+            }
+
+            const success = await eda.dmt_Schematic.modifySchematicName(schematicUuid, schematicName);
+            reply(true, { success, schematicUuid, schematicName });
+            return;
+        }
+
+        if (message.event === 'modify-schematic-page-name') {
+            const schematicPageUuid = body.schematicPageUuid;
+            const schematicPageName = body.schematicPageName;
+            if (typeof schematicPageUuid !== 'string' || !schematicPageUuid) {
+                throw new Error('Missing schematicPageUuid');
+            }
+            if (typeof schematicPageName !== 'string' || !schematicPageName) {
+                throw new Error('Missing schematicPageName');
+            }
+
+            const success = await eda.dmt_Schematic.modifySchematicPageName(schematicPageUuid, schematicPageName);
+            reply(true, { success, schematicPageUuid, schematicPageName });
+            return;
+        }
+
         if (message.event === 'assemble-circuit') {
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');
