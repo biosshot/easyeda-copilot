@@ -85,8 +85,8 @@ export default function useChat() {
         icon: string;
         attachId: 'Selected circuit' | 'Block diagram';
     }[]>([
-        { value: true, showIfValue: false, label: 'Upload selected', icon: 'BoxSelect', attachId: 'Selected circuit' },
-        { value: false, showIfValue: false, label: 'Upload all', icon: 'BoxSelect', attachId: 'Selected circuit' },
+        { value: false, showIfValue: false, label: 'Upload selected', icon: 'BoxSelect', attachId: 'Selected circuit' },
+        { value: true, showIfValue: false, label: 'Upload all', icon: 'BoxSelect', attachId: 'Selected circuit' },
         { value: undefined, showIfValue: true, label: 'Block diagram', icon: 'Cuboid', attachId: 'Block diagram' },
     ]);
 
