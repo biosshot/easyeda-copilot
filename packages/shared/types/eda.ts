@@ -11,7 +11,7 @@ declare global {
         getSchematic?: (primitiveIds?: string[]) => Promise<ExplainCircuit>,
         getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
         checkpointer?: {
-            restore: (id?: string) => Promise<boolean>;
+            restore: (id?: string, allAgree?: boolean) => Promise<boolean>;
             save: (minor: boolean) => Promise<string | null>;
             list: () => Promise<{
                 _id: string;

@@ -68,7 +68,7 @@ import { formatFileSize } from '../../utils/file-size';
 import IconButton from '../shared/IconButton.vue';
 import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from '../../eda/utils';
-import { checkpointer } from '../../eda/checkpointer';
+const { checkpointer } = eda;
 
 const props = defineProps<{ msg: ChatMessage, idx: number, isFirstInGroup: boolean, isLastInGroup: boolean, firstInGroupIdx: number }>();
 const content = ref<typeof ChatMessageContent | null>(null);

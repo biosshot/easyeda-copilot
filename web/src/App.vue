@@ -57,9 +57,10 @@ import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
-import { checkpointer } from './eda/checkpointer';
 import { startRelay, stopRelay } from './api/relay';
 // import VoltageChart from './components/shared/VoltageChart.vue';
+
+const { checkpointer } = eda;
 
 const isOnlineMode = computed(() => isEasyEda() && (eda.sys_Environment.isOnlineMode() || eda.sys_Environment.isWeb()));
 

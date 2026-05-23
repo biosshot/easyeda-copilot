@@ -197,7 +197,7 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'checkpoint-restore') {
-            const restored = await checkpointer.restore(typeof body.checkpointId === 'string' ? body.checkpointId : undefined);
+            const restored = await checkpointer.restore(typeof body.checkpointId === 'string' ? body.checkpointId : undefined, true);
             reply(true, { restored });
             return;
         }

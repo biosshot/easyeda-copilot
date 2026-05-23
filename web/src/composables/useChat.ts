@@ -11,7 +11,7 @@ import { makeLLmSettings } from '../utils/llm-settings';
 import { FlowExportObject } from '@vue-flow/core';
 import { CircuitBlocks } from "@copilot/shared/types/circuit";
 import { parseFile, getAcceptString, AttachmentFile } from '../utils/file-parser';
-import { checkpointer } from '../eda/checkpointer';
+const { checkpointer } = eda;
 
 function transformFlowToBlocks(flowData: FlowExportObject): CircuitBlocks['blocks'] {
     const { nodes, edges } = flowData;
