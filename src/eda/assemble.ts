@@ -259,11 +259,11 @@ async function drawRect(blocksRect: CircuitAssembly['blocks_rect'], offset: Offs
     }
 }
 
-const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfirmationMessage>) => {
-    return new Promise<boolean>((resolve, reject) => {
-        eda.sys_Dialog.showConfirmationMessage(args[0], args[1], args[2], args[3], resolve);
-    })
-}
+// const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfirmationMessage>) => {
+//     return new Promise<boolean>((resolve, reject) => {
+//         eda.sys_Dialog.showConfirmationMessage(args[0], args[1], args[2], args[3], resolve);
+//     })
+// }
 
 async function calculateTargetPlace(root: { width: number, height: number }, componentsAllowReplace: ComponentToReplace[],
     rm_components?: string[], added_net?: AddedNet[]) {
@@ -539,7 +539,7 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     logTiming('Search free place', timeSearchPlace);
     eda.sys_Log.add(`Place at: ${JSON.stringify(offset)}`);
 
-    if (rm_components?.length && await confirmationMessage('The following components will be removed:\n' + rm_components.join(', '), 'Confirm deletion')) {
+    if (rm_components?.length) {
         const timeRemoveComp = Date.now();
         const addAddedNet = [];
         for (const designator of rm_components) {

@@ -70,7 +70,7 @@ const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfi
     })
 }
 
-async function restoreCheckpoint(id?: string) {
+async function restoreCheckpoint(id?: string, allAgree = false) {
     let checkpoint: Checkpoint | undefined;
 
     if (!id) {
@@ -91,8 +91,9 @@ async function restoreCheckpoint(id?: string) {
         return false;
     }
 
-    if (!await confirmationMessage('Are you sure you want to restore this checkpoint? Current changes may be lost.', 'Restore'))
-        return false;
+    if (!allAgree)
+        if (!await confirmationMessage('Are you sure you want to restore this checkpoint? Current changes may be lost.', 'Restore'))
+            return false;
 
     if (checkpoint === lastCheckpoint) {
         lastCheckpoint = undefined;
