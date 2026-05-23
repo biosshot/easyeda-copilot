@@ -104,9 +104,14 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     }
 
     // 1. Получаем нетлист как строку
-    const netlistText: string = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO);
-    const pinToSignal = parseAllegroNetlist(netlistText);
+    let netlistText = await eda.sch_ManufactureData.getNetlistFile(undefined, ESYS_NetlistType.ALLEGRO).then(file => file?.text()).catch(e => undefined);
+    if (!netlistText && typeof eda?.sch_Netlist?.getNetlist === 'function') netlistText = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO).catch(e => undefined);
 
+    if (!netlistText) {
+        eda.sys_Log.add("Failed export netlis", ESYS_LogType.FATAL_ERROR);
+        throw new Error('Failed export netlist')
+    }
+    const pinToSignal = parseAllegroNetlist(netlistText);
 
     if (!primitiveIds) {
         primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();

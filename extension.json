@@ -33,7 +33,6 @@
 	"entry": "./dist/index",
 	"dependentExtensions": [],
 	"headerMenus": {
-		"home": [],
 		"sch": [
 			{
 				"id": "Copilot",
@@ -89,6 +88,11 @@
 				"id": "Copilot",
 				"title": "Copilot",
 				"menuItems": [
+					{
+						"id": "MCP",
+						"title": "MCP",
+						"registerFn": "openMcp"
+					},
 					{
 						"id": "About",
 						"title": "About...",

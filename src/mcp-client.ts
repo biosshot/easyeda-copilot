@@ -192,7 +192,7 @@ async function handleMessage(message: McpMessage) {
         if (message.event === 'checkpoint-read') {
             const checkpoint = await checkpointer.read(String(body.checkpointId));
             if (!checkpoint) throw new Error('Checkpoint not found');
-            reply(true, checkpoint);
+            reply(true, { ...checkpoint, content: 'too big' });
             return;
         }
 
