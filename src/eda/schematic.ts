@@ -53,27 +53,22 @@ async function searchDevicesByCodes(codes: string[]) {
 
 // Вспомогательная функция: парсинг Allegro-нетлиста
 function parseAllegroNetlist(netlistText: string) {
-    netlistText = netlistText.replaceAll('\r', '').replaceAll('\n\n', '\n').replaceAll(" ,\n", " ");
+    netlistText = netlistText.replaceAll('\r', '').replaceAll('\n\n', '\n');
 
     const lines = netlistText.split('\n');
     const signalToPins = new Map<string, string[]>(); // 'VCC' => ['R1.1', 'C2.2', ...]
     let inNetsSection = false;
+    let currentNetLine = '';
 
-    for (const line of lines) {
-        const trimmed = line.trim();
-        if (trimmed === '$NETS') {
-            inNetsSection = true;
-            continue;
-        }
-        if (trimmed.startsWith('$') && trimmed !== '$NETS') {
-            inNetsSection = false;
-            continue;
-        }
-        if (!inNetsSection || !trimmed || trimmed.startsWith(';')) continue;
+    const normalizeLine = (line: string) => line
+        .replaceAll(',', ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 
-        // Пример строки: 'VCC_12V' ; H7.1 R7.1 R9.1
-        const match = trimmed.match(/^['"]?(.*?)['"]?\s*;\s*(.*)$/);
-        if (!match) continue;
+    const parseNetLine = (line: string) => {
+        // Example net line: 'VCC_12V' ; H7.1 R7.1 R9.1
+        const match = line.match(/^['"]?(.*?)['"]?\s*;\s*(.*)$/);
+        if (!match) return;
 
         const signalName = match[1].trim();
         const pinRefs = match[2]
@@ -82,6 +77,42 @@ function parseAllegroNetlist(netlistText: string) {
             .filter(Boolean);
 
         signalToPins.set(signalName, pinRefs);
+    };
+
+    for (const line of lines) {
+        const trimmed = normalizeLine(line);
+        if (trimmed === '$NETS') {
+            if (currentNetLine) {
+                parseNetLine(currentNetLine);
+                currentNetLine = '';
+            }
+            inNetsSection = true;
+            continue;
+        }
+        if (trimmed.startsWith('$') && trimmed !== '$NETS') {
+            if (currentNetLine) {
+                parseNetLine(currentNetLine);
+                currentNetLine = '';
+            }
+            inNetsSection = false;
+            continue;
+        }
+        if (!inNetsSection || !trimmed || trimmed.startsWith(';')) continue;
+
+        // Пример строки: 'VCC_12V' ; H7.1 R7.1 R9.1
+        if (trimmed.includes(';')) {
+            if (currentNetLine) parseNetLine(currentNetLine);
+            currentNetLine = trimmed;
+            continue;
+        }
+
+        if (currentNetLine) {
+            currentNetLine += ` ${trimmed}`;
+        }
+    }
+
+    if (currentNetLine) {
+        parseNetLine(currentNetLine);
     }
 
     // Обратный маппинг: "R1.1" => "VCC"
@@ -111,7 +142,9 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         eda.sys_Log.add("Failed export netlis", ESYS_LogType.FATAL_ERROR);
         throw new Error('Failed export netlist')
     }
+
     const pinToSignal = parseAllegroNetlist(netlistText);
+    eda.sys_Log.add('newtlist ' + JSON.stringify(Object.fromEntries(pinToSignal.entries())));
 
     if (!primitiveIds) {
         primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
