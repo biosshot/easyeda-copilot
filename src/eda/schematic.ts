@@ -52,7 +52,7 @@ async function searchDevicesByCodes(codes: string[]) {
 }
 
 // Вспомогательная функция: парсинг Allegro-нетлиста
-function parseAllegroNetlist(netlistText: string) {
+function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<string>) {
     netlistText = netlistText.replaceAll('\r', '').replaceAll('\n\n', '\n');
 
     const lines = netlistText.split('\n');
@@ -71,6 +71,8 @@ function parseAllegroNetlist(netlistText: string) {
         if (!match) return;
 
         const signalName = match[1].trim();
+        if (allowedSignalNames?.size && !allowedSignalNames.has(signalName)) return;
+
         const pinRefs = match[2]
             .split(/\s+/)
             .map(p => p.trim())
@@ -143,8 +145,16 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         throw new Error('Failed export netlist')
     }
 
-    const pinToSignal = parseAllegroNetlist(netlistText);
-    eda.sys_Log.add('newtlist ' + JSON.stringify(Object.fromEntries(pinToSignal.entries())));
+    const allWiresName = await eda.sch_PrimitiveWire.getAll()
+        .then(wires => wires
+            .map(wire => wire.getState_Net())
+            .filter((netName): netName is string => typeof netName === 'string' && netName.trim().length > 0)
+        )
+        .catch(() => []);
+    const currentPageSignalNames = new Set(allWiresName);
+
+    const pinToSignal = parseAllegroNetlist(netlistText, currentPageSignalNames);
+    eda.sys_Log.add('netlist ' + JSON.stringify(Object.fromEntries(pinToSignal.entries())));
 
     if (!primitiveIds) {
         primitiveIds = await eda.sch_SelectControl.getAllSelectedPrimitives_PrimitiveId();
