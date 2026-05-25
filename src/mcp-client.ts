@@ -118,10 +118,10 @@ async function handleMessage(message: McpMessage) {
 
         if (message.event === 'create-schematic') {
             const boardName = typeof body.boardName === 'string' ? body.boardName : undefined;
-            const schematicUuid = await eda.dmt_Schematic.createSchematic(boardName);
-            if (!schematicUuid) throw new Error('Failed to create schematic');
+            const schematicFirstPageUuid = await eda.dmt_Schematic.createSchematic(boardName);
+            if (!schematicFirstPageUuid) throw new Error('Failed to create schematic');
 
-            reply(true, { schematicUuid });
+            reply(true, { schematicFirstPageUuid });
             return;
         }
 
@@ -211,11 +211,16 @@ async function handleMessage(message: McpMessage) {
 
 export function connectMcp() {
     if (isRegistered) {
-        eda.sys_WebSocket.register(MCP_WS_ID, MCP_WS_URL);
+        disconnectMcp();
         return;
     }
 
-    isRegistered = true;
+    const t = setTimeout(() => {
+        eda.sys_Log.add(`Fail connect MCP WebSocket`, ESYS_LogType.ERROR);
+        eda.sys_Message.showToastMessage('Fail connect MCP WebSocket', ESYS_ToastMessageType.ERROR);
+        disconnectMcp();
+    }, 2000);
+
     eda.sys_WebSocket.register(
         MCP_WS_ID,
         MCP_WS_URL,
@@ -228,6 +233,8 @@ export function connectMcp() {
             }
         },
         () => {
+            isRegistered = true;
+            clearTimeout(t);
             eda.sys_Log.add(`MCP WebSocket opened: ${MCP_WS_URL}`, ESYS_LogType.INFO);
             eda.sys_Message.showToastMessage('MCP connected', ESYS_ToastMessageType.SUCCESS);
         }
@@ -235,6 +242,7 @@ export function connectMcp() {
 }
 
 export function disconnectMcp() {
+    eda.sys_Message.showToastMessage('MCP WebSocket closed', ESYS_ToastMessageType.SUCCESS);
     eda.sys_WebSocket.close(MCP_WS_ID, 1000, 'Closed by EasyEDA Copilot');
     isRegistered = false;
 }

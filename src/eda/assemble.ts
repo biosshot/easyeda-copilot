@@ -7,7 +7,7 @@ import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections
 import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
 import { AddedNet, ComponentToReplace, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
-import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout } from "./utils";
+import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
 import PQueue from 'p-queue';
 
 const assembleQueue = new PQueue({ concurrency: 1 });
@@ -230,7 +230,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
             }
 
-            await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+            await yieldToEventLoop();
         }
     }
 
@@ -380,6 +380,20 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         const totalElapsed = Date.now() - startTimeTotal;
         eda.sys_Log.add(`Time for ${label}: ${duration}ms (total: ${totalElapsed}ms)`, ESYS_LogType.INFO);
     };
+    const runStep = async <T>(label: string, fn: () => Promise<T>) => {
+        const startedAt = Date.now();
+        eda.sys_Log.add(`Assemble step start: ${label}`, ESYS_LogType.INFO);
+
+        try {
+            const result = await fn();
+            logTiming(label, startedAt);
+            eda.sys_Log.add(`Assemble step done: ${label}`, ESYS_LogType.INFO);
+            return result;
+        } catch (error) {
+            eda.sys_Log.add(`Assemble step error: ${label}: ${(error as Error).message}`, ESYS_LogType.ERROR);
+            throw error;
+        }
+    };
 
     eda.sys_Message.showToastMessage(`Assemble circuit...`, ESYS_ToastMessageType.INFO);
     eda.sys_Log.add(`Assemble circuit...`);
@@ -400,13 +414,13 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         }
     }
 
-    const timeCheckpoint = Date.now();
-    if (eda.checkpointer) await eda.checkpointer.save(true);
-    else {
-        eda.sys_Log.add(`Checkpointer is null`);
-        eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
-    }
-    logTiming('Checkpoint save', timeCheckpoint);
+    await runStep('Checkpoint save', async () => {
+        if (eda.checkpointer) await eda.checkpointer.save(true);
+        else {
+            eda.sys_Log.add(`Checkpointer is null`);
+            eda.sys_Message.showToastMessage(`Checkpointer is null`, ESYS_ToastMessageType.INFO);
+        }
+    });
 
     let { components, rm_components, edges, added_net } = circuit;
 
@@ -415,105 +429,105 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     let schematic: ExplainCircuit | undefined;
 
     if (circuit.replace_components) {
-        const timeReplace = Date.now();
-        // @ts-ignore
-        const tasks = circuit.replace_components.map(async designator => {
-            designator = rmPartFromDesignator(designator);
-            const componentsToRep = components.filter(c => rmPartFromDesignator(c.designator) === designator).filter(c => c.part_uuid);
+        await runStep('Prepare components for replacement', async () => {
+            // @ts-ignore
+            const tasks = circuit.replace_components.map(async designator => {
+                designator = rmPartFromDesignator(designator);
+                const componentsToRep = components.filter(c => rmPartFromDesignator(c.designator) === designator).filter(c => c.part_uuid);
 
-            if (!componentsToRep.length) {
-                eda.sys_Log.add(`Replace not allow: "${designator}" not found in components: ${components.map(c => c.designator)}`)
-                return;
-            }
-
-            const primitives = await searchComponentInSCH(designator);
-            if (!primitives || !primitives?.length) {
-                eda.sys_Log.add(`Replace not allow: "${designator}" primitve not found`)
-                return;
-            }
-
-            for (const component of componentsToRep) {
-                if (!component.part_uuid) {
-                    eda.sys_Log.add(`Replace not allow: "${designator}" not found part_uuid`)
+                if (!componentsToRep.length) {
+                    eda.sys_Log.add(`Replace not allow: "${designator}" not found in components: ${components.map(c => c.designator)}`)
                     return;
                 }
 
-                let primitive;
-
-                if (primitives.length > 1) {
-                    const id = component.sub_part_name?.split('.').at(-1);
-                    primitive = primitives.find(primitive => {
-                        const oldid = primitive.component.getState_SubPartName()?.split('.').at(-1);
-                        return id && oldid && id === oldid;
-                    })
-                }
-                else primitive = primitives[0];
-
-                if (!primitive) {
-                    eda.sys_Log.add(`Not found part: "${designator}" ${component.sub_part_name}`)
+                const primitives = await searchComponentInSCH(designator);
+                if (!primitives || !primitives?.length) {
+                    eda.sys_Log.add(`Replace not allow: "${designator}" primitve not found`)
                     return;
                 }
 
-                const replacer = await ComponentReplacer(primitive.primitiveId, primitive.component, component);
+                for (const component of componentsToRep) {
+                    if (!component.part_uuid) {
+                        eda.sys_Log.add(`Replace not allow: "${designator}" not found part_uuid`)
+                        return;
+                    }
 
-                const { cause, isAllow } = replacer.isAllow();
+                    let primitive;
 
-                if (!isAllow) {
-                    const msg = `Not allow replace componet "${designator}": ` + cause;
-                    eda.sys_Log.add(msg);
-                    eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.WARNING);
-                    return;
+                    if (primitives.length > 1) {
+                        const id = component.sub_part_name?.split('.').at(-1);
+                        primitive = primitives.find(primitive => {
+                            const oldid = primitive.component.getState_SubPartName()?.split('.').at(-1);
+                            return id && oldid && id === oldid;
+                        })
+                    }
+                    else primitive = primitives[0];
+
+                    if (!primitive) {
+                        eda.sys_Log.add(`Not found part: "${designator}" ${component.sub_part_name}`)
+                        return;
+                    }
+
+                    const replacer = await ComponentReplacer(primitive.primitiveId, primitive.component, component);
+
+                    const { cause, isAllow } = replacer.isAllow();
+
+                    if (!isAllow) {
+                        const msg = `Not allow replace componet "${designator}": ` + cause;
+                        eda.sys_Log.add(msg);
+                        eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.WARNING);
+                        return;
+                    }
+
+                    componentsAllowReplace.push({ component, replacer });
                 }
+            });
 
-                componentsAllowReplace.push({ component, replacer });
-            }
+            await Promise.all(tasks);
         });
-
-        await Promise.all(tasks);
-        logTiming('Prepare components for replacement', timeReplace);
     }
 
     if (componentsAllowReplace.length) {
-        const timeReplaceExecute = Date.now();
-        const tasks = componentsAllowReplace.map(async ({ component, replacer }) => {
-            if (!component.part_uuid) return;
-            const primitive = replacer.getOldPrimitive();
-            if (!primitive) return;
-            const designator = rmPartFromDesignator(component.designator);
+        await runStep('Execute component replacement', async () => {
+            const tasks = componentsAllowReplace.map(async ({ component, replacer }) => {
+                if (!component.part_uuid) return;
+                const primitive = replacer.getOldPrimitive();
+                if (!primitive) return;
+                const designator = rmPartFromDesignator(component.designator);
 
-            try {
-                await replacer.replace();
-                eda.sys_Log.add(`Replace ok: "${designator}"`);
+                try {
+                    await replacer.replace();
+                    eda.sys_Log.add(`Replace ok: "${designator}"`);
 
-                components = components.filter(c => rmPartFromDesignator(c.designator) !== designator);
-                rm_components = rm_components!.filter(rmdesignator => rmPartFromDesignator(rmdesignator) !== designator);
-                // @ts-ignore
-                const pattern = new RegExp(`${RegExp.escape(designator)}[_.]`);
-                edges = edges.filter(e => !e.sections?.some(s =>
-                    pattern.test(s.incomingShape ?? '') || pattern.test(s.outgoingShape ?? '')
-                ))
+                    components = components.filter(c => rmPartFromDesignator(c.designator) !== designator);
+                    rm_components = rm_components!.filter(rmdesignator => rmPartFromDesignator(rmdesignator) !== designator);
+                    // @ts-ignore
+                    const pattern = new RegExp(`${RegExp.escape(designator)}[_.]`);
+                    edges = edges.filter(e => !e.sections?.some(s =>
+                        pattern.test(s.incomingShape ?? '') || pattern.test(s.outgoingShape ?? '')
+                    ))
 
-                if (!added_net) added_net = [];
+                    if (!added_net) added_net = [];
 
-                for (const pin of component.pins) {
-                    if (!pin.signal_name) continue;
-                    added_net.push({
-                        designator,
-                        net: pin.signal_name,
-                        pin_number: pin.pin_number
-                    })
+                    for (const pin of component.pins) {
+                        if (!pin.signal_name) continue;
+                        added_net.push({
+                            designator,
+                            net: pin.signal_name,
+                            pin_number: pin.pin_number
+                        })
+                    }
+                } catch (error) {
+                    const msg = `Failed replace componet "${designator}": ` + (error as Error).message;
+                    eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.WARNING);
+                    eda.sys_Log.add(msg);
                 }
-            } catch (error) {
-                const msg = `Failed replace componet "${designator}": ` + (error as Error).message;
-                eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.WARNING);
-                eda.sys_Log.add(msg);
-            }
-        });
+            });
 
-        eda.sys_Log.add('Replace start...')
-        await Promise.all(tasks);
-        eda.sys_Log.add('Replace done')
-        logTiming('Execute component replacement', timeReplaceExecute);
+            eda.sys_Log.add('Replace start...')
+            await Promise.all(tasks);
+            eda.sys_Log.add('Replace done')
+        });
 
         components = components.filter(component => {
             const designator = rmPartFromDesignator(component.designator);
@@ -530,69 +544,53 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
         added_net = added_net?.filter(an => components.some(c => c.pins.some(p => p.signal_name === an.net)));
     }
 
-    const timeCalcPlace = Date.now();
-    const placeTarget = await calculateTargetPlace(root, componentsAllowReplace, rm_components, added_net);
-    logTiming('Calculate target place', timeCalcPlace);
+    const placeTarget = await runStep('Calculate target place', () => calculateTargetPlace(root, componentsAllowReplace, rm_components, added_net));
 
-    const timeSearchPlace = Date.now();
-    const offset = await searchFreePlaceV2(placeTarget, { w: root.width, h: root.height })
-    logTiming('Search free place', timeSearchPlace);
+    const offset = await runStep('Search free place', () => searchFreePlaceV2(placeTarget, { w: root.width, h: root.height }));
     eda.sys_Log.add(`Place at: ${JSON.stringify(offset)}`);
 
     if (rm_components?.length) {
-        const timeRemoveComp = Date.now();
-        const addAddedNet = [];
-        for (const designator of rm_components) {
-            const added = await removeComponent(designator, schematic).catch(e => {
-                const msg = `Error with rm component ${designator}: ${(e as Error).message}; ${(e as Error).stack}`;
-                eda.sys_Log.add(msg);
-                eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
-                return [];
-            });
+        await runStep('Remove components', async () => {
+            const addAddedNet = [];
+            for (const designator of rm_components!) {
+                const added = await removeComponent(designator, schematic).catch(e => {
+                    const msg = `Error with rm component ${designator}: ${(e as Error).message}; ${(e as Error).stack}`;
+                    eda.sys_Log.add(msg);
+                    eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
+                    return [];
+                });
 
-            addAddedNet.push(...added);
-        }
+                addAddedNet.push(...added);
+            }
 
-        if (!added_net) added_net = addAddedNet;
-        else added_net = [...added_net, ...addAddedNet];
-        logTiming('Remove components', timeRemoveComp);
+            if (!added_net) added_net = addAddedNet;
+            else added_net = [...added_net, ...addAddedNet];
+        });
     }
 
-    const timePlace = Date.now();
-    const placedComp = await placeComponents(components, offset);
-    logTiming('Place components', timePlace);
+    const placedComp = await runStep('Place components', () => placeComponents(components, offset));
 
-    const timeDrawEdges = Date.now();
-    await drawEdges(edges, components, placedComp, offset);
-    logTiming('Draw edges', timeDrawEdges);
+    await runStep('Draw edges', () => drawEdges(edges, components, placedComp, offset));
 
     if (circuit.assembly_options?.draw_blocks) {
-        const timeDrawRect = Date.now();
-        await drawRect(circuit.blocks_rect, offset);
-        logTiming('Draw rectangles', timeDrawRect);
+        await runStep('Draw rectangles', () => drawRect(circuit.blocks_rect, offset));
     }
 
-    const timenNetForUnusedPins = Date.now();
-    const netForUnusedPins = getNetForUnusedPins(components, edges, placedComp);
-    logTiming('Get net for unused', timenNetForUnusedPins);
+    const netForUnusedPins = await runStep('Get net for unused', async () => getNetForUnusedPins(components, edges, placedComp));
 
-    const timeForTimeout = Date.now();
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, 300));
-    logTiming('Timeout', timeForTimeout);
+    await runStep('Pre-net settle', yieldToEventLoop);
 
-    const timeRmNet = Date.now();
-    const needAddNet = await rmNet(circuit.rm_net ?? [], placedComp);
-    logTiming('Remove nets', timeRmNet);
+    const needAddNet = await runStep('Remove nets', () => rmNet(circuit.rm_net ?? [], placedComp));
 
     if (!added_net) added_net = needAddNet;
     else added_net = [...added_net, ...needAddNet];
 
-    const timePlaceNet = Date.now();
-    await placeNet(added_net ?? [], placedComp, true);
-    await placeNet(netForUnusedPins, placedComp, true);
-    logTiming('Place nets', timePlaceNet);
+    await runStep('Place nets', async () => {
+        await placeNet(added_net ?? [], placedComp, true);
+        await placeNet(netForUnusedPins, placedComp, true);
+    });
 
-    await new Promise<void>((resolve, reject) => setTimeout(resolve, 300));
+    await runStep('Post-net settle', yieldToEventLoop);
 
     const totalDuration = Date.now() - startTimeTotal;
     eda.sys_Message.showToastMessage(`Assemble complete.`, ESYS_ToastMessageType.SUCCESS);

@@ -126,3 +126,7 @@ export function getPrimitiveById(primitiveId: string | string[]) {
     else
         return eda.sch_PrimitiveComponent.get(primitiveId).then(r => Array.isArray(r) ? r[0] : r);
 }
+
+export async function yieldToEventLoop() {
+    await Promise.resolve();
+}
