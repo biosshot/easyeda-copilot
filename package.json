@@ -60,6 +60,7 @@
 	"workspaces": [
 		"src",
 		"web",
+		"mcp",
 		"packages/shared"
 	]
 }
