@@ -1,8 +1,12 @@
 {
   "name": "easyeda-copilot-mcp",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "MCP server for EasyEDA Copilot",
   "type": "module",
+  "repository": {
+    "url": "https://github.com/biosshot/easyeda-copilot",
+    "type": "git"
+  },
   "bin": {
     "easyeda-copilot-mcp": "./dist/index.js"
   },

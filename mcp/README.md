@@ -1,26 +1,58 @@
 # easyeda-copilot-mcp
 
-MCP server package for EasyEDA Copilot. This package lives inside the EasyEDA Copilot repository, but is published and run as a separate npm binary.
+MCP server for EasyEDA Copilot.
+
+## Usage
+
+1. Open a schematic in EasyEDA Pro.
+2. Open the EasyEDA Copilot extension and start the MCP interface.
+3. Connect your MCP client.
 
 ## Build
 
 ```bash
+git clone https://github.com/biosshot/easyeda-copilot
+cd easyeda-copilot/mcp
 npm install
 npm run build
 ```
 
-The compiled MCP server is emitted to `dist/index.js`.
+## MCP config with npx
 
-## Run
+Codex:
 
 ```bash
-npm start
+codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
 ```
 
-When installed as a package, the executable name is `easyeda-copilot-mcp`.
-
-## npx
+Claude Code:
 
 ```bash
-npx easyeda-copilot-mcp
+claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+```
+
+Generic MCP config:
+
+```json
+{
+  "mcpServers": {
+    "easyeda-copilot": {
+      "command": "npx",
+      "args": ["-y", "easyeda-copilot-mcp"]
+    }
+  }
+}
+```
+
+## MCP config with node
+
+```json
+{
+  "mcpServers": {
+    "easyeda-copilot": {
+      "command": "node",
+      "args": ["/absolute/path/to/easyeda-copilot/mcp/dist/index.js"]
+    }
+  }
+}
 ```
