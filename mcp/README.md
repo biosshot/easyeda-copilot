@@ -4,9 +4,10 @@ MCP server for EasyEDA Copilot.
 
 ## Usage
 
-1. Open a schematic in EasyEDA Pro.
-2. Open the EasyEDA Copilot extension and start the MCP interface.
-3. Connect your MCP client.
+1. Add this MCP server to your agent.
+2. Start Codex, Claude Code, or another MCP client with this MCP server enabled.
+3. Open a schematic in EasyEDA Pro.
+4. Open the EasyEDA Copilot extension and start the MCP interface.
 
 ## Build
 

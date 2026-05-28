@@ -99,6 +99,31 @@ Always verify the SPICE models used for replacement components. The selected mod
   <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/spice.gif" alt="SPICE simulation">
 </p>
 
+## MCP server
+
+EasyEDA Copilot can connect to external MCP clients. Start the MCP server from your agent first, then connect EasyEDA to it.
+
+Codex:
+
+```bash
+codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+```
+
+Claude Code:
+
+```bash
+claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+```
+
+Startup order:
+
+1. Add the MCP server to your agent.
+2. Start Codex, Claude Code, or another MCP client with this MCP server enabled.
+3. Open a schematic in EasyEDA Pro.
+4. Open the EasyEDA Copilot extension and start the MCP interface.
+
+See [MCP package README](mcp/README.md)
+
 ## Documentation
 
 - [Settings](docs/settings.md)

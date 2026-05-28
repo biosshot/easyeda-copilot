@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "MCP server for EasyEDA Copilot",
   "type": "module",
+  "license": "MIT",
   "repository": {
     "url": "https://github.com/biosshot/easyeda-copilot",
     "type": "git"

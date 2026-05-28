@@ -56,7 +56,11 @@ function sendWs(socket: WebSocket, message: WsMessage) {
 async function requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120000) {
     const client = [...wsClients].at(-1);
     if (!client) {
-        throw new Error('EasyEDA MCP interface is not connected. Open Copilot -> MCP first.');
+        throw new Error(`EasyEDA MCP interface is not connected.
+1. Open EasyEda Pro
+2. Open any schematic
+3. Copilot -> MCP
+4. Ensure the connection is successful`);
     }
 
     const id = randomUUID();
