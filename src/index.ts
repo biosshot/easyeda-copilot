@@ -19,7 +19,7 @@ import { getAsmCircuit, getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 import { searchComponentInSCH } from './eda/search';
 import { checkpointer } from './eda/checkpointer';
-import { connectMcp } from './mcp-client';
+import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
 
 eda.assembleCircuit = assembleCircuit;
 eda.getSchematic = getSchematic;
@@ -27,7 +27,11 @@ eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
 eda.checkpointer = checkpointer;
 
-export function activate(status?: 'onStartupFinished', arg?: string) { }
+startMcpScanOnStartup();
+
+export function activate(status?: 'onStartupFinished', arg?: string) {
+	startMcpScanOnStartup();
+}
 
 export async function about() {
 	eda.sys_Dialog.showInformationMessage(`${extension.displayName} Extension\nVersion ${extension.version}\n\nRepository ${extension.repository.url}\n\nDeveloped by ${extension.publisher}`);
@@ -38,7 +42,7 @@ export async function openInterface() {
 }
 
 export async function openMcp() {
-	connectMcp();
+	toggleMcpScan();
 }
 
 export async function importAsmCircuit() {

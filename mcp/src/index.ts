@@ -29,8 +29,13 @@ type PendingRequest = {
 
 const wsClients = new Set<WebSocket>();
 const pendingRequests = new Map<string, PendingRequest>();
+let wsServerReady = false;
 
 function handleWsMessage(message: WsMessage) {
+    if (message.event === 'ping') {
+        return;
+    }
+
     const parsedBody = message.body ? JSON.parse(message.body) : {};
     const id = parsedBody?.id;
     if (!id || typeof id !== 'string') return;
@@ -54,6 +59,11 @@ function sendWs(socket: WebSocket, message: WsMessage) {
 }
 
 async function requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120000) {
+    if (!wsServerReady) {
+        throw new Error(`EasyEDA MCP WebSocket server is not available on ${MCP_WS_HOST}:${MCP_WS_PORT}.
+Another easyeda-copilot-mcp process may already be using this port.`);
+    }
+
     const client = [...wsClients].at(-1);
     if (!client) {
         throw new Error(`EasyEDA MCP interface is not connected.
@@ -96,7 +106,17 @@ function startWsServer() {
 
         socket.on('message', data => {
             const raw = typeof data === 'string' ? data : data.toString();
-            handleWsMessage(JSON.parse(raw) as WsMessage);
+            const message = JSON.parse(raw) as WsMessage;
+
+            if (message.event === 'ping') {
+                sendWs(socket, {
+                    event: 'pong',
+                    body: message.body || JSON.stringify({ ok: true }),
+                });
+                return;
+            }
+
+            handleWsMessage(message);
         });
 
         socket.on('close', () => wsClients.delete(socket));
@@ -104,7 +124,18 @@ function startWsServer() {
     });
 
     wsServer.on('listening', () => {
+        wsServerReady = true;
         // console.error(`EasyEDA Copilot MCP WebSocket listening on ws://${MCP_WS_HOST}:${MCP_WS_PORT}`);
+    });
+
+    wsServer.on('error', (error: NodeJS.ErrnoException) => {
+        wsServerReady = false;
+        if (error.code === 'EADDRINUSE') {
+            // Keep the MCP stdio server alive. Only the EasyEDA bridge is unavailable for this process.
+            return;
+        }
+
+        throw error;
     });
 }
 
