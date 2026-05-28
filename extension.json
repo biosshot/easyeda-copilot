@@ -33,7 +33,6 @@
 	"entry": "./dist/index",
 	"dependentExtensions": [],
 	"headerMenus": {
-		"home": [],
 		"sch": [
 			{
 				"id": "Copilot",
@@ -48,6 +47,11 @@
 						"id": "Reused",
 						"title": "Reused blocks",
 						"registerFn": "openReused"
+					},
+					{
+						"id": "MCP",
+						"title": "MCP",
+						"registerFn": "openMcp"
 					},
 					{
 						"id": "Export",
@@ -84,6 +88,11 @@
 				"id": "Copilot",
 				"title": "Copilot",
 				"menuItems": [
+					{
+						"id": "MCP",
+						"title": "MCP",
+						"registerFn": "openMcp"
+					},
 					{
 						"id": "About",
 						"title": "About...",

@@ -42,6 +42,31 @@ In EasyEDA Pro:
 3. Select the downloaded `.eext` file.
 4. Enable `External Interactions`.
 5. Open a schematic and use `Copilot -> Interface`.
+   
+## MCP server
+
+EasyEDA Copilot can connect to external MCP clients. The extension scans `ws://127.0.0.1:8787` every 5 seconds and connects when your MCP server is available. The `Copilot -> MCP` menu item pauses or resumes this scan.
+
+Codex:
+
+```bash
+codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+```
+
+Claude Code:
+
+```bash
+claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+```
+
+Recommended order:
+
+1. Add the MCP server to your agent.
+2. Start Codex, Claude Code, or another MCP client with this MCP server enabled.
+3. Open a schematic in EasyEDA Pro.
+4. EasyEDA Copilot will connect automatically. Use `Copilot -> MCP` only to pause or resume scanning.
+
+See [MCP package README](mcp/README.md)
 
 ## Compatibility
 

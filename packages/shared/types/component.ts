@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { LCSC_uuid } from "./lcsc";
 
-
 export const ComponentStruct = () => z.object({
     pins: z.array(
         z.object({

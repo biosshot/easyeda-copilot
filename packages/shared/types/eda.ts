@@ -11,8 +11,20 @@ declare global {
         getSchematic?: (primitiveIds?: string[]) => Promise<ExplainCircuit>,
         getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
         checkpointer?: {
-            restore: (id?: string) => Promise<boolean>;
+            restore: (id?: string, allAgree?: boolean) => Promise<boolean>;
             save: (minor: boolean) => Promise<string | null>;
+            list: () => Promise<{
+                _id: string;
+                timestamp: number;
+                pageId?: string;
+                isCurrentPage: boolean;
+            }[]>;
+            read: (id: string) => Promise<{
+                _id: string;
+                timestamp: number;
+                pageId?: string;
+                content: string;
+            } | null>;
             hasCheckpoint: () => boolean;
         }
         simulationResult?: SimulateResult,

@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { LCSC_uuid } from "./lcsc";
-import { ReusedTags, ReusedCategory } from "./reused";
+import { ReusedCategory, ReusedTags } from "./reused";
 
-const PinSchema = () => z.object({
-    pin_number: z.number().or(z.string()).describe('Pin number.'),
+export const PinSchema = () => z.object({
+    pin_number: z.union([z.number(), z.string()]).describe('Pin number.'),
     name: z.string().describe('Pin name (e.g., "VCC").'),
     signal_name: z.string().describe('The name of the signal the pin is connected to. (Name only). The signal name assigned to the pin must be identical to the signal name of the target output.'),
 });
@@ -15,6 +15,18 @@ export const BaseComponentSchema = () => z.object({
     block_name: z.string().describe('Reference to the block.'),
     search_query: z.string().describe('A component search question. For example: "1k 1W smd resistor", "LM358", "2-pin power connector"'),
     part_uuid: LCSC_uuid().nullable().describe("If you know the part_uuid of the lcsc component, be sure to fill in this field; otherwise, fill in null.")
+});
+
+export const CircuitReusedBlockSchema = () => z.object({
+    block_uuid: z.string(),
+    parameters_to_recalc: z.array(z.object({
+        name: z.string(),
+        new_value: z.number()
+    })).describe("Parameters that will be recalculated to suit your needs"),
+    ports: z.array(z.object({
+        port_number: z.string().or(z.number()).describe("Port number"),
+        signal_name: z.string().describe("Port signal_name"),
+    }))
 });
 
 export const ComponentAsmSchema = () => BaseComponentSchema().extend({
@@ -45,14 +57,15 @@ const MetadataSchema = () => z.object({
 });
 
 export const CircuitStruct = () => z.object({
-    metadata: MetadataSchema().describe('Metadata'),
-    blocks: z.array(BlockSchema()).describe('Blocks'),
-    components: z.array(BaseComponentSchema()).describe('Components'),
+    metadata: (MetadataSchema().describe('Metadata')),
+    blocks: (z.array(BlockSchema()).describe('Blocks')),
+    components: (z.array(BaseComponentSchema()).describe('Components')),
+    reused_blocks: (z.array(CircuitReusedBlockSchema()).describe('reuded blocks'))
 });
 
 export const CircuitBlocksStruct = () => z.object({
-    metadata: MetadataSchema().describe('Metadata'),
-    blocks: z.array(BlockSchema()).describe('Blocks'),
+    metadata: (MetadataSchema().describe('Metadata')),
+    blocks: (z.array(BlockSchema()).describe('Blocks')),
 });
 
 export const CircuitWithoutBlocksStruct = () => z.object({
@@ -88,7 +101,7 @@ export const CircuitAssemblyStruct = () => z.object({
             outgoingShape: z.string().optional(),
             incomingSections: z.array(z.string()).optional(),
             outgoingSections: z.array(z.string()).optional(),
-        })).optional(),
+        })),
     })),
     blocks: z.array(BlockSchema()).describe('Blocks'),
     blocks_rect: z.array(z.object({
@@ -105,7 +118,7 @@ export const CircuitAssemblyStruct = () => z.object({
     }).optional(),
     added_net: z.array(z.object({
         designator: z.string(),
-        pin_number: z.number().or(z.string()),
+        pin_number: z.union([z.number(), z.string()]),
         net: z.string(),
     })).optional(),
     rm_net: z.array(z.object({
@@ -118,12 +131,12 @@ export const CircuitAssemblyStruct = () => z.object({
 });
 
 const ExplainPinSchema = () => z.object({
-    pin_number: z.number().or(z.string()).describe('Pin number.'),
+    pin_number: z.union([z.number(), z.string()]).describe('Pin number.'),
     name: z.string().describe('Pin name (e.g., "VCC").'),
     signal_name: z.string().describe('The name of the signal the pin is connected to. (Name only). The signal name assigned to the pin must be identical to the signal name of the target output.'),
 });
 
-const ExplainComponentSchema = () => z.object({
+export const ExplainComponentSchema = () => z.object({
     designator: z.string().describe('Component identifier (e.g., "U1", "R5", "J1", "X1").'),
     value: z.string().describe('Minimum description: for simple components — only the nominal value; for microcircuits — only the name. Only ASCII symbols (e.g., "LM358", "10nF", "100k").'),
     pins: z.array(ExplainPinSchema()).describe('Pin details.'),
@@ -141,11 +154,21 @@ export const ExplainCircuitStruct = () => z.object({
     components: z.array(ExplainComponentSchema()).describe('Components'),
 });
 
-export const DiagnosticAlgoritm = () => z.object({});
-
 export const CircuitModStruct = () => z.object({
-    add_components: z.array(BaseComponentSchema()).describe('Components to add'),
-    rm_components: z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit')
+    add_components: (z.array(BaseComponentSchema().omit({ part_uuid: true }).extend({
+        part_uuid: LCSC_uuid().describe("part_uuid of the lcsc component")
+    })).describe('Components to add')),
+    add_reused_blocks: (z.array(CircuitReusedBlockSchema()).describe('reuded blocks to add')),
+    rm_components: ((z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit'))),
+    external_rm_connect: ((z.array(z.object({
+        designator: z.string().describe('Target component designator'),
+        pin_number: z.union([z.number(), z.string()]).describe('Target component pin number'),
+    })).nullable())).describe('Use only if you need to remove/break the connection from an external component\'s pin. Remember to remove external_rm_connect first and then add external_connect.'),
+    external_connect: ((z.array(z.object({
+        designator: z.string().describe('Target component designator'),
+        pin_number: z.union([z.number(), z.string()]).describe('Target component pin number'),
+        signal_name: z.string().describe('Signal name'),
+    })).nullable())).describe('Use only when you need to connect to a pin of an external component that you have not modified and that does not have a signal_name')
 });
 
 export type CircuitMod = z.infer<ReturnType<typeof CircuitModStruct>>;
