@@ -1,4 +1,5 @@
 import { assembleCircuit } from './eda/assemble';
+import { assembleBoard } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
@@ -252,6 +253,16 @@ async function handleMessage(message: McpMessage) {
 
             await checkpointer.save(false);
             await assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0]);
+            reply(true, { assembled: true });
+            return;
+        }
+
+        if (message.event === 'assemble-board') {
+            const board = body.boardAssemble ?? body.board ?? body.pcb_board_assemble;
+            if (!board) throw new Error('Missing board assemble payload in assemble-board body');
+
+            await checkpointer.save(false);
+            await assembleBoard(board as Parameters<typeof assembleBoard>[0]);
             reply(true, { assembled: true });
             return;
         }

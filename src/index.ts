@@ -14,6 +14,7 @@
  * https://prodocs.lceda.cn/cn/api/guide/
  */
 import { assembleCircuit } from './eda/assemble';
+import { assembleBoard } from './eda/pcb-assemble';
 import extension from '../extension.json';
 import { getAsmCircuit, getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
@@ -22,6 +23,7 @@ import { checkpointer } from './eda/checkpointer';
 import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
 
 eda.assembleCircuit = assembleCircuit;
+eda.assembleBoard = assembleBoard;
 eda.getSchematic = getSchematic;
 eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
@@ -51,6 +53,15 @@ export async function importAsmCircuit() {
 		const text = await file.text();
 		const json = JSON.parse(text);
 		assembleCircuit(json);
+	});
+}
+
+export async function importAsmBoard() {
+	eda.sys_FileSystem.openReadFileDialog(undefined, false).then(async (file) => {
+		if (!file) return eda.sys_Message.showToastMessage("No file", ESYS_ToastMessageType.ERROR);
+		const text = await file.text();
+		const json = JSON.parse(text);
+		assembleBoard(json);
 	});
 }
 

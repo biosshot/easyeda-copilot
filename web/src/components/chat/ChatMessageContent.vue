@@ -17,6 +17,9 @@
                         @inline-buttons="emit('inline-buttons', { buttons: $event, idx })" />
                     <PdfFileViewer v-else-if="parsedMessage?.type === 'pdf_file'" :result="parsedMessage.result" />
                     <ImageUrlView v-else-if="parsedMessage?.type === 'image_url'" :result="parsedMessage.result" />
+                    <div v-else-if="parsedMessage?.type === 'pcb_layout_routing_result'"></div>
+                    <div v-else-if="parsedMessage?.type === 'pcb_layout_placement_result'"></div>
+                    <div v-else-if="parsedMessage?.type === 'pcb_layout_digest'"></div>
                     <div v-else ref="markdownElement" v-html="safeHtml"></div>
                 </template>
             </div>
