@@ -71,7 +71,7 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
         if (!match) return;
 
         const signalName = match[1].trim();
-        if (allowedSignalNames?.size && !allowedSignalNames.has(signalName)) return;
+        if (allowedSignalNames?.size && !allowedSignalNames.has(signalName) && !signalName.startsWith('$')) return;
 
         const pinRefs = match[2]
             .split(/\s+/)
@@ -91,7 +91,7 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
             inNetsSection = true;
             continue;
         }
-        if (trimmed.startsWith('$') && trimmed !== '$NETS') {
+        if (trimmed.startsWith('$') && trimmed !== '$NETS' && !trimmed.includes(';')) {
             if (currentNetLine) {
                 parseNetLine(currentNetLine);
                 currentNetLine = '';
