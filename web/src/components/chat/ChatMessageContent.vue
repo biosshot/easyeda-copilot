@@ -15,11 +15,13 @@
                     <CircuitAgentResultViewer v-else-if="parsedMessage?.type === 'circuit_agent_result'"
                         :result="parsedMessage.result"
                         @inline-buttons="emit('inline-buttons', { buttons: $event, idx })" />
+                    <PcbBoardAssembleViewer v-else-if="parsedMessage?.type === 'pcb_board_assemble'"
+                        :result="parsedMessage.result"
+                        @inline-buttons="emit('inline-buttons', { buttons: $event, idx })" />
+                    <PcbToolReportViewer v-else-if="parsedMessage?.type === 'pcb_tool_report'"
+                        :result="parsedMessage.result" />
                     <PdfFileViewer v-else-if="parsedMessage?.type === 'pdf_file'" :result="parsedMessage.result" />
                     <ImageUrlView v-else-if="parsedMessage?.type === 'image_url'" :result="parsedMessage.result" />
-                    <div v-else-if="parsedMessage?.type === 'pcb_layout_routing_result'"></div>
-                    <div v-else-if="parsedMessage?.type === 'pcb_layout_placement_result'"></div>
-                    <div v-else-if="parsedMessage?.type === 'pcb_layout_digest'"></div>
                     <div v-else ref="markdownElement" v-html="safeHtml"></div>
                 </template>
             </div>
@@ -47,6 +49,8 @@ import { markdown } from '../../utils/markdown'
 import ComponentViewer from './component/ComponentViewer.vue'
 import CircuitExplainViewer from './circuit/CircuitExplainViewer.vue'
 import CircuitAgentResultViewer from './circuit/CircuitAgentResultViewer.vue'
+import PcbBoardAssembleViewer from './pcb/PcbBoardAssembleViewer.vue'
+import PcbToolReportViewer from './pcb/PcbToolReportViewer.vue'
 import PdfFileViewer from './pdf/PdfFileViewer.vue'
 import { InlineButton, InlineButtonsIdx } from '../../types/inline-button'
 import AdjTextarea from '../shared/AdjTextarea.vue'

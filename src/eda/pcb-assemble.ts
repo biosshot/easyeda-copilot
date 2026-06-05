@@ -4,10 +4,12 @@ import { yieldToEventLoop } from "./utils";
 
 const assembleBoardQueue = new PQueue({ concurrency: 1 });
 const MM_TO_MIL = 1000 / 25.4;
-const BOARD_OUTLINE_WIDTH_MM = 0.1;
+const BOARD_OUTLINE_WIDTH_MM = 0.254;
 const DEFAULT_POUR_LINE_WIDTH_MM = 0.15;
 const MIN_COPPER_WIDTH_MM = 0.01;
 const SAME_POINT_EPS = 1e-9;
+const DEFAULT_GND_NET = "GND";
+const DEFAULT_GND_POUR_PREFIX = "COPILOT_GND";
 
 type BoardPoint = {
     x: number;
@@ -18,7 +20,7 @@ type BoardLayer = NonNullable<BoardAssemble["components"]>[number]["layer"];
 
 type DoneablePrimitive<T> = {
     isAsync(): boolean;
-    done(): Promise<T>;
+    done(): T | Promise<T>;
 };
 
 function layerToComponent(layer: BoardLayer): TPCB_LayersOfComponent {
@@ -61,20 +63,46 @@ function trimClosingPoint(points: BoardPoint[]) {
     return points;
 }
 
+function normalizePolygonPoints(points: BoardPoint[]) {
+    const normalized: BoardPoint[] = [];
+    for (const point of trimClosingPoint(points)) {
+        if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) continue;
+        if (normalized.length && samePoint(normalized[normalized.length - 1], point)) continue;
+
+        normalized.push(point);
+    }
+
+    return trimClosingPoint(normalized);
+}
+
 function polygonSource(points: BoardPoint[]): TPCB_PolygonSourceArray {
-    const normalized = trimClosingPoint(points).map(pointMmToPcbMil);
+    const normalized = normalizePolygonPoints(points).map(pointMmToPcbMil);
     const [first, ...rest] = normalized;
+    const closed = samePoint(first, normalized[normalized.length - 1])
+        ? rest
+        : [...rest, first];
 
     return [
         first.x,
         first.y,
         "L",
-        ...rest.flatMap(point => [point.x, point.y]),
+        ...closed.flatMap(point => [point.x, point.y]),
     ] as TPCB_PolygonSourceArray;
 }
 
 function safeNetName(net: string | undefined) {
     return net?.trim() ?? "";
+}
+
+function safePrimitiveName(prefix: string, ...parts: Array<string | number | undefined>) {
+    const name = [prefix, ...parts]
+        .filter(part => part !== undefined && String(part).length > 0)
+        .join("_")
+        .replace(/[^A-Za-z0-9_]/g, "_")
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+
+    return name || prefix;
 }
 
 function validLengthMm(value: number | undefined, fallbackMm: number) {
@@ -96,47 +124,127 @@ function warning(message: string) {
 async function commitPrimitive<T extends DoneablePrimitive<T>>(primitive: T | undefined, message: string) {
     if (!primitive) throw new Error(message);
 
-    return primitive.isAsync() ? await primitive.done() : primitive;
+    return await Promise.resolve(primitive.done());
+}
+
+async function commitPourCopperRegion(pour: IPCB_PrimitivePour, net: string) {
+    const poured = await pour.rebuildCopperRegion();
+    if (!poured) {
+        warning(`PCB polygon copper rebuild returned empty region: ${net}`);
+    } else if (poured.isAsync()) {
+        await Promise.resolve(poured.done());
+    }
+}
+
+async function createCommittedPour(args: {
+    net: string;
+    layer: TPCB_LayersOfCopper;
+    polygon: IPCB_Polygon;
+    preserveSilos: boolean;
+    pourName: string;
+    pourPriority: number;
+    lineWidth: number;
+}) {
+    try {
+        return await commitPrimitive(
+            await eda.pcb_PrimitivePour.create(
+                args.net,
+                args.layer,
+                args.polygon,
+                EPCB_PrimitivePourFillMethod.SOLID,
+                args.preserveSilos,
+                args.pourName,
+                args.pourPriority,
+                args.lineWidth,
+                false,
+            ),
+            "create returned undefined",
+        );
+    } catch (firstError) {
+        eda.sys_Log.add(
+            `PCB pour create retry without pourName: ${args.net}: ${(firstError as Error).message}`,
+            ESYS_LogType.WARNING,
+        );
+
+        return await commitPrimitive(
+            await eda.pcb_PrimitivePour.create(
+                args.net,
+                args.layer,
+                args.polygon,
+                EPCB_PrimitivePourFillMethod.SOLID,
+                args.preserveSilos,
+                undefined,
+                args.pourPriority,
+                args.lineWidth,
+                false,
+            ),
+            `create returned undefined after retry: ${(firstError as Error).message}`,
+        );
+    }
+}
+
+async function createCommittedFill(args: {
+    net: string;
+    layer: TPCB_LayersOfFill;
+    polygon: IPCB_Polygon;
+    lineWidth: number;
+}) {
+    return await commitPrimitive(
+        await eda.pcb_PrimitiveFill.create(
+            args.layer,
+            args.polygon,
+            args.net,
+            EPCB_PrimitiveFillMode.SOLID,
+            args.lineWidth,
+            false,
+        ),
+        "create fill returned undefined",
+    );
 }
 
 async function drawBoardOutline(board: BoardAssemble["board"]) {
     if (!board) return;
 
-    const points = trimClosingPoint(board.polygon).map(pointMmToPcbMil);
+    const points = normalizePolygonPoints(board.polygon).map(pointMmToPcbMil);
     if (points.length < 3) {
         warning("PCB board outline skipped: polygon must contain at least 3 points");
         return;
     }
 
-    const oldOutline = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
-    if (oldOutline.length) {
-        await eda.pcb_PrimitiveLine.delete(oldOutline).catch(error => {
+    const oldOutlineLines = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
+    if (oldOutlineLines.length) {
+        await eda.pcb_PrimitiveLine.delete(oldOutlineLines).catch(error => {
             warning(`PCB board outline cleanup failed: ${(error as Error).message}`);
             return false;
         });
     }
 
-    for (let i = 0; i < points.length; i++) {
-        const start = points[i];
-        const end = points[(i + 1) % points.length];
-        if (samePoint(start, end)) continue;
-
-        await commitPrimitive(
-            await eda.pcb_PrimitiveLine.create(
-                "",
-                EPCB_LayerId.BOARD_OUTLINE,
-                start.x,
-                start.y,
-                end.x,
-                end.y,
-                mmToMil(BOARD_OUTLINE_WIDTH_MM),
-            ),
-            `Failed to create board outline segment ${i + 1}`,
-        );
-        await yieldToEventLoop();
+    const oldOutlinePolylines = await eda.pcb_PrimitivePolyline.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
+    if (oldOutlinePolylines.length) {
+        await eda.pcb_PrimitivePolyline.delete(oldOutlinePolylines).catch(error => {
+            warning(`PCB board outline polyline cleanup failed: ${(error as Error).message}`);
+            return false;
+        });
     }
 
-    eda.sys_Log.add(`PCB board outline created: ${points.length} points`, ESYS_LogType.INFO);
+    const polygon = eda.pcb_MathPolygon.createPolygon(polygonSource(board.polygon));
+    if (!polygon) {
+        warning("PCB board outline skipped: invalid polygon geometry");
+        return;
+    }
+
+    await commitPrimitive(
+        await eda.pcb_PrimitivePolyline.create(
+            "",
+            EPCB_LayerId.BOARD_OUTLINE,
+            polygon,
+            mmToMil(BOARD_OUTLINE_WIDTH_MM),
+            false,
+        ),
+        "Failed to create board outline polyline",
+    );
+
+    eda.sys_Log.add(`PCB board outline polyline created: ${points.length} points`, ESYS_LogType.INFO);
 }
 
 async function placeComponents(components: BoardAssemble["components"]) {
@@ -301,7 +409,7 @@ async function drawPolygons(polygons: BoardAssemble["polygons"]) {
 
     for (let i = 0; i < polygons.length; i++) {
         const item = polygons[i];
-        const points = trimClosingPoint(item.points);
+        const points = normalizePolygonPoints(item.points);
         if (points.length < 3) continue;
 
         const net = safeNetName(item.net);
@@ -314,28 +422,89 @@ async function drawPolygons(polygons: BoardAssemble["polygons"]) {
             const polygon = eda.pcb_MathPolygon.createPolygon(polygonSource(points));
             if (!polygon) throw new Error("invalid polygon geometry");
 
-            const pour = await commitPrimitive(
-                await eda.pcb_PrimitivePour.create(
-                    net,
-                    layerToCopper(item.layer),
-                    polygon,
-                    EPCB_PrimitivePourFillMethod.SOLID,
-                    true,
-                    `COPPER_${net}_${i + 1}`,
-                    undefined,
-                    mmToMil(DEFAULT_POUR_LINE_WIDTH_MM),
-                ),
-                "create returned undefined",
-            );
-
-            const poured = await pour.rebuildCopperRegion();
-            if (!poured) {
-                warning(`PCB polygon copper rebuild returned empty region: ${net}`);
-            } else if (poured.isAsync()) {
-                await Promise.resolve(poured.done());
-            }
+            await createCommittedFill({
+                net,
+                layer: layerToCopper(item.layer),
+                polygon,
+                lineWidth: mmToMil(DEFAULT_POUR_LINE_WIDTH_MM),
+            });
         } catch (error) {
-            warning(`PCB polygon failed ${net}: ${(error as Error).message}`);
+            warning(`PCB fill polygon failed ${net}: ${(error as Error).message}`);
+        }
+
+        await yieldToEventLoop();
+    }
+}
+
+async function getCopperLayers(): Promise<TPCB_LayersOfCopper[]> {
+    const layerCount = await eda.pcb_Layer.getTheNumberOfCopperLayers().catch(error => {
+        warning(`PCB copper layer count read failed, fallback to 2 layers: ${(error as Error).message}`);
+        return 2;
+    });
+
+    const count = Math.min(Math.max(Math.floor(layerCount || 2), 2), 32);
+    const layers: TPCB_LayersOfCopper[] = [EPCB_LayerId.TOP];
+
+    for (let i = 0; i < count - 2; i++) {
+        layers.push((EPCB_LayerId.INNER_1 + i) as TPCB_LayersOfCopper);
+    }
+
+    layers.push(EPCB_LayerId.BOTTOM);
+    return layers;
+}
+
+function copperLayerName(layer: TPCB_LayersOfCopper) {
+    if (layer === EPCB_LayerId.TOP) return "TOP";
+    if (layer === EPCB_LayerId.BOTTOM) return "BOTTOM";
+
+    return `INNER_${Number(layer) - Number(EPCB_LayerId.INNER_1) + 1}`;
+}
+
+async function removeOldDefaultGroundPours() {
+    const oldPours = await eda.pcb_PrimitivePour.getAll(DEFAULT_GND_NET).catch(() => []);
+    const targets = oldPours.filter(pour => pour.getState_PourName()?.startsWith(DEFAULT_GND_POUR_PREFIX));
+
+    if (targets.length) {
+        await eda.pcb_PrimitivePour.delete(targets).catch(error => {
+            warning(`PCB old GND pour cleanup failed: ${(error as Error).message}`);
+            return false;
+        });
+    }
+}
+
+async function drawDefaultGroundPours(board: BoardAssemble["board"]) {
+    if (!board) return;
+
+    const points = normalizePolygonPoints(board.polygon);
+    if (points.length < 3) {
+        warning("PCB default GND pour skipped: board polygon must contain at least 3 points");
+        return;
+    }
+
+    await removeOldDefaultGroundPours();
+
+    const layers = await getCopperLayers();
+    for (let i = 0; i < layers.length; i++) {
+        const layer = layers[i];
+        const layerName = copperLayerName(layer);
+
+        try {
+            const polygon = eda.pcb_MathPolygon.createPolygon(polygonSource(points));
+            if (!polygon) throw new Error("invalid board polygon geometry");
+
+            const pour = await createCommittedPour({
+                net: DEFAULT_GND_NET,
+                layer,
+                polygon,
+                preserveSilos: false,
+                pourName: safePrimitiveName(DEFAULT_GND_POUR_PREFIX, layerName),
+                pourPriority: i,
+                lineWidth: mmToMil(DEFAULT_POUR_LINE_WIDTH_MM),
+            });
+
+            // await commitPourCopperRegion(pour, DEFAULT_GND_NET);
+        } catch (error) {
+            warning(`PCB default GND pour failed ${layerName}: ${(error as Error).message}`);
         }
 
         await yieldToEventLoop();
@@ -390,7 +559,8 @@ async function assembleBoardTask(board: BoardAssemble) {
     await runStep("Place components", () => placeComponents(board.components));
     await runStep("Draw tracks", () => drawTracks(board.tracks));
     await runStep("Draw vias", () => drawVias(board.vias));
-    await runStep("Draw copper polygons", () => drawPolygons(board.polygons));
+    await runStep("Draw copper fills", () => drawPolygons(board.polygons));
+    await runStep("Draw default GND pours", () => drawDefaultGroundPours(board.board));
     await runStep("Refresh PCB state", refreshPcbState);
     await runStep("Post-assemble settle", yieldToEventLoop);
 

@@ -40,4 +40,3 @@ export const BoardAssembleSchema = () => z.object({
 })
 
 export type BoardAssemble = z.infer<ReturnType<typeof BoardAssembleSchema>>;
-
