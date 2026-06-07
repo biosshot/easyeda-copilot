@@ -162,6 +162,12 @@ async function handleMessage(message: McpMessage) {
                         name: item.name,
                         itemType: item.itemType,
                         schematic: filterSch(item.schematic),
+                        pcb: {
+                            name: item.pcb.name,
+                            itemType: item.pcb.itemType,
+                            uuid: item.pcb.uuid,
+                            parentBoardName: item.pcb.parentBoardName
+                        },
                     })
                 }
                 else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
@@ -169,7 +175,16 @@ async function handleMessage(message: McpMessage) {
                         name: item.name,
                         itemType: item.itemType,
                         page: filterSch(item).page,
-                        uuid: item.uuid
+                        uuid: item.uuid,
+                        parentBoardUuid: item.parentBoardUuid
+                    })
+                }
+                else if (item.itemType === EDMT_ItemType.PCB) {
+                    project_data.push({
+                        name: item.name,
+                        itemType: item.itemType,
+                        uuid: item.uuid,
+                        parentBoardName: item.parentBoardName
                     })
                 }
             }

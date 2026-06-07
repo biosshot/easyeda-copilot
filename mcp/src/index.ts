@@ -3,11 +3,16 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
 import { randomUUID } from 'node:crypto';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { isAbsolute, join, resolve } from 'node:path';
 import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
+import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
 
-const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || 'https://circuit.tech.ru.net').replace(/\/$/, '');
+const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
+const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);
 const MCP_WS_HOST = process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1';
 
@@ -15,6 +20,18 @@ const server = new McpServer({
     name: 'easyeda-copilot',
     version: '1.0.0',
 });
+
+const PCB_LAYOUT_MCP_GUIDANCE = [
+    '<MCP_PCB_ASSEMBLY_WORKFLOW>',
+    'make_pcb_layout is iterative. Use it repeatedly to inspect placement/routing reports and previewImagePath. Do not assemble the PCB during intermediate attempts.',
+    'Final PCB assembly is allowed only after verifying the EasyEDA project structure:',
+    '1. Call get_current_project_info.',
+    '2. Confirm the schematic used for PCB layout belongs to a BOARD item and that the same BOARD item has a PCB document.',
+    '3. Before assembly, call open_document with that BOARD item PCB uuid. The PCB document must be opened first.',
+    '4. Only after open_document succeeds, call assemble_pcb_layout_on_current_pcbdoc with the final layoutId.',
+    'Do not call assemble_pcb_layout_on_current_pcbdoc for a standalone schematic, an unrelated PCB document, or an ambiguous project structure. Ask the user to select/create the correct board/PCB document instead.',
+    '</MCP_PCB_ASSEMBLY_WORKFLOW>',
+].join('\n');
 
 type WsMessage = {
     event: string;
@@ -27,8 +44,31 @@ type PendingRequest = {
     timer: ReturnType<typeof setTimeout>;
 };
 
+type MakePcbLayoutResponse = {
+    content?: string;
+    toolReport?: unknown;
+    pcb?: BoardAssemble;
+    preview_image_url?: string;
+    error?: string;
+};
+
+type PcbComponentSizesResponse = {
+    content?: string;
+    report?: unknown;
+    error?: string;
+};
+
+type StoredPcbLayout = {
+    pcb: BoardAssemble;
+    content?: string;
+    toolReport?: unknown;
+    previewImagePath?: string;
+    createdAt: number;
+};
+
 const wsClients = new Set<WebSocket>();
 const pendingRequests = new Map<string, PendingRequest>();
+const storedPcbLayouts = new Map<string, StoredPcbLayout>();
 let wsServerReady = false;
 
 function handleWsMessage(message: WsMessage) {
@@ -177,6 +217,22 @@ async function getText(path: string): Promise<string> {
     return text;
 }
 
+async function getPcbLayoutPromptText() {
+    return [
+        await getText('/v1/mcp-tools/prompts/pcb-layout'),
+        '',
+        PCB_LAYOUT_MCP_GUIDANCE,
+    ].join('\n');
+}
+
+async function getCombinedPromptText() {
+    return [
+        await getText('/v1/mcp-tools/prompts/combined'),
+        '',
+        PCB_LAYOUT_MCP_GUIDANCE,
+    ].join('\n');
+}
+
 function textResult(value: unknown) {
     return {
         content: [{
@@ -184,6 +240,64 @@ function textResult(value: unknown) {
             text: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
         }],
     };
+}
+
+function resolveInputFilePath(filePath: string) {
+    return isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
+}
+
+async function readLayoutCode(input: { code?: string; file?: string; }) {
+    if (input.code?.trim()) {
+        return input.code;
+    }
+
+    const filePath = input.file;
+    if (!filePath?.trim()) {
+        throw new Error('Fill one: code, file.');
+    }
+
+    return await readFile(resolveInputFilePath(filePath), 'utf8');
+}
+
+function previewImageExtension(mimeType: string | undefined) {
+    if (mimeType === 'image/svg+xml') return '.svg';
+    if (mimeType === 'image/png') return '.png';
+    if (mimeType === 'image/jpeg') return '.jpg';
+    if (mimeType === 'image/webp') return '.webp';
+    return '.svg';
+}
+
+async function writePreviewImageFile(previewImage: string | undefined, layoutId: string) {
+    if (!previewImage) return undefined;
+
+    const dataUrlMatch = /^data:([^;,]+)?(;base64)?,(.*)$/s.exec(previewImage);
+    const mimeType = dataUrlMatch?.[1];
+    const isBase64 = Boolean(dataUrlMatch?.[2]);
+    const payload = dataUrlMatch?.[3] ?? previewImage;
+    const bytes = dataUrlMatch
+        ? isBase64
+            ? Buffer.from(payload, 'base64')
+            : Buffer.from(decodeURIComponent(payload), 'utf8')
+        : Buffer.from(previewImage, 'base64');
+
+    const previewDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-previews');
+    await mkdir(previewDir, { recursive: true });
+
+    const filePath = join(previewDir, `${layoutId}${previewImageExtension(mimeType)}`);
+    await writeFile(filePath, bytes);
+    return filePath;
+}
+
+function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
+    storedPcbLayouts.set(layoutId, layout);
+
+    if (storedPcbLayouts.size <= 25) return;
+
+    const oldest = [...storedPcbLayouts.entries()]
+        .sort((a, b) => a[1].createdAt - b[1].createdAt)
+        .at(0)?.[0];
+
+    if (oldest) storedPcbLayouts.delete(oldest);
 }
 
 server.registerResource(
@@ -216,6 +330,40 @@ server.registerResource(
             uri: uri.toString(),
             mimeType: 'text/plain',
             text: await getText('/v1/mcp-tools/prompts/circuit-maker'),
+        }],
+    }),
+);
+
+server.registerResource(
+    'pcb_layout_prompt',
+    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/pcb-layout`,
+    {
+        title: 'PCB Layout Prompt',
+        description: 'PCB layout skill instructions, JavaScript DSL spec, and output expectations.',
+        mimeType: 'text/plain',
+    },
+    async (uri) => ({
+        contents: [{
+            uri: uri.toString(),
+            mimeType: 'text/plain',
+            text: await getPcbLayoutPromptText(),
+        }],
+    }),
+);
+
+server.registerResource(
+    'combined_prompt',
+    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/combined`,
+    {
+        title: 'Combined EasyEDA Copilot Prompt',
+        description: 'Combined EasyEDA Copilot prompt from the main server.',
+        mimeType: 'text/plain',
+    },
+    async (uri) => ({
+        contents: [{
+            uri: uri.toString(),
+            mimeType: 'text/plain',
+            text: await getCombinedPromptText(),
         }],
     }),
 );
@@ -257,24 +405,36 @@ server.registerPrompt(
 );
 
 server.registerPrompt(
-    'easyeda_circuit_agent_prompt',
+    'pcb_layout_prompt',
     {
-        title: 'EasyEDA Circuit Agent Prompt',
-        description: 'Load both EasyEDA Copilot skill-agent and circuit-maker prompts.',
+        title: 'PCB Layout Prompt',
+        description: 'Load the EasyEDA Copilot PCB layout instructions, JavaScript DSL spec, and output expectations.',
     },
     async () => ({
-        description: 'Combined EasyEDA Copilot agent prompt for circuit creation workflows.',
+        description: 'PCB layout skill instructions, JavaScript DSL spec, and output expectations.',
         messages: [{
             role: 'user',
             content: {
                 type: 'text',
-                text: [
-                    '# Skill Agent Prompt',
-                    await getText('/v1/mcp-tools/prompts/skill-agent'),
-                    '',
-                    '# Circuit Maker Prompt',
-                    await getText('/v1/mcp-tools/prompts/circuit-maker'),
-                ].join('\n'),
+                text: await getPcbLayoutPromptText(),
+            },
+        }],
+    }),
+);
+
+server.registerPrompt(
+    'easyeda_circuit_agent_prompt',
+    {
+        title: 'EasyEDA Circuit Agent Prompt',
+        description: 'Load the combined EasyEDA Copilot prompt.',
+    },
+    async () => ({
+        description: 'Combined EasyEDA Copilot prompt for circuit and PCB workflows.',
+        messages: [{
+            role: 'user',
+            content: {
+                type: 'text',
+                text: await getCombinedPromptText(),
             },
         }],
     }),
@@ -286,7 +446,7 @@ server.registerTool(
         title: 'Read EasyEDA Copilot Prompt',
         description: 'Read EasyEDA Copilot prompts explicitly when the MCP client does not inject prompt/resource contents automatically.',
         inputSchema: z.object({
-            name: z.enum(['skill_agent', 'circuit_maker', 'combined']).describe('Prompt to read.'),
+            name: z.enum(['skill_agent', 'circuit_maker', 'pcb_layout', 'combined']).describe('Prompt to read.'),
         }),
     },
     async ({ name }) => {
@@ -298,13 +458,11 @@ server.registerTool(
             return textResult(await getText('/v1/mcp-tools/prompts/circuit-maker'));
         }
 
-        return textResult([
-            '# Skill Agent Prompt',
-            await getText('/v1/mcp-tools/prompts/skill-agent'),
-            '',
-            '# Circuit Maker Prompt',
-            await getText('/v1/mcp-tools/prompts/circuit-maker'),
-        ].join('\n'));
+        if (name === 'pcb_layout') {
+            return textResult(await getPcbLayoutPromptText());
+        }
+
+        return textResult(await getCombinedPromptText());
     },
 );
 
@@ -342,6 +500,105 @@ server.registerTool(
     async ({ query, page, limit }) => {
         const result = await postJson('/v1/mcp-tools/search-reused-block', { query, page, limit });
         return textResult(result);
+    },
+);
+
+server.registerTool(
+    'get_pcb_component_sizes',
+    {
+        title: 'Get PCB Component Sizes',
+        description: 'Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions.',
+        inputSchema: z.object({
+            designators: z.array(z.string()).nullable().optional(),
+            includeAll: z.boolean().nullable().optional(),
+        }),
+    },
+    async ({ designators, includeAll }) => {
+        const circuit = await requestEasyEda('get-schematic');
+        const result = await postJson('/v1/mcp-tools/get-pcb-component-sizes', {
+            circuit,
+            designators,
+            includeAll,
+        }) as PcbComponentSizesResponse;
+
+        return textResult(result.content ?? result.error ?? result);
+    },
+);
+
+server.registerTool(
+    'make_pcb_layout',
+    {
+        title: 'Make PCB Layout',
+        description: 'Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board.',
+        inputSchema: z.object({
+            code: z.string().min(1).optional().describe('JavaScript PCB layout DSL code.'),
+            file: z.string().min(1).optional().describe('Path to a JavaScript PCB layout DSL code file.'),
+        }).refine(data => Boolean(data.code || data.file), {
+            message: 'Fill one: code, file.',
+        }),
+    },
+    async (input) => {
+        const code = await readLayoutCode(input);
+        const circuit = await requestEasyEda('get-schematic');
+        const result = await postJson('/v1/mcp-tools/make-pcb-layout', {
+            code,
+            circuit,
+        }) as MakePcbLayoutResponse;
+
+        const runId = randomUUID();
+        const layoutId = result.pcb ? runId : undefined;
+        const previewImagePath = await writePreviewImageFile(result.preview_image_url, runId);
+
+        if (result.pcb && layoutId) {
+            rememberPcbLayout(layoutId, {
+                pcb: result.pcb,
+                content: result.content,
+                toolReport: result.toolReport,
+                previewImagePath,
+                createdAt: Date.now(),
+            });
+        }
+
+        const report = {
+            layoutId,
+            previewImagePath,
+        };
+
+        const lines = [
+            result.content ?? result.error ?? 'PCB layout finished.',
+            `Run report:\n${JSON.stringify(report, null, 2)}`,
+        ];
+
+        return textResult(lines.join('\n\n'));
+    },
+);
+
+server.registerTool(
+    'assemble_pcb_layout_on_current_pcbdoc',
+    {
+        title: 'Assemble PCB Layout',
+        description: 'Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid.',
+        inputSchema: z.object({
+            layoutId: z.string().min(1).describe('layoutId returned by make_pcb_layout.'),
+        }),
+    },
+    async ({ layoutId }) => {
+        const layout = storedPcbLayouts.get(layoutId);
+        if (!layout) {
+            return textResult({
+                error: 'PCB layout not found. Run make_pcb_layout again and use the returned layoutId.',
+                layoutId,
+            });
+        }
+
+        await requestEasyEda('assemble-board', {
+            boardAssemble: layout.pcb,
+        }, 300000);
+
+        return textResult({
+            content: 'PCB layout sent to EasyEDA for assembly.',
+            layoutId,
+        });
     },
 );
 
@@ -388,7 +645,7 @@ server.registerTool(
     'get_current_project_info',
     {
         title: 'Get Current EasyEDA Project Info',
-        description: 'Read the current EasyEDA project tree and document metadata through the connected extension.',
+        description: 'Read the current EasyEDA project tree and document metadata through the connected extension. BOARD items show the linked schematic and PCB document; use this before PCB assembly.',
         inputSchema: z.object({}),
     },
     async () => {
