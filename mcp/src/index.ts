@@ -246,14 +246,10 @@ function resolveInputFilePath(filePath: string) {
     return isAbsolute(filePath) ? filePath : resolve(process.cwd(), filePath);
 }
 
-async function readLayoutCode(input: { code?: string; file?: string; }) {
-    if (input.code?.trim()) {
-        return input.code;
-    }
-
+async function readLayoutCode(input: { file: string; }) {
     const filePath = input.file;
     if (!filePath?.trim()) {
-        throw new Error('Fill one: code, file.');
+        throw new Error('Fill one: file.');
     }
 
     return await readFile(resolveInputFilePath(filePath), 'utf8');
@@ -531,9 +527,8 @@ server.registerTool(
         title: 'Make PCB Layout',
         description: 'Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board.',
         inputSchema: z.object({
-            code: z.string().min(1).optional().describe('JavaScript PCB layout DSL code.'),
-            file: z.string().min(1).optional().describe('Path to a JavaScript PCB layout DSL code file.'),
-        }).refine(data => Boolean(data.code || data.file), {
+            file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
+        }).refine(data => Boolean(data.file), {
             message: 'Fill one: code, file.',
         }),
     },
@@ -650,6 +645,19 @@ server.registerTool(
     },
     async () => {
         const result = await requestEasyEda('get-current-project-info');
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'get_current_drc_rules',
+    {
+        title: 'Get Current PCB DRC Rules',
+        description: 'Return the current EasyEDA PCB DRC rule configuration as JSON. Open the target PCB document first.',
+        inputSchema: z.object({}),
+    },
+    async () => {
+        const result = await requestEasyEda('get-current-drc-rules');
         return textResult(result);
     },
 );

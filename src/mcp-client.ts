@@ -190,6 +190,7 @@ async function handleMessage(message: McpMessage) {
             }
 
             reply(true, {
+                current_doc_uuid: await eda.dmt_SelectControl.getCurrentDocumentInfo().then(c => c?.uuid).catch(_ => undefined),
                 data: project_data,
                 project_name: projectInfo.friendlyName,
                 description: projectInfo.description
@@ -207,6 +208,12 @@ async function handleMessage(message: McpMessage) {
             if (!tabId) throw new Error(`Failed to open document: ${documentUuid}`);
 
             reply(true, { tabId, documentUuid });
+            return;
+        }
+
+        if (message.event === 'get-current-drc-rules') {
+            const rules = await eda.pcb_Drc.getCurrentRuleConfiguration();
+            reply(true, JSON.stringify(rules));
             return;
         }
 
