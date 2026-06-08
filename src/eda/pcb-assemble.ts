@@ -1,6 +1,6 @@
 import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import PQueue from "p-queue";
-import { yieldToEventLoop } from "./utils";
+import { withTimeout, yieldToEventLoop } from "./utils";
 
 const assembleBoardQueue = new PQueue({ concurrency: 1 });
 const MM_TO_MIL = 1000 / 25.4;
@@ -10,6 +10,7 @@ const MIN_COPPER_WIDTH_MM = 0.01;
 const SAME_POINT_EPS = 1e-9;
 const DEFAULT_GND_NET = "GND";
 const DEFAULT_GND_POUR_PREFIX = "COPILOT_GND";
+const PCB_CLEAR_TIMEOUT_MS = 5000;
 
 type BoardPoint = {
     x: number;
@@ -119,6 +120,57 @@ function validLengthMmToMil(value: number | undefined, fallbackMm: number) {
 function warning(message: string) {
     eda.sys_Log.add(message, ESYS_LogType.WARNING);
     eda.sys_Message.showToastMessage(message, ESYS_ToastMessageType.WARNING);
+}
+
+type PcbPrimitiveCleanupApi = {
+    getAllPrimitiveId(): Promise<Array<string>>;
+    delete(primitiveIds: Array<string>): Promise<boolean>;
+};
+
+async function clearPrimitiveGroup(name: string, api: PcbPrimitiveCleanupApi) {
+    const ids = await withTimeout(
+        api.getAllPrimitiveId(),
+        PCB_CLEAR_TIMEOUT_MS,
+        `PCB cleanup ${name} get timeout`,
+    ).catch(error => {
+        warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
+        return [];
+    });
+
+    if (!ids.length) return;
+
+    await withTimeout(
+        api.delete(ids),
+        PCB_CLEAR_TIMEOUT_MS,
+        `PCB cleanup ${name} delete timeout`,
+    ).catch(error => {
+        warning(`PCB cleanup ${name} delete failed: ${(error as Error).message}`);
+        return false;
+    });
+
+    await yieldToEventLoop();
+}
+
+async function clearCurrentPcbBoard() {
+    const groups: Array<[string, PcbPrimitiveCleanupApi]> = [
+        ["pour", eda.pcb_PrimitivePour],
+        ["fill", eda.pcb_PrimitiveFill],
+        ["region", eda.pcb_PrimitiveRegion],
+        ["via", eda.pcb_PrimitiveVia],
+        ["line", eda.pcb_PrimitiveLine],
+        ["arc", eda.pcb_PrimitiveArc],
+        ["polyline", eda.pcb_PrimitivePolyline],
+        ["string", eda.pcb_PrimitiveString],
+        ["attribute", eda.pcb_PrimitiveAttribute],
+        ["pad", eda.pcb_PrimitivePad],
+        ["dimension", eda.pcb_PrimitiveDimension],
+        ["image", eda.pcb_PrimitiveImage],
+        ["object", eda.pcb_PrimitiveObject],
+    ];
+
+    for (const [name, api] of groups) {
+        await clearPrimitiveGroup(name, api);
+    }
 }
 
 async function commitPrimitive<T extends DoneablePrimitive<T>>(primitive: T | undefined, message: string) {
@@ -555,6 +607,7 @@ async function assembleBoardTask(board: BoardAssemble) {
         eda.sys_Log.add(`PCB assemble warning: ${message}`, ESYS_LogType.WARNING);
     }
 
+    await runStep("Clear PCB board", clearCurrentPcbBoard);
     await runStep("Draw board outline", () => drawBoardOutline(board.board));
     await runStep("Place components", () => placeComponents(board.components));
     await runStep("Draw tracks", () => drawTracks(board.tracks));
