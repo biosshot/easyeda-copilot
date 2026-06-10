@@ -269,6 +269,62 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'create-board') {
+            const schematicUuid = typeof body.schematicUuid === 'string' ? body.schematicUuid : undefined;
+            const pcbUuid = typeof body.pcbUuid === 'string' ? body.pcbUuid : undefined;
+
+            const boardName = await eda.dmt_Board.createBoard(schematicUuid, pcbUuid);
+            if (!boardName) throw new Error('Failed to create board');
+
+            reply(true, { boardName, schematicUuid, pcbUuid });
+            return;
+        }
+
+        if (message.event === 'delete-board') {
+            const boardName = body.boardName;
+            if (typeof boardName !== 'string' || !boardName) {
+                throw new Error('Missing boardName');
+            }
+
+            const success = await eda.dmt_Board.deleteBoard(boardName);
+            reply(true, { success, boardName });
+            return;
+        }
+
+        if (message.event === 'create-pcb') {
+            const boardName = typeof body.boardName === 'string' ? body.boardName : undefined;
+
+            const pcbUuid = await eda.dmt_Pcb.createPcb(boardName);
+            if (!pcbUuid) throw new Error('Failed to create PCB');
+
+            reply(true, { pcbUuid, boardName });
+            return;
+        }
+
+        if (message.event === 'modify-pcb-name') {
+            const pcbUuid = body.pcbUuid;
+            const pcbName = body.pcbName;
+            if (typeof pcbUuid !== 'string' || !pcbUuid) {
+                throw new Error('Missing pcbUuid');
+            }
+            if (typeof pcbName !== 'string' || !pcbName) {
+                throw new Error('Missing pcbName');
+            }
+
+            const success = await eda.dmt_Pcb.modifyPcbName(pcbUuid, pcbName);
+            reply(true, { success, pcbUuid, pcbName });
+            return;
+        }
+
+        if (message.event === 'import-pcb-changes') {
+            const schematicUuid = typeof body.schematicUuid === 'string' ? body.schematicUuid : undefined;
+
+            await checkpointer.save(false);
+            const success = await eda.pcb_Document.importChanges(schematicUuid);
+            reply(true, { success, schematicUuid });
+            return;
+        }
+
         if (message.event === 'assemble-circuit') {
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');

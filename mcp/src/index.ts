@@ -690,6 +690,95 @@ server.registerTool(
 );
 
 server.registerTool(
+    'create_board',
+    {
+        title: 'Create EasyEDA Board',
+        description: 'Create a board in the current EasyEDA project, optionally linking an existing schematic UUID and PCB UUID. Use get_current_project_info to inspect available document UUIDs first.',
+        inputSchema: z.object({
+            schematic_uuid: z.string().min(1).optional().describe('Optional schematic UUID to link to the new board.'),
+            pcb_uuid: z.string().min(1).optional().describe('Optional PCB UUID to link to the new board.'),
+        }),
+    },
+    async ({ schematic_uuid, pcb_uuid }) => {
+        const result = await requestEasyEda('create-board', {
+            schematicUuid: schematic_uuid,
+            pcbUuid: pcb_uuid,
+        });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'delete_board',
+    {
+        title: 'Delete EasyEDA Board',
+        description: 'Delete a board from the current EasyEDA project by board name. This is destructive; use get_current_project_info first to verify the exact board name.',
+        inputSchema: z.object({
+            board_name: z.string().min(1).describe('Board name to delete.'),
+        }),
+    },
+    async ({ board_name }) => {
+        const result = await requestEasyEda('delete-board', {
+            boardName: board_name,
+        });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'create_pcb',
+    {
+        title: 'Create EasyEDA PCB',
+        description: 'Create a PCB in the current EasyEDA project. If board_name is omitted, EasyEDA creates a free PCB.',
+        inputSchema: z.object({
+            board_name: z.string().min(1).optional().describe('Optional parent board name.'),
+        }),
+    },
+    async ({ board_name }) => {
+        const result = await requestEasyEda('create-pcb', {
+            boardName: board_name,
+        });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'modify_pcb_name',
+    {
+        title: 'Rename EasyEDA PCB',
+        description: 'Modify an EasyEDA PCB name.',
+        inputSchema: z.object({
+            pcb_uuid: z.string().min(1).describe('PCB UUID.'),
+            pcb_name: z.string().min(1).describe('New PCB name.'),
+        }),
+    },
+    async ({ pcb_uuid, pcb_name }) => {
+        const result = await requestEasyEda('modify-pcb-name', {
+            pcbUuid: pcb_uuid,
+            pcbName: pcb_name,
+        });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'import_pcb_changes',
+    {
+        title: 'Import PCB Changes',
+        description: `Import schematic changes into the currently opened PCB document. If schematic_uuid is omitted, EasyEDA uses the schematic linked to the same board. Open the target PCB document first. For PCB docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
+        inputSchema: z.object({
+            schematic_uuid: z.string().min(1).optional().describe('Optional schematic UUID to import changes from.'),
+        }),
+    },
+    async ({ schematic_uuid }) => {
+        const result = await requestEasyEda('import-pcb-changes', {
+            schematicUuid: schematic_uuid,
+        }, 300000);
+        return textResult(result);
+    },
+);
+
+server.registerTool(
     'list_checkpoints',
     {
         title: 'List EasyEDA Checkpoints',
