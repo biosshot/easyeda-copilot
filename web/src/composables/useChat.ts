@@ -445,6 +445,16 @@ export default function useChat() {
                             })
                         }
                     }
+                    else if (json.type === 'pcb_tool_report' && json.result) {
+                        return {
+                            ...msg,
+                            content: JSON.stringify(json.result ?? {})
+                        };
+                    }
+                    else if (json.type === 'pcb_board_assemble') {
+                        return null;
+                    }
+
                 } catch (error) {
                     return msg;
                 }

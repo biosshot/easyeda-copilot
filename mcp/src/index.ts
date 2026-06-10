@@ -2,10 +2,10 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { isAbsolute, join, resolve } from 'node:path';
+import { homedir, tmpdir } from 'node:os';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
@@ -15,23 +15,21 @@ const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);
 const MCP_WS_HOST = process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1';
+const DOCS_CACHE_DIR = resolve(process.env.EASYEDA_COPILOT_MCP_DOCS_DIR || join(
+    process.env.LOCALAPPDATA || join(homedir(), '.cache'),
+    'easyeda-copilot-mcp',
+    'docs',
+));
+const DOCS_MANIFEST_FILE = join(DOCS_CACHE_DIR, 'manifest.json');
+const SKILL_DOC_PATH = join(DOCS_CACHE_DIR, 'SKILL.md');
+const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
+const CIRCUIT_DOCS_DIR = join(DOCS_CACHE_DIR, 'circuit-maker');
+const PCB_LAYOUT_DOCS_DIR = join(DOCS_CACHE_DIR, 'pcb-layout');
 
 const server = new McpServer({
     name: 'easyeda-copilot',
     version: '1.0.0',
 });
-
-const PCB_LAYOUT_MCP_GUIDANCE = [
-    '<MCP_PCB_ASSEMBLY_WORKFLOW>',
-    'make_pcb_layout is iterative. Use it repeatedly to inspect placement/routing reports and previewImagePath. Do not assemble the PCB during intermediate attempts.',
-    'Final PCB assembly is allowed only after verifying the EasyEDA project structure:',
-    '1. Call get_current_project_info.',
-    '2. Confirm the schematic used for PCB layout belongs to a BOARD item and that the same BOARD item has a PCB document.',
-    '3. Before assembly, call open_document with that BOARD item PCB uuid. The PCB document must be opened first.',
-    '4. Only after open_document succeeds, call assemble_pcb_layout_on_current_pcbdoc with the final layoutId.',
-    'Do not call assemble_pcb_layout_on_current_pcbdoc for a standalone schematic, an unrelated PCB document, or an ambiguous project structure. Ask the user to select/create the correct board/PCB document instead.',
-    '</MCP_PCB_ASSEMBLY_WORKFLOW>',
-].join('\n');
 
 type WsMessage = {
     event: string;
@@ -66,10 +64,24 @@ type StoredPcbLayout = {
     createdAt: number;
 };
 
+type McpDocManifestEntry = {
+    id: string;
+    path: string;
+    sha256: string;
+    bytes: number;
+    url: string;
+};
+
+type McpDocsManifest = {
+    version: string;
+    docs: McpDocManifestEntry[];
+};
+
 const wsClients = new Set<WebSocket>();
 const pendingRequests = new Map<string, PendingRequest>();
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
 let wsServerReady = false;
+let docsSyncError: string | undefined;
 
 function handleWsMessage(message: WsMessage) {
     if (message.event === 'ping') {
@@ -217,20 +229,77 @@ async function getText(path: string): Promise<string> {
     return text;
 }
 
-async function getPcbLayoutPromptText() {
-    return [
-        await getText('/v1/mcp-tools/prompts/pcb-layout'),
-        '',
-        PCB_LAYOUT_MCP_GUIDANCE,
-    ].join('\n');
+async function getJson<T>(path: string): Promise<T> {
+    return JSON.parse(await getText(path)) as T;
 }
 
-async function getCombinedPromptText() {
+function sha256Text(text: string) {
+    return createHash('sha256').update(text, 'utf8').digest('hex');
+}
+
+function resolveDocCachePath(docPath: string) {
+    const root = resolve(DOCS_CACHE_DIR);
+    const target = resolve(root, docPath);
+    const rel = relative(root, target);
+
+    if (rel.startsWith('..') || isAbsolute(rel)) {
+        throw new Error(`Unsafe MCP doc path: ${docPath}`);
+    }
+
+    return target;
+}
+
+function normalizeDocApiPath(path: string) {
+    if (path.startsWith('/v1/')) return path;
+    if (path.startsWith('/mcp-tools/')) return `/v1${path}`;
+    return path;
+}
+
+async function syncLocalDocsFromServer() {
+    const manifest = await getJson<McpDocsManifest>('/v1/mcp-tools/docs/manifest');
+    await mkdir(DOCS_CACHE_DIR, { recursive: true });
+
+    for (const doc of manifest.docs) {
+        const filePath = resolveDocCachePath(doc.path);
+        let currentText: string | undefined;
+
+        try {
+            currentText = await readFile(filePath, 'utf8');
+        } catch {
+            currentText = undefined;
+        }
+
+        if (currentText && sha256Text(currentText) === doc.sha256) {
+            continue;
+        }
+
+        const text = await getText(normalizeDocApiPath(doc.url));
+        const actualSha = sha256Text(text);
+        if (actualSha !== doc.sha256) {
+            throw new Error(`MCP doc checksum mismatch for ${doc.id}. Expected ${doc.sha256}, got ${actualSha}.`);
+        }
+
+        await mkdir(dirname(filePath), { recursive: true });
+        await writeFile(filePath, text, 'utf8');
+    }
+
+    await writeFile(DOCS_MANIFEST_FILE, JSON.stringify({
+        ...manifest,
+        source: COPILOT_SERVER_URL,
+        cachedAt: new Date().toISOString(),
+    }, null, 2), 'utf8');
+}
+
+function localSkillDocText() {
     return [
-        await getText('/v1/mcp-tools/prompts/combined'),
+        'EasyEDA Copilot MCP documentation is cached locally.',
         '',
-        PCB_LAYOUT_MCP_GUIDANCE,
-    ].join('\n');
+        `Skill file: ${SKILL_DOC_PATH}`,
+        `Docs directory: ${DOCS_CACHE_DIR}`,
+        '',
+        'Read SKILL.md first. It points to the rest of the local docs.',
+        docsSyncError ? `Last startup docs sync error: ${docsSyncError}` : undefined,
+    ].filter(Boolean).join('\n');
 }
 
 function textResult(value: unknown) {
@@ -297,169 +366,38 @@ function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
 }
 
 server.registerResource(
-    'skill_agent_prompt',
-    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/skill-agent`,
+    'easyeda_copilot_mcp_skill',
+    SKILL_DOC_URI,
     {
-        title: 'Skill Agent Prompt',
-        description: 'System prompt used by the EasyEDA Copilot skill agent.',
+        title: 'EasyEDA Copilot MCP Skill',
+        description: 'Path to the locally cached EasyEDA Copilot MCP SKILL.md.',
         mimeType: 'text/plain',
     },
     async (uri) => ({
         contents: [{
             uri: uri.toString(),
             mimeType: 'text/plain',
-            text: await getText('/v1/mcp-tools/prompts/skill-agent'),
-        }],
-    }),
-);
-
-server.registerResource(
-    'circuit_maker_prompt',
-    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/circuit-maker`,
-    {
-        title: 'Circuit Maker Prompt',
-        description: 'Circuit maker skill instructions and output expectations.',
-        mimeType: 'text/plain',
-    },
-    async (uri) => ({
-        contents: [{
-            uri: uri.toString(),
-            mimeType: 'text/plain',
-            text: await getText('/v1/mcp-tools/prompts/circuit-maker'),
-        }],
-    }),
-);
-
-server.registerResource(
-    'pcb_layout_prompt',
-    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/pcb-layout`,
-    {
-        title: 'PCB Layout Prompt',
-        description: 'PCB layout skill instructions, JavaScript DSL spec, and output expectations.',
-        mimeType: 'text/plain',
-    },
-    async (uri) => ({
-        contents: [{
-            uri: uri.toString(),
-            mimeType: 'text/plain',
-            text: await getPcbLayoutPromptText(),
-        }],
-    }),
-);
-
-server.registerResource(
-    'combined_prompt',
-    `${COPILOT_SERVER_URL}/v1/mcp-tools/prompts/combined`,
-    {
-        title: 'Combined EasyEDA Copilot Prompt',
-        description: 'Combined EasyEDA Copilot prompt from the main server.',
-        mimeType: 'text/plain',
-    },
-    async (uri) => ({
-        contents: [{
-            uri: uri.toString(),
-            mimeType: 'text/plain',
-            text: await getCombinedPromptText(),
+            text: localSkillDocText(),
         }],
     }),
 );
 
 server.registerPrompt(
-    'skill_agent_prompt',
+    'easyeda_copilot_mcp_skill',
     {
-        title: 'Skill Agent Prompt',
-        description: 'Load the EasyEDA Copilot skill-agent system prompt.',
+        title: 'EasyEDA Copilot MCP Skill',
+        description: 'Use the locally cached EasyEDA Copilot MCP SKILL.md.',
     },
     async () => ({
-        description: 'System prompt used by the EasyEDA Copilot skill agent.',
+        description: 'Local EasyEDA Copilot MCP skill documentation.',
         messages: [{
             role: 'user',
             content: {
                 type: 'text',
-                text: await getText('/v1/mcp-tools/prompts/skill-agent'),
+                text: localSkillDocText(),
             },
         }],
     }),
-);
-
-server.registerPrompt(
-    'circuit_maker_prompt',
-    {
-        title: 'Circuit Maker Prompt',
-        description: 'Load the EasyEDA Copilot circuit-maker instructions and output expectations.',
-    },
-    async () => ({
-        description: 'Circuit maker skill instructions and output expectations.',
-        messages: [{
-            role: 'user',
-            content: {
-                type: 'text',
-                text: await getText('/v1/mcp-tools/prompts/circuit-maker'),
-            },
-        }],
-    }),
-);
-
-server.registerPrompt(
-    'pcb_layout_prompt',
-    {
-        title: 'PCB Layout Prompt',
-        description: 'Load the EasyEDA Copilot PCB layout instructions, JavaScript DSL spec, and output expectations.',
-    },
-    async () => ({
-        description: 'PCB layout skill instructions, JavaScript DSL spec, and output expectations.',
-        messages: [{
-            role: 'user',
-            content: {
-                type: 'text',
-                text: await getPcbLayoutPromptText(),
-            },
-        }],
-    }),
-);
-
-server.registerPrompt(
-    'easyeda_circuit_agent_prompt',
-    {
-        title: 'EasyEDA Circuit Agent Prompt',
-        description: 'Load the combined EasyEDA Copilot prompt.',
-    },
-    async () => ({
-        description: 'Combined EasyEDA Copilot prompt for circuit and PCB workflows.',
-        messages: [{
-            role: 'user',
-            content: {
-                type: 'text',
-                text: await getCombinedPromptText(),
-            },
-        }],
-    }),
-);
-
-server.registerTool(
-    'read_prompt',
-    {
-        title: 'Read EasyEDA Copilot Prompt',
-        description: 'Read EasyEDA Copilot prompts explicitly when the MCP client does not inject prompt/resource contents automatically.',
-        inputSchema: z.object({
-            name: z.enum(['skill_agent', 'circuit_maker', 'pcb_layout', 'combined']).describe('Prompt to read.'),
-        }),
-    },
-    async ({ name }) => {
-        if (name === 'skill_agent') {
-            return textResult(await getText('/v1/mcp-tools/prompts/skill-agent'));
-        }
-
-        if (name === 'circuit_maker') {
-            return textResult(await getText('/v1/mcp-tools/prompts/circuit-maker'));
-        }
-
-        if (name === 'pcb_layout') {
-            return textResult(await getPcbLayoutPromptText());
-        }
-
-        return textResult(await getCombinedPromptText());
-    },
 );
 
 server.registerTool(
@@ -486,7 +424,7 @@ server.registerTool(
     'search_reused_block',
     {
         title: 'Search Reused Block',
-        description: 'Search pre-assembled EasyEDA Copilot reused blocks that can be recalculated and inserted into a circuit.',
+        description: `Search pre-assembled EasyEDA Copilot reused blocks that can be recalculated and inserted into a circuit. For circuit workflow docs, read the local docs folder: ${CIRCUIT_DOCS_DIR}`,
         inputSchema: z.object({
             query: z.string().describe('Query example: "3.3V power regulator"'),
             page: z.number().min(1).default(1).describe('Current results page.'),
@@ -503,7 +441,7 @@ server.registerTool(
     'get_pcb_component_sizes',
     {
         title: 'Get PCB Component Sizes',
-        description: 'Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions.',
+        description: `Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions. For PCB layout docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
         inputSchema: z.object({
             designators: z.array(z.string()).nullable().optional(),
             includeAll: z.boolean().nullable().optional(),
@@ -525,7 +463,7 @@ server.registerTool(
     'make_pcb_layout',
     {
         title: 'Make PCB Layout',
-        description: 'Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board.',
+        description: `Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
         inputSchema: z.object({
             file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
         }).refine(data => Boolean(data.file), {
@@ -572,7 +510,7 @@ server.registerTool(
     'assemble_pcb_layout_on_current_pcbdoc',
     {
         title: 'Assemble PCB Layout',
-        description: 'Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid.',
+        description: `Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid. For PCB assembly docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
         inputSchema: z.object({
             layoutId: z.string().min(1).describe('layoutId returned by make_pcb_layout.'),
         }),
@@ -601,7 +539,7 @@ server.registerTool(
     'extract_circuit_on_current_page',
     {
         title: 'Extract Circuit',
-        description: 'Post-process circuit changes on the main EasyEDA Copilot server and sends the assembled result to EasyEDA. Every added component must include part_uuid.',
+        description: `Post-process circuit changes on the main EasyEDA Copilot server and sends the assembled result to EasyEDA. Every added component must include part_uuid. For circuit modification docs, read the local docs folder: ${CIRCUIT_DOCS_DIR}`,
         inputSchema: CircuitModStruct(),
     },
     async (circuit) => {
@@ -809,6 +747,12 @@ server.registerTool(
 
 async function main() {
     startWsServer();
+    try {
+        await syncLocalDocsFromServer();
+    } catch (error) {
+        docsSyncError = (error as Error).message;
+    }
+
     const transport = new StdioServerTransport();
     await server.connect(transport);
     // console.error(`EasyEDA Copilot MCP Server running on stdio. Server URL: ${COPILOT_SERVER_URL}`);
