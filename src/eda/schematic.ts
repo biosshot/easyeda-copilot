@@ -129,6 +129,12 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
 }
 
 export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
+    const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
+
+    if (docType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
+        throw new Error('Failed getSchematic. Open schematic page doc to fix.')
+    }
+
     const now = Date.now();
     // @ts-ignore
     if (now - lastToastTime > TOAST_THROTTLE_MS) {

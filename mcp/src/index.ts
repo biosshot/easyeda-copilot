@@ -6,6 +6,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { homedir, tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import sharp from 'sharp';
 import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
@@ -325,11 +326,30 @@ async function readLayoutCode(input: { file: string; }) {
 }
 
 function previewImageExtension(mimeType: string | undefined) {
-    if (mimeType === 'image/svg+xml') return '.svg';
+    if (mimeType === 'image/svg+xml') return '.png';
     if (mimeType === 'image/png') return '.png';
     if (mimeType === 'image/jpeg') return '.jpg';
     if (mimeType === 'image/webp') return '.webp';
     return '.svg';
+}
+
+function isSvgImage(bytes: Buffer, mimeType: string | undefined) {
+    if (mimeType === 'image/svg+xml') return true;
+    return bytes.subarray(0, 512).toString('utf8').trimStart().startsWith('<svg');
+}
+
+async function renderPreviewImage(bytes: Buffer, mimeType: string | undefined) {
+    if (!isSvgImage(bytes, mimeType)) {
+        return {
+            bytes,
+            extension: previewImageExtension(mimeType),
+        };
+    }
+
+    return {
+        bytes: await sharp(bytes).png().toBuffer(),
+        extension: '.png',
+    };
 }
 
 async function writePreviewImageFile(previewImage: string | undefined, layoutId: string) {
@@ -339,16 +359,19 @@ async function writePreviewImageFile(previewImage: string | undefined, layoutId:
     const mimeType = dataUrlMatch?.[1];
     const isBase64 = Boolean(dataUrlMatch?.[2]);
     const payload = dataUrlMatch?.[3] ?? previewImage;
-    const bytes = dataUrlMatch
+    const sourceBytes = dataUrlMatch
         ? isBase64
             ? Buffer.from(payload, 'base64')
             : Buffer.from(decodeURIComponent(payload), 'utf8')
+        : previewImage.trimStart().startsWith('<svg')
+            ? Buffer.from(previewImage, 'utf8')
         : Buffer.from(previewImage, 'base64');
 
     const previewDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-previews');
     await mkdir(previewDir, { recursive: true });
 
-    const filePath = join(previewDir, `${layoutId}${previewImageExtension(mimeType)}`);
+    const { bytes, extension } = await renderPreviewImage(sourceBytes, mimeType);
+    const filePath = join(previewDir, `${layoutId}${extension}`);
     await writeFile(filePath, bytes);
     return filePath;
 }
@@ -618,6 +641,23 @@ server.registerTool(
 );
 
 server.registerTool(
+    'sync_current_document',
+    {
+        title: 'Sync Current EasyEDA Document',
+        description: 'Force EasyEDA to synchronize the current schematic or PCB document by saving it, closing the current editor tab, waiting briefly, and reopening the same document.',
+        inputSchema: z.object({
+            settle_ms: z.number().min(0).max(10000).default(500).describe('Delay in milliseconds between close and reopen.'),
+        }),
+    },
+    async ({ settle_ms }) => {
+        const result = await requestEasyEda('sync-current-document', {
+            settleMs: settle_ms,
+        }, 300000);
+        return textResult(result);
+    },
+);
+
+server.registerTool(
     'create_schematic',
     {
         title: 'Create EasyEDA Schematic',
@@ -658,7 +698,7 @@ server.registerTool(
         description: 'Modify an EasyEDA schematic name.',
         inputSchema: z.object({
             schematic_uuid: z.string().min(1).describe('Schematic UUID.'),
-            schematic_name: z.string().min(1).describe('New schematic name.'),
+            schematic_name: z.string().min(1).describe('New schematic short name. Use UPPERCASE or PascalCase'),
         }),
     },
     async ({ schematic_uuid, schematic_name }) => {
@@ -677,7 +717,7 @@ server.registerTool(
         description: 'Modify an EasyEDA schematic page name.',
         inputSchema: z.object({
             schematic_page_uuid: z.string().min(1).describe('Schematic page UUID.'),
-            schematic_page_name: z.string().min(1).describe('New schematic page name.'),
+            schematic_page_name: z.string().min(1).describe('New schematic page short name. Use UPPERCASE or PascalCase'),
         }),
     },
     async ({ schematic_page_uuid, schematic_page_name }) => {
@@ -749,7 +789,7 @@ server.registerTool(
         description: 'Modify an EasyEDA PCB name.',
         inputSchema: z.object({
             pcb_uuid: z.string().min(1).describe('PCB UUID.'),
-            pcb_name: z.string().min(1).describe('New PCB name.'),
+            pcb_name: z.string().min(1).describe('New PCB short name. Use UPPERCASE or PascalCase.'),
         }),
     },
     async ({ pcb_uuid, pcb_name }) => {

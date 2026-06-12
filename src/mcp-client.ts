@@ -49,6 +49,22 @@ function send(event: string, body: Record<string, unknown>) {
     } satisfies McpMessage));
 }
 
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function saveCurrentDocument(document: IDMT_EditorDocumentItem) {
+    if (document.documentType === EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
+        return await eda.sch_Document.save();
+    }
+
+    if (document.documentType === EDMT_EditorDocumentType.PCB) {
+        return await eda.pcb_Document.save(document.uuid);
+    }
+
+    throw new Error(`Unsupported current document type for sync: ${document.documentType}`);
+}
+
 function clearHeartbeatTimeout() {
     if (!state.heartbeatTimeout) return;
     clearTimeout(state.heartbeatTimeout);
@@ -208,6 +224,35 @@ async function handleMessage(message: McpMessage) {
             if (!tabId) throw new Error(`Failed to open document: ${documentUuid}`);
 
             reply(true, { tabId, documentUuid });
+            return;
+        }
+
+        if (message.event === 'sync-current-document') {
+            const settleMs = typeof body.settleMs === 'number' && Number.isFinite(body.settleMs)
+                ? Math.max(0, body.settleMs)
+                : 500;
+            const document = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+            if (!document) throw new Error('Current document info not found');
+
+            const saved = await saveCurrentDocument(document);
+            if (!saved) throw new Error(`Failed to save current document: ${document.uuid}`);
+
+            const closed = await eda.dmt_EditorControl.closeDocument(document.tabId || document.uuid);
+            if (!closed) throw new Error(`Failed to close current document: ${document.uuid}`);
+
+            await delay(settleMs);
+
+            const tabId = await eda.dmt_EditorControl.openDocument(document.uuid);
+            if (!tabId) throw new Error(`Failed to reopen current document: ${document.uuid}`);
+
+            reply(true, {
+                documentUuid: document.uuid,
+                documentType: document.documentType,
+                saved,
+                closed,
+                tabId,
+                settleMs,
+            });
             return;
         }
 

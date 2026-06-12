@@ -11,6 +11,7 @@ const SAME_POINT_EPS = 1e-9;
 const DEFAULT_GND_NET = "GND";
 const DEFAULT_GND_POUR_PREFIX = "COPILOT_GND";
 const PCB_CLEAR_TIMEOUT_MS = 5000;
+const PCB_POST_CLEAR_SETTLE_MS = 500;
 
 type BoardPoint = {
     x: number;
@@ -570,6 +571,22 @@ async function refreshPcbState() {
     });
 }
 
+function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function saveCurrentPcbDocument() {
+    const document = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+    if (!document || document.documentType !== EDMT_EditorDocumentType.PCB) {
+        throw new Error("Current document is not a PCB");
+    }
+
+    const saved = await eda.pcb_Document.save(document.uuid);
+    if (!saved) throw new Error(`Failed to save PCB document: ${document.uuid}`);
+
+    await delay(PCB_POST_CLEAR_SETTLE_MS);
+}
+
 async function assembleBoardTask(board: BoardAssemble) {
     const startTimeTotal = Date.now();
     const logTiming = (label: string, startTime: number) => {
@@ -608,6 +625,7 @@ async function assembleBoardTask(board: BoardAssemble) {
     }
 
     await runStep("Clear PCB board", clearCurrentPcbBoard);
+    await runStep("Save PCB after clear", saveCurrentPcbDocument);
     await runStep("Draw board outline", () => drawBoardOutline(board.board));
     await runStep("Place components", () => placeComponents(board.components));
     await runStep("Draw tracks", () => drawTracks(board.tracks));
