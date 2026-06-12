@@ -11,6 +11,7 @@ import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
+import type { ExplainPCB } from '@copilot/shared/types/pcb/explain';
 
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
@@ -594,6 +595,19 @@ server.registerTool(
     async () => {
         const result = await requestEasyEda('get-schematic') as ExplainCircuit;
         return textResult({ ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) });
+    },
+);
+
+server.registerTool(
+    'get_current_pcb',
+    {
+        title: 'Get EasyEDA PCB',
+        description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first.',
+        inputSchema: z.object({}),
+    },
+    async () => {
+        const result = await requestEasyEda('get-pcb') as ExplainPCB;
+        return textResult(result);
     },
 );
 

@@ -1,6 +1,7 @@
 import { assembleCircuit } from './eda/assemble';
 import { assembleBoard } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
+import { getPcb } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 
@@ -145,6 +146,11 @@ async function handleMessage(message: McpMessage) {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds]);
             reply(true, schematic);
+            return;
+        }
+
+        if (message.event === 'get-pcb') {
+            reply(true, await getPcb());
             return;
         }
 
