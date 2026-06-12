@@ -37,6 +37,13 @@ export const ExplainPcbComponentSchema = () => z.object({
         pad_number: z.string(),
         signal_name: z.string().optional(),
     }).strict()),
+    nearest_components: z.array(z.object({
+        designator: z.string(),
+        distance: z.number(),
+        x: z.number(),
+        y: z.number(),
+        layer: ExplainPcbLayerSchema(),
+    }).strict()).optional(),
 }).strict();
 
 export const SimplifiedDrcViolationSchema = () => z.object({

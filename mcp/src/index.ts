@@ -669,6 +669,22 @@ server.registerTool(
 );
 
 server.registerTool(
+    'inspect_component',
+    {
+        title: 'Inspect PCB Component',
+        description: 'Return a PCB component by designator with a list of nearest neighboring components within the given radius. Open the target PCB document first.',
+        inputSchema: z.object({
+            designator: z.string().min(1).describe('Component designator to inspect, e.g. R1.'),
+            radius: z.number().min(0.1).max(100).default(10).describe('Search radius in millimeters for nearest components.'),
+        }),
+    },
+    async ({ designator, radius }) => {
+        const result = await requestEasyEda('inspect-component', { designator, radius }, 300000);
+        return textResult(result);
+    },
+);
+
+server.registerTool(
     'open_document',
     {
         title: 'Open EasyEDA Project Document',

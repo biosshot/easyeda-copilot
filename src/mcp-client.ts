@@ -2,7 +2,7 @@ import { assembleCircuit } from './eda/assemble';
 import { assembleBoard } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { checkPcbDrc } from './eda/drc';
-import { getPcb, inspectNet } from './eda/pcb';
+import { getPcb, inspectComponent, inspectNet } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 
@@ -289,6 +289,20 @@ async function handleMessage(message: McpMessage) {
 
             const pcb = await getPcb();
             const result = await inspectNet(pcb, netName, drcLimit);
+            reply(true, result);
+            return;
+        }
+
+        if (message.event === 'inspect-component') {
+            const designator = typeof body.designator === 'string' ? body.designator : '';
+            if (!designator) throw new Error('Missing designator');
+
+            const radius = typeof body.radius === 'number' && Number.isFinite(body.radius) && body.radius > 0
+                ? body.radius
+                : 10;
+
+            const pcb = await getPcb();
+            const result = await inspectComponent(pcb, designator, radius);
             reply(true, result);
             return;
         }

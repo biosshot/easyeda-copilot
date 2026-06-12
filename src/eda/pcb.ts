@@ -997,3 +997,34 @@ export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: num
 
     return result;
 }
+
+export async function inspectComponent(pcb: ExplainPCB, designator: string, radius: number): Promise<ExplainPcbComponent> {
+    const target = pcb.components.find(component => component.designator === designator);
+    if (!target) throw new Error(`Component not found: ${designator}`);
+
+    const radiusSquared = radius * radius;
+    const nearest = pcb.components
+        .filter(component => component.designator !== designator)
+        .map(component => {
+            const dx = component.x - target.x;
+            const dy = component.y - target.y;
+            return {
+                component,
+                distanceSquared: dx * dx + dy * dy,
+            };
+        })
+        .filter(item => item.distanceSquared <= radiusSquared)
+        .sort((a, b) => a.distanceSquared - b.distanceSquared)
+        .map(item => ({
+            designator: item.component.designator,
+            distance: round(Math.sqrt(item.distanceSquared)),
+            x: item.component.x,
+            y: item.component.y,
+            layer: item.component.layer,
+        }));
+
+    return {
+        ...target,
+        nearest_components: nearest,
+    };
+}
