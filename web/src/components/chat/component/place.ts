@@ -1,4 +1,4 @@
-
+import '@copilot/shared/types/eda';
 
 function withTimeout<T>(
     promise: T,
@@ -27,15 +27,7 @@ function withTimeout<T>(
 }
 
 export const placeComponent = async (part_uuid: string) => {
-    let maybeLibUuid;
-    const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
-
-    if (isOffline) {
-        maybeLibUuid = ['0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154', 'lcsc'];
-    }
-    else {
-        maybeLibUuid = ['lcsc'];
-    }
+    const maybeLibUuid = await eda.getLibraryUuidList?.() ?? [await eda.lib_LibrariesList.getSystemLibraryUuid() ?? 'lcsc'];
 
     let comp;
 
@@ -46,11 +38,7 @@ export const placeComponent = async (part_uuid: string) => {
                 uuid: part_uuid
             });
 
-            if (isOffline)
-                comp = await withTimeout(compPromise, 3000);
-            else
-                comp = await compPromise;
-
+            comp = await withTimeout(compPromise, 3000);
         } catch (error) {
             comp = undefined;
         }

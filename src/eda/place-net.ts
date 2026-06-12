@@ -2,7 +2,7 @@ import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
 import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
-import { withTimeout } from "./utils";
+import { normWireY, withTimeout } from "./utils";
 
 // Генератор диапазона (аналог range в Python)
 const range = (start: number, stop: number, step: number) =>
@@ -13,10 +13,10 @@ const trialPortOffsetLengths = range(10, 800, 10);
 
 // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
 const directions = [
-    { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
-    { dx: 0, dy: -1, port_offset_y: 0 },  // top
-    { dx: -1, dy: 0, port_offset_y: -1 },  // left
-    { dx: 0, dy: 1, port_offset_y: 0 },    // bottom
+    { dx: 1, dy: 0, port_offset_y: normWireY(1) },   // rigth
+    { dx: 0, dy: normWireY(1), port_offset_y: 0 },  // top
+    { dx: -1, dy: 0, port_offset_y: normWireY(1) },  // left
+    { dx: 0, dy: normWireY(-1), port_offset_y: 0 },    // bottom
 ];
 
 const selectPortForNet = (net: string) => {
@@ -295,7 +295,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
         let rotation = (dir.dy === 1 ? 180 : 0);
         if (portData.rotateToIdle === -1) rotation += 180;
 
-        const comp = await placeComponent(portData, { x: endX, y: -endYPort, rotate: rotation }).catch(e => undefined);
+        const comp = await placeComponent(portData, { x: endX, y: normWireY(endYPort), rotate: rotation }).catch(e => undefined);
 
         if (comp) {
             comp.setState_Name(net.net);

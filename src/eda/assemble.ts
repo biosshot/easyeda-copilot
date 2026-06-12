@@ -7,7 +7,7 @@ import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections
 import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
 import { AddedNet, ComponentToReplace, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
-import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
+import { chunkArray, getPageSize, normWireY, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
 import PQueue from 'p-queue';
 
 const assembleQueue = new PQueue({ concurrency: 1 });
@@ -129,7 +129,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
     placeComponents: PlacedComponents, offset: Offset = { x: 0, y: 0 }) {
     const pointToArr = (p: { x: number, y: number }) => {
         const { x, y } = applyOffset(p.x, p.y, offset);
-        return [x, -y];
+        return [x, normWireY(y)];
     }
 
     const searchSignalName = (designator: string, pin: string | number) => {

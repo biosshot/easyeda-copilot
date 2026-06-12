@@ -15,6 +15,7 @@ declare global {
         getPcb?: () => Promise<ExplainPCB>,
         checkPcbDrc?: (limit: number) => Promise<SimplifiedDrcCategory[]>,
         getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
+        getLibraryUuidList?: (libraryUuid?: string) => Promise<string[]>,
         checkpointer?: {
             restore: (id?: string, allAgree?: boolean) => Promise<boolean>;
             save: (minor: boolean) => Promise<string | null>;

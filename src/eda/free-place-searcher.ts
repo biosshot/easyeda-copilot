@@ -1,4 +1,4 @@
-import { getBBox, to2 } from "./utils";
+import { getBBox, normWireY, to2 } from "./utils";
 
 interface Offset {
     x: number | undefined;
@@ -27,7 +27,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
 
         return {
             x: bbox.minX - PADDING,
-            y: (-bbox.minY) + PADDING,
+            y: normWireY(bbox.minY) + PADDING,
             w: bbox.width + PADDING * 2,
             h: bbox.height + PADDING * 2
         }
@@ -46,9 +46,9 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
                 continue;
             }
             const rect = {
-                h: Math.abs((-segment[1]) - (-segment[3])) + PADDING * 2,
+                h: Math.abs(normWireY(segment[1]) - normWireY(segment[3])) + PADDING * 2,
                 w: Math.abs(segment[0] - segment[2]) + PADDING * 2,
-                y: Math.max(-segment[1], -segment[3]) + PADDING,
+                y: Math.max(normWireY(segment[1]), normWireY(segment[3])) + PADDING,
                 x: Math.min(segment[0], segment[2]) - PADDING,
             };
             busyRects.push(rect);

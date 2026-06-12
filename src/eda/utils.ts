@@ -130,3 +130,10 @@ export function getPrimitiveById(primitiveId: string | string[]) {
 export async function yieldToEventLoop() {
     await Promise.resolve();
 }
+
+const VERSION_EDASYEDA = eda.sys_Environment.getEditorCurrentVersion().split('.').map(Number);
+
+export function normWireY(y: number) {
+    if (VERSION_EDASYEDA[0] >= 3) return y;
+    return -y
+}

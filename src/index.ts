@@ -23,6 +23,7 @@ import { searchComponentInSCH } from './eda/search';
 import { checkpointer } from './eda/checkpointer';
 import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
 import { checkPcbDrc } from './eda/drc';
+import { getLibraryUuidList } from './eda/place-component';
 
 eda.assembleCircuit = assembleCircuit;
 eda.assembleBoard = assembleBoard;
@@ -32,6 +33,7 @@ eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
 eda.checkpointer = checkpointer;
 eda.checkPcbDrc = checkPcbDrc;
+eda.getLibraryUuidList = getLibraryUuidList;
 
 startMcpScanOnStartup();
 
