@@ -1,7 +1,8 @@
 import { assembleCircuit } from './eda/assemble';
 import { assembleBoard } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
-import { getPcb } from './eda/pcb';
+import { checkPcbDrc } from './eda/drc';
+import { getPcb, inspectNet } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 
@@ -273,40 +274,22 @@ async function handleMessage(message: McpMessage) {
                 ? Math.floor(body.limit)
                 : 24;
 
-            const drcResult = await eda.pcb_Drc.check(true, false, true);
-            const violations = Array.isArray(drcResult) ? drcResult : [];
+            const result = await checkPcbDrc(limit);
+            reply(true, result);
+            return;
+        }
 
-            const limitForGroup = Math.max(1, Math.round(limit / violations.length));
+        if (message.event === 'inspect-net') {
+            const netName = typeof body.net === 'string' ? body.net : '';
+            if (!netName) throw new Error('Missing net');
 
-            function formatDrcMessage(str: string | undefined, param: Record<string, string> | undefined) {
-                if (!str || !param) return str ?? '';
-                return str.replace(/\{(\w+)\}/g, (_, key) => param[key] ?? `{${key}}`);
-            }
+            const drcLimit = typeof body.drc_limit === 'number' && Number.isFinite(body.drc_limit) && body.drc_limit > 0
+                ? Math.floor(body.drc_limit)
+                : 24;
 
-            function simplifyItem(item: Record<string, unknown>) {
-                const explanation = item.explanation as Record<string, unknown> | undefined;
-                const param = explanation?.param as Record<string, string> | undefined;
-                const obj1 = item.obj1 as Record<string, string> | undefined;
-                const obj2 = item.obj2 as Record<string, string> | undefined;
-
-                return {
-                    errorType: item.errorType,
-                    obj1: obj1?.suffix,
-                    obj2: obj2?.suffix,
-                    net: item.net,
-                    message: formatDrcMessage(explanation?.str as string | undefined, param),
-                };
-            }
-
-            const simplified = violations.map(category => ({
-                name: category.name,
-                list: (category.list as Array<{ name: string; list: Array<Record<string, unknown>> }>).map(group => ({
-                    name: group.name,
-                    list: group.list.slice(0, limitForGroup).map(simplifyItem),
-                })).filter(group => group.list.length > 0),
-            })).filter(category => category.list.length > 0);
-
-            reply(true, simplified);
+            const pcb = await getPcb();
+            const result = await inspectNet(pcb, netName, drcLimit);
+            reply(true, result);
             return;
         }
 

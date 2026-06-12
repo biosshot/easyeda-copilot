@@ -4,7 +4,7 @@
 import type _ from '@jlceda/pro-api-types';
 import { CircuitAssembly, ExplainCircuit } from './circuit';
 import { BoardAssemble } from './pcb/board-assemble';
-import { ExplainPCB } from './pcb/explain';
+import { ExplainPCB, SimplifiedDrcCategory } from './pcb/explain';
 import { SimulateResult } from './spice';
 
 declare global {
@@ -13,6 +13,7 @@ declare global {
         assembleBoard?: (board: BoardAssemble) => Promise<void>,
         getSchematic?: (primitiveIds?: string[]) => Promise<ExplainCircuit>,
         getPcb?: () => Promise<ExplainPCB>,
+        checkPcbDrc?: (limit: number) => Promise<SimplifiedDrcCategory[]>,
         getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
         checkpointer?: {
             restore: (id?: string, allAgree?: boolean) => Promise<boolean>;

@@ -39,13 +39,28 @@ export const ExplainPcbComponentSchema = () => z.object({
     }).strict()),
 }).strict();
 
+export const SimplifiedDrcViolationSchema = () => z.object({
+    errorType: z.string(),
+    obj1: z.string().optional(),
+    obj2: z.string().optional(),
+    message: z.string(),
+}).strict();
+
+export const SimplifiedDrcCategorySchema = () => z.object({
+    name: z.string(),
+    list: z.array(z.object({
+        name: z.string(),
+        list: z.array(SimplifiedDrcViolationSchema()),
+    }).strict()),
+}).strict();
+
 export const ExplainPcbWireSchema = () => z.object({
     net: z.string(),
     layer: ExplainPcbWireLayerSchema(),
-    endpoints: z.array(ExplainPcbPadRefSchema()),
+    connected_pads: z.array(ExplainPcbPadRefSchema()),
     length: z.number(),
-    directDistance: z.number().optional(),
-    detourRatio: z.number().optional(),
+    direct_distance: z.number().optional(),
+    detour_ratio: z.number().optional(),
     vias: z.number(),
     width: z.object({
         min: z.number(),
@@ -53,6 +68,7 @@ export const ExplainPcbWireSchema = () => z.object({
     }).strict(),
     segments: z.number(),
     bbox: ExplainPcbBoxSchema(),
+    drc_violations: z.array(SimplifiedDrcViolationSchema()).optional(),
 }).strict();
 
 export const ExplainPcbViaSchema = () => z.object({
@@ -92,6 +108,9 @@ export type ExplainPcbPadRef = z.infer<ReturnType<typeof ExplainPcbPadRefSchema>
 export type ExplainPcbBoard = z.infer<ReturnType<typeof ExplainPcbBoardSchema>>;
 export type ExplainPcbComponent = z.infer<ReturnType<typeof ExplainPcbComponentSchema>>;
 export type ExplainPcbWire = z.infer<ReturnType<typeof ExplainPcbWireSchema>>;
+export type SimplifiedDrcViolation = z.infer<ReturnType<typeof SimplifiedDrcViolationSchema>>;
 export type ExplainPcbVia = z.infer<ReturnType<typeof ExplainPcbViaSchema>>;
 export type ExplainPcbPolygon = z.infer<ReturnType<typeof ExplainPcbPolygonSchema>>;
 export type ExplainPCB = z.infer<ReturnType<typeof ExplainPcbSchema>>;
+export type SimplifiedDrcCategory = z.infer<ReturnType<typeof SimplifiedDrcCategorySchema>>;
+export type SimplifiedDrcResult = SimplifiedDrcCategory[];

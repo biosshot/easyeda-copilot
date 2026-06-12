@@ -6,7 +6,9 @@ import type {
     ExplainPcbPolygon,
     ExplainPcbVia,
     ExplainPcbWire,
+    SimplifiedDrcViolation,
 } from "@copilot/shared/types/pcb/explain";
+import { checkPcbDrc } from "./drc";
 
 const MIL_TO_MM = 25.4 / 1000;
 const SNAP_TOLERANCE_MM = 0.05;
@@ -707,7 +709,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
     const netEndpoints = pads
         .filter(pad => pad.net === net)
         .map(({ designator, pad_number }) => ({ designator, pad_number }));
-    const endpoints = uniquePadRefs([...geometryEndpoints, ...netEndpoints]);
+    const connected_pads = uniquePadRefs([...geometryEndpoints, ...netEndpoints]);
 
     const length = island.edges.reduce((total, edge) => total + distance(edge.start, edge.end), 0);
     const widths = island.edges.map(edge => edge.width);
@@ -722,7 +724,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
     const wire: ExplainPcbWire = {
         net,
         layer: layers.size > 1 || vias.length ? "mixed" : [...layers][0],
-        endpoints,
+        connected_pads,
         length: milToMm(length),
         vias: vias.length,
         width: {
@@ -733,11 +735,11 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
         bbox: toExplainBox(box, context),
     };
 
-    if (endpoints.length === 2) {
+    if (connected_pads.length === 2) {
         const directDistance = maxIslandNodeDistance(island) * MIL_TO_MM;
         if (directDistance >= DIRECT_DISTANCE_MIN_MM) {
-            wire.directDistance = round(directDistance);
-            wire.detourRatio = round((length * MIL_TO_MM) / directDistance);
+            wire.direct_distance = round(directDistance);
+            wire.detour_ratio = round((length * MIL_TO_MM) / directDistance);
         }
     }
 
@@ -910,4 +912,88 @@ export async function getPcb(): Promise<ExplainPCB> {
         wires: wires.length ? wires : undefined,
         polygons: polygons.length ? polygons : undefined,
     };
+}
+
+function unionBox(boxes: ExplainPcbBox[]): ExplainPcbBox {
+    if (!boxes.length) return { left: 0, right: 0, top: 0, bottom: 0 };
+    return {
+        left: Math.min(...boxes.map(box => box.left)),
+        right: Math.max(...boxes.map(box => box.right)),
+        top: Math.max(...boxes.map(box => box.top)),
+        bottom: Math.min(...boxes.map(box => box.bottom)),
+    };
+}
+
+function padRefKey(ref: ExplainPcbPadRef) {
+    return `${ref.designator}\0${ref.pad_number}`;
+}
+
+export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: number): Promise<ExplainPcbWire[]> {
+    const wires = pcb.wires?.filter(wire => wire.net === netName) ?? [];
+    if (!wires.length) return [];
+
+    const drcResult = await checkPcbDrc(drcLimit);
+    const netInSuffix = `(${netName})`;
+    const netViolations = drcResult.flatMap(category =>
+        category.list.flatMap(group => group.list.filter(violation => {
+            return violation.obj1?.includes(netInSuffix) || violation.obj2?.includes(netInSuffix);
+        }))
+    );
+
+    const padToWireIndices = new Map<string, number[]>();
+    wires.forEach((wire, index) => {
+        for (const pad of wire.connected_pads) {
+            const key = padRefKey(pad);
+            const list = padToWireIndices.get(key) ?? [];
+            list.push(index);
+            padToWireIndices.set(key, list);
+        }
+    });
+
+    function parsePadRefFromSuffix(suffix: string | undefined): ExplainPcbPadRef | undefined {
+        if (!suffix) return undefined;
+        const lastDash = suffix.lastIndexOf('-');
+        if (lastDash <= 0 || lastDash === suffix.length - 1) return undefined;
+        const designator = suffix.slice(0, lastDash);
+        const padNumber = suffix.slice(lastDash + 1);
+        if (!designator || !padNumber) return undefined;
+        return { designator, pad_number: padNumber };
+    }
+
+    const result: ExplainPcbWire[] = wires.map(wire => ({ ...wire, drc_violations: [] }));
+    const unmatched: SimplifiedDrcViolation[] = [];
+
+    for (const violation of netViolations) {
+        const refs = [
+            parsePadRefFromSuffix(violation.obj1),
+            parsePadRefFromSuffix(violation.obj2),
+        ].filter((ref): ref is ExplainPcbPadRef => Boolean(ref));
+        const targetIndices = new Set<number>();
+        for (const ref of refs) {
+            for (const index of padToWireIndices.get(padRefKey(ref)) ?? []) {
+                targetIndices.add(index);
+            }
+        }
+        if (targetIndices.size) {
+            for (const index of targetIndices) {
+                result[index].drc_violations!.push(violation);
+            }
+        } else {
+            unmatched.push(violation);
+        }
+    }
+
+    if (unmatched.length) {
+        for (const wire of result) {
+            wire.drc_violations!.push(...unmatched);
+        }
+    }
+
+    for (const wire of result) {
+        if (!wire.drc_violations?.length) {
+            delete (wire as Partial<ExplainPcbWire>).drc_violations;
+        }
+    }
+
+    return result;
 }

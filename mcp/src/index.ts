@@ -641,13 +641,29 @@ server.registerTool(
     'check_pcb_drc',
     {
         title: 'Check PCB DRC',
-        description: 'Run EasyEDA PCB DRC check on the currently opened PCB document. Returns simplified DRC violations grouped by category, with a per-group limit to avoid huge responses. Open the target PCB document first.',
+        description: 'Run EasyEDA PCB DRC check on the currently opened PCB document. Returns simplified DRC violations grouped by category. The limit is split evenly across rule groups within each category to avoid huge responses. Open the target PCB document first.',
         inputSchema: z.object({
-            limit: z.number().min(1).max(200).default(24).describe('Maximum number of violations per group to return.'),
+            limit: z.number().min(1).max(200).default(24).describe('Maximum number of violations to return per category, split across rule groups.'),
         }),
     },
     async ({ limit }) => {
         const result = await requestEasyEda('check-pcb-drc', { limit }, 300000);
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'inspect_net',
+    {
+        title: 'Inspect PCB Net',
+        description: 'Analyze a specific net on the currently opened PCB document: length, width, vias, layers, connected/unconnected pads, polygons, and DRC violations. Open the target PCB document first.',
+        inputSchema: z.object({
+            net: z.string().min(1).describe('Net name to inspect.'),
+            drc_limit: z.number().min(1).max(200).default(24).describe('Maximum DRC violations per group to fetch for this net.'),
+        }),
+    },
+    async ({ net, drc_limit }) => {
+        const result = await requestEasyEda('inspect-net', { net, drc_limit }, 300000);
         return textResult(result);
     },
 );

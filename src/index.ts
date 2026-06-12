@@ -22,6 +22,7 @@ import '@copilot/shared/types/eda';
 import { searchComponentInSCH } from './eda/search';
 import { checkpointer } from './eda/checkpointer';
 import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
+import { checkPcbDrc } from './eda/drc';
 
 eda.assembleCircuit = assembleCircuit;
 eda.assembleBoard = assembleBoard;
@@ -30,6 +31,7 @@ eda.getPcb = getPcb;
 eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
 eda.checkpointer = checkpointer;
+eda.checkPcbDrc = checkPcbDrc;
 
 startMcpScanOnStartup();
 
