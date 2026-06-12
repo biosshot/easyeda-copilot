@@ -366,7 +366,7 @@ async function writePreviewImageFile(previewImage: string | undefined, layoutId:
             : Buffer.from(decodeURIComponent(payload), 'utf8')
         : previewImage.trimStart().startsWith('<svg')
             ? Buffer.from(previewImage, 'utf8')
-        : Buffer.from(previewImage, 'base64');
+            : Buffer.from(previewImage, 'base64');
 
     const previewDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-previews');
     await mkdir(previewDir, { recursive: true });
@@ -633,6 +633,21 @@ server.registerTool(
     },
     async () => {
         const result = await requestEasyEda('get-current-drc-rules');
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'check_pcb_drc',
+    {
+        title: 'Check PCB DRC',
+        description: 'Run EasyEDA PCB DRC check on the currently opened PCB document. Returns simplified DRC violations grouped by category, with a per-group limit to avoid huge responses. Open the target PCB document first.',
+        inputSchema: z.object({
+            limit: z.number().min(1).max(200).default(24).describe('Maximum number of violations per group to return.'),
+        }),
+    },
+    async ({ limit }) => {
+        const result = await requestEasyEda('check-pcb-drc', { limit }, 300000);
         return textResult(result);
     },
 );

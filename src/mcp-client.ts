@@ -268,6 +268,48 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'check-pcb-drc') {
+            const limit = typeof body.limit === 'number' && Number.isFinite(body.limit) && body.limit > 0
+                ? Math.floor(body.limit)
+                : 24;
+
+            const drcResult = await eda.pcb_Drc.check(true, false, true);
+            const violations = Array.isArray(drcResult) ? drcResult : [];
+
+            const limitForGroup = Math.max(1, Math.round(limit / violations.length));
+
+            function formatDrcMessage(str: string | undefined, param: Record<string, string> | undefined) {
+                if (!str || !param) return str ?? '';
+                return str.replace(/\{(\w+)\}/g, (_, key) => param[key] ?? `{${key}}`);
+            }
+
+            function simplifyItem(item: Record<string, unknown>) {
+                const explanation = item.explanation as Record<string, unknown> | undefined;
+                const param = explanation?.param as Record<string, string> | undefined;
+                const obj1 = item.obj1 as Record<string, string> | undefined;
+                const obj2 = item.obj2 as Record<string, string> | undefined;
+
+                return {
+                    errorType: item.errorType,
+                    obj1: obj1?.suffix,
+                    obj2: obj2?.suffix,
+                    net: item.net,
+                    message: formatDrcMessage(explanation?.str as string | undefined, param),
+                };
+            }
+
+            const simplified = violations.map(category => ({
+                name: category.name,
+                list: (category.list as Array<{ name: string; list: Array<Record<string, unknown>> }>).map(group => ({
+                    name: group.name,
+                    list: group.list.slice(0, limitForGroup).map(simplifyItem),
+                })).filter(group => group.list.length > 0),
+            })).filter(category => category.list.length > 0);
+
+            reply(true, simplified);
+            return;
+        }
+
         if (message.event === 'create-schematic') {
             const boardName = typeof body.boardName === 'string' ? body.boardName : undefined;
             const schematicFirstPageUuid = await eda.dmt_Schematic.createSchematic(boardName);
