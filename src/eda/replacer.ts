@@ -2,7 +2,7 @@ import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import { placeComponent } from "./place-component";
 import { getSchematic } from "./schematic";
 import { searchComponentInSCH } from "./search";
-import { getAllWiresByNet, normWireY, to2 } from "./utils";
+import { getAllWiresByNet, normWireY, normalizeWireLine, to2 } from "./utils";
 
 const rotatePoint = (p: { x: number, y: number }, rotate: number) => {
     const radians = -rotate * (Math.PI / 180);
@@ -253,7 +253,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                     for (const wire_ of wires) {
                         const lineRaw = wire_.getState_Line()
 
-                        wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+                        wireData = normalizeWireLine(lineRaw);
 
                         for (let index = 0; index < wireData.length; index++) {
                             wireDataIndex = index;

@@ -2,7 +2,7 @@ import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
 import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
-import { normWireY, to2, VERSION_EDASYEDA, withTimeout } from "./utils";
+import { normWireY, normalizeWireLine, to2, VERSION_EDASYEDA, withTimeout } from "./utils";
 
 // Генератор диапазона (аналог range в Python)
 const range = (start: number, stop: number, step: number) =>
@@ -52,30 +52,7 @@ function segmentsOverlap(seg1: number[], seg2: number[]): boolean {
 }
 
 function getWireSegments(wire: ISCH_PrimitiveWire): number[][] {
-    const lineRaw = wire.getState_Line();
-    if (!lineRaw || !Array.isArray(lineRaw)) return [];
-
-    // Массив сегментов: [[x1,y1,x2,y2], ...]
-    if (Array.isArray(lineRaw[0])) {
-        return (lineRaw as number[][]).filter(seg => seg.length >= 4);
-    }
-
-    // Один сегмент: [x1,y1,x2,y2]
-    if (lineRaw.length === 4) {
-        return [lineRaw as number[]];
-    }
-
-    // Плоский массив точек: [x1,y1,x2,y2,x3,y3,...]
-    if (lineRaw.length >= 4 && lineRaw.length % 2 === 0) {
-        const segments: number[][] = [];
-        const flatLine = lineRaw as number[];
-        for (let i = 0; i < flatLine.length - 2; i += 2) {
-            segments.push([flatLine[i], flatLine[i + 1], flatLine[i + 2], flatLine[i + 3]]);
-        }
-        return segments;
-    }
-
-    return [];
+    return normalizeWireLine(wire.getState_Line());
 }
 
 function candidateWireOverlaps(candidateLine: number[], existingSegments: number[][]): boolean {

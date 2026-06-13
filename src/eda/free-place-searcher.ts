@@ -1,4 +1,4 @@
-import { getBBox, normWireY, to2 } from "./utils";
+import { getBBox, normWireY, normalizeWireLine, to2 } from "./utils";
 
 interface Offset {
     x: number | undefined;
@@ -38,7 +38,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
 
     for (const wire of wires) {
         const line_ = wire.getState_Line();
-        const line = (Array.isArray(line_[0]) ? line_ : [line_]) as number[][];
+        const line = normalizeWireLine(line_);
 
         for (const segment of line) {
             if (segment.length !== 4) {

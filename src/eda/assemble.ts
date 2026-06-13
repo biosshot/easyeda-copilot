@@ -6,7 +6,7 @@ import { ComponentReplacer } from "./replacer";
 import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections";
 import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
-import { AddedNet, ComponentToReplace, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
+import { AddedNet, ComponentToReplace, ECHOSYS_LIB, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
 import { chunkArray, getPageSize, normWireY, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
 import PQueue from 'p-queue';
 
@@ -58,6 +58,24 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
         comp.setState_OtherProperty({
             "Global Net Name": s
         });
+    }
+    else if (component.designator.includes('|')) {
+        comp = await placeComponent({
+            libraryUuid: ECHOSYS_LIB,
+            uuid: partUuid
+        }, { x, y, rotate });
+
+        const s = component.pins[0]?.signal_name ?? 'Unknown';
+
+        try {
+            comp.setState_Name(s);
+            comp.setState_OtherProperty({
+                "Global Net Name": s
+            });
+        } catch (error) {
+            // pass
+        }
+
     }
     else {
         comp = await placeComponent({

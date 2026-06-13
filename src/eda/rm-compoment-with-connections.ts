@@ -2,7 +2,7 @@ import { ExplainCircuit } from "@copilot/shared/types/circuit";
 import { getSchematic } from "./schematic";
 import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet } from "./types";
-import { getAllWiresByNet, getPrimitiveById, normWireY, rmPartFromDesignator, to2 } from "./utils";
+import { getAllWiresByNet, getPrimitiveById, normWireY, normalizeWireLine, rmPartFromDesignator, to2 } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
 interface Point {
@@ -22,34 +22,6 @@ interface EasyEDAWire {
     line: number[] | number[][]; // [x1, y1, x2, y2, ...] или [[x1,y1,x2,y2], ...]
     net: string;
     primitiveId: string;
-}
-
-// Нормализует line провода в массив сегментов [[x1,y1,x2,y2], ...]
-function normalizeWireLine(line: number[] | number[][]): number[][] {
-    if (!line || line.length === 0) return [];
-
-    // Массив сегментов: [[x1,y1,x2,y2], ...]
-    if (Array.isArray(line[0])) {
-        return (line as number[][]).filter(seg => seg.length >= 4);
-    }
-
-    const flat = line as number[];
-
-    // Один сегмент: [x1,y1,x2,y2]
-    if (flat.length === 4) {
-        return [flat];
-    }
-
-    // Плоский массив точек: [x1,y1,x2,y2,x3,y3,...]
-    if (flat.length >= 4 && flat.length % 2 === 0) {
-        const segments: number[][] = [];
-        for (let i = 0; i < flat.length - 2; i += 2) {
-            segments.push([flat[i], flat[i + 1], flat[i + 2], flat[i + 3]]);
-        }
-        return segments;
-    }
-
-    return [];
 }
 
 // Вспомогательная функция для создания уникального ключа точки

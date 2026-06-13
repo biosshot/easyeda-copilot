@@ -1,6 +1,6 @@
 import type { CircuitAssembly, ExplainCircuit } from '@copilot/shared/types/circuit';
 import { searchComponentInSCH } from './search';
-import { getBBox, getPrimitiveById, to2, withTimeout } from './utils';
+import { getBBox, getPrimitiveById, normalizeWireLine, to2, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -426,7 +426,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
         const lineRaw = wire.getState_Line();
         if (!lineRaw || !Array.isArray(lineRaw)) continue;
 
-        const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+        const wireData = normalizeWireLine(lineRaw);
 
         // Собираем все точки этого провода
         const wirePoints = new Set<string>();

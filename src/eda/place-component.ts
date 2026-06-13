@@ -1,9 +1,9 @@
+import { ECHOSYS_LIB } from "./types";
 import { to2, withTimeout } from "./utils";
 
 const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
 
 const SYS_LIB_UUID = eda.lib_LibrariesList.getSystemLibraryUuid();
-const ECHOSYS_LIB = 'f5af0881d090439f925343ec8aedf154';
 
 export async function getLibraryUuidList(libraryUuid?: string) {
     const maybeLibUuid = [];

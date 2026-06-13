@@ -1,20 +1,22 @@
 import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import { ComponentReplacer } from "./replacer";
 
+export const ECHOSYS_LIB = 'f5af0881d090439f925343ec8aedf154';
+
 export const VCC_PORT_COMPONENT = {
-    libraryUuid: 'f5af0881d090439f925343ec8aedf154',
+    libraryUuid: ECHOSYS_LIB,
     uuid: '4e5977e7f049493cbf5b5f91190144d3',
     rotateToIdle: 1,
 };
 
 export const GND_PORT_COMPONENT = {
-    libraryUuid: 'f5af0881d090439f925343ec8aedf154',
+    libraryUuid: ECHOSYS_LIB,
     uuid: '181f479f152643bbaa46a4b8cd92ed2e',
     rotateToIdle: -1,
 };
 
 export const NET_PORT_COMPONENT = {
-    libraryUuid: 'f5af0881d090439f925343ec8aedf154',
+    libraryUuid: ECHOSYS_LIB,
     uuid: '7523d33c197549a39030c4ac7fddee68',
     rotateToIdle: 1
 };

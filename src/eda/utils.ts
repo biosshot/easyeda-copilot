@@ -138,6 +138,42 @@ export function normWireY(y: number) {
     return -y
 }
 
+/**
+ * Нормализует line провода в массив сегментов [[x1,y1,x2,y2], ...].
+ * Учитывает версию EasyEDA:
+ * - v2: line уже массив сегментов или один сегмент [x1,y1,x2,y2]
+ * - v3: line — плоский массив сегментов [x1,y1,x2,y2,x3,y3,x4,y4,...]
+ */
+export function normalizeWireLine(line: number[] | number[][]): number[][] {
+    if (!line || line.length === 0) return [];
+
+    // v2: массив сегментов [[x1,y1,x2,y2], ...]
+    if (Array.isArray(line[0])) {
+        return (line as number[][]).filter(seg => seg.length >= 4);
+    }
+
+    const flat = line as number[];
+
+    // v3: плоский массив сегментов [x1,y1,x2,y2,x3,y3,x4,y4,...]
+    if (VERSION_EDASYEDA[0] >= 3) {
+        if (flat.length >= 4 && flat.length % 4 === 0) {
+            const segments: number[][] = [];
+            for (let i = 0; i < flat.length; i += 4) {
+                segments.push([flat[i], flat[i + 1], flat[i + 2], flat[i + 3]]);
+            }
+            return segments;
+        }
+        return [];
+    }
+
+    // v2 fallback: один сегмент [x1,y1,x2,y2]
+    if (flat.length === 4) {
+        return [flat];
+    }
+
+    return [];
+}
+
 export async function getAllWiresByNet(net: string) {
     if (VERSION_EDASYEDA[0] < 3) return await eda.sch_PrimitiveWire.getAll(net).catch(e => []);
     const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
