@@ -1,6 +1,6 @@
 import type { CircuitAssembly, ExplainCircuit } from '@copilot/shared/types/circuit';
 import { searchComponentInSCH } from './search';
-import { getBBox, getPrimitiveById, withTimeout } from './utils';
+import { getBBox, getPrimitiveById, to2, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -394,7 +394,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
             for (const p of compPins ?? []) {
                 const px = p.getState_X();
                 const py = p.getState_Y();
-                pinCoordMap.set(`${px},${py}`, {
+                pinCoordMap.set(`${to2(px)},${to2(py)}`, {
                     designator: component.designator,
                     pin_number: p.getState_PinNumber(),
                 });
@@ -419,7 +419,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
     }
 
     // Строим граф проводов ПО ЦЕПЯМ: для каждого net — свой граф смежности
-    const ptKey = (p: { x: number; y: number }) => `${p.x},${p.y}`;
+    const ptKey = (p: { x: number; y: number }) => `${to2(p.x)},${to2(p.y)}`;
     const netToWireGraph = new Map<string, Map<string, Set<string>>>();
 
     for (const wire of allWires) {

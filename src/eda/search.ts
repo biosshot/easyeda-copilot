@@ -1,5 +1,5 @@
 import { PlacedComponents } from "./types";
-import { getPrimitiveById, rmPartFromDesignator, to2 } from "./utils";
+import { getAllWiresByNet, getPrimitiveById, rmPartFromDesignator, to2 } from "./utils";
 
 export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
@@ -48,7 +48,7 @@ export async function getAllPrimitivePins() {
 }
 
 export async function hasDirectWire(net: string, p1: { x: number, y: number }, p2: { x: number, y: number }) {
-    const wires = await eda.sch_PrimitiveWire.getAll(net);
+    const wires = await getAllWiresByNet(net);
 
     for (const wire of wires) {
         const lineRaw = wire.getState_Line()

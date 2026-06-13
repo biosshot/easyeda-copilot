@@ -131,9 +131,15 @@ export async function yieldToEventLoop() {
     await Promise.resolve();
 }
 
-const VERSION_EDASYEDA = eda.sys_Environment.getEditorCurrentVersion().split('.').map(Number);
+export const VERSION_EDASYEDA = eda.sys_Environment.getEditorCurrentVersion().split('.').map(Number);
 
 export function normWireY(y: number) {
     if (VERSION_EDASYEDA[0] >= 3) return y;
     return -y
+}
+
+export async function getAllWiresByNet(net: string) {
+    if (VERSION_EDASYEDA[0] < 3) return await eda.sch_PrimitiveWire.getAll(net).catch(e => []);
+    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
+    return allWires.filter(w => w.getState_Net() === net);
 }

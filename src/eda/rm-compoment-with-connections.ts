@@ -2,7 +2,7 @@ import { ExplainCircuit } from "@copilot/shared/types/circuit";
 import { getSchematic } from "./schematic";
 import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet } from "./types";
-import { getPrimitiveById, rmPartFromDesignator } from "./utils";
+import { getAllWiresByNet, getPrimitiveById, normWireY, rmPartFromDesignator, to2 } from "./utils";
 
 // Типы данных, соответствующие вашему JSON
 interface Point {
@@ -19,17 +19,45 @@ interface Segment {
 interface EasyEDAWire {
     async: boolean;
     primitiveType: string;
-    line: number[][]; // [x1, y1, x2, y2, ...]
+    line: number[] | number[][]; // [x1, y1, x2, y2, ...] или [[x1,y1,x2,y2], ...]
     net: string;
     primitiveId: string;
 }
 
+// Нормализует line провода в массив сегментов [[x1,y1,x2,y2], ...]
+function normalizeWireLine(line: number[] | number[][]): number[][] {
+    if (!line || line.length === 0) return [];
+
+    // Массив сегментов: [[x1,y1,x2,y2], ...]
+    if (Array.isArray(line[0])) {
+        return (line as number[][]).filter(seg => seg.length >= 4);
+    }
+
+    const flat = line as number[];
+
+    // Один сегмент: [x1,y1,x2,y2]
+    if (flat.length === 4) {
+        return [flat];
+    }
+
+    // Плоский массив точек: [x1,y1,x2,y2,x3,y3,...]
+    if (flat.length >= 4 && flat.length % 2 === 0) {
+        const segments: number[][] = [];
+        for (let i = 0; i < flat.length - 2; i += 2) {
+            segments.push([flat[i], flat[i + 1], flat[i + 2], flat[i + 3]]);
+        }
+        return segments;
+    }
+
+    return [];
+}
+
 // Вспомогательная функция для создания уникального ключа точки
-const getPointKey = (p: Point): string => `${p.x},${p.y}`;
+const getPointKey = (p: Point): string => `${to2(p.x)},${to2(p.y)}`;
 
 // Проверка равенства двух точек
 function pointsEqual(p1: Point, p2: Point): boolean {
-    return p1.x === p2.x && p1.y === p2.y;
+    return to2(p1.x) === to2(p2.x) && to2(p1.y) === to2(p2.y);
 }
 
 // Проверка, лежит ли точка на сегменте (коллинеарна и в bounding box)
@@ -37,16 +65,16 @@ export function isPointOnSegment(point: Point, segment: Segment): boolean {
     const { start, end } = segment;
 
     // Проверяем коллинеарность через векторное произведение
-    const crossProduct = (point.y - start.y) * (end.x - start.x) - (point.x - start.x) * (end.y - start.y);
+    const crossProduct = (to2(point.y) - to2(start.y)) * (to2(end.x) - to2(start.x)) - (to2(point.x) - to2(start.x)) * (to2(end.y) - to2(start.y));
     if (crossProduct !== 0) return false;
 
     // Проверяем, находится ли точка в bounding box сегмента
-    const minX = Math.min(start.x, end.x);
-    const maxX = Math.max(start.x, end.x);
-    const minY = Math.min(start.y, end.y);
-    const maxY = Math.max(start.y, end.y);
+    const minX = Math.min(to2(start.x), to2(end.x));
+    const maxX = Math.max(to2(start.x), to2(end.x));
+    const minY = Math.min(to2(start.y), to2(end.y));
+    const maxY = Math.max(to2(start.y), to2(end.y));
 
-    return point.x >= minX && point.x <= maxX && point.y >= minY && point.y <= maxY;
+    return to2(point.x) >= to2(minX) && to2(point.x) <= to2(maxX) && to2(point.y) >= to2(minY) && to2(point.y) <= to2(maxY);
 }
 
 /**
@@ -60,10 +88,11 @@ function splitWireAtJunctions(
 
     const pins = options?.pins ?? [];
 
-    // 1. Парсим отрезки из формата [x1, y1, x2, y2]
-    const segments: Segment[] = wireData.line.map((coords, index) => ({
-        start: { x: coords[0], y: coords[1] },
-        end: { x: coords[2], y: coords[3] },
+    // 1. Парсим отрезки из любого формата line (плоский массив или массив сегментов)
+    const lineSegments = normalizeWireLine(wireData.line);
+    const segments: Segment[] = lineSegments.map((coords, index) => ({
+        start: { x: to2(coords[0]), y: to2(coords[1]) },
+        end: { x: to2(coords[2]), y: to2(coords[3]) },
         originalIndex: index
     }));
 
@@ -170,19 +199,19 @@ function splitWireAtJunctions(
             // Если это первый отрезок в пути, добавляем обе точки.
             // Если продолжение, добавляем только вторую (чтобы не дублировать узел соединения)
             if (path.length === 0) {
-                path.push([p1.x, p1.y, p2.x, p2.y]);
+                path.push([to2(p1.x), to2(p1.y), to2(p2.x), to2(p2.y)]);
             } else {
                 // Проверяем, нужно ли (merge) с предыдущим отрезком, если они коллинеарны и идут подряд
                 const lastSeg = path[path.length - 1];
                 const lastX2 = lastSeg[2];
                 const lastY2 = lastSeg[3];
 
-                if (lastX2 === p1.x && lastY2 === p1.y) {
+                if (to2(lastX2) === to2(p1.x) && to2(lastY2) === to2(p1.y)) {
                     // Продолжение линии, можно объединить в один массив координат или оставить сегментами
                     // Для простоты оставим как список сегментов внутри одного Wire
-                    path.push([p1.x, p1.y, p2.x, p2.y]);
+                    path.push([to2(p1.x), to2(p1.y), to2(p2.x), to2(p2.y)]);
                 } else {
-                    path.push([p1.x, p1.y, p2.x, p2.y]);
+                    path.push([to2(p1.x), to2(p1.y), to2(p2.x), to2(p2.y)]);
                 }
             }
 
@@ -271,19 +300,26 @@ async function removeWiresFromComponentToFirstJunction(
     allWires: EasyEDAWire[]
 ) {
     const rmIndxs: number[] = [];
+    eda.sys_Log.add(`allWires ${JSON.stringify(allWires)}`)
+    eda.sys_Log.add(`componentPins ${componentPins.length}`)
 
     for (const pin of componentPins) {
         const pinX = pin.getState_X();
         const pinY = pin.getState_Y();
+        eda.sys_Log.add(`PINCOORDS ${to2(pinX)}, ${to2(pinY)}`)
 
         // Ищем wire, который содержит позицию пина (сегмент, начинающийся в пине)
         const wireIndex = allWires.findIndex(wire =>
-            wire.line.some(segment => (segment[0] === pinX && segment[1] === pinY) || segment[2] === pinX && segment[3] === pinY)
+            normalizeWireLine(wire.line).some(segment =>
+                (to2(segment[0]) === to2(pinX) && to2(segment[1]) === to2(pinY)) ||
+                (to2(segment[2]) === to2(pinX) && to2(segment[3]) === to2(pinY))
+            )
         );
 
         if (wireIndex === -1) {
             continue;
         }
+        eda.sys_Log.add(`wireIndex ${wireIndex}`)
 
         const wireWithPin = allWires[wireIndex];
 
@@ -292,7 +328,7 @@ async function removeWiresFromComponentToFirstJunction(
         // Собираем все линии из оставшихся wires
         const mergedLines: number[][] = [];
         for (const wire of newAllWires) {
-            mergedLines.push(...wire.line);
+            mergedLines.push(...normalizeWireLine(wire.line));
         }
 
         rmIndxs.push(wireIndex);
@@ -300,6 +336,8 @@ async function removeWiresFromComponentToFirstJunction(
         // Передаем объединенные линии в modify для оставшегося провода
         if (newAllWires.length > 0 && mergedLines.length > 0) {
             if (!Object.values(countPoints(mergedLines)).find(x => x >= 4)) {
+                eda.sys_Log.add(`modify wire`)
+
                 await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
                     line: mergedLines,
                 });
@@ -311,11 +349,13 @@ async function removeWiresFromComponentToFirstJunction(
                 });
             }
             else {
+                eda.sys_Log.add(`rmIsDirect false`)
                 await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId)
                 await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
 
                 for (const line of mergedLines) {
-                    const wire = await eda.sch_PrimitiveWire.create(line, wireWithPin.net);
+                    eda.sys_Log.add(`create wire: ${JSON.stringify(line)}, ${wireWithPin.net}`)
+                    const wire = await eda.sch_PrimitiveWire.create(line, wireWithPin.net).catch(e => undefined);
                     await wire?.done().catch(e => undefined);
                 }
 
@@ -325,6 +365,7 @@ async function removeWiresFromComponentToFirstJunction(
             }
         }
         else {
+            eda.sys_Log.add(`rmIsDirect`)
             await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId);
             await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
             return { end: false, allWires, rmIsDirect: true, wireWithPin, pin };
@@ -364,7 +405,7 @@ export async function getShortSymPos(primitive: string | ISCH_PrimitiveComponent
 
         pinX = shortSymbol.getState_X();
         // компоненты инвертируют y
-        pinY = -shortSymbol.getState_Y();
+        pinY = normWireY(shortSymbol.getState_Y());
     }
 
     return { pinX, pinY }
@@ -390,7 +431,10 @@ async function rmUnunsedShortSym(allWires: EasyEDAWire[], net: string) {
         if (!pos) continue;
 
         const wireIndex = allWires.findIndex(wire =>
-            wire.line.some(segment => (segment[0] === pos.pinX && segment[1] === pos.pinY) || segment[2] === pos.pinX && segment[3] === pos.pinY)
+            normalizeWireLine(wire.line).some(segment =>
+                (to2(segment[0]) === to2(pos.pinX) && to2(segment[1]) === to2(pos.pinY)) ||
+                (to2(segment[2]) === to2(pos.pinX) && to2(segment[3]) === to2(pos.pinY))
+            )
         );
 
         if (wireIndex === -1) {
@@ -410,11 +454,13 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
     const addedNet: AddedNet[] = [];
 
     do {
-        const wire = await eda.sch_PrimitiveWire.getAll(net).catch(e => []);
+        const wire = await getAllWiresByNet(net);
+        eda.sys_Log.add(`Wire ${JSON.stringify(wire)}`)
         // Передаём координаты всех пинов компонента для обработки узлов на проводах
         allWires = wire.flatMap(w => splitWireAtJunctions(w as unknown as EasyEDAWire, {
             pins: allPinsPos
         }))
+        eda.sys_Log.add(`allWires ${JSON.stringify(allWires)}`)
 
         const { allWires: allWires__, end: end__, rmIsDirect, wireWithPin, pin: targetPin } = await removeWiresFromComponentToFirstJunction(pins, allWires);
 
@@ -430,9 +476,10 @@ async function processRmWire(pins: ISCH_PrimitiveComponentPin[], net: string, al
 
             // wireWithPin.line
             const antagonistPin = allPinsPos.find(p =>
-                !(p.x === trgX && p.y === trgY) &&
-                wireWithPin.line.some(segment =>
-                    ((segment[0] === p.x && segment[1] === p.y) || segment[2] === p.x && segment[3] === p.y)
+                !(to2(p.x) === to2(trgX) && to2(p.y) === to2(trgY)) &&
+                normalizeWireLine(wireWithPin.line).some(segment =>
+                ((to2(segment[0]) === to2(p.x) && to2(segment[1]) === to2(p.y)) ||
+                    (to2(segment[2]) === to2(p.x) && to2(segment[3]) === to2(p.y)))
                 )
             )
 
