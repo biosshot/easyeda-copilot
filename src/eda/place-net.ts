@@ -348,7 +348,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
     if (wire && makePortForThis && endX && endYPort && dir) {
         const portData = selectPortForNet(net.net);
-        let rotation = (dir.dy === 1 ? 180 : 0);
+        let rotation = (dir.dy === normWireY(-1) ? 180 : 0);
         if (portData.rotateToIdle === -1) rotation += 180;
 
         const comp = await placeComponent(portData, { x: endX, y: normWireY(endYPort), rotate: rotation }).catch(e => undefined);
