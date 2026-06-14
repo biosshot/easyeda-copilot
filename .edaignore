@@ -30,3 +30,4 @@ debug.log
 /build.mjs
 /packages
 /.edaignore
+/mcp

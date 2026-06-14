@@ -719,10 +719,8 @@ server.registerTool(
             layers: z.array(z.string()).default(['all']).describe('Layers to render, e.g. ["top"], ["bottom"], ["top","bottom"], or ["all"].'),
             highlight_net: z.string().optional().describe('Optional net name to highlight.'),
             highlight_component: z.string().optional().describe('Optional component designator to highlight.'),
-            highlight_net_colors: z.record(z.string()).optional().describe('Optional per-net highlight colors, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}.'),
-            highlight_component_colors: z.record(z.string()).optional().describe('Optional per-component highlight colors, e.g. {"U1":"#ff0000"}.'),
-            show_net_labels: z.boolean().default(true).describe('Render net names inside tracks and polygons.'),
-            polygon_label_step_mm: z.number().min(0.5).max(100).default(6).describe('Grid step in millimeters for polygon net labels.'),
+            highlight_net_colors: z.record(z.string(), z.string()).optional().describe('Optional per-net highlight colors, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}.'),
+            highlight_component_colors: z.record(z.string(), z.string()).optional().describe('Optional per-component highlight colors, e.g. {"U1":"#ff0000"}.'),
             zoom: ZoomTargetSchema.default({ mode: 'full' }).describe('Zoom target: full board, a net, a component, or a bbox.'),
             padding_mm: z.number().min(0).max(100).default(2).describe('Padding around the rendered area in millimeters.'),
         }),
@@ -738,8 +736,7 @@ server.registerTool(
             highlightComponentColors: input.highlight_component_colors || {},
             zoom: input.zoom,
             paddingMm: input.padding_mm,
-            show: { netLabels: input.show_net_labels },
-            polygonLabelStepMm: input.polygon_label_step_mm,
+            show: {},
             widthPx: 1600,
         };
 

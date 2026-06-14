@@ -1393,3 +1393,5 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
 
     return result;
 }
+
+eda.getPcbRaw = getPcbRaw;

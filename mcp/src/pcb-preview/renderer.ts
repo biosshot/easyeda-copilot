@@ -93,7 +93,7 @@ function componentHighlightColor(designator: string | undefined, options: Previe
 const LABEL_MIN_FONT_MM = 0.1;
 const TRACK_LABEL_FONT_RATIO = 0.8;
 const TRACK_LABEL_CHAR_RATIO = 0.6;
-const POLYGON_LABEL_FONT_RATIO = 0.25;
+const POLYGON_LABEL_FONT_RATIO = 0.15;
 
 const COMPONENT_LABEL_MIN_FONT_MM = 0.5;
 const COMPONENT_LABEL_MAX_FONT_MM = 2.0;
@@ -172,7 +172,6 @@ function renderPolygonLabels(poly: PcbPolygon, options: PreviewOptions): string 
     const textWidth = poly.net.length * fontSize * TRACK_LABEL_CHAR_RATIO;
     const halfW = textWidth / 2;
     const halfH = fontSize / 2;
-    const strokeWidth = fontSize * 0.08;
 
     let svg = '';
     for (const island of islands) {
@@ -182,7 +181,7 @@ function renderPolygonLabels(poly: PcbPolygon, options: PreviewOptions): string 
         for (let x = startX; x <= bbox.maxX; x += step) {
             for (let y = startY; y <= bbox.maxY; y += step) {
                 if (!polygonContainsRect(x, y, halfW, halfH, island)) continue;
-                svg += `<text x="${x.toFixed(4)}" y="${svgY(y).toFixed(4)}" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" font-weight="bold" fill="${LAYER_COLORS.netLabel}" stroke="#ffffff" stroke-width="${strokeWidth.toFixed(4)}" stroke-opacity="0.8" paint-order="stroke" text-anchor="middle" dominant-baseline="middle">${escapeXml(poly.net)}</text>`;
+                svg += `<text x="${x.toFixed(4)}" y="${svgY(y).toFixed(4)}" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" fill="${LAYER_COLORS.netLabel}" fill-opacity="0.45" text-anchor="middle" dominant-baseline="middle">${escapeXml(poly.net)}</text>`;
             }
         }
     }
