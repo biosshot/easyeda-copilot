@@ -119,6 +119,7 @@ export interface PreviewShowOptions {
     vias?: boolean;
     polygons?: boolean;
     components?: boolean;
+    netLabels?: boolean;
 }
 
 export interface PreviewOptions {
@@ -131,6 +132,7 @@ export interface PreviewOptions {
     paddingMm: number;
     show: PreviewShowOptions;
     widthPx: number;
+    polygonLabelStepMm?: number;
     debug?: boolean;
 }
 

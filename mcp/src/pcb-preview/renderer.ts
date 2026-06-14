@@ -1,7 +1,7 @@
 import { LAYER_COLORS, LAYER_ORDER } from './colors.js';
-import { boxFromPoints, cleanPolygonRings, expandBox, svgY, type Box, type Island } from './geometry.js';
+import { boxFromPoints, cleanPolygonRings, expandBox, pointInRing, ringBounds, svgY, type Box, type Island } from './geometry.js';
 import { polygonRings, type PolygonDiagnostics } from './parser.js';
-import type { PcbArc, PcbComponent, PcbData, PcbPad, PcbPolygon, PcbTrack, PcbVia, PreviewOptions, ZoomTarget } from './types.js';
+import type { LayerKey, PcbArc, PcbComponent, PcbData, PcbPad, PcbPolygon, PcbTrack, PcbVia, PreviewOptions, ZoomTarget } from './types.js';
 
 export { LAYER_ORDER };
 
@@ -74,12 +74,113 @@ function shouldRenderMultiPads(options: PreviewOptions): boolean {
     return options.layers.includes('all') || options.layers.some(isCopperLayer);
 }
 
-function isNetHighlighted(net: string | undefined, highlightNets: string[]): boolean {
-    return !!net && highlightNets.includes(net);
+function netHighlightColor(net: string | undefined, options: PreviewOptions): string | undefined {
+    if (!net) return undefined;
+    const custom = options.highlightNetColors?.[net];
+    if (custom) return custom;
+    if (options.highlightNets.includes(net)) return LAYER_COLORS.highlight;
+    return undefined;
 }
 
-function isComponentHighlighted(designator: string | undefined, highlightComponents: string[]): boolean {
-    return !!designator && highlightComponents.includes(designator);
+function componentHighlightColor(designator: string | undefined, options: PreviewOptions): string | undefined {
+    if (!designator) return undefined;
+    const custom = options.highlightComponentColors?.[designator];
+    if (custom) return custom;
+    if (options.highlightComponents.includes(designator)) return LAYER_COLORS.highlight;
+    return undefined;
+}
+
+const LABEL_MIN_FONT_MM = 0.1;
+const TRACK_LABEL_FONT_RATIO = 0.8;
+const TRACK_LABEL_CHAR_RATIO = 0.6;
+const POLYGON_LABEL_FONT_RATIO = 0.25;
+
+function netLabelsEnabled(options: PreviewOptions): boolean {
+    return options.show.netLabels !== false;
+}
+
+function renderTrackLabel(track: PcbTrack, options: PreviewOptions): string {
+    if (!netLabelsEnabled(options)) return '';
+    if (!track.net) return '';
+    if (options.show.tracks === false) return '';
+    if (!isLayerSelected(track.layer, options.layers)) return '';
+
+    const fontSize = track.width * TRACK_LABEL_FONT_RATIO;
+    if (fontSize < LABEL_MIN_FONT_MM) return '';
+
+    const dx = track.x2 - track.x1;
+    const dy = track.y2 - track.y1;
+    const length = Math.hypot(dx, dy);
+    const textWidth = track.net.length * fontSize * TRACK_LABEL_CHAR_RATIO;
+    if (length < textWidth * 1.1) return '';
+
+    const midX = (track.x1 + track.x2) / 2;
+    const midY = (track.y1 + track.y2) / 2;
+    const svgMidY = svgY(midY);
+    let angle = Math.atan2(-dy, dx) * (180 / Math.PI);
+    if (angle > 90) angle -= 180;
+    else if (angle < -90) angle += 180;
+
+    const strokeWidth = fontSize * 0.08;
+    return `<text x="${midX.toFixed(4)}" y="${svgMidY.toFixed(4)}" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" font-weight="bold" fill="${LAYER_COLORS.netLabel}" stroke="#ffffff" stroke-width="${strokeWidth.toFixed(4)}" stroke-opacity="0.8" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" transform="rotate(${angle.toFixed(2)} ${midX.toFixed(4)} ${svgMidY.toFixed(4)})">${escapeXml(track.net)}</text>`;
+}
+
+function polygonContainsPoint(pt: [number, number], island: Island): boolean {
+    if (!pointInRing(pt, island.outer)) return false;
+    for (const cutout of island.cutouts) {
+        if (pointInRing(pt, cutout)) return false;
+    }
+    return true;
+}
+
+function polygonContainsRect(x: number, y: number, halfW: number, halfH: number, island: Island): boolean {
+    const corners: [number, number][] = [
+        [x - halfW, y - halfH],
+        [x + halfW, y - halfH],
+        [x + halfW, y + halfH],
+        [x - halfW, y + halfH],
+    ];
+    for (const c of corners) {
+        if (!polygonContainsPoint(c, island)) return false;
+    }
+    return true;
+}
+
+function renderPolygonLabels(poly: PcbPolygon, options: PreviewOptions): string {
+    if (!netLabelsEnabled(options)) return '';
+    if (!poly.net) return '';
+    if (options.show.polygons === false) return '';
+    if (!isLayerSelected(poly.layer, options.layers)) return '';
+    if (poly.layer.endsWith('_soldermask') || poly.layer.endsWith('_paste')) return '';
+
+    const step = options.polygonLabelStepMm ?? 6;
+    if (step <= 0) return '';
+
+    const rings = polygonRings(poly);
+    if (!rings.length) return '';
+
+    const islands = cleanPolygonRings(rings);
+    if (!islands.length) return '';
+
+    const fontSize = step * POLYGON_LABEL_FONT_RATIO;
+    const textWidth = poly.net.length * fontSize * TRACK_LABEL_CHAR_RATIO;
+    const halfW = textWidth / 2;
+    const halfH = fontSize / 2;
+    const strokeWidth = fontSize * 0.08;
+
+    let svg = '';
+    for (const island of islands) {
+        const bbox = ringBounds(island.outer);
+        const startX = Math.floor(bbox.minX / step) * step;
+        const startY = Math.floor(bbox.minY / step) * step;
+        for (let x = startX; x <= bbox.maxX; x += step) {
+            for (let y = startY; y <= bbox.maxY; y += step) {
+                if (!polygonContainsRect(x, y, halfW, halfH, island)) continue;
+                svg += `<text x="${x.toFixed(4)}" y="${svgY(y).toFixed(4)}" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" font-weight="bold" fill="${LAYER_COLORS.netLabel}" stroke="#ffffff" stroke-width="${strokeWidth.toFixed(4)}" stroke-opacity="0.8" paint-order="stroke" text-anchor="middle" dominant-baseline="middle">${escapeXml(poly.net)}</text>`;
+            }
+        }
+    }
+    return svg;
 }
 
 function renderPolygon(poly: PcbPolygon, options: PreviewOptions, diagnostics?: { polygons: PolygonDiagnostics[] }): string {
@@ -100,8 +201,9 @@ function renderPolygon(poly: PcbPolygon, options: PreviewOptions, diagnostics?: 
     const openSegments = rings.filter(r => r.length === 2);
 
     const baseColor = LAYER_COLORS[poly.layer] || '#cccccc';
-    const highlighted = options.highlightNets.length > 0 && isNetHighlighted(poly.net, options.highlightNets);
-    const color = highlighted ? LAYER_COLORS.highlight : baseColor;
+    const highlightColor = netHighlightColor(poly.net, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || baseColor;
     const strokeWidth = poly.lineWidth > 0 ? poly.lineWidth : 0;
 
     let svg = '';
@@ -133,8 +235,9 @@ function renderTrack(track: PcbTrack, options: PreviewOptions): string {
     if (!isLayerSelected(track.layer, options.layers)) return '';
     if (options.show.tracks === false) return '';
 
-    const highlighted = options.highlightNets.length > 0 && isNetHighlighted(track.net, options.highlightNets);
-    const color = highlighted ? LAYER_COLORS.highlight : (LAYER_COLORS[track.layer] || '#cccccc');
+    const highlightColor = netHighlightColor(track.net, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || (LAYER_COLORS[track.layer] || '#cccccc');
     const width = highlighted ? Math.max(track.width * 1.5, track.width + 0.1) : track.width;
     const opacity = highlighted ? 1 : 0.95;
 
@@ -145,8 +248,9 @@ function renderArc(arc: PcbArc, options: PreviewOptions): string {
     if (!isLayerSelected(arc.layer, options.layers)) return '';
     if (options.show.tracks === false) return '';
 
-    const highlighted = options.highlightNets.length > 0 && isNetHighlighted(arc.net, options.highlightNets);
-    const color = highlighted ? LAYER_COLORS.highlight : (LAYER_COLORS[arc.layer] || '#cccccc');
+    const highlightColor = netHighlightColor(arc.net, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || (LAYER_COLORS[arc.layer] || '#cccccc');
     const width = highlighted ? Math.max(arc.width * 1.5, arc.width + 0.1) : arc.width;
 
     // Approximate the arc with a polyline so it gets round caps naturally.
@@ -199,8 +303,9 @@ function arcPointsFromArc(arc: PcbArc): Array<[number, number]> {
 
 function renderVia(via: PcbVia, options: PreviewOptions): string {
     if (options.show.vias === false) return '';
-    const highlighted = options.highlightNets.length > 0 && isNetHighlighted(via.net, options.highlightNets);
-    const color = highlighted ? LAYER_COLORS.highlight : LAYER_COLORS.multi;
+    const highlightColor = netHighlightColor(via.net, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || LAYER_COLORS.multi;
     const r = via.diameter / 2;
     const holeR = via.drill / 2;
     const strokeWidth = highlighted ? 0.15 : 0.08;
@@ -214,8 +319,9 @@ function renderVia(via: PcbVia, options: PreviewOptions): string {
 function renderPad(pad: PcbPad, options: PreviewOptions): string {
     if (options.show.pads === false) return '';
 
-    const highlighted = options.highlightNets.length > 0 && isNetHighlighted(pad.net, options.highlightNets);
-    const color = highlighted ? LAYER_COLORS.highlight : (LAYER_COLORS[pad.layer] || LAYER_COLORS.multi);
+    const highlightColor = netHighlightColor(pad.net, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.multi);
     const w = pad.width || 0.5;
     const h = pad.height || 0.5;
     // EasyEDA pad rotation is stored in radians; convert to degrees for SVG.
@@ -240,8 +346,9 @@ function renderPad(pad: PcbPad, options: PreviewOptions): string {
 
 function renderComponent(comp: PcbComponent, options: PreviewOptions): string {
     if (options.show.components === false) return '';
-    const highlighted = isComponentHighlighted(comp.designator, options.highlightComponents);
-    const color = highlighted ? LAYER_COLORS.highlight : LAYER_COLORS.component;
+    const highlightColor = componentHighlightColor(comp.designator, options);
+    const highlighted = !!highlightColor;
+    const color = highlightColor || LAYER_COLORS.component;
     const size = 0.5;
     const y = svgY(comp.y);
     return [
@@ -394,11 +501,15 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
         for (const poly of data.polygons || []) {
             if (poly.layer === layer) {
                 layerGroup.push(renderPolygon(poly, options, diagnostics));
+                layerGroup.push(renderPolygonLabels(poly, options));
             }
         }
 
         for (const track of data.tracks || []) {
-            if (track.layer === layer) layerGroup.push(renderTrack(track, options));
+            if (track.layer === layer) {
+                layerGroup.push(renderTrack(track, options));
+                layerGroup.push(renderTrackLabel(track, options));
+            }
         }
         for (const arc of data.arcs || []) {
             if (arc.layer === layer) layerGroup.push(renderArc(arc, options));

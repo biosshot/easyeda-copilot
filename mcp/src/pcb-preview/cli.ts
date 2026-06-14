@@ -68,17 +68,35 @@ function normalizeShow(show: unknown): PreviewOptions['show'] {
         vias: (show as Record<string, unknown>).vias as boolean | undefined,
         polygons: (show as Record<string, unknown>).polygons as boolean | undefined,
         components: (show as Record<string, unknown>).components as boolean | undefined,
+        netLabels: (show as Record<string, unknown>).net_labels as boolean | undefined,
     };
+}
+
+function normalizeColorMap(map: unknown): Record<string, string> {
+    if (!map || typeof map !== 'object') return {};
+    const result: Record<string, string> = {};
+    for (const [key, value] of Object.entries(map as Record<string, unknown>)) {
+        if (typeof value === 'string') result[key] = value;
+    }
+    return result;
+}
+
+const show = normalizeShow(rawOptions.show);
+if (typeof rawOptions.show_net_labels === 'boolean') {
+    show.netLabels = rawOptions.show_net_labels;
 }
 
 const options: PreviewOptions = {
     layers: (rawOptions.layers as LayerKey[]) || ['all'],
     highlightNets: toStringArray(rawOptions.highlight_nets),
     highlightComponents: toStringArray(rawOptions.highlight_components),
+    highlightNetColors: normalizeColorMap(rawOptions.highlight_net_colors),
+    highlightComponentColors: normalizeColorMap(rawOptions.highlight_component_colors),
     zoom: normalizeZoom(rawOptions.zoom),
     paddingMm: typeof rawOptions.padding_mm === 'number' ? rawOptions.padding_mm : 2,
-    show: normalizeShow(rawOptions.show),
+    show,
     widthPx: typeof rawOptions.width_px === 'number' ? rawOptions.width_px : 1600,
+    polygonLabelStepMm: typeof rawOptions.polygon_label_step_mm === 'number' ? rawOptions.polygon_label_step_mm : undefined,
     debug: !!rawOptions.debug,
 };
 

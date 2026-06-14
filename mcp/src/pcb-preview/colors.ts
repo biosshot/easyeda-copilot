@@ -19,4 +19,5 @@ export const LAYER_COLORS: Record<string, string> = {
     highlight: '#ffeb3b',
     drill: '#000000',
     component: '#ffffff',
+    netLabel: '#000000',
 };
