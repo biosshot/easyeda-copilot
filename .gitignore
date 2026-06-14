@@ -4,5 +4,5 @@
 /node_modules
 /package-lock.json
 /iframe
-/mcp/dist/index.js
+/mcp/dist/
 /mcp/.test-data

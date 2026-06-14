@@ -2,7 +2,7 @@ import { assembleCircuit } from './eda/assemble';
 import { assembleBoard } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { checkPcbDrc } from './eda/drc';
-import { getPcb, inspectComponent, inspectNet } from './eda/pcb';
+import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 
@@ -152,6 +152,11 @@ async function handleMessage(message: McpMessage) {
 
         if (message.event === 'get-pcb') {
             reply(true, await getPcb());
+            return;
+        }
+
+        if (message.event === 'get-pcb-raw') {
+            reply(true, await getPcbRaw());
             return;
         }
 

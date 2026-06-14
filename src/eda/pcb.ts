@@ -1028,3 +1028,368 @@ export async function inspectComponent(pcb: ExplainPCB, designator: string, radi
         nearest_components: nearest,
     };
 }
+
+const RAW_LAYER_NAMES: Record<number, string> = {
+    1: 'top',
+    2: 'bottom',
+    3: 'top_silkscreen',
+    4: 'bottom_silkscreen',
+    5: 'top_soldermask',
+    6: 'bottom_soldermask',
+    7: 'top_paste',
+    8: 'bottom_paste',
+    9: 'top_assembly',
+    10: 'bottom_assembly',
+    11: 'board_outline',
+    12: 'multi',
+    13: 'document',
+    14: 'mechanical',
+};
+
+function rawLayerName(id: number | undefined): string {
+    return id !== undefined ? (RAW_LAYER_NAMES[id] ?? `layer_${id}`) : 'unknown';
+}
+
+function toMmCopperGrid(value: number) {
+    return round(value * 0.254);
+}
+
+function trimClosingPointRaw(points: RawPoint[]): RawPoint[] {
+    if (points.length > 1 && samePoint(points[0], points[points.length - 1], 1e-6)) {
+        return points.slice(0, -1);
+    }
+    return points;
+}
+
+function parseOutlineSource(source: TPCB_PolygonSourceArray): RawPoint[][] {
+    const rings: RawPoint[][] = [];
+    let current: RawPoint[] = [];
+    let i = 0;
+
+    function flush() {
+        if (current.length >= 2) rings.push(trimClosingPointRaw([...current]));
+        current = [];
+    }
+
+    if (typeof source[0] === 'number' && typeof source[1] === 'number') {
+        current.push({ x: source[0], y: source[1] });
+        i = 2;
+    }
+
+    while (i < source.length) {
+        const cmd = source[i++];
+        if (cmd === 'M') {
+            flush();
+            if (i + 1 < source.length && typeof source[i] === 'number') {
+                current.push({ x: source[i] as number, y: source[i + 1] as number });
+                i += 2;
+            }
+        } else if (cmd === 'Z') {
+            flush();
+        } else if (cmd === 'L' || cmd === 'C') {
+            while (i + 1 < source.length && typeof source[i] === 'number') {
+                current.push({ x: source[i] as number, y: source[i + 1] as number });
+                i += 2;
+            }
+        }
+    }
+    flush();
+    return rings.filter(r => r.length >= 3);
+}
+
+function outlineRingsFromComplex(complex: TPCB_PolygonSourceArray | Array<TPCB_PolygonSourceArray>): RawPoint[][] {
+    if (!complex) return [];
+    if (Array.isArray(complex[0])) {
+        return (complex as Array<TPCB_PolygonSourceArray>).flatMap(parseOutlineSource).filter(r => r.length >= 3);
+    }
+    return parseOutlineSource(complex as TPCB_PolygonSourceArray);
+}
+
+function convertSourceArray(source: TPCB_PolygonSourceArray, coordConv: (v: number) => number): (number | string)[] {
+    const out: (number | string)[] = [];
+    let i = 0;
+
+    if (typeof source[0] === 'number' && typeof source[1] === 'number') {
+        out.push(coordConv(source[0]), coordConv(source[1]));
+        i = 2;
+    }
+
+    while (i < source.length) {
+        const token = source[i];
+        if (typeof token !== 'string') {
+            out.push(token);
+            i++;
+            continue;
+        }
+
+        const cmd = token;
+        out.push(cmd);
+        i++;
+
+        if (cmd === 'M') {
+            if (i + 1 < source.length && typeof source[i] === 'number') {
+                out.push(coordConv(source[i]), coordConv(source[i + 1]));
+                i += 2;
+            }
+        } else if (cmd === 'L' || cmd === 'C' || cmd === 'Q') {
+            while (i + 1 < source.length && typeof source[i] === 'number') {
+                out.push(coordConv(source[i]), coordConv(source[i + 1]));
+                i += 2;
+            }
+        } else if (cmd === 'Z') {
+            // no args
+        } else if (cmd === 'R') {
+            const x = source[i], y = source[i + 1], w = source[i + 2], h = source[i + 3], rot = source[i + 4], round = source[i + 5];
+            out.push(
+                typeof x === 'number' ? coordConv(x) : x,
+                typeof y === 'number' ? coordConv(y) : y,
+                typeof w === 'number' ? coordConv(w) : w,
+                typeof h === 'number' ? coordConv(h) : h,
+                rot,
+                typeof round === 'number' ? coordConv(round) : round,
+            );
+            i += 6;
+        } else if (cmd === 'CIRCLE') {
+            const cx = source[i], cy = source[i + 1], r = source[i + 2];
+            out.push(
+                typeof cx === 'number' ? coordConv(cx) : cx,
+                typeof cy === 'number' ? coordConv(cy) : cy,
+                typeof r === 'number' ? coordConv(r) : r,
+            );
+            i += 3;
+        } else if (cmd === 'ARC' || cmd === 'CARC') {
+            const angle = source[i], ex = source[i + 1], ey = source[i + 2];
+            out.push(angle, typeof ex === 'number' ? coordConv(ex) : ex, typeof ey === 'number' ? coordConv(ey) : ey);
+            i += 3;
+        } else {
+            while (i < source.length && typeof source[i] === 'number') {
+                out.push(source[i]);
+                i++;
+            }
+        }
+    }
+
+    return out;
+}
+
+function rawSourcesFromComplex(
+    complex: TPCB_PolygonSourceArray | Array<TPCB_PolygonSourceArray>,
+    coordConv: (v: number) => number,
+): (number | string)[][] {
+    if (!complex) return [];
+    if (Array.isArray(complex[0])) {
+        return (complex as Array<TPCB_PolygonSourceArray>).map(src => convertSourceArray(src, coordConv));
+    }
+    return [convertSourceArray(complex as TPCB_PolygonSourceArray, coordConv)];
+}
+
+export interface RawPcbSnapshot {
+    boardPolygon: [number, number][];
+    components: Array<{
+        designator: string;
+        x: number;
+        y: number;
+        rotate: number;
+        layer: string;
+    }>;
+    pads: Array<{
+        x: number;
+        y: number;
+        net: string;
+        padNumber: string;
+        layer: string;
+        shapeType: string | undefined;
+        width: number | undefined;
+        height: number | undefined;
+        rotation: number;
+    }>;
+    tracks: Array<{
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+        width: number;
+        layer: string;
+        net: string;
+    }>;
+    arcs: Array<{
+        x1: number;
+        y1: number;
+        x2: number;
+        y2: number;
+        arcAngle: number;
+        width: number;
+        layer: string;
+        net: string;
+    }>;
+    vias: Array<{
+        x: number;
+        y: number;
+        diameter: number;
+        drill: number;
+        net: string;
+    }>;
+    polygons: Array<{
+        net: string;
+        layer: string;
+        fill: boolean;
+        lineWidth: number;
+        sources: (number | string)[][];
+    }>;
+}
+
+export async function getPcbRaw(): Promise<RawPcbSnapshot> {
+    const result: RawPcbSnapshot = {
+        boardPolygon: [],
+        components: [],
+        pads: [],
+        tracks: [],
+        arcs: [],
+        vias: [],
+        polygons: [],
+    };
+
+    const boardPolylines = await eda.pcb_PrimitivePolyline.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
+    for (const pl of boardPolylines) {
+        const rings = outlineRingsFromComplex(pl.getState_Polygon().getSource());
+        if (rings[0]) {
+            result.boardPolygon = rings[0].map(p => [milToMm(p.x), milToMm(p.y)]);
+            break;
+        }
+    }
+
+    if (!result.boardPolygon.length) {
+        const lines = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
+        const segments = lines.map(l => ({
+            x1: l.getState_StartX(),
+            y1: l.getState_StartY(),
+            x2: l.getState_EndX(),
+            y2: l.getState_EndY(),
+        }));
+
+        if (segments.length) {
+            const unused = segments.slice(1);
+            const first = segments[0];
+            const pts: RawPoint[] = [{ x: first.x1, y: first.y1 }, { x: first.x2, y: first.y2 }];
+            while (unused.length) {
+                const tail = pts[pts.length - 1];
+                const idx = unused.findIndex(s => samePoint({ x: s.x1, y: s.y1 }, tail, 1e-6) || samePoint({ x: s.x2, y: s.y2 }, tail, 1e-6));
+                if (idx < 0) break;
+                const next = unused.splice(idx, 1)[0];
+                const p = samePoint({ x: next.x1, y: next.y1 }, tail, 1e-6) ? { x: next.x2, y: next.y2 } : { x: next.x1, y: next.y1 };
+                pts.push(p);
+                if (samePoint(pts[0], pts[pts.length - 1], 1e-6)) break;
+            }
+            result.boardPolygon = pts.map(p => [milToMm(p.x), milToMm(p.y)]);
+        }
+    }
+
+    const components = await eda.pcb_PrimitiveComponent.getAll().catch(() => []);
+    for (const c of components) {
+        result.components.push({
+            designator: c.getState_Designator() || '',
+            x: milToMm(c.getState_X()),
+            y: milToMm(c.getState_Y()),
+            rotate: normalizeRotation(c.getState_Rotation()),
+            layer: rawLayerName(c.getState_Layer()),
+        });
+    }
+
+    const allPads = await eda.pcb_PrimitivePad.getAll().catch(() => []);
+    for (const p of allPads) {
+        const shape = p.getState_Pad();
+        result.pads.push({
+            x: milToMm(p.getState_X()),
+            y: milToMm(p.getState_Y()),
+            net: safeNet(p.getState_Net()) ?? '',
+            padNumber: p.getState_PadNumber(),
+            layer: rawLayerName(p.getState_Layer()),
+            shapeType: shape ? String(shape[0]) : undefined,
+            width: shape && typeof shape[1] === 'number' ? milToMm(shape[1]) : undefined,
+            height: shape && typeof shape[2] === 'number' ? milToMm(shape[2]) : undefined,
+            rotation: normalizeRotation(p.getState_Rotation()),
+        });
+    }
+
+    const lines = await eda.pcb_PrimitiveLine.getAll().catch(() => []);
+    for (const l of lines) {
+        result.tracks.push({
+            x1: milToMm(l.getState_StartX()),
+            y1: milToMm(l.getState_StartY()),
+            x2: milToMm(l.getState_EndX()),
+            y2: milToMm(l.getState_EndY()),
+            width: milToMm(l.getState_LineWidth()),
+            layer: rawLayerName(l.getState_Layer()),
+            net: safeNet(l.getState_Net()) ?? '',
+        });
+    }
+
+    const arcPrimitives = await eda.pcb_PrimitiveArc.getAll().catch(() => []);
+    for (const a of arcPrimitives) {
+        result.arcs.push({
+            x1: milToMm(a.getState_StartX()),
+            y1: milToMm(a.getState_StartY()),
+            x2: milToMm(a.getState_EndX()),
+            y2: milToMm(a.getState_EndY()),
+            arcAngle: a.getState_ArcAngle(),
+            width: milToMm(a.getState_LineWidth()),
+            layer: rawLayerName(a.getState_Layer()),
+            net: safeNet(a.getState_Net()) ?? '',
+        });
+    }
+
+    const viaPrimitives = await eda.pcb_PrimitiveVia.getAll().catch(() => []);
+    for (const v of viaPrimitives) {
+        result.vias.push({
+            x: milToMm(v.getState_X()),
+            y: milToMm(v.getState_Y()),
+            diameter: milToMm(v.getState_Diameter()),
+            drill: milToMm(v.getState_HoleDiameter()),
+            net: safeNet(v.getState_Net()) ?? '',
+        });
+    }
+
+    const pours = await eda.pcb_PrimitivePour.getAll().catch(() => []);
+    const pourById = new Map(pours.map(p => [p.getState_PrimitiveId(), p]));
+
+    const poureds = await eda.pcb_PrimitivePoured.getAll().catch(() => []);
+    for (const poured of poureds) {
+        const pour = pourById.get(poured.getState_PourPrimitiveId());
+        const net = pour ? safeNet(pour.getState_Net()) ?? '' : '';
+        const layer = pour ? rawLayerName(pour.getState_Layer()) : 'top';
+
+        for (const fill of poured.getState_PourFills()) {
+            const path = fill.path;
+            const src = typeof (path as { getSourceStrictComplex?: () => TPCB_PolygonSourceArray }).getSourceStrictComplex === 'function'
+                ? (path as { getSourceStrictComplex: () => TPCB_PolygonSourceArray }).getSourceStrictComplex()
+                : path.getSource();
+            const sources = rawSourcesFromComplex(src, toMmCopperGrid);
+            if (sources.length) {
+                result.polygons.push({
+                    net,
+                    layer,
+                    fill: fill.fill,
+                    lineWidth: toMmCopperGrid(fill.lineWidth),
+                    sources,
+                });
+            }
+        }
+    }
+
+    const fills = await eda.pcb_PrimitiveFill.getAll().catch(() => []);
+    for (const f of fills) {
+        const src = f.getState_ComplexPolygon().getSource();
+        const sources = rawSourcesFromComplex(src, milToMm);
+        if (sources.length) {
+            result.polygons.push({
+                net: safeNet(f.getState_Net()) ?? '',
+                layer: rawLayerName(f.getState_Layer()),
+                fill: true,
+                lineWidth: 0,
+                sources,
+            });
+        }
+    }
+
+    return result;
+}

@@ -12,6 +12,7 @@ import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
 import type { ExplainPCB } from '@copilot/shared/types/pcb/explain';
+import { savePcbPreview, type PcbData, type PreviewOptions } from './pcb-preview/index.js';
 
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
@@ -681,6 +682,64 @@ server.registerTool(
     async ({ designator, radius }) => {
         const result = await requestEasyEda('inspect-component', { designator, radius }, 300000);
         return textResult(result);
+    },
+);
+
+const BboxMmSchema = z.object({
+    x: z.number().describe('X coordinate in millimeters.'),
+    y: z.number().describe('Y coordinate in millimeters.'),
+    width: z.number().positive().describe('Width in millimeters.'),
+    height: z.number().positive().describe('Height in millimeters.'),
+    unit: z.literal('mm').optional().default('mm').describe('Unit type.'),
+});
+
+const BboxRelSchema = z.object({
+    x: z.number().min(0).max(1).describe('Relative X (0..1) of the board bounding box.'),
+    y: z.number().min(0).max(1).describe('Relative Y (0..1) of the board bounding box.'),
+    width: z.number().min(0).max(1).describe('Relative width (0..1) of the board bounding box.'),
+    height: z.number().min(0).max(1).describe('Relative height (0..1) of the board bounding box.'),
+    unit: z.literal('rel').describe('Relative unit marker.'),
+});
+
+const BboxSchema = z.union([BboxMmSchema, BboxRelSchema]);
+
+const ZoomTargetSchema = z.discriminatedUnion('mode', [
+    z.object({ mode: z.literal('full') }),
+    z.object({ mode: z.literal('net'), net: z.string().min(1).describe('Net name to zoom to.') }),
+    z.object({ mode: z.literal('component'), designator: z.string().min(1).describe('Component designator to zoom to, e.g. U1.') }),
+    z.object({ mode: z.literal('bbox'), bbox: BboxSchema.describe('Bounding box in mm or relative units.') }),
+]);
+
+server.registerTool(
+    'preview_pcb',
+    {
+        title: 'Preview PCB',
+        description: 'Render a PNG preview of the currently opened PCB document. Supports layer selection, net/component highlighting, and zoom to a net, component, or bounding box. Open the target PCB document first.',
+        inputSchema: z.object({
+            layers: z.array(z.string()).default(['all']).describe('Layers to render, e.g. ["top"], ["bottom"], ["top","bottom"], or ["all"].'),
+            highlight_net: z.string().optional().describe('Optional net name to highlight.'),
+            highlight_component: z.string().optional().describe('Optional component designator to highlight.'),
+            zoom: ZoomTargetSchema.default({ mode: 'full' }).describe('Zoom target: full board, a net, a component, or a bbox.'),
+            padding_mm: z.number().min(0).max(100).default(2).describe('Padding around the rendered area in millimeters.'),
+        }),
+    },
+    async (input) => {
+        const data = await requestEasyEda('get-pcb-raw') as PcbData;
+
+        const options: PreviewOptions = {
+            layers: input.layers,
+            highlightNets: input.highlight_net ? [input.highlight_net] : [],
+            highlightComponents: input.highlight_component ? [input.highlight_component] : [],
+            zoom: input.zoom,
+            paddingMm: input.padding_mm,
+            show: {},
+            widthPx: 1600,
+        };
+
+        const runId = randomUUID();
+        const { pngPath } = await savePcbPreview(data, options, runId);
+
+        return textResult({ image_path: pngPath });
     },
 );
 
