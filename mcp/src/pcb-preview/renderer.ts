@@ -32,6 +32,38 @@ function isCopperLayer(layer: string): boolean {
     return layer === 'top' || layer === 'bottom' || layer === 'multi';
 }
 
+function uniqueLayers(layers: LayerKey[]): LayerKey[] {
+    const seen = new Set<string>();
+    return layers.filter(l => {
+        if (seen.has(l)) return false;
+        seen.add(l);
+        return true;
+    });
+}
+
+function normalizeRenderOrder(options: PreviewOptions): LayerKey[] {
+    const selected = options.layers;
+    let ordered: LayerKey[];
+
+    if (selected.includes('all')) {
+        // LAYER_ORDER is the physical bottom-to-top render order.
+        ordered = [...LAYER_ORDER];
+    } else {
+        // User-facing order: the first layer is the topmost one.
+        // SVG paints elements in document order, so we reverse before rendering.
+        ordered = uniqueLayers(selected).reverse();
+    }
+
+    // Multi-layer pads and vias are implicit whenever any copper layer is shown.
+    // If the caller didn't explicitly place the 'multi' pseudo-layer, render it
+    // on top so vias/pads stay visible.
+    if (!ordered.includes('multi') && (shouldRenderMultiPads(options) || shouldRenderVias(options))) {
+        ordered.push('multi');
+    }
+
+    return ordered;
+}
+
 function shouldRenderVias(options: PreviewOptions): boolean {
     if (options.show.vias === false) return false;
     return options.layers.includes('all') || options.layers.some(isCopperLayer);
@@ -343,12 +375,6 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
         ? pointsToPath(data.boardPolygon)
         : '';
 
-    const polygons = [...(data.polygons || [])].sort((a, b) => {
-        const ai = LAYER_ORDER.indexOf(a.layer);
-        const bi = LAYER_ORDER.indexOf(b.layer);
-        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-    });
-
     const parts: string[] = [];
 
     if (boardPath) {
@@ -360,12 +386,12 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
         parts.push('<g>');
     }
 
-    for (const layer of LAYER_ORDER) {
-        if (!isLayerSelected(layer, options.layers)) continue;
+    const orderedLayers = normalizeRenderOrder(options);
 
+    for (const layer of orderedLayers) {
         const layerGroup: string[] = [];
 
-        for (const poly of polygons) {
+        for (const poly of data.polygons || []) {
             if (poly.layer === layer) {
                 layerGroup.push(renderPolygon(poly, options, diagnostics));
             }
@@ -384,25 +410,23 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
             }
         }
 
+        if (layer === 'multi') {
+            if (shouldRenderMultiPads(options)) {
+                for (const pad of data.pads || []) {
+                    if (pad.layer === 'multi') {
+                        layerGroup.push(renderPad(pad, options));
+                    }
+                }
+            }
+            if (shouldRenderVias(options)) {
+                for (const via of data.vias || []) {
+                    layerGroup.push(renderVia(via, options));
+                }
+            }
+        }
+
         if (layerGroup.length) {
             parts.push(`<g data-layer="${layer}">${layerGroup.join('')}</g>`);
-        }
-    }
-
-    if (shouldRenderMultiPads(options)) {
-        const multiPadGroup = (data.pads || [])
-            .filter(pad => pad.layer === 'multi')
-            .map(pad => renderPad(pad, options))
-            .join('');
-        if (multiPadGroup) {
-            parts.push(`<g data-layer="multi-pads">${multiPadGroup}</g>`);
-        }
-    }
-
-    if (shouldRenderVias(options)) {
-        const viaGroup = (data.vias || []).map(via => renderVia(via, options)).join('');
-        if (viaGroup) {
-            parts.push(`<g data-layer="multi">${viaGroup}</g>`);
         }
     }
 

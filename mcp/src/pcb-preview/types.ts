@@ -125,6 +125,8 @@ export interface PreviewOptions {
     layers: LayerKey[];
     highlightNets: string[];
     highlightComponents: string[];
+    highlightNetColors?: Record<string, string>;
+    highlightComponentColors?: Record<string, string>;
     zoom: ZoomTarget;
     paddingMm: number;
     show: PreviewShowOptions;
