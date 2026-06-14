@@ -88,11 +88,6 @@ function round(value: number) {
     return Math.round(value * ROUND_DIGITS) / ROUND_DIGITS;
 }
 
-function normalizeRotation(rotation: number) {
-    const normalized = rotation % 360;
-    return round(normalized < 0 ? normalized + 360 : normalized);
-}
-
 function milToMm(value: number) {
     return round(value * MIL_TO_MM);
 }
@@ -488,7 +483,7 @@ async function readComponents() {
             footprint: safeString(primitive.getState_Footprint()?.name),
             x: primitive.getState_X(),
             y: primitive.getState_Y(),
-            rotate: normalizeRotation(primitive.getState_Rotation()),
+            rotate: (primitive.getState_Rotation()),
             layer: layerToSide(primitive.getState_Layer()) ?? "top",
             pads: componentPads.map(pad => ({
                 pad_number: pad.pad_number,
@@ -1077,7 +1072,7 @@ function parseOutlineSource(source: TPCB_PolygonSourceArray): RawPoint[][] {
     }
 
     while (i < source.length) {
-        const cmd = source[i++];
+        const cmd = source[i++] as string | number;
         if (cmd === 'M') {
             flush();
             if (i + 1 < source.length && typeof source[i] === 'number') {
@@ -1122,18 +1117,18 @@ function convertSourceArray(source: TPCB_PolygonSourceArray, coordConv: (v: numb
             continue;
         }
 
-        const cmd = token;
+        const cmd = token as string | number;
         out.push(cmd);
         i++;
 
         if (cmd === 'M') {
             if (i + 1 < source.length && typeof source[i] === 'number') {
-                out.push(coordConv(source[i]), coordConv(source[i + 1]));
+                out.push(coordConv(source[i] as number), coordConv(source[i + 1] as number));
                 i += 2;
             }
         } else if (cmd === 'L' || cmd === 'C' || cmd === 'Q') {
             while (i + 1 < source.length && typeof source[i] === 'number') {
-                out.push(coordConv(source[i]), coordConv(source[i + 1]));
+                out.push(coordConv(source[i] as number), coordConv(source[i + 1] as number));
                 i += 2;
             }
         } else if (cmd === 'Z') {
@@ -1290,7 +1285,7 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
             designator: c.getState_Designator() || '',
             x: milToMm(c.getState_X()),
             y: milToMm(c.getState_Y()),
-            rotate: normalizeRotation(c.getState_Rotation()),
+            rotate: (c.getState_Rotation()),
             layer: rawLayerName(c.getState_Layer()),
         });
     }
@@ -1307,7 +1302,7 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
             shapeType: shape ? String(shape[0]) : undefined,
             width: shape && typeof shape[1] === 'number' ? milToMm(shape[1]) : undefined,
             height: shape && typeof shape[2] === 'number' ? milToMm(shape[2]) : undefined,
-            rotation: normalizeRotation(p.getState_Rotation()),
+            rotation: (p.getState_Rotation()),
         });
     }
 
@@ -1360,8 +1355,8 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
 
         for (const fill of poured.getState_PourFills()) {
             const path = fill.path;
-            const src = typeof (path as { getSourceStrictComplex?: () => TPCB_PolygonSourceArray }).getSourceStrictComplex === 'function'
-                ? (path as { getSourceStrictComplex: () => TPCB_PolygonSourceArray }).getSourceStrictComplex()
+            const src = typeof path.getSourceStrictComplex === 'function'
+                ? path.getSourceStrictComplex()
                 : path.getSource();
             const sources = rawSourcesFromComplex(src, toMmCopperGrid);
             if (sources.length) {
@@ -1393,5 +1388,3 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
 
     return result;
 }
-
-eda.getPcbRaw = getPcbRaw;
