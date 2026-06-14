@@ -95,6 +95,12 @@ const TRACK_LABEL_FONT_RATIO = 0.8;
 const TRACK_LABEL_CHAR_RATIO = 0.6;
 const POLYGON_LABEL_FONT_RATIO = 0.25;
 
+const COMPONENT_LABEL_MIN_FONT_MM = 0.5;
+const COMPONENT_LABEL_MAX_FONT_MM = 2.0;
+const COMPONENT_LABEL_WIDTH_RATIO = 0.35;
+const COMPONENT_LABEL_HEIGHT_RATIO = 0.6;
+const COMPONENT_CROSS_SIZE_MM = 0.15;
+
 function netLabelsEnabled(options: PreviewOptions): boolean {
     return options.show.netLabels !== false;
 }
@@ -344,19 +350,30 @@ function renderPad(pad: PcbPad, options: PreviewOptions): string {
     return `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${rot})">${shapeSvg}</g>`;
 }
 
-function renderComponent(comp: PcbComponent, options: PreviewOptions): string {
+function renderComponent(comp: PcbComponent, options: PreviewOptions, data: PcbData): string {
     if (options.show.components === false) return '';
     const highlightColor = componentHighlightColor(comp.designator, options);
-    const highlighted = !!highlightColor;
     const color = highlightColor || LAYER_COLORS.component;
-    const size = 0.5;
     const y = svgY(comp.y);
+
+    const box = componentBox(data, comp.designator);
+    const boxW = box ? Math.max(0.1, box.maxX - box.minX) : 1;
+    const boxH = box ? Math.max(0.1, box.maxY - box.minY) : 1;
+
+    const fontSize = Math.max(
+        COMPONENT_LABEL_MIN_FONT_MM,
+        Math.min(
+            COMPONENT_LABEL_MAX_FONT_MM,
+            Math.min(boxW * COMPONENT_LABEL_WIDTH_RATIO, boxH * COMPONENT_LABEL_HEIGHT_RATIO),
+        ),
+    );
+    const textStrokeWidth = fontSize * 0.06;
+
     return [
         `<g transform="translate(${comp.x} ${y})">`,
-        `<line x1="${-size}" y1="0" x2="${size}" y2="0" stroke="${color}" stroke-width="0.1" />`,
-        `<line x1="0" y1="${-size}" x2="0" y2="${size}" stroke="${color}" stroke-width="0.1" />`,
-        `<circle cx="0" cy="0" r="${size / 4}" fill="${color}" />`,
-        `<text x="${size + 0.2}" y="${-size - 0.2}" fill="${color}" font-size="1.2" font-family="sans-serif">${escapeXml(comp.designator)}</text>`,
+        `<line x1="${-COMPONENT_CROSS_SIZE_MM}" y1="0" x2="${COMPONENT_CROSS_SIZE_MM}" y2="0" stroke="${color}" stroke-width="0.04" opacity="0.6" />`,
+        `<line x1="0" y1="${-COMPONENT_CROSS_SIZE_MM}" x2="0" y2="${COMPONENT_CROSS_SIZE_MM}" stroke="${color}" stroke-width="0.04" opacity="0.6" />`,
+        `<text x="0" y="0" fill="${color}" stroke="#000000" stroke-width="${textStrokeWidth.toFixed(4)}" stroke-opacity="0.5" paint-order="stroke" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" font-weight="bold" text-anchor="middle" dominant-baseline="middle">${escapeXml(comp.designator)}</text>`,
         '</g>',
     ].join('');
 }
@@ -381,19 +398,47 @@ function boardBox(data: PcbData): Box {
     return boxFromPoints(points);
 }
 
+function nearestComponent(data: PcbData, x: number, y: number, exclude?: PcbComponent): PcbComponent | undefined {
+    let best: PcbComponent | undefined;
+    let bestDist = Infinity;
+    for (const c of data.components || []) {
+        if (c === exclude) continue;
+        const d = Math.hypot(c.x - x, c.y - y);
+        if (d < bestDist) {
+            bestDist = d;
+            best = c;
+        }
+    }
+    return best;
+}
+
 function componentBox(data: PcbData, designator: string): Box | undefined {
     const component = data.components?.find(c => c.designator === designator);
     if (!component) return undefined;
 
+    // Find the nearest other component to decide a local search radius.
+    const nearestOther = nearestComponent(data, component.x, component.y, component);
+    const nearestDist = nearestOther ? Math.hypot(nearestOther.x - component.x, nearestOther.y - component.y) : Infinity;
+    const threshold = Math.min(5, nearestDist * 0.75);
+
     const points: Array<[number, number]> = [[component.x, component.y]];
-    data.pads?.forEach(p => {
-        if (p.designator === designator) points.push([p.x, p.y]);
-    });
+    for (const p of data.pads || []) {
+        const d = Math.hypot(p.x - component.x, p.y - component.y);
+        if (d > threshold) continue;
+        // Only claim pads for which this component is the closest one.
+        const closest = nearestComponent(data, p.x, p.y);
+        if (closest === component) {
+            const hw = (p.width || 0.5) / 2;
+            const hh = (p.height || 0.5) / 2;
+            points.push([p.x - hw, p.y - hh], [p.x + hw, p.y + hh]);
+        }
+    }
 
     const box = boxFromPoints(points);
-    // If the component has no pads, expand a tiny placeholder so it is visible.
     const hasGeometry = points.length > 1;
-    return hasGeometry ? box : expandBox(box, 5);
+    // If we couldn't find any pads, fall back to a small placeholder so the
+    // designator is still readable and not blown up to the board size.
+    return hasGeometry ? box : expandBox(box, 0.5);
 }
 
 function netBox(data: PcbData, net: string): Box | undefined {
@@ -542,7 +587,7 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
     }
 
     for (const comp of data.components || []) {
-        parts.push(renderComponent(comp, options));
+        parts.push(renderComponent(comp, options, data));
     }
 
     if (boardPath) {
