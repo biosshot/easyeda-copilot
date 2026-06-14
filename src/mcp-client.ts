@@ -280,6 +280,14 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
+        if (message.event === 'run-schematic-drc') {
+            const violations = await eda.sch_Drc.check(true, !!body.showUi, true);
+            const list = Array.isArray(violations) ? violations : [];
+            eda.sys_Log.add(`Schematic DRC: ${list.length} violation(s)`, list.length ? ESYS_LogType.WARNING : ESYS_LogType.INFO);
+            reply(true, { passed: list.length === 0, count: list.length, violations: list });
+            return;
+        }
+
         throw new Error(`Unknown MCP event: ${message.event}`);
     } catch (error) {
         eda.sys_Log.add(`MCP event error: ${message.event}: ${(error as Error).message}`, ESYS_LogType.ERROR);

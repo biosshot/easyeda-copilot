@@ -385,6 +385,21 @@ server.registerTool(
 );
 
 server.registerTool(
+    'run_schematic_drc',
+    {
+        title: 'Run Schematic DRC',
+        description: 'Run the schematic Design Rule Check (DRC) on the current EasyEDA page and return any violations. Use this as a feedback loop: after editing the schematic, call this and fix the reported issues until "passed" is true.',
+        inputSchema: z.object({
+            show_ui: z.boolean().default(false).describe("Also open EasyEDA's bottom DRC panel for the human. Default false (runs silently)."),
+        }),
+    },
+    async ({ show_ui }) => {
+        const result = await requestEasyEda('run-schematic-drc', { showUi: show_ui });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
     'get_current_project_info',
     {
         title: 'Get Current EasyEDA Project Info',
