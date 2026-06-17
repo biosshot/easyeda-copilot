@@ -533,31 +533,6 @@ async function readVias() {
         }
     }
 
-    const freePads = await eda.pcb_PrimitivePad.getAll().catch(() => []);
-    for (const pad of freePads) {
-        const asComponentPad = pad as IPCB_PrimitivePad & {
-            getState_ParentComponentPrimitiveId?: () => string;
-        };
-        if (typeof asComponentPad.getState_ParentComponentPrimitiveId === "function") continue;
-
-        const hole = pad.getState_Hole();
-        if (!hole) continue;
-
-        const drill = Math.max(...hole.slice(1).filter((value): value is number => typeof value === "number"));
-        const padShape = pad.getState_Pad();
-        const diameter = padShape
-            ? Math.max(...padShape.slice(1).filter((value): value is number => typeof value === "number"))
-            : drill;
-
-        vias.push({
-            net: safeString(pad.getState_Net()),
-            x: milToMm(pad.getState_X()),
-            y: milToMm(pad.getState_Y()),
-            diameter: milToMm(diameter),
-            drill: milToMm(drill),
-        });
-    }
-
     return { vias, viaNodes };
 }
 

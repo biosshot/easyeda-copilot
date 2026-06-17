@@ -585,7 +585,7 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions): string {
     }
 
     if (boardPath) {
-        parts.push(`<path d="${boardPath}" fill="none" stroke="${LAYER_COLORS.BOARD_OUTLINE}" stroke-width="0.15" />`);
+        parts.push(`<path d="${boardPath}" fill="none" stroke="${LAYER_COLORS.BOARD_OUTLINE}" stroke-width="0.254" />`);
     }
 
     parts.push('</g>');
