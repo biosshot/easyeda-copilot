@@ -12,9 +12,9 @@ import * as z from 'zod/v4';
 import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
 import type { ExplainPCB } from '@copilot/shared/types/pcb/explain';
-import { savePcbPreview, type PcbData, type PreviewOptions } from './pcb-preview/index.js';
+import { savePcbPreview, type PreviewOptions } from './pcb-preview/index.js';
 import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
-import { writeFileSync } from 'node:fs';
+import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
@@ -728,7 +728,7 @@ server.registerTool(
         }),
     },
     async (input) => {
-        const data = await requestEasyEda('get-pcb-raw') as PcbData;
+        const data = await requestEasyEda('get-pcb-raw') as RawPcb;
 
         const options: PreviewOptions = {
             layers: input.layers,

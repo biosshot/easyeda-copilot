@@ -1,5 +1,4 @@
 import { PcbPoint } from '@copilot/shared/types/pcb/shared';
-import ClipperLib from 'clipper-lib';
 
 export interface Box {
     minX: number;
@@ -141,14 +140,14 @@ export function cleanPolygonRings(rings: PcbPoint[][]): Island[] {
 
     for (const ring of rings) {
         if (ring.length < 3) continue;
-        const path = ring.map(p => ({ X: Math.round(p.x * scale), Y: Math.round(p.y * scale) }));
-        const simplified = ClipperLib.Clipper.SimplifyPolygon(path, ClipperLib.PolyFillType.pftNonZero);
-        for (const sp of simplified) {
-            if (sp.length < 3) continue;
-            const cleaned = ClipperLib.Clipper.CleanPolygon(sp, 0);
-            if (cleaned.length < 3) continue;
-            allPaths.push(cleaned.map((pt: { X: number, Y: number }): PcbPoint => ({ x: pt.X / scale, y: pt.Y / scale })));
-        }
+
+        const processedPath = ring.map(p => {
+            const X = (p.x * scale);
+            const Y = (p.y * scale);
+            return { x: X / scale, y: Y / scale };
+        });
+
+        allPaths.push(processedPath);
     }
 
     return buildIslands(allPaths);

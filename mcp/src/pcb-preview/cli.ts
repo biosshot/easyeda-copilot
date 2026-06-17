@@ -110,7 +110,6 @@ const options: PreviewOptions = {
 
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-console.log(options)
 const { pngPath, svgPath } = await savePcbPreview(data, options);
 
 console.log('Rendered PNG:', pngPath);
