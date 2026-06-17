@@ -23,6 +23,12 @@ export const RawPcbPadSchema = () => z.object({
     width: z.number().optional(),
     height: z.number().optional(),
     rotation: z.number(),
+    hole: z.object({
+        data: z.array(z.string().or(z.number())),
+        offsetX: z.number(),
+        offsetY: z.number(),
+        rotation: z.number(),
+    }).optional()
 });
 
 export const RawPcbTrackSchema = () => z.object({

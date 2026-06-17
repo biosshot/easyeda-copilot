@@ -1004,6 +1004,12 @@ export async function getPcbRaw(): Promise<RawPcb> {
             width: shape && typeof shape[1] === 'number' ? milToMm(shape[1]) : undefined,
             height: shape && typeof shape[2] === 'number' ? milToMm(shape[2]) : undefined,
             rotation: p.getState_Rotation(),
+            hole: p.getState_Hole() ? {
+                data: p.getState_Hole()!.map(v => typeof v === 'number' ? milToMm(v) : v),
+                offsetX: p.getState_HoleOffsetX(),
+                offsetY: p.getState_HoleOffsetY(),
+                rotation: p.getState_HoleRotation(),
+            } : undefined
         });
     }
 

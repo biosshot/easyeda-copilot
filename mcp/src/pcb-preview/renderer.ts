@@ -322,12 +322,14 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
     const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.MULTI);
     const w = pad.width || 0.5;
     const h = pad.height || 0.5;
+
     // EasyEDA pad rotation is stored in radians; convert to degrees for SVG.
     const rot = -(pad.rotation || 0) * (180 / Math.PI);
     const shape = pad.shapeType;
 
     const stroke = `stroke="${LAYER_COLORS.DRILL_DRAWING}" stroke-width="0.05"`;
     let shapeSvg = '';
+
     if (shape === 'OVAL') {
         const r = Math.min(w, h) / 2;
         shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${r}" ry="${r}" fill="${color}" ${stroke} />`;
@@ -339,7 +341,36 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
         shapeSvg = `<ellipse cx="0" cy="0" rx="${w / 2}" ry="${h / 2}" fill="${color}" ${stroke} />`;
     }
 
-    return `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${rot})">${shapeSvg}</g>`;
+    let holeSvg = '';
+    if (pad.hole) {
+        const holeType = pad.hole.data[0];
+        const ox = pad.hole.offsetX || 0;
+        const oy = pad.hole.offsetY || 0;
+
+        const holeRot = -(pad.hole.rotation || 0) * (180 / Math.PI);
+
+        let holeShape = '';
+
+        const holeFill = LAYER_COLORS.DRILL_DRAWING;
+
+        if (holeType === 'ROUND') {
+            const d = Number(pad.hole.data[1]) || 0;
+            holeShape = `<circle cx="0" cy="0" r="${d / 2}" fill="${holeFill}" />`;
+        }
+        else if (holeType === 'SLOT') {
+            const d = Number(pad.hole.data[1]) || 0;
+            let l = Number(pad.hole.data[2]) || d;
+            if (l < d) l = d;
+            const r = d / 2;
+            holeShape = `<rect x="${-l / 2}" y="${-d / 2}" width="${l}" height="${d}" rx="${r}" ry="${r}" fill="${holeFill}" />`;
+        }
+
+        if (holeShape) {
+            holeSvg = `<g transform="translate(${ox} ${-oy}) rotate(${holeRot})">${holeShape}</g>`;
+        }
+    }
+
+    return `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${rot})">${shapeSvg}${holeSvg}</g>`;
 }
 
 function renderComponent(comp: RawPcbComponent, options: PreviewOptions, data: RawPcb): string {
