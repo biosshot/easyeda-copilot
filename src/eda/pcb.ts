@@ -35,7 +35,9 @@ type RawComponent = Omit<ExplainPcbComponent, "x" | "y" | "pads"> & {
     pads: ExplainPcbComponent["pads"];
 };
 
-type InternalPad = ExplainPcbPadRef & {
+type InternalPad = {
+    designator: string,
+    pad_number: string,
     net?: string;
     x: number;
     y: number;
@@ -76,6 +78,8 @@ type RawPolygon = {
     rings: RawPoint[][];
 };
 
+const toExplainPad = (pad: { designator: string, pad_number: string }) => `${pad.designator}.${pad.pad_number}`
+
 function layerToSide(layer: EPCB_LayerId) {
     if (layer === EPCB_LayerId.TOP) return "TOP";
     if (layer === EPCB_LayerId.BOTTOM) return "BOTTOM";
@@ -84,17 +88,17 @@ function layerToSide(layer: EPCB_LayerId) {
 
 function toExplainPoint(point: RawPoint) {
     return {
-        x: milToMm(point.x),
-        y: milToMm(point.y),
+        x: round(milToMm(point.x), 10),
+        y: round(milToMm(point.y), 10),
     };
 }
 
 function toExplainBox(box: RawBox): ExplainPcbBox {
     return {
-        left: milToMm(box.minX),
-        right: milToMm(box.maxX),
-        top: milToMm(box.maxY),
-        bottom: milToMm(box.minY),
+        left: round(milToMm(box.minX), 10),
+        right: round(milToMm(box.maxX), 10),
+        top: round(milToMm(box.maxY), 10),
+        bottom: round(milToMm(box.minY), 10),
     };
 }
 
@@ -305,20 +309,6 @@ function nodeKey(point: RawPoint) {
     return `${Math.round(point.x / SNAP_TOLERANCE_MIL)},${Math.round(point.y / SNAP_TOLERANCE_MIL)}`;
 }
 
-function uniquePadRefs(pads: ExplainPcbPadRef[]) {
-    const seen = new Set<string>();
-    const unique: ExplainPcbPadRef[] = [];
-
-    for (const pad of pads) {
-        const key = `${pad.designator}\0${pad.pad_number}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-        unique.push(pad);
-    }
-
-    return unique;
-}
-
 function maxIslandNodeDistance(island: WireIsland) {
     const pointByKey = new Map<string, RawPoint>();
 
@@ -447,16 +437,16 @@ async function readComponents() {
         const componentPads = await getComponentPads(primitive);
         const rawComponent: RawComponent = {
             designator,
-            part_uuid: safeString(primitive.getState_Component()?.uuid),
+            // part_uuid: safeString(primitive.getState_Component()?.uuid),
             value: getComponentValue(primitive),
             footprint: safeString(primitive.getState_Footprint()?.name),
-            x: milToMm(primitive.getState_X()),
-            y: milToMm(primitive.getState_Y()),
-            rotate: (primitive.getState_Rotation()),
+            x: round(milToMm(primitive.getState_X()), 10),
+            y: round(milToMm(primitive.getState_Y()), 10),
+            // rotate: (primitive.getState_Rotation()),
             layer: layerToSide(primitive.getState_Layer()) ?? "TOP",
-            pads: componentPads.map(pad => ({
-                pad_number: pad.pad_number,
-                signal_name: pad.signal_name,
+            pads: componentPads.filter(p => !!p.signal_name?.trim()).map(pad => ({
+                pad: pad.pad_number,
+                net: pad.signal_name,
             })),
         };
 
@@ -503,9 +493,9 @@ async function readTrackSegments() {
         segments.push({
             net,
             layer,
-            start: { x: line.getState_StartX(), y: line.getState_StartY() },
-            end: { x: line.getState_EndX(), y: line.getState_EndY() },
-            width: line.getState_LineWidth(),
+            start: { x: milToMm(line.getState_StartX()), y: milToMm(line.getState_StartY()) },
+            end: { x: milToMm(line.getState_EndX()), y: milToMm(line.getState_EndY()) },
+            width: milToMm(line.getState_LineWidth()),
         });
     }
 
@@ -646,7 +636,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
     const netEndpoints = pads
         .filter(pad => pad.net === net)
         .map(({ designator, pad_number }) => ({ designator, pad_number }));
-    const connected_pads = uniquePadRefs([...geometryEndpoints, ...netEndpoints]);
+    const connected_pads = [...geometryEndpoints, ...netEndpoints].map(toExplainPad);
 
     const length = island.edges.reduce((total, edge) => total + distance(edge.start, edge.end), 0);
     const widths = island.edges.map(edge => edge.width);
@@ -662,11 +652,11 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
         net,
         layer: [...layers],
         connected_pads,
-        length: milToMm(length),
+        length: round(length, 100),
         vias: vias.length,
         width: {
-            min: milToMm(Math.min(...widths)),
-            max: milToMm(Math.max(...widths)),
+            min: Math.min(...widths),
+            max: Math.max(...widths),
         },
         segments: island.edges.length,
         bbox: toExplainBox(box),
@@ -766,11 +756,10 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
             const geometryConnects = pads
                 .filter(pad => pad.net === polygon.net && padTouchesPolygon(pad, rings))
                 .map(({ designator, pad_number }) => ({ designator, pad_number }));
-            const connects = uniquePadRefs(geometryConnects.length
+
+            const connects = geometryConnects.length
                 ? geometryConnects
-                : pads
-                    .filter(pad => pad.net === polygon.net)
-                    .map(({ designator, pad_number }) => ({ designator, pad_number })));
+                : pads.filter(pad => pad.net === polygon.net)
 
             polygons.push({
                 net: polygon.net,
@@ -779,9 +768,9 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
                 cutouts: island.cutouts.length
                     ? island.cutouts.map(ring => ring.map(point => toExplainPoint(point)))
                     : undefined,
-                area: round((outerArea - cutoutArea) * MIL_TO_MM * MIL_TO_MM),
+                area: round((outerArea - cutoutArea) * MIL_TO_MM * MIL_TO_MM, 1),
                 bbox: toExplainBox(boxFromPoints(island.outer)),
-                connects,
+                connects: [...new Set(connects.map(({ designator, pad_number }) => toExplainPad({ designator, pad_number })))],
             });
         }
     }
@@ -806,18 +795,22 @@ export async function getPcb(): Promise<ExplainPCB> {
     const wires = buildWires(segments, viaResult.viaNodes, componentResult.pads);
     const polygons = buildPolygons(rawPolygons, componentResult.pads);
 
+    const fullPolygonConnected = polygons.flatMap(p => p.connects);
+
     return {
         board: boardPolygon?.length
             ? { polygon: boardPolygon }
             : undefined,
         components: componentResult.rawComponents,
-        wires: wires.length ? wires : undefined,
+        wires: wires.length ?
+            wires.map(wire => ({ ...wire, connected_pads: wire.connected_pads.filter(c => !fullPolygonConnected.includes(c)) })).filter(wire => wire.connected_pads.length)
+            : undefined,
         polygons: polygons.length ? polygons : undefined,
     };
 }
 
 function padRefKey(ref: ExplainPcbPadRef) {
-    return `${ref.designator}\0${ref.pad_number}`;
+    return ref;
 }
 
 export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: number): Promise<ExplainPcbWire[]> {
@@ -849,7 +842,7 @@ export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: num
         const designator = suffix.slice(0, lastDash);
         const padNumber = suffix.slice(lastDash + 1);
         if (!designator || !padNumber) return undefined;
-        return { designator, pad_number: padNumber };
+        return toExplainPad({ designator, pad_number: padNumber });
     }
 
     const result: ExplainPcbWire[] = wires.map(wire => ({ ...wire, drc_violations: [] }));

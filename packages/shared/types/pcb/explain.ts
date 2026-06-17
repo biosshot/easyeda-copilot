@@ -8,10 +8,12 @@ export const ExplainPcbBoxSchema = () => z.object({
     bottom: z.number(),
 }).strict();
 
-export const ExplainPcbPadRefSchema = () => z.object({
-    designator: z.string(),
-    pad_number: z.string(),
-}).strict();
+// export const ExplainPcbPadRefSchema = () => z.object({
+//     designator: z.string(),
+//     pad: z.string(),
+// }).strict();
+
+export const ExplainPcbPadRefSchema = () => z.string();
 
 
 export const ExplainPcbBoardSchema = () => z.object({
@@ -25,11 +27,11 @@ export const ExplainPcbComponentSchema = () => z.object({
     footprint: z.string().optional(),
     x: z.number(),
     y: z.number(),
-    rotate: z.number(),
+    rotate: z.number().optional(),
     layer: PcbLayerNameSchema(),
     pads: z.array(z.object({
-        pad_number: z.string(),
-        signal_name: z.string().optional(),
+        pad: z.string(),
+        net: z.string().optional(),
     }).strict()),
     nearest_components: z.array(z.object({
         designator: z.string(),
