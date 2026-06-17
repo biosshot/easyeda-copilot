@@ -9,9 +9,9 @@ import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import sharp from 'sharp';
 import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
-import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
+import { CircuitModStruct, ExplainCircuitStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
-import type { ExplainPCB } from '@copilot/shared/types/pcb/explain';
+import { ExplainPcbSchema, type ExplainPCB } from '@copilot/shared/types/pcb/explain';
 import { savePcbPreview, type PreviewOptions } from './pcb-preview/index.js';
 import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
@@ -30,6 +30,7 @@ const SKILL_DOC_PATH = join(DOCS_CACHE_DIR, 'SKILL.md');
 const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
 const CIRCUIT_DOCS_DIR = join(DOCS_CACHE_DIR, 'circuit-maker');
 const PCB_LAYOUT_DOCS_DIR = join(DOCS_CACHE_DIR, 'pcb-layout');
+const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
 
 const server = new McpServer({
     name: 'easyeda-copilot',
@@ -592,12 +593,26 @@ server.registerTool(
     'get_current_page_schematic',
     {
         title: 'Get EasyEDA Schematic',
-        description: 'Get the current EasyEDA schematic through the connected MCP interface.',
+        description: 'Get the current EasyEDA schematic through the connected MCP interface.\n' +
+            `Format: ${JSON.stringify(ExplainCircuitStruct().toJSONSchema())}`,
         inputSchema: z.object({}),
     },
     async () => {
         const result = await requestEasyEda('get-schematic') as ExplainCircuit;
-        return textResult({ ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) });
+        const schematic = { ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) };
+
+        if (schematic.components.length > 40) {
+            await mkdir(TEMP_DIR, { recursive: true });
+
+            const savePath = join(TEMP_DIR, `sch-${crypto.randomUUID().slice(0, 6)}.json`);
+            await writeFile(savePath, JSON.stringify(schematic, null, 2));
+            return textResult({
+                "message": "Schematic too big, so it was saved to a file. components len: " + schematic.components.length,
+                "path": savePath
+            });
+        }
+
+        return textResult(schematic);
     },
 );
 
@@ -605,11 +620,29 @@ server.registerTool(
     'get_current_pcb',
     {
         title: 'Get EasyEDA PCB',
-        description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first.',
+        description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first.\n' +
+            `Format: ${JSON.stringify(ExplainPcbSchema({ forLLM: true }).toJSONSchema())}`,
         inputSchema: z.object({}),
     },
     async () => {
         const result = await requestEasyEda('get-pcb') as ExplainPCB;
+
+        if (result.components.length > 30 || result.vias?.length || 0 > 50 || result.polygons?.length || 0 > 20 || result.wires?.length || 0 > 50) {
+            await mkdir(TEMP_DIR, { recursive: true });
+
+            const savePath = join(TEMP_DIR, `pcb-${crypto.randomUUID().slice(0, 6)}.json`);
+            await writeFile(savePath, JSON.stringify(result, null, 2));
+            return textResult({
+                "message": "Pcb too big, so it was saved to a file.\n" +
+                    `components len: ${result.components.length}\n` +
+                    `vias len: ${result.vias?.length}\n` +
+                    `polygons len: ${result.polygons?.length}\n` +
+                    `wires len: ${result.wires?.length}`,
+                "path": savePath
+            });
+        }
+
+
         return textResult(result);
     },
 );
@@ -739,11 +772,11 @@ server.registerTool(
             zoom: input.zoom,
             paddingMm: input.padding_mm,
             show: {},
-            widthPx: 1600,
+            widthPx: 1024,
         };
 
-        const runId = randomUUID();
-        const { pngPath } = await savePcbPreview(data, options, runId);
+        await mkdir(TEMP_DIR, { recursive: true });
+        const { pngPath } = await savePcbPreview(data, options, join(TEMP_DIR, crypto.randomUUID().slice(0, 6)));
 
         return textResult({ image_path: pngPath });
     },

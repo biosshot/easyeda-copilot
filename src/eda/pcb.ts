@@ -777,6 +777,7 @@ export async function getPcb(): Promise<ExplainPCB> {
             ? { polygon: boardPolygon }
             : undefined,
         components: componentResult.rawComponents,
+        vias: viaResult.vias,
         wires: wires.length ?
             wires.map(wire => ({ ...wire, connected_pads: wire.connected_pads.filter(c => !fullPolygonConnected.includes(c)) })).filter(wire => wire.connected_pads.length)
             : undefined,

@@ -103,14 +103,14 @@ const options: PreviewOptions = {
     zoom: normalizeZoom(rawOptions.zoom),
     paddingMm: typeof rawOptions.padding_mm === 'number' ? rawOptions.padding_mm : 2,
     show,
-    widthPx: typeof rawOptions.width_px === 'number' ? rawOptions.width_px : 1600,
+    widthPx: typeof rawOptions.width_px === 'number' ? rawOptions.width_px : 1024,
     polygonLabelStepMm: typeof rawOptions.polygon_label_step_mm === 'number' ? rawOptions.polygon_label_step_mm : undefined,
     debug: !!rawOptions.debug,
 };
 
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
-const { pngPath, svgPath } = await savePcbPreview(data, options);
+const { pngPath, svgPath } = await savePcbPreview(data, options, 'pcb');
 
 console.log('Rendered PNG:', pngPath);
 console.log('Rendered SVG:', svgPath);

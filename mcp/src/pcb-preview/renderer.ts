@@ -538,7 +538,7 @@ export function computeViewBox(data: RawPcb, options: PreviewOptions): Box {
     };
 }
 
-export function renderPcbToSvg(data: RawPcb, options: PreviewOptions): string {
+export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
     const viewBox = computeViewBox(data, options);
     const vbWidth = viewBox.maxX - viewBox.minX;
     const vbHeight = viewBox.maxY - viewBox.minY;
@@ -623,12 +623,18 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions): string {
 
     const heightPx = Math.round(options.widthPx * (vbHeight / vbWidth));
 
-    return [
-        '<?xml version="1.0" encoding="UTF-8"?>',
-        `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox.minX.toFixed(4)} ${viewBox.minY.toFixed(4)} ${vbWidth.toFixed(4)} ${vbHeight.toFixed(4)}" width="${options.widthPx}" height="${heightPx}">`,
-        parts.join('\n'),
-        '</svg>',
-    ].join('\n');
+    return {
+        vbWidth,
+        vbHeight,
+        viewBox,
+        heightPx,
+        svg: [
+            '<?xml version="1.0" encoding="UTF-8"?>',
+            `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${viewBox.minX.toFixed(4)} ${viewBox.minY.toFixed(4)} ${vbWidth.toFixed(4)} ${vbHeight.toFixed(4)}" width="${options.widthPx}" height="${heightPx}">`,
+            parts.join('\n'),
+            '</svg>',
+        ].join('\n')
+    };
 }
 
 export function renderDiagnostics(diagnostics: { polygons: PolygonDiagnostics[] } | undefined): Record<string, unknown> | undefined {

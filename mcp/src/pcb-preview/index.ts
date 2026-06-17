@@ -1,23 +1,24 @@
-import { mkdir, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import type { PreviewOptions, PreviewResult } from './types.js';
 import { computeViewBox, renderPcbToSvg } from './renderer.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 
 export * from './types.js';
-export { renderPcbToSvg, computeViewBox, renderDiagnostics } from './renderer.js';
 
 export async function renderPcbPreview(data: RawPcb, options: PreviewOptions): Promise<PreviewResult> {
     const svg = renderPcbToSvg(data, options);
-    const pngBuffer = await sharp(Buffer.from(svg))
-        .resize(options.widthPx, null, { withoutEnlargement: false })
+    const pngBuffer = await sharp(Buffer.from(svg.svg))
+        .resize({
+            width: options.widthPx,
+            height: 1600,
+            fit: 'inside'
+        })
         .png()
         .toBuffer();
 
     return {
-        svg,
+        svg: svg.svg,
         pngBuffer,
         viewBox: computeViewBox(data, options),
     };
@@ -26,15 +27,12 @@ export async function renderPcbPreview(data: RawPcb, options: PreviewOptions): P
 export async function savePcbPreview(
     data: RawPcb,
     options: PreviewOptions,
-    fileName?: string,
+    fileName: string,
 ): Promise<{ svgPath: string; pngPath: string }> {
     const { svg, pngBuffer } = await renderPcbPreview(data, options);
-    const previewDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-previews');
-    await mkdir(previewDir, { recursive: true });
 
-    const baseName = fileName ?? `pcb-preview-${Date.now()}`;
-    const svgPath = join(previewDir, `${baseName}.svg`);
-    const pngPath = join(previewDir, `${baseName}.png`);
+    const svgPath = `${fileName}.svg`;
+    const pngPath = `${fileName}.png`;
 
     await Promise.all([
         writeFile(svgPath, svg, 'utf8'),
