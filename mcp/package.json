@@ -31,7 +31,9 @@
   },
   "devDependencies": {
     "@copilot/shared": "file:../packages/shared",
+    "@types/clipper-lib": "^6.4.0",
     "@types/node": "^25.9.1",
+    "@types/sharp": "^0.31.1",
     "@types/ws": "^8.18.1",
     "rimraf": "^6.1.2",
     "tsup": "^8.5.1",

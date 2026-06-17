@@ -179,3 +179,21 @@ export async function getAllWiresByNet(net: string) {
     const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
     return allWires.filter(w => w.getState_Net() === net);
 }
+
+export function round(value: number, ROUND_DIGITS: number = 10000) {
+    return Math.round(value * ROUND_DIGITS) / ROUND_DIGITS;
+}
+
+export function milToMm(value: number) {
+    const MIL_TO_MM = 25.4 / 1000;
+    return round(value * MIL_TO_MM);
+}
+
+export function mmToMil(value: number) {
+    const MIL_TO_MM = 25.4 / 1000;
+    return round(value / MIL_TO_MM);
+}
+
+export function safeString(value: unknown) {
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}

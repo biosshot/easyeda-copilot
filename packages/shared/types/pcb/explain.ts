@@ -1,9 +1,5 @@
 import * as z from "zod";
-
-export const ExplainPcbPointSchema = () => z.object({
-    x: z.number(),
-    y: z.number(),
-}).strict();
+import { PcbPointSchema, PcbLayerNameSchema } from "./shared";
 
 export const ExplainPcbBoxSchema = () => z.object({
     left: z.number(),
@@ -17,11 +13,9 @@ export const ExplainPcbPadRefSchema = () => z.object({
     pad_number: z.string(),
 }).strict();
 
-export const ExplainPcbLayerSchema = () => z.enum(["top", "bottom"]);
-export const ExplainPcbWireLayerSchema = () => z.enum(["top", "bottom", "mixed"]);
 
 export const ExplainPcbBoardSchema = () => z.object({
-    polygon: z.array(ExplainPcbPointSchema()).min(3),
+    polygon: z.array(PcbPointSchema()).min(3),
 }).strict();
 
 export const ExplainPcbComponentSchema = () => z.object({
@@ -32,7 +26,7 @@ export const ExplainPcbComponentSchema = () => z.object({
     x: z.number(),
     y: z.number(),
     rotate: z.number(),
-    layer: ExplainPcbLayerSchema(),
+    layer: PcbLayerNameSchema(),
     pads: z.array(z.object({
         pad_number: z.string(),
         signal_name: z.string().optional(),
@@ -42,7 +36,7 @@ export const ExplainPcbComponentSchema = () => z.object({
         distance: z.number(),
         x: z.number(),
         y: z.number(),
-        layer: ExplainPcbLayerSchema(),
+        layer: PcbLayerNameSchema(),
     }).strict()).optional(),
 }).strict();
 
@@ -63,7 +57,7 @@ export const SimplifiedDrcCategorySchema = () => z.object({
 
 export const ExplainPcbWireSchema = () => z.object({
     net: z.string(),
-    layer: ExplainPcbWireLayerSchema(),
+    layer: z.array(PcbLayerNameSchema()),
     connected_pads: z.array(ExplainPcbPadRefSchema()),
     length: z.number(),
     direct_distance: z.number().optional(),
@@ -88,15 +82,15 @@ export const ExplainPcbViaSchema = () => z.object({
 
 export const ExplainPcbPolygonSchema = () => z.object({
     net: z.string(),
-    layer: ExplainPcbLayerSchema(),
-    points: z.array(ExplainPcbPointSchema()).min(3),
-    cutouts: z.array(z.array(ExplainPcbPointSchema()).min(3)).optional(),
+    layer: PcbLayerNameSchema(),
+    // points: z.array(PcbPointSchema()).min(3),
+    cutouts: z.array(z.array(PcbPointSchema()).min(3)).optional(),
     area: z.number(),
     bbox: ExplainPcbBoxSchema(),
     connects: z.array(ExplainPcbPadRefSchema()),
     minWidth: z.number().optional(),
     narrowNecks: z.array(z.object({
-        at: ExplainPcbPointSchema(),
+        at: PcbPointSchema(),
         width: z.number(),
     }).strict()).optional(),
 }).strict();
@@ -109,7 +103,6 @@ export const ExplainPcbSchema = () => z.object({
     polygons: z.array(ExplainPcbPolygonSchema()).optional(),
 }).strict();
 
-export type ExplainPcbPoint = z.infer<ReturnType<typeof ExplainPcbPointSchema>>;
 export type ExplainPcbBox = z.infer<ReturnType<typeof ExplainPcbBoxSchema>>;
 export type ExplainPcbPadRef = z.infer<ReturnType<typeof ExplainPcbPadRefSchema>>;
 export type ExplainPcbBoard = z.infer<ReturnType<typeof ExplainPcbBoardSchema>>;

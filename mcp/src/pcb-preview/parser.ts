@@ -1,4 +1,5 @@
-import type { Point, PolygonSource } from './types.js';
+import { RawPcbPolygon } from "@copilot/shared/types/pcb/raw";
+import { PcbPoint } from "@copilot/shared/types/pcb/shared";
 
 export interface PolygonDiagnostics {
     net?: string;
@@ -7,49 +8,49 @@ export interface PolygonDiagnostics {
     unknownCommands?: string[];
 }
 
-function trimClosingPoint(points: Point[]): Point[] {
+function trimClosingPoint(points: PcbPoint[]): PcbPoint[] {
     if (points.length > 1 &&
-        points[0][0] === points[points.length - 1][0] &&
-        points[0][1] === points[points.length - 1][1]) {
+        points[0].x === points[points.length - 1].x &&
+        points[0].y === points[points.length - 1].y) {
         points.pop();
     }
     return points;
 }
 
-function flattenCubicBezier(p0: Point, p1: Point, p2: Point, p3: Point, steps = 12): Point[] {
-    const pts: Point[] = [];
+function flattenCubicBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, p3: PcbPoint, steps = 12): PcbPoint[] {
+    const pts: PcbPoint[] = [];
     for (let i = 1; i <= steps; i++) {
         const t = i / steps;
         const u = 1 - t;
         const u2 = u * u;
         const t2 = t * t;
-        const x = u2 * u * p0[0] + 3 * u2 * t * p1[0] + 3 * u * t2 * p2[0] + t2 * t * p3[0];
-        const y = u2 * u * p0[1] + 3 * u2 * t * p1[1] + 3 * u * t2 * p2[1] + t2 * t * p3[1];
-        pts.push([x, y]);
+        const x = u2 * u * p0.x + 3 * u2 * t * p1.x + 3 * u * t2 * p2.x + t2 * t * p3.x;
+        const y = u2 * u * p0.y + 3 * u2 * t * p1.y + 3 * u * t2 * p2.y + t2 * t * p3.y;
+        pts.push({ x, y });
     }
     return pts;
 }
 
-function flattenQuadraticBezier(p0: Point, p1: Point, p2: Point, steps = 12): Point[] {
-    const pts: Point[] = [];
+function flattenQuadraticBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, steps = 12): PcbPoint[] {
+    const pts: PcbPoint[] = [];
     for (let i = 1; i <= steps; i++) {
         const t = i / steps;
         const u = 1 - t;
-        const x = u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0];
-        const y = u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1];
-        pts.push([x, y]);
+        const x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.y;
+        const y = u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y;
+        pts.push({ x, y });
     }
     return pts;
 }
 
-function arcPoints(start: Point, end: Point, angleDeg: number): Point[] {
-    const [sx, sy] = start;
-    const [ex, ey] = end;
+function arcPoints(start: PcbPoint, end: PcbPoint, angleDeg: number): PcbPoint[] {
+    const { x: sx, y: sy } = start;
+    const { x: ex, y: ey } = end;
     const angleRad = angleDeg * Math.PI / 180;
     const absAngle = Math.abs(angleRad);
 
     if (absAngle < 1e-9 || (Math.abs(sx - ex) < 1e-9 && Math.abs(sy - ey) < 1e-9)) {
-        return [[ex, ey]];
+        return [{ x: ex, y: ey }];
     }
 
     const dx = ex - sx;
@@ -71,46 +72,46 @@ function arcPoints(start: Point, end: Point, angleDeg: number): Point[] {
     const startAngle = Math.atan2(sy - cy, sx - cx);
     const endAngle = startAngle + angleRad;
 
-    const pts: Point[] = [];
+    const pts: PcbPoint[] = [];
     const count = Math.max(4, Math.min(64, Math.ceil(Math.abs(angleDeg) / 3)));
     for (let i = 1; i <= count; i++) {
         const t = i / count;
         const a = startAngle + (endAngle - startAngle) * t;
-        pts.push([cx + Math.cos(a) * radius, cy + Math.sin(a) * radius]);
+        pts.push({ x: cx + Math.cos(a) * radius, y: cy + Math.sin(a) * radius });
     }
     return pts;
 }
 
-function rotatePoint(p: Point, cx: number, cy: number, angleDeg: number): Point {
+function rotatePoint(p: PcbPoint, cx: number, cy: number, angleDeg: number): PcbPoint {
     const angleRad = angleDeg * Math.PI / 180;
     const cos = Math.cos(angleRad);
     const sin = Math.sin(angleRad);
-    const dx = p[0] - cx;
-    const dy = p[1] - cy;
-    return [cx + dx * cos - dy * sin, cy + dx * sin + dy * cos];
+    const dx = p.x - cx;
+    const dy = p.y - cy;
+    return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos };
 }
 
-function roundedRectPoints(x: number, y: number, w: number, h: number, rot: number, round: number): Point[] {
-    const corners: Point[] = [[x, y], [x + w, y], [x + w, y + h], [x, y + h]];
+function roundedRectPoints(x: number, y: number, w: number, h: number, rot: number, round: number): PcbPoint[] {
+    const corners: PcbPoint[] = [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
     const rotated = corners.map(p => rotatePoint(p, x, y, rot || 0));
     if (!round || round <= 1e-6) return rotated;
     return rotated;
 }
 
-function samePoint(a: Point, b: Point): boolean {
-    return Math.abs(a[0] - b[0]) < 1e-9 && Math.abs(a[1] - b[1]) < 1e-9;
+function samePoint(a: PcbPoint, b: PcbPoint): boolean {
+    return Math.abs(a.x - b.x) < 1e-9 && Math.abs(a.y - b.y) < 1e-9;
 }
 
-export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonDiagnostics): Point[][] {
-    const rings: Point[][] = [];
-    let current: Point[] = [];
+export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnostics?: PolygonDiagnostics): PcbPoint[][] {
+    const rings: PcbPoint[][] = [];
+    let current: PcbPoint[] = [];
     let i = 0;
     const commandsSeen = new Set<string>();
 
     function flush(forceClose = false) {
         if (current.length >= 2) {
             if (forceClose && !samePoint(current[0], current[current.length - 1])) {
-                current.push([...current[0]]);
+                current.push({ ...current[0] });
             }
             rings.push(trimClosingPoint([...current]));
         }
@@ -118,7 +119,7 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
     }
 
     if (typeof source[0] === 'number' && typeof source[1] === 'number') {
-        current.push([source[0], source[1]]);
+        current.push({ x: source[0], y: source[1] });
         i = 2;
     }
 
@@ -130,14 +131,14 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
         if (cmd === 'M') {
             flush();
             if (i + 1 < source.length && typeof source[i] === 'number' && typeof source[i + 1] === 'number') {
-                current.push([source[i], source[i + 1]]);
+                current.push({ x: source[i] as number, y: source[i + 1] as number });
                 i += 2;
             }
         } else if (cmd === 'Z') {
             flush(true);
         } else if (cmd === 'L') {
             while (i + 1 < source.length && typeof source[i] === 'number' && typeof source[i + 1] === 'number') {
-                current.push([source[i], source[i + 1]]);
+                current.push({ x: source[i] as number, y: source[i + 1] as number });
                 i += 2;
             }
         } else if (cmd === 'R') {
@@ -149,10 +150,10 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
         } else if (cmd === 'CIRCLE') {
             const cx = source[i], cy = source[i + 1], r = source[i + 2];
             if (typeof cx === 'number' && typeof cy === 'number' && typeof r === 'number') {
-                const circle: Point[] = [];
+                const circle: PcbPoint[] = [];
                 for (let a = 0; a < 24; a++) {
                     const ang = (2 * Math.PI * a) / 24;
-                    circle.push([cx + Math.cos(ang) * r, cy + Math.sin(ang) * r]);
+                    circle.push({ x: cx + Math.cos(ang) * r, y: cy + Math.sin(ang) * r });
                 }
                 rings.push(trimClosingPoint(circle));
             }
@@ -162,10 +163,10 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
                 typeof source[i] === 'number' && typeof source[i + 1] === 'number' &&
                 typeof source[i + 2] === 'number' && typeof source[i + 3] === 'number' &&
                 typeof source[i + 4] === 'number' && typeof source[i + 5] === 'number') {
-                const p0 = current.length ? current[current.length - 1] : [source[i], source[i + 1]];
-                const p1: Point = [source[i], source[i + 1]];
-                const p2: Point = [source[i + 2], source[i + 3]];
-                const p3: Point = [source[i + 4], source[i + 5]];
+                const p0 = current.length ? current[current.length - 1] : { x: source[i] as number, y: source[i + 1] as number };
+                const p1: PcbPoint = { x: source[i] as number, y: source[i + 1] as number };
+                const p2: PcbPoint = { x: source[i + 2] as number, y: source[i + 3] as number };
+                const p3: PcbPoint = { x: source[i + 4] as number, y: source[i + 5] as number };
                 current.push(...flattenCubicBezier(p0, p1, p2, p3));
                 i += 6;
             }
@@ -173,9 +174,9 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
             while (i + 3 < source.length &&
                 typeof source[i] === 'number' && typeof source[i + 1] === 'number' &&
                 typeof source[i + 2] === 'number' && typeof source[i + 3] === 'number') {
-                const p0 = current.length ? current[current.length - 1] : [source[i], source[i + 1]];
-                const p1: Point = [source[i], source[i + 1]];
-                const p2: Point = [source[i + 2], source[i + 3]];
+                const p0 = current.length ? current[current.length - 1] : { x: source[i] as number, y: source[i + 1] as number };
+                const p1: PcbPoint = { x: source[i] as number, y: source[i + 1] as number };
+                const p2: PcbPoint = { x: source[i + 2] as number, y: source[i + 3] as number };
                 current.push(...flattenQuadraticBezier(p0, p1, p2));
                 i += 4;
             }
@@ -184,9 +185,9 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
                 typeof source[i] === 'number' &&
                 typeof source[i + 1] === 'number' &&
                 typeof source[i + 2] === 'number') {
-                const start = current.length ? current[current.length - 1] : [0, 0];
-                const angleDeg = source[i];
-                const end: Point = [source[i + 1], source[i + 2]];
+                const start = current.length ? current[current.length - 1] : { x: 0, y: 0 };
+                const angleDeg = source[i] as number;
+                const end: PcbPoint = { x: source[i + 1] as number, y: source[i + 2] as number };
                 current.push(...arcPoints(start, end, angleDeg));
                 i += 3;
             }
@@ -206,19 +207,19 @@ export function parsePolygonSource(source: PolygonSource, diagnostics?: PolygonD
     return rings.filter(ring => ring.length >= 2);
 }
 
-export function ringsFromComplex(complex: PolygonSource[] | PolygonSource, diagnostics?: PolygonDiagnostics): Point[][] {
+export function ringsFromComplex(complex: RawPcbPolygon['sources'] | RawPcbPolygon['sources'][0], diagnostics?: PolygonDiagnostics): PcbPoint[][] {
     if (!complex) return [];
     if (Array.isArray(complex) && complex.length > 0 && Array.isArray(complex[0])) {
-        const allRings: Point[][] = [];
-        for (const source of complex as PolygonSource[]) {
+        const allRings: PcbPoint[][] = [];
+        for (const source of complex as RawPcbPolygon['sources']) {
             allRings.push(...parsePolygonSource(source, diagnostics));
         }
         return allRings.filter(ring => ring.length >= 2);
     }
-    return parsePolygonSource(complex as PolygonSource, diagnostics);
+    return parsePolygonSource(complex as RawPcbPolygon['sources'][0], diagnostics);
 }
 
-export function polygonRings(poly: { sources?: PolygonSource[]; rings?: Point[][] }, diagnostics?: PolygonDiagnostics): Point[][] {
+export function polygonRings(poly: { sources?: RawPcbPolygon['sources']; rings?: PcbPoint[][] }, diagnostics?: PolygonDiagnostics): PcbPoint[][] {
     if (poly.sources && poly.sources.length) {
         return ringsFromComplex(poly.sources, diagnostics);
     }

@@ -13,6 +13,8 @@ import { CircuitModStruct, type ExplainCircuit } from '@copilot/shared/types/cir
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
 import type { ExplainPCB } from '@copilot/shared/types/pcb/explain';
 import { savePcbPreview, type PcbData, type PreviewOptions } from './pcb-preview/index.js';
+import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
+import { writeFileSync } from 'node:fs';
 
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
@@ -716,7 +718,7 @@ server.registerTool(
         title: 'Preview PCB',
         description: 'Render a PNG preview of the currently opened PCB document. Supports layer selection, net/component highlighting, and zoom to a net, component, or bounding box. Open the target PCB document first.',
         inputSchema: z.object({
-            layers: z.array(z.string()).default(['all']).describe('Layers to render, e.g. ["top"], ["bottom"], ["top","bottom"], or ["all"].'),
+            layers: z.array(PcbLayerNameSchema().or(z.literal('all'))).default(['all']).describe('Layers to render, e.g. ["top"], ["bottom"], ["top","bottom"], or ["all"].'),
             highlight_net: z.string().optional().describe('Optional net name to highlight.'),
             highlight_component: z.string().optional().describe('Optional component designator to highlight.'),
             highlight_net_colors: z.record(z.string(), z.string()).optional().describe('Optional per-net highlight colors, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}.'),

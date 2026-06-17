@@ -7,7 +7,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { savePcbPreview } from './index.js';
-import type { LayerKey, PreviewOptions, ZoomTarget } from './types.js';
+import type { PreviewOptions, ZoomTarget } from './types.js';
+import { PcbLayerName } from '@copilot/shared/types/pcb/shared.js';
 
 function loadRawOptions(arg: string | undefined): Record<string, unknown> {
     if (!arg) return {};
@@ -61,7 +62,14 @@ function normalizeZoom(zoom: unknown): ZoomTarget {
 }
 
 function normalizeShow(show: unknown): PreviewOptions['show'] {
-    if (!show || typeof show !== 'object') return {};
+    if (!show || typeof show !== 'object') return {
+        tracks: true,
+        pads: true,
+        vias: true,
+        polygons: true,
+        components: true,
+        netLabels: true
+    };
     return {
         tracks: (show as Record<string, unknown>).tracks as boolean | undefined,
         pads: (show as Record<string, unknown>).pads as boolean | undefined,
@@ -87,7 +95,7 @@ if (typeof rawOptions.show_net_labels === 'boolean') {
 }
 
 const options: PreviewOptions = {
-    layers: (rawOptions.layers as LayerKey[]) || ['all'],
+    layers: (rawOptions.layers as PcbLayerName[]) || ['all'],
     highlightNets: toStringArray(rawOptions.highlight_nets),
     highlightComponents: toStringArray(rawOptions.highlight_components),
     highlightNetColors: normalizeColorMap(rawOptions.highlight_net_colors),
@@ -102,6 +110,7 @@ const options: PreviewOptions = {
 
 const data = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
 
+console.log(options)
 const { pngPath, svgPath } = await savePcbPreview(data, options);
 
 console.log('Rendered PNG:', pngPath);

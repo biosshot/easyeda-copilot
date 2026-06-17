@@ -1,7 +1,10 @@
+import { RawPcb, RawPcbArc, RawPcbComponent, RawPcbPad, RawPcbPolygon, RawPcbTrack, RawPcbVia } from '@copilot/shared/types/pcb/raw.js';
+
 import { LAYER_COLORS, LAYER_ORDER } from './colors.js';
 import { boxFromPoints, cleanPolygonRings, expandBox, pointInRing, ringBounds, svgY, type Box, type Island } from './geometry.js';
 import { polygonRings, type PolygonDiagnostics } from './parser.js';
-import type { LayerKey, PcbArc, PcbComponent, PcbData, PcbPad, PcbPolygon, PcbTrack, PcbVia, PreviewOptions, ZoomTarget } from './types.js';
+import type { PreviewOptions, ZoomTarget } from './types.js';
+import { PcbLayerName, PcbPoint } from '@copilot/shared/types/pcb/shared.js';
 
 export { LAYER_ORDER };
 
@@ -13,9 +16,9 @@ function escapeXml(str: string): string {
         .replace(/"/g, '&quot;');
 }
 
-function pointsToPath(points: Array<{ 0: number; 1: number }>): string {
+function pointsToPath(points: PcbPoint[]): string {
     if (!points || points.length < 2) return '';
-    return `M ${points.map(p => `${p[0].toFixed(4)} ${svgY(p[1]).toFixed(4)}`).join(' L ')} Z`;
+    return `M ${points.map(p => `${p.x.toFixed(4)} ${svgY(p.y).toFixed(4)}`).join(' L ')} Z`;
 }
 
 function pointsToOpenPath(points: Array<{ 0: number; 1: number }>): string {
@@ -23,27 +26,18 @@ function pointsToOpenPath(points: Array<{ 0: number; 1: number }>): string {
     return `M ${points.map(p => `${p[0].toFixed(4)} ${svgY(p[1]).toFixed(4)}`).join(' L ')}`;
 }
 
-function isLayerSelected(layer: string, selected: string[]): boolean {
+function isLayerSelected(layer: PcbLayerName, selected: string[]): boolean {
     if (!selected || selected.includes('all')) return true;
     return selected.includes(layer);
 }
 
-function isCopperLayer(layer: string): boolean {
-    return layer === 'top' || layer === 'bottom' || layer === 'multi';
+function isCopperLayer(layer: PcbLayerName | 'all'): boolean {
+    return layer === 'TOP' || layer === 'BOTTOM' || layer === 'MULTI';
 }
 
-function uniqueLayers(layers: LayerKey[]): LayerKey[] {
-    const seen = new Set<string>();
-    return layers.filter(l => {
-        if (seen.has(l)) return false;
-        seen.add(l);
-        return true;
-    });
-}
-
-function normalizeRenderOrder(options: PreviewOptions): LayerKey[] {
+function normalizeRenderOrder(options: PreviewOptions): PcbLayerName[] {
     const selected = options.layers;
-    let ordered: LayerKey[];
+    let ordered: PcbLayerName[];
 
     if (selected.includes('all')) {
         // LAYER_ORDER is the physical bottom-to-top render order.
@@ -51,14 +45,14 @@ function normalizeRenderOrder(options: PreviewOptions): LayerKey[] {
     } else {
         // User-facing order: the first layer is the topmost one.
         // SVG paints elements in document order, so we reverse before rendering.
-        ordered = uniqueLayers(selected).reverse();
+        ordered = [...(new Set(selected))].reverse() as PcbLayerName[];
     }
 
     // Multi-layer pads and vias are implicit whenever any copper layer is shown.
-    // If the caller didn't explicitly place the 'multi' pseudo-layer, render it
+    // If the caller didn't explicitly place the 'MULTI' pseudo-layer, render it
     // on top so vias/pads stay visible.
-    if (!ordered.includes('multi') && (shouldRenderMultiPads(options) || shouldRenderVias(options))) {
-        ordered.push('multi');
+    if (!ordered.includes('MULTI') && (shouldRenderMultiPads(options) || shouldRenderVias(options))) {
+        ordered.push('MULTI');
     }
 
     return ordered;
@@ -105,7 +99,7 @@ function netLabelsEnabled(options: PreviewOptions): boolean {
     return options.show.netLabels !== false;
 }
 
-function renderTrackLabel(track: PcbTrack, options: PreviewOptions): string {
+function renderTrackLabel(track: RawPcbTrack, options: PreviewOptions): string {
     if (!netLabelsEnabled(options)) return '';
     if (!track.net) return '';
     if (options.show.tracks === false) return '';
@@ -131,7 +125,7 @@ function renderTrackLabel(track: PcbTrack, options: PreviewOptions): string {
     return `<text x="${midX.toFixed(4)}" y="${svgMidY.toFixed(4)}" font-size="${fontSize.toFixed(3)}" font-family="sans-serif" font-weight="bold" fill="${LAYER_COLORS.netLabel}" stroke="#ffffff" stroke-width="${strokeWidth.toFixed(4)}" stroke-opacity="0.8" paint-order="stroke" text-anchor="middle" dominant-baseline="middle" transform="rotate(${angle.toFixed(2)} ${midX.toFixed(4)} ${svgMidY.toFixed(4)})">${escapeXml(track.net)}</text>`;
 }
 
-function polygonContainsPoint(pt: [number, number], island: Island): boolean {
+function polygonContainsPoint(pt: PcbPoint, island: Island): boolean {
     if (!pointInRing(pt, island.outer)) return false;
     for (const cutout of island.cutouts) {
         if (pointInRing(pt, cutout)) return false;
@@ -147,12 +141,12 @@ function polygonContainsRect(x: number, y: number, halfW: number, halfH: number,
         [x - halfW, y + halfH],
     ];
     for (const c of corners) {
-        if (!polygonContainsPoint(c, island)) return false;
+        if (!polygonContainsPoint({ x: c[0], y: c[1] }, island)) return false;
     }
     return true;
 }
 
-function renderPolygonLabels(poly: PcbPolygon, options: PreviewOptions): string {
+function renderPolygonLabels(poly: RawPcbPolygon, options: PreviewOptions): string {
     if (!netLabelsEnabled(options)) return '';
     if (!poly.net) return '';
     if (options.show.polygons === false) return '';
@@ -188,7 +182,7 @@ function renderPolygonLabels(poly: PcbPolygon, options: PreviewOptions): string 
     return svg;
 }
 
-function renderPolygon(poly: PcbPolygon, options: PreviewOptions, diagnostics?: { polygons: PolygonDiagnostics[] }): string {
+function renderPolygon(poly: RawPcbPolygon, options: PreviewOptions, diagnostics?: { polygons: PolygonDiagnostics[] }): string {
     if (!isLayerSelected(poly.layer, options.layers)) return '';
     if (options.show.polygons === false) return '';
     if (poly.layer.endsWith('_soldermask')) return '';
@@ -229,14 +223,14 @@ function renderPolygon(poly: PcbPolygon, options: PreviewOptions, diagnostics?: 
     if (openSegments.length && strokeWidth > 0) {
         for (const seg of openSegments) {
             const [a, b] = seg;
-            svg += `<line x1="${a[0]}" y1="${svgY(a[1])}" x2="${b[0]}" y2="${svgY(b[1])}" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" />`;
+            svg += `<line x1="${a.x}" y1="${svgY(a.y)}" x2="${b.x}" y2="${svgY(b.y)}" stroke="${color}" stroke-width="${strokeWidth}" stroke-linecap="round" />`;
         }
     }
 
     return svg;
 }
 
-function renderTrack(track: PcbTrack, options: PreviewOptions): string {
+function renderTrack(track: RawPcbTrack, options: PreviewOptions): string {
     if (!isLayerSelected(track.layer, options.layers)) return '';
     if (options.show.tracks === false) return '';
 
@@ -249,7 +243,7 @@ function renderTrack(track: PcbTrack, options: PreviewOptions): string {
     return `<line x1="${track.x1}" y1="${svgY(track.y1)}" x2="${track.x2}" y2="${svgY(track.y2)}" stroke="${color}" stroke-width="${width}" stroke-linecap="round" opacity="${opacity}" />`;
 }
 
-function renderArc(arc: PcbArc, options: PreviewOptions): string {
+function renderArc(arc: RawPcbArc, options: PreviewOptions): string {
     if (!isLayerSelected(arc.layer, options.layers)) return '';
     if (options.show.tracks === false) return '';
 
@@ -265,7 +259,7 @@ function renderArc(arc: PcbArc, options: PreviewOptions): string {
     return `<path d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" />`;
 }
 
-function arcPointsFromArc(arc: PcbArc): Array<[number, number]> {
+function arcPointsFromArc(arc: RawPcbArc): Array<[number, number]> {
     // startX startY ARC arcAngle endX endY
     const start: [number, number] = [arc.x1, arc.y1];
     const end: [number, number] = [arc.x2, arc.y2];
@@ -306,34 +300,33 @@ function arcPointsFromArc(arc: PcbArc): Array<[number, number]> {
     return pts;
 }
 
-function renderVia(via: PcbVia, options: PreviewOptions): string {
+function renderVia(via: RawPcbVia, options: PreviewOptions): string {
     if (options.show.vias === false) return '';
     const highlightColor = netHighlightColor(via.net, options);
     const highlighted = !!highlightColor;
-    const color = highlightColor || LAYER_COLORS.multi;
+    const color = highlightColor || LAYER_COLORS.MULTI;
     const r = via.diameter / 2;
     const holeR = via.drill / 2;
     const strokeWidth = highlighted ? 0.15 : 0.08;
 
     return [
-        `<circle cx="${via.x}" cy="${svgY(via.y)}" r="${r}" fill="${color}" stroke="${LAYER_COLORS.drill}" stroke-width="${strokeWidth}" />`,
-        `<circle cx="${via.x}" cy="${svgY(via.y)}" r="${holeR}" fill="${LAYER_COLORS.drill}" />`,
+        `<circle cx="${via.x}" cy="${svgY(via.y)}" r="${r}" fill="${color}" stroke="${LAYER_COLORS.DRILL_DRAWING}" stroke-width="${strokeWidth}" />`,
+        `<circle cx="${via.x}" cy="${svgY(via.y)}" r="${holeR}" fill="${LAYER_COLORS.DRILL_DRAWING}" />`,
     ].join('');
 }
 
-function renderPad(pad: PcbPad, options: PreviewOptions): string {
+function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
     if (options.show.pads === false) return '';
 
     const highlightColor = netHighlightColor(pad.net, options);
-    const highlighted = !!highlightColor;
-    const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.multi);
+    const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.MULTI);
     const w = pad.width || 0.5;
     const h = pad.height || 0.5;
     // EasyEDA pad rotation is stored in radians; convert to degrees for SVG.
     const rot = -(pad.rotation || 0) * (180 / Math.PI);
     const shape = pad.shapeType;
 
-    const stroke = `stroke="${LAYER_COLORS.drill}" stroke-width="0.05"`;
+    const stroke = `stroke="${LAYER_COLORS.DRILL_DRAWING}" stroke-width="0.05"`;
     let shapeSvg = '';
     if (shape === 'OVAL') {
         const r = Math.min(w, h) / 2;
@@ -349,10 +342,10 @@ function renderPad(pad: PcbPad, options: PreviewOptions): string {
     return `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${rot})">${shapeSvg}</g>`;
 }
 
-function renderComponent(comp: PcbComponent, options: PreviewOptions, data: PcbData): string {
+function renderComponent(comp: RawPcbComponent, options: PreviewOptions, data: RawPcb): string {
     if (options.show.components === false) return '';
     const highlightColor = componentHighlightColor(comp.designator, options);
-    const color = highlightColor || LAYER_COLORS.component;
+    const color = highlightColor || LAYER_COLORS.COMPONENT_SHAPE;
     const y = svgY(comp.y);
 
     const box = componentBox(data, comp.designator);
@@ -377,28 +370,28 @@ function renderComponent(comp: PcbComponent, options: PreviewOptions, data: PcbD
     ].join('');
 }
 
-function collectAllPoints(data: PcbData): Array<[number, number]> {
-    const points: Array<[number, number]> = [];
-    if (data.boardPolygon) points.push(...data.boardPolygon);
-    data.components?.forEach(c => points.push([c.x, c.y]));
-    data.pads?.forEach(p => points.push([p.x, p.y]));
-    data.vias?.forEach(v => points.push([v.x, v.y]));
-    data.tracks?.forEach(t => points.push([t.x1, t.y1], [t.x2, t.y2]));
-    data.arcs?.forEach(a => points.push([a.x1, a.y1], [a.x2, a.y2]));
+function collectAllPoints(data: RawPcb): PcbPoint[] {
+    const points: PcbPoint[] = [];
+    if (data.board?.polygon) points.push(...data.board.polygon);
+    data.components?.forEach(c => points.push({ x: c.x, y: c.y }));
+    data.pads?.forEach(p => points.push({ x: p.x, y: p.y }));
+    data.vias?.forEach(v => points.push({ x: v.x, y: v.y }));
+    data.tracks?.forEach(t => points.push({ x: t.x1, y: t.y1 }, { x: t.x2, y: t.y2 }));
+    data.arcs?.forEach(a => points.push({ x: a.x1, y: a.y1 }, { x: a.x2, y: a.y2 }));
     data.polygons?.forEach(p => polygonRings(p).forEach(r => points.push(...r)));
     return points;
 }
 
-function boardBox(data: PcbData): Box {
-    if (data.boardPolygon && data.boardPolygon.length) {
-        return boxFromPoints(data.boardPolygon);
+function boardBox(data: RawPcb): Box {
+    if (data.board?.polygon && data.board?.polygon.length) {
+        return boxFromPoints(data.board?.polygon);
     }
     const points = collectAllPoints(data);
     return boxFromPoints(points);
 }
 
-function nearestComponent(data: PcbData, x: number, y: number, exclude?: PcbComponent): PcbComponent | undefined {
-    let best: PcbComponent | undefined;
+function nearestComponent(data: RawPcb, x: number, y: number, exclude?: RawPcbComponent): RawPcbComponent | undefined {
+    let best: RawPcbComponent | undefined;
     let bestDist = Infinity;
     for (const c of data.components || []) {
         if (c === exclude) continue;
@@ -411,7 +404,7 @@ function nearestComponent(data: PcbData, x: number, y: number, exclude?: PcbComp
     return best;
 }
 
-function componentBox(data: PcbData, designator: string): Box | undefined {
+function componentBox(data: RawPcb, designator: string): Box | undefined {
     const component = data.components?.find(c => c.designator === designator);
     if (!component) return undefined;
 
@@ -420,7 +413,7 @@ function componentBox(data: PcbData, designator: string): Box | undefined {
     const nearestDist = nearestOther ? Math.hypot(nearestOther.x - component.x, nearestOther.y - component.y) : Infinity;
     const threshold = Math.min(5, nearestDist * 0.75);
 
-    const points: Array<[number, number]> = [[component.x, component.y]];
+    const points: PcbPoint[] = [{ x: component.x, y: component.y }];
     for (const p of data.pads || []) {
         const d = Math.hypot(p.x - component.x, p.y - component.y);
         if (d > threshold) continue;
@@ -429,7 +422,7 @@ function componentBox(data: PcbData, designator: string): Box | undefined {
         if (closest === component) {
             const hw = (p.width || 0.5) / 2;
             const hh = (p.height || 0.5) / 2;
-            points.push([p.x - hw, p.y - hh], [p.x + hw, p.y + hh]);
+            points.push({ x: p.x - hw, y: p.y - hh }, { x: p.x + hw, y: p.y + hh });
         }
     }
 
@@ -440,19 +433,19 @@ function componentBox(data: PcbData, designator: string): Box | undefined {
     return hasGeometry ? box : expandBox(box, 0.5);
 }
 
-function netBox(data: PcbData, net: string): Box | undefined {
-    const points: Array<[number, number]> = [];
+function netBox(data: RawPcb, net: string): Box | undefined {
+    const points: PcbPoint[] = [];
     data.tracks?.forEach(t => {
-        if (t.net === net) points.push([t.x1, t.y1], [t.x2, t.y2]);
+        if (t.net === net) points.push({ x: t.x1, y: t.y1 }, { x: t.x2, y: t.y2 });
     });
     data.arcs?.forEach(a => {
-        if (a.net === net) points.push([a.x1, a.y1], [a.x2, a.y2]);
+        if (a.net === net) points.push({ x: a.x1, y: a.y1 }, { x: a.x2, y: a.y2 });
     });
     data.pads?.forEach(p => {
-        if (p.net === net) points.push([p.x, p.y]);
+        if (p.net === net) points.push({ x: p.x, y: p.y });
     });
     data.vias?.forEach(v => {
-        if (v.net === net) points.push([v.x, v.y]);
+        if (v.net === net) points.push({ x: v.x, y: v.y });
     });
     data.polygons?.forEach(p => {
         if (p.net === net) {
@@ -464,7 +457,7 @@ function netBox(data: PcbData, net: string): Box | undefined {
     return boxFromPoints(points);
 }
 
-function resolveRelativeBbox(data: PcbData, bbox: { x: number; y: number; width: number; height: number }): Box {
+function resolveRelativeBbox(data: RawPcb, bbox: { x: number; y: number; width: number; height: number }): Box {
     const base = boardBox(data);
     const baseW = base.maxX - base.minX;
     const baseH = base.maxY - base.minY;
@@ -478,7 +471,7 @@ function resolveRelativeBbox(data: PcbData, bbox: { x: number; y: number; width:
     };
 }
 
-function resolveZoomBox(data: PcbData, zoom: ZoomTarget): Box {
+function resolveZoomBox(data: RawPcb, zoom: ZoomTarget): Box {
     if (zoom.mode === 'bbox') {
         if (zoom.bbox.unit === 'rel') {
             return resolveRelativeBbox(data, zoom.bbox);
@@ -504,7 +497,7 @@ function resolveZoomBox(data: PcbData, zoom: ZoomTarget): Box {
     return boardBox(data);
 }
 
-export function computeViewBox(data: PcbData, options: PreviewOptions): Box {
+export function computeViewBox(data: RawPcb, options: PreviewOptions): Box {
     const rawBox = expandBox(resolveZoomBox(data, options.zoom), options.paddingMm);
     return {
         minX: rawBox.minX,
@@ -514,7 +507,7 @@ export function computeViewBox(data: PcbData, options: PreviewOptions): Box {
     };
 }
 
-export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
+export function renderPcbToSvg(data: RawPcb, options: PreviewOptions): string {
     const viewBox = computeViewBox(data, options);
     const vbWidth = viewBox.maxX - viewBox.minX;
     const vbHeight = viewBox.maxY - viewBox.minY;
@@ -522,8 +515,8 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
     const diagnostics = options.debug ? { polygons: [] as PolygonDiagnostics[] } : undefined;
 
     const boardClipId = 'board-clip';
-    const boardPath = data.boardPolygon && data.boardPolygon.length
-        ? pointsToPath(data.boardPolygon)
+    const boardPath = data.board?.polygon && data.board?.polygon.length
+        ? pointsToPath(data.board?.polygon)
         : '';
 
     const parts: string[] = [];
@@ -531,7 +524,7 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
     if (boardPath) {
         parts.push(`<defs><clipPath id="${boardClipId}"><path d="${boardPath}" /></clipPath></defs>`);
         parts.push(`<g clip-path="url(#${boardClipId})">`);
-        parts.push(`<rect x="${viewBox.minX}" y="${viewBox.minY}" width="${vbWidth}" height="${vbHeight}" fill="${LAYER_COLORS.board}" />`);
+        // parts.push(`<rect x="${viewBox.minX}" y="${viewBox.minY}" width="${vbWidth}" height="${vbHeight}" fill="${LAYER_COLORS.board}" />`);
     } else {
         parts.push(`<rect x="${viewBox.minX}" y="${viewBox.minY}" width="${vbWidth}" height="${vbHeight}" fill="#222" />`);
         parts.push('<g>');
@@ -560,15 +553,15 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
         }
 
         for (const pad of data.pads || []) {
-            if (pad.layer === layer && layer !== 'multi') {
+            if (pad.layer === layer && layer !== 'MULTI') {
                 layerGroup.push(renderPad(pad, options));
             }
         }
 
-        if (layer === 'multi') {
+        if (layer === 'MULTI') {
             if (shouldRenderMultiPads(options)) {
                 for (const pad of data.pads || []) {
-                    if (pad.layer === 'multi') {
+                    if (pad.layer === 'MULTI') {
                         layerGroup.push(renderPad(pad, options));
                     }
                 }
@@ -580,17 +573,19 @@ export function renderPcbToSvg(data: PcbData, options: PreviewOptions): string {
             }
         }
 
+        for (const comp of data.components || []) {
+            if (comp.layer === layer) {
+                layerGroup.push(renderComponent(comp, options, data));
+            }
+        }
+
         if (layerGroup.length) {
             parts.push(`<g data-layer="${layer}">${layerGroup.join('')}</g>`);
         }
     }
 
-    for (const comp of data.components || []) {
-        parts.push(renderComponent(comp, options, data));
-    }
-
     if (boardPath) {
-        parts.push(`<path d="${boardPath}" fill="none" stroke="${LAYER_COLORS.board_edge}" stroke-width="0.15" />`);
+        parts.push(`<path d="${boardPath}" fill="none" stroke="${LAYER_COLORS.BOARD_OUTLINE}" stroke-width="0.15" />`);
     }
 
     parts.push('</g>');

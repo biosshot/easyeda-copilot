@@ -2,13 +2,14 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import sharp from 'sharp';
-import type { PcbData, PreviewOptions, PreviewResult } from './types.js';
+import type { PreviewOptions, PreviewResult } from './types.js';
 import { computeViewBox, renderPcbToSvg } from './renderer.js';
+import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 
 export * from './types.js';
 export { renderPcbToSvg, computeViewBox, renderDiagnostics } from './renderer.js';
 
-export async function renderPcbPreview(data: PcbData, options: PreviewOptions): Promise<PreviewResult> {
+export async function renderPcbPreview(data: RawPcb, options: PreviewOptions): Promise<PreviewResult> {
     const svg = renderPcbToSvg(data, options);
     const pngBuffer = await sharp(Buffer.from(svg))
         .resize(options.widthPx, null, { withoutEnlargement: false })
@@ -23,7 +24,7 @@ export async function renderPcbPreview(data: PcbData, options: PreviewOptions): 
 }
 
 export async function savePcbPreview(
-    data: PcbData,
+    data: RawPcb,
     options: PreviewOptions,
     fileName?: string,
 ): Promise<{ svgPath: string; pngPath: string }> {

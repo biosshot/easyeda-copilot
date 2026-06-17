@@ -1,5 +1,5 @@
+import { PcbPoint } from '@copilot/shared/types/pcb/shared';
 import ClipperLib from 'clipper-lib';
-import type { Point } from './types.js';
 
 export interface Box {
     minX: number;
@@ -8,14 +8,14 @@ export interface Box {
     maxY: number;
 }
 
-export function boxFromPoints(points: Point[]): Box {
+export function boxFromPoints(points: PcbPoint[]): Box {
     if (!points || !points.length) return { minX: 0, minY: 0, maxX: 1, maxY: 1 };
-    let minX = points[0][0], minY = points[0][1], maxX = points[0][0], maxY = points[0][1];
-    for (const [x, y] of points) {
-        if (x < minX) minX = x;
-        if (y < minY) minY = y;
-        if (x > maxX) maxX = x;
-        if (y > maxY) maxY = y;
+    let minX = points[0].x, minY = points[0].y, maxX = points[0].x, maxY = points[0].y;
+    for (const p of points) {
+        if (p.x < minX) minX = p.x;
+        if (p.y < minY) minY = p.y;
+        if (p.x > maxX) maxX = p.x;
+        if (p.y > maxY) maxY = p.y;
     }
     return { minX, minY, maxX, maxY };
 }
@@ -33,33 +33,33 @@ export function svgY(y: number): number {
     return -y;
 }
 
-export function polygonArea(ring: Point[]): number {
+export function polygonArea(ring: PcbPoint[]): number {
     let area = 0;
     for (let i = 0; i < ring.length; i++) {
-        const [x1, y1] = ring[i];
-        const [x2, y2] = ring[(i + 1) % ring.length];
+        const { x: x1, y: y1 } = ring[i];
+        const { x: x2, y: y2 } = ring[(i + 1) % ring.length];
         area += x1 * y2 - x2 * y1;
     }
     return Math.abs(area) / 2;
 }
 
-export function pointInRing(point: Point, ring: Point[]): boolean {
+export function pointInRing(point: PcbPoint, ring: PcbPoint[]): boolean {
     let inside = false;
     for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
-        const [xi, yi] = ring[i];
-        const [xj, yj] = ring[j];
-        const intersect = ((yi > point[1]) !== (yj > point[1])) &&
-            (point[0] < (xj - xi) * (point[1] - yi) / (yj - yi) + xi);
+        const { x: xi, y: yi } = ring[i];
+        const { x: xj, y: yj } = ring[j];
+        const intersect = ((yi > point.y) !== (yj > point.y)) &&
+            (point.x < (xj - xi) * (point.y - yi) / (yj - yi) + xi);
         if (intersect) inside = !inside;
     }
     return inside;
 }
 
-export function ringBounds(ring: Point[]): Box {
+export function ringBounds(ring: PcbPoint[]): Box {
     return boxFromPoints(ring);
 }
 
-export function ringFullyInside(container: Point[], candidate: Point[]): boolean {
+export function ringFullyInside(container: PcbPoint[], candidate: PcbPoint[]): boolean {
     const cb = ringBounds(container);
     const bb = ringBounds(candidate);
     if (bb.minX < cb.minX || bb.minY < cb.minY || bb.maxX > cb.maxX || bb.maxY > cb.maxY) {
@@ -74,7 +74,7 @@ export function ringFullyInside(container: Point[], candidate: Point[]): boolean
 const CUTOUT_MIN_AREA = 0.2;
 const CUTOUT_MIN_DENSITY = 0.25;
 
-export function isSliverCutout(ring: Point[]): boolean {
+export function isSliverCutout(ring: PcbPoint[]): boolean {
     const area = polygonArea(ring);
     if (area < CUTOUT_MIN_AREA) return true;
     const bbox = ringBounds(ring);
@@ -84,11 +84,11 @@ export function isSliverCutout(ring: Point[]): boolean {
 }
 
 export interface Island {
-    outer: Point[];
-    cutouts: Point[][];
+    outer: PcbPoint[];
+    cutouts: PcbPoint[][];
 }
 
-export function buildIslands(rings: Point[][]): Island[] {
+export function buildIslands(rings: PcbPoint[][]): Island[] {
     const valid = rings.filter(r => r.length >= 3);
     const sorted = [...valid].sort((a, b) => polygonArea(b) - polygonArea(a));
 
@@ -135,19 +135,19 @@ export function buildIslands(rings: Point[][]): Island[] {
     return islands;
 }
 
-export function cleanPolygonRings(rings: Point[][]): Island[] {
+export function cleanPolygonRings(rings: PcbPoint[][]): Island[] {
     const scale = 1000;
-    const allPaths: Point[][] = [];
+    const allPaths: PcbPoint[][] = [];
 
     for (const ring of rings) {
         if (ring.length < 3) continue;
-        const path = ring.map(p => ({ X: Math.round(p[0] * scale), Y: Math.round(p[1] * scale) }));
+        const path = ring.map(p => ({ X: Math.round(p.x * scale), Y: Math.round(p.y * scale) }));
         const simplified = ClipperLib.Clipper.SimplifyPolygon(path, ClipperLib.PolyFillType.pftNonZero);
         for (const sp of simplified) {
             if (sp.length < 3) continue;
             const cleaned = ClipperLib.Clipper.CleanPolygon(sp, 0);
             if (cleaned.length < 3) continue;
-            allPaths.push(cleaned.map(pt => [pt.X / scale, pt.Y / scale]));
+            allPaths.push(cleaned.map((pt: { X: number, Y: number }): PcbPoint => ({ x: pt.X / scale, y: pt.Y / scale })));
         }
     }
 

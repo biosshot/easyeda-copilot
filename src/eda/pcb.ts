@@ -8,13 +8,14 @@ import type {
     ExplainPcbWire,
     SimplifiedDrcViolation,
 } from "@copilot/shared/types/pcb/explain";
+import { RawPcb, RawPcbArc, RawPcbComponent, RawPcbPad, RawPcbPolygon, RawPcbTrack } from "@copilot/shared/types/pcb/raw";
 import { checkPcbDrc } from "./drc";
+import { PcbLayerName } from "@copilot/shared/types/pcb/shared";
+import { milToMm, mmToMil, round, safeString } from "./utils";
 
 const MIL_TO_MM = 25.4 / 1000;
-const SNAP_TOLERANCE_MM = 0.05;
-const SNAP_TOLERANCE_MIL = SNAP_TOLERANCE_MM / MIL_TO_MM;
+const SNAP_TOLERANCE_MIL = mmToMil(0.05);
 const DIRECT_DISTANCE_MIN_MM = 0.1;
-const ROUND_DIGITS = 10000;
 
 type RawPoint = {
     x: number;
@@ -26,10 +27,6 @@ type RawBox = {
     minY: number;
     maxX: number;
     maxY: number;
-};
-
-type CoordinateContext = {
-    origin: RawPoint;
 };
 
 type RawComponent = Omit<ExplainPcbComponent, "x" | "y" | "pads"> & {
@@ -48,7 +45,7 @@ type InternalPad = ExplainPcbPadRef & {
 
 type TrackSegment = {
     net: string;
-    layer: "top" | "bottom";
+    layer: PcbLayerName;
     start: RawPoint;
     end: RawPoint;
     width: number;
@@ -75,50 +72,29 @@ type WireIsland = {
 
 type RawPolygon = {
     net: string;
-    layer: "top" | "bottom";
+    layer: "TOP" | "BOTTOM";
     rings: RawPoint[][];
 };
 
-type PcbPadLike = Pick<
-    IPCB_PrimitivePad,
-    "getState_PrimitiveId" | "getState_X" | "getState_Y" | "getState_Net" | "getState_PadNumber" | "getState_Pad"
->;
-
-function round(value: number) {
-    return Math.round(value * ROUND_DIGITS) / ROUND_DIGITS;
-}
-
-function milToMm(value: number) {
-    return round(value * MIL_TO_MM);
-}
-
-function safeString(value: unknown) {
-    return typeof value === "string" && value.trim() ? value.trim() : undefined;
-}
-
-function safeNet(value: unknown) {
-    return safeString(value);
-}
-
-function layerToSide(layer: number | undefined): "top" | "bottom" | undefined {
-    if (layer === EPCB_LayerId.TOP) return "top";
-    if (layer === EPCB_LayerId.BOTTOM) return "bottom";
+function layerToSide(layer: EPCB_LayerId) {
+    if (layer === EPCB_LayerId.TOP) return "TOP";
+    if (layer === EPCB_LayerId.BOTTOM) return "BOTTOM";
     return undefined;
 }
 
-function toExplainPoint(point: RawPoint, context: CoordinateContext) {
+function toExplainPoint(point: RawPoint) {
     return {
-        x: round((point.x - context.origin.x) * MIL_TO_MM),
-        y: round((context.origin.y - point.y) * MIL_TO_MM),
+        x: milToMm(point.x),
+        y: milToMm(point.y),
     };
 }
 
-function toExplainBox(box: RawBox, context: CoordinateContext): ExplainPcbBox {
+function toExplainBox(box: RawBox): ExplainPcbBox {
     return {
-        left: round((box.minX - context.origin.x) * MIL_TO_MM),
-        right: round((box.maxX - context.origin.x) * MIL_TO_MM),
-        top: round((context.origin.y - box.minY) * MIL_TO_MM),
-        bottom: round((context.origin.y - box.maxY) * MIL_TO_MM),
+        left: milToMm(box.minX),
+        right: milToMm(box.maxX),
+        top: milToMm(box.maxY),
+        bottom: milToMm(box.minY),
     };
 }
 
@@ -147,13 +123,6 @@ function boxFromPoints(points: RawPoint[], radius = 0) {
     const box = emptyBox();
     for (const point of points) includePoint(box, point, radius);
     return box;
-}
-
-function centerOfBox(box: RawBox): RawPoint {
-    return {
-        x: (box.minX + box.maxX) / 2,
-        y: (box.minY + box.maxY) / 2,
-    };
 }
 
 function samePoint(a: RawPoint, b: RawPoint, tolerance = SNAP_TOLERANCE_MIL) {
@@ -235,8 +204,8 @@ function polygonSourceToPoints(source: TPCB_PolygonSourceArray) {
                 points.push(
                     { x, y },
                     { x: x + width, y },
-                    { x: x + width, y: y + height },
-                    { x, y: y + height },
+                    { x: x + width, y: y - height },
+                    { x, y: y - height },
                 );
             }
             index += 6;
@@ -399,12 +368,12 @@ function padShapeRadius(shape: TPCB_PrimitivePadShape | undefined) {
 }
 
 async function getPadsByPrimitiveIds(primitiveIds: string[]) {
-    const pads = new Map<string, PcbPadLike>();
+    const pads = new Map<string, IPCB_PrimitivePad>();
     if (!primitiveIds.length) return pads;
 
     const primitives = await eda.pcb_Primitive.getPrimitivesByPrimitiveId(primitiveIds).catch(() => []);
     for (const primitive of primitives) {
-        const candidate = primitive as IPCB_Primitive & Partial<PcbPadLike>;
+        const candidate = primitive as IPCB_Primitive & Partial<IPCB_PrimitivePad>;
         if (typeof candidate.getState_PrimitiveId !== "function"
             || typeof candidate.getState_PadNumber !== "function"
             || typeof candidate.getState_X !== "function"
@@ -412,7 +381,7 @@ async function getPadsByPrimitiveIds(primitiveIds: string[]) {
             continue;
         }
 
-        pads.set(candidate.getState_PrimitiveId(), candidate as PcbPadLike);
+        pads.set(candidate.getState_PrimitiveId(), candidate as IPCB_PrimitivePad);
     }
 
     return pads;
@@ -425,7 +394,7 @@ async function getComponentPads(component: IPCB_PrimitiveComponent) {
         .filter((primitiveId): primitiveId is string => Boolean(primitiveId));
     const pinsByPrimitiveId = await getPadsByPrimitiveIds(statePadIds);
     const allPins = await component.getAllPins().catch(() => []);
-    const pinsByNumber = new Map<string, PcbPadLike>();
+    const pinsByNumber = new Map<string, IPCB_PrimitivePad>();
 
     for (const pin of allPins ?? []) {
         const padNumber = safeString(pin.getState_PadNumber());
@@ -437,7 +406,7 @@ async function getComponentPads(component: IPCB_PrimitiveComponent) {
     const byNumber = new Map<string, {
         pad_number: string;
         signal_name?: string;
-        raw?: PcbPadLike;
+        raw?: IPCB_PrimitivePad;
     }>();
 
     for (const pad of statePads) {
@@ -447,7 +416,7 @@ async function getComponentPads(component: IPCB_PrimitiveComponent) {
         const primitiveId = safeString(pad.primitiveId);
         byNumber.set(padNumber, {
             pad_number: padNumber,
-            signal_name: safeNet(pad.net),
+            signal_name: safeString(pad.net),
             raw: primitiveId ? pinsByPrimitiveId.get(primitiveId) ?? pinsByNumber.get(padNumber) : pinsByNumber.get(padNumber),
         });
     }
@@ -458,7 +427,7 @@ async function getComponentPads(component: IPCB_PrimitiveComponent) {
 
         byNumber.set(padNumber, {
             pad_number: padNumber,
-            signal_name: safeNet(pin.getState_Net()),
+            signal_name: safeString(pin.getState_Net()),
             raw: pin,
         });
     }
@@ -481,10 +450,10 @@ async function readComponents() {
             part_uuid: safeString(primitive.getState_Component()?.uuid),
             value: getComponentValue(primitive),
             footprint: safeString(primitive.getState_Footprint()?.name),
-            x: primitive.getState_X(),
-            y: primitive.getState_Y(),
+            x: milToMm(primitive.getState_X()),
+            y: milToMm(primitive.getState_Y()),
             rotate: (primitive.getState_Rotation()),
-            layer: layerToSide(primitive.getState_Layer()) ?? "top",
+            layer: layerToSide(primitive.getState_Layer()) ?? "TOP",
             pads: componentPads.map(pad => ({
                 pad_number: pad.pad_number,
                 signal_name: pad.signal_name,
@@ -509,44 +478,17 @@ async function readComponents() {
     return { rawComponents, pads };
 }
 
-function stitchSegments(segments: Array<{ start: RawPoint; end: RawPoint }>) {
-    if (!segments.length) return [];
-
-    const unused = [...segments];
-    const first = unused.shift()!;
-    const points = [first.start, first.end];
-
-    while (unused.length) {
-        const tail = points[points.length - 1];
-        const nextIndex = unused.findIndex(segment => samePoint(segment.start, tail) || samePoint(segment.end, tail));
-        if (nextIndex < 0) break;
-
-        const [next] = unused.splice(nextIndex, 1);
-        points.push(samePoint(next.start, tail) ? next.end : next.start);
-
-        if (samePoint(points[0], points[points.length - 1])) break;
-    }
-
-    return normalizeRawPolygon(points);
-}
-
 async function readBoardPolygon() {
-    const polylines = await eda.pcb_PrimitivePolyline.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
+    const polylines = await eda.pcb_PrimitivePolyline.getAll().catch(() => []);
+
     const polylinePolygons = polylines
+        .filter(poly => poly.getState_Layer() === EPCB_LayerId.BOARD_OUTLINE)
         .map(polyline => polygonSourceToPoints(polyline.getState_Polygon().getSource()))
         .filter(points => points.length >= 3)
         .sort((a, b) => polygonArea(b) - polygonArea(a));
 
-    if (polylinePolygons[0]) return polylinePolygons[0];
-
-    const lines = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
-    const segments = lines.map(line => ({
-        start: { x: line.getState_StartX(), y: line.getState_StartY() },
-        end: { x: line.getState_EndX(), y: line.getState_EndY() },
-    }));
-
-    const stitched = stitchSegments(segments);
-    return stitched.length >= 3 ? stitched : undefined;
+    if (polylinePolygons[0]) return polylinePolygons[0].map(p => toExplainPoint(p));
+    return undefined;
 }
 
 async function readTrackSegments() {
@@ -554,7 +496,7 @@ async function readTrackSegments() {
     const segments: TrackSegment[] = [];
 
     for (const line of lines) {
-        const net = safeNet(line.getState_Net());
+        const net = safeString(line.getState_Net());
         const layer = layerToSide(line.getState_Layer());
         if (!net || !layer) continue;
 
@@ -576,11 +518,11 @@ async function readVias() {
     const viaNodes: ViaNode[] = [];
 
     for (const via of primitiveVias) {
-        const net = safeNet(via.getState_Net());
-        const diameter = via.getState_Diameter();
-        const drill = via.getState_HoleDiameter();
-        const x = via.getState_X();
-        const y = via.getState_Y();
+        const net = safeString(via.getState_Net());
+        const diameter = milToMm(via.getState_Diameter());
+        const drill = milToMm(via.getState_HoleDiameter());
+        const x = milToMm(via.getState_X());
+        const y = milToMm(via.getState_Y());
 
         vias.push({
             net,
@@ -618,11 +560,11 @@ async function readVias() {
             : drill;
 
         vias.push({
-            net: safeNet(pad.getState_Net()),
-            x: pad.getState_X(),
-            y: pad.getState_Y(),
-            diameter,
-            drill,
+            net: safeString(pad.getState_Net()),
+            x: milToMm(pad.getState_X()),
+            y: milToMm(pad.getState_Y()),
+            diameter: milToMm(diameter),
+            drill: milToMm(drill),
         });
     }
 
@@ -693,7 +635,7 @@ function padTouchesIsland(pad: InternalPad, island: WireIsland) {
     });
 }
 
-function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad[], viaNodes: ViaNode[], context: CoordinateContext): ExplainPcbWire | undefined {
+function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad[], viaNodes: ViaNode[]): ExplainPcbWire | undefined {
     if (!island.edges.length) return undefined;
 
     const layers = new Set(island.edges.map(edge => edge.layer));
@@ -718,7 +660,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
 
     const wire: ExplainPcbWire = {
         net,
-        layer: layers.size > 1 || vias.length ? "mixed" : [...layers][0],
+        layer: [...layers],
         connected_pads,
         length: milToMm(length),
         vias: vias.length,
@@ -727,7 +669,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
             max: milToMm(Math.max(...widths)),
         },
         segments: island.edges.length,
-        bbox: toExplainBox(box, context),
+        bbox: toExplainBox(box),
     };
 
     if (connected_pads.length === 2) {
@@ -741,7 +683,7 @@ function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad
     return wire;
 }
 
-function buildWires(segments: TrackSegment[], viaNodes: ViaNode[], pads: InternalPad[], context: CoordinateContext) {
+function buildWires(segments: TrackSegment[], viaNodes: ViaNode[], pads: InternalPad[]) {
     const byNet = new Map<string, TrackSegment[]>();
     const viasByNet = new Map<string, ViaNode[]>();
 
@@ -762,7 +704,7 @@ function buildWires(segments: TrackSegment[], viaNodes: ViaNode[], pads: Interna
         const netVias = viasByNet.get(net) ?? [];
         const islands = findConnectedIslands(netSegments, netVias);
         for (const island of islands) {
-            const wire = createWireFromIsland(net, island, pads, netVias, context);
+            const wire = createWireFromIsland(net, island, pads, netVias);
             if (wire) wires.push(wire);
         }
     }
@@ -775,10 +717,10 @@ async function readRawPolygons() {
 
     const addPolygon = (
         net: string | undefined,
-        layer: number | undefined,
+        layer: EPCB_LayerId,
         source: TPCB_PolygonSourceArray | Array<TPCB_PolygonSourceArray>,
     ) => {
-        const safe = safeNet(net);
+        const safe = safeString(net);
         const side = layerToSide(layer);
         if (!safe || !side) return;
 
@@ -799,7 +741,7 @@ async function readRawPolygons() {
     return polygons;
 }
 
-function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[], context: CoordinateContext) {
+function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
     const polygons: ExplainPcbPolygon[] = [];
 
     for (const polygon of rawPolygons) {
@@ -833,39 +775,18 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[], context: 
             polygons.push({
                 net: polygon.net,
                 layer: polygon.layer,
-                points: island.outer.map(point => toExplainPoint(point, context)),
+                // points: island.outer.map(point => toExplainPoint(point, context)),
                 cutouts: island.cutouts.length
-                    ? island.cutouts.map(ring => ring.map(point => toExplainPoint(point, context)))
+                    ? island.cutouts.map(ring => ring.map(point => toExplainPoint(point)))
                     : undefined,
                 area: round((outerArea - cutoutArea) * MIL_TO_MM * MIL_TO_MM),
-                bbox: toExplainBox(boxFromPoints(island.outer), context),
+                bbox: toExplainBox(boxFromPoints(island.outer)),
                 connects,
             });
         }
     }
 
     return polygons;
-}
-
-function transformComponents(rawComponents: RawComponent[], context: CoordinateContext): ExplainPcbComponent[] {
-    return rawComponents.map(component => ({
-        ...component,
-        ...toExplainPoint(component, context),
-    }));
-}
-
-function transformVias(vias: ExplainPcbVia[], context: CoordinateContext): ExplainPcbVia[] {
-    return vias.map(via => ({
-        net: via.net,
-        ...toExplainPoint(via, context),
-        diameter: milToMm(via.diameter),
-        drill: milToMm(via.drill),
-    }));
-}
-
-function createFallbackOrigin(points: RawPoint[]) {
-    const box = boxFromPoints(points);
-    return isValidBox(box) ? centerOfBox(box) : { x: 0, y: 0 };
 }
 
 export async function getPcb(): Promise<ExplainPCB> {
@@ -882,40 +803,16 @@ export async function getPcb(): Promise<ExplainPCB> {
         readRawPolygons(),
     ]);
 
-    const fallbackPoints: RawPoint[] = [
-        ...(boardPolygon ?? []),
-        ...componentResult.rawComponents.map(component => ({ x: component.x, y: component.y })),
-        ...componentResult.pads.map(pad => ({ x: pad.x, y: pad.y })),
-        ...segments.flatMap(segment => [segment.start, segment.end]),
-        ...viaResult.vias.map(via => ({ x: via.x, y: via.y })),
-        ...rawPolygons.flatMap(polygon => polygon.rings.flat()),
-    ];
-
-    const origin = boardPolygon?.length
-        ? centerOfBox(boxFromPoints(boardPolygon))
-        : createFallbackOrigin(fallbackPoints);
-    const context: CoordinateContext = { origin };
-
-    const wires = buildWires(segments, viaResult.viaNodes, componentResult.pads, context);
-    const polygons = buildPolygons(rawPolygons, componentResult.pads, context);
+    const wires = buildWires(segments, viaResult.viaNodes, componentResult.pads);
+    const polygons = buildPolygons(rawPolygons, componentResult.pads);
 
     return {
         board: boardPolygon?.length
-            ? { polygon: boardPolygon.map(point => toExplainPoint(point, context)) }
+            ? { polygon: boardPolygon }
             : undefined,
-        components: transformComponents(componentResult.rawComponents, context),
+        components: componentResult.rawComponents,
         wires: wires.length ? wires : undefined,
         polygons: polygons.length ? polygons : undefined,
-    };
-}
-
-function unionBox(boxes: ExplainPcbBox[]): ExplainPcbBox {
-    if (!boxes.length) return { left: 0, right: 0, top: 0, bottom: 0 };
-    return {
-        left: Math.min(...boxes.map(box => box.left)),
-        right: Math.max(...boxes.map(box => box.right)),
-        top: Math.max(...boxes.map(box => box.top)),
-        bottom: Math.min(...boxes.map(box => box.bottom)),
     };
 }
 
@@ -1024,80 +921,13 @@ export async function inspectComponent(pcb: ExplainPCB, designator: string, radi
     };
 }
 
-const RAW_LAYER_NAMES: Record<number, string> = {
-    1: 'top',
-    2: 'bottom',
-    3: 'top_silkscreen',
-    4: 'bottom_silkscreen',
-    5: 'top_soldermask',
-    6: 'bottom_soldermask',
-    7: 'top_paste',
-    8: 'bottom_paste',
-    9: 'top_assembly',
-    10: 'bottom_assembly',
-    11: 'board_outline',
-    12: 'multi',
-    13: 'document',
-    14: 'mechanical',
-};
-
-function rawLayerName(id: number | undefined): string {
-    return id !== undefined ? (RAW_LAYER_NAMES[id] ?? `layer_${id}`) : 'unknown';
+function rawLayerName(raw: number | string): PcbLayerName {
+    if (typeof raw === 'string') return raw as PcbLayerName;
+    return EPCB_LayerId[raw] as PcbLayerName;
 }
 
 function toMmCopperGrid(value: number) {
     return round(value * 0.254);
-}
-
-function trimClosingPointRaw(points: RawPoint[]): RawPoint[] {
-    if (points.length > 1 && samePoint(points[0], points[points.length - 1], 1e-6)) {
-        return points.slice(0, -1);
-    }
-    return points;
-}
-
-function parseOutlineSource(source: TPCB_PolygonSourceArray): RawPoint[][] {
-    const rings: RawPoint[][] = [];
-    let current: RawPoint[] = [];
-    let i = 0;
-
-    function flush() {
-        if (current.length >= 2) rings.push(trimClosingPointRaw([...current]));
-        current = [];
-    }
-
-    if (typeof source[0] === 'number' && typeof source[1] === 'number') {
-        current.push({ x: source[0], y: source[1] });
-        i = 2;
-    }
-
-    while (i < source.length) {
-        const cmd = source[i++] as string | number;
-        if (cmd === 'M') {
-            flush();
-            if (i + 1 < source.length && typeof source[i] === 'number') {
-                current.push({ x: source[i] as number, y: source[i + 1] as number });
-                i += 2;
-            }
-        } else if (cmd === 'Z') {
-            flush();
-        } else if (cmd === 'L' || cmd === 'C') {
-            while (i + 1 < source.length && typeof source[i] === 'number') {
-                current.push({ x: source[i] as number, y: source[i + 1] as number });
-                i += 2;
-            }
-        }
-    }
-    flush();
-    return rings.filter(r => r.length >= 3);
-}
-
-function outlineRingsFromComplex(complex: TPCB_PolygonSourceArray | Array<TPCB_PolygonSourceArray>): RawPoint[][] {
-    if (!complex) return [];
-    if (Array.isArray(complex[0])) {
-        return (complex as Array<TPCB_PolygonSourceArray>).flatMap(parseOutlineSource).filter(r => r.length >= 3);
-    }
-    return parseOutlineSource(complex as TPCB_PolygonSourceArray);
 }
 
 function convertSourceArray(source: TPCB_PolygonSourceArray, coordConv: (v: number) => number): (number | string)[] {
@@ -1178,150 +1008,53 @@ function rawSourcesFromComplex(
     return [convertSourceArray(complex as TPCB_PolygonSourceArray, coordConv)];
 }
 
-export interface RawPcbSnapshot {
-    boardPolygon: [number, number][];
-    components: Array<{
-        designator: string;
-        x: number;
-        y: number;
-        rotate: number;
-        layer: string;
-    }>;
-    pads: Array<{
-        x: number;
-        y: number;
-        net: string;
-        padNumber: string;
-        layer: string;
-        shapeType: string | undefined;
-        width: number | undefined;
-        height: number | undefined;
-        rotation: number;
-    }>;
-    tracks: Array<{
-        x1: number;
-        y1: number;
-        x2: number;
-        y2: number;
-        width: number;
-        layer: string;
-        net: string;
-    }>;
-    arcs: Array<{
-        x1: number;
-        y1: number;
-        x2: number;
-        y2: number;
-        arcAngle: number;
-        width: number;
-        layer: string;
-        net: string;
-    }>;
-    vias: Array<{
-        x: number;
-        y: number;
-        diameter: number;
-        drill: number;
-        net: string;
-    }>;
-    polygons: Array<{
-        net: string;
-        layer: string;
-        fill: boolean;
-        lineWidth: number;
-        sources: (number | string)[][];
-    }>;
-}
+export async function getPcbRaw(): Promise<RawPcb> {
+    const boardPolygon = await readBoardPolygon();
+    if (!boardPolygon) throw new Error('Board outline is missing.')
 
-export async function getPcbRaw(): Promise<RawPcbSnapshot> {
-    const result: RawPcbSnapshot = {
-        boardPolygon: [],
-        components: [],
-        pads: [],
-        tracks: [],
-        arcs: [],
-        vias: [],
-        polygons: [],
-    };
-
-    const boardPolylines = await eda.pcb_PrimitivePolyline.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
-    for (const pl of boardPolylines) {
-        const rings = outlineRingsFromComplex(pl.getState_Polygon().getSource());
-        if (rings[0]) {
-            result.boardPolygon = rings[0].map(p => [milToMm(p.x), milToMm(p.y)]);
-            break;
-        }
-    }
-
-    if (!result.boardPolygon.length) {
-        const lines = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE).catch(() => []);
-        const segments = lines.map(l => ({
-            x1: l.getState_StartX(),
-            y1: l.getState_StartY(),
-            x2: l.getState_EndX(),
-            y2: l.getState_EndY(),
-        }));
-
-        if (segments.length) {
-            const unused = segments.slice(1);
-            const first = segments[0];
-            const pts: RawPoint[] = [{ x: first.x1, y: first.y1 }, { x: first.x2, y: first.y2 }];
-            while (unused.length) {
-                const tail = pts[pts.length - 1];
-                const idx = unused.findIndex(s => samePoint({ x: s.x1, y: s.y1 }, tail, 1e-6) || samePoint({ x: s.x2, y: s.y2 }, tail, 1e-6));
-                if (idx < 0) break;
-                const next = unused.splice(idx, 1)[0];
-                const p = samePoint({ x: next.x1, y: next.y1 }, tail, 1e-6) ? { x: next.x2, y: next.y2 } : { x: next.x1, y: next.y1 };
-                pts.push(p);
-                if (samePoint(pts[0], pts[pts.length - 1], 1e-6)) break;
-            }
-            result.boardPolygon = pts.map(p => [milToMm(p.x), milToMm(p.y)]);
-        }
-    }
-
-    const components = await eda.pcb_PrimitiveComponent.getAll().catch(() => []);
-    for (const c of components) {
-        result.components.push({
+    const components: RawPcbComponent[] = []
+    for (const c of await eda.pcb_PrimitiveComponent.getAll().catch(() => [])) {
+        components.push({
             designator: c.getState_Designator() || '',
             x: milToMm(c.getState_X()),
             y: milToMm(c.getState_Y()),
-            rotate: (c.getState_Rotation()),
+            rotate: c.getState_Rotation(),
             layer: rawLayerName(c.getState_Layer()),
         });
     }
 
-    const allPads = await eda.pcb_PrimitivePad.getAll().catch(() => []);
-    for (const p of allPads) {
+    const pads: RawPcbPad[] = []
+    for (const p of await eda.pcb_PrimitivePad.getAll().catch(() => [])) {
         const shape = p.getState_Pad();
-        result.pads.push({
+        pads.push({
             x: milToMm(p.getState_X()),
             y: milToMm(p.getState_Y()),
-            net: safeNet(p.getState_Net()) ?? '',
+            net: safeString(p.getState_Net()) ?? '',
             padNumber: p.getState_PadNumber(),
             layer: rawLayerName(p.getState_Layer()),
             shapeType: shape ? String(shape[0]) : undefined,
             width: shape && typeof shape[1] === 'number' ? milToMm(shape[1]) : undefined,
             height: shape && typeof shape[2] === 'number' ? milToMm(shape[2]) : undefined,
-            rotation: (p.getState_Rotation()),
+            rotation: p.getState_Rotation(),
         });
     }
 
-    const lines = await eda.pcb_PrimitiveLine.getAll().catch(() => []);
-    for (const l of lines) {
-        result.tracks.push({
+    const tracks: RawPcbTrack[] = [];
+    for (const l of await eda.pcb_PrimitiveLine.getAll().catch(() => [])) {
+        tracks.push({
             x1: milToMm(l.getState_StartX()),
             y1: milToMm(l.getState_StartY()),
             x2: milToMm(l.getState_EndX()),
             y2: milToMm(l.getState_EndY()),
             width: milToMm(l.getState_LineWidth()),
             layer: rawLayerName(l.getState_Layer()),
-            net: safeNet(l.getState_Net()) ?? '',
+            net: safeString(l.getState_Net()) ?? '',
         });
     }
 
-    const arcPrimitives = await eda.pcb_PrimitiveArc.getAll().catch(() => []);
-    for (const a of arcPrimitives) {
-        result.arcs.push({
+    const arcs: RawPcbArc[] = [];
+    for (const a of await eda.pcb_PrimitiveArc.getAll().catch(() => [])) {
+        arcs.push({
             x1: milToMm(a.getState_StartX()),
             y1: milToMm(a.getState_StartY()),
             x2: milToMm(a.getState_EndX()),
@@ -1329,29 +1062,23 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
             arcAngle: a.getState_ArcAngle(),
             width: milToMm(a.getState_LineWidth()),
             layer: rawLayerName(a.getState_Layer()),
-            net: safeNet(a.getState_Net()) ?? '',
+            net: safeString(a.getState_Net()) ?? '',
         });
     }
 
-    const viaPrimitives = await eda.pcb_PrimitiveVia.getAll().catch(() => []);
-    for (const v of viaPrimitives) {
-        result.vias.push({
-            x: milToMm(v.getState_X()),
-            y: milToMm(v.getState_Y()),
-            diameter: milToMm(v.getState_Diameter()),
-            drill: milToMm(v.getState_HoleDiameter()),
-            net: safeNet(v.getState_Net()) ?? '',
-        });
-    }
+    const vias = await readVias().then(r => r.vias);
 
     const pours = await eda.pcb_PrimitivePour.getAll().catch(() => []);
     const pourById = new Map(pours.map(p => [p.getState_PrimitiveId(), p]));
 
     const poureds = await eda.pcb_PrimitivePoured.getAll().catch(() => []);
+
+    const polygons: RawPcbPolygon[] = []
+
     for (const poured of poureds) {
         const pour = pourById.get(poured.getState_PourPrimitiveId());
-        const net = pour ? safeNet(pour.getState_Net()) ?? '' : '';
-        const layer = pour ? rawLayerName(pour.getState_Layer()) : 'top';
+        const net = pour ? safeString(pour.getState_Net()) ?? '' : '';
+        const layer = pour ? rawLayerName(pour.getState_Layer()) : 'TOP';
 
         for (const fill of poured.getState_PourFills()) {
             const path = fill.path;
@@ -1360,7 +1087,7 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
                 : path.getSource();
             const sources = rawSourcesFromComplex(src, toMmCopperGrid);
             if (sources.length) {
-                result.polygons.push({
+                polygons.push({
                     net,
                     layer,
                     fill: fill.fill,
@@ -1376,8 +1103,8 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
         const src = f.getState_ComplexPolygon().getSource();
         const sources = rawSourcesFromComplex(src, milToMm);
         if (sources.length) {
-            result.polygons.push({
-                net: safeNet(f.getState_Net()) ?? '',
+            polygons.push({
+                net: safeString(f.getState_Net()) ?? '',
                 layer: rawLayerName(f.getState_Layer()),
                 fill: true,
                 lineWidth: 0,
@@ -1386,5 +1113,15 @@ export async function getPcbRaw(): Promise<RawPcbSnapshot> {
         }
     }
 
-    return result;
+    return {
+        board: boardPolygon?.length
+            ? { polygon: boardPolygon }
+            : undefined,
+        arcs,
+        components,
+        pads,
+        polygons,
+        tracks,
+        vias
+    };
 }

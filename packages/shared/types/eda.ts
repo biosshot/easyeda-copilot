@@ -6,6 +6,7 @@ import { CircuitAssembly, ExplainCircuit } from './circuit';
 import { BoardAssemble } from './pcb/board-assemble';
 import { ExplainPCB, SimplifiedDrcCategory } from './pcb/explain';
 import { SimulateResult } from './spice';
+import { RawPcb } from './pcb/raw';
 
 declare global {
     interface EDA {
@@ -13,6 +14,7 @@ declare global {
         assembleBoard?: (board: BoardAssemble) => Promise<void>,
         getSchematic?: (primitiveIds?: string[]) => Promise<ExplainCircuit>,
         getPcb?: () => Promise<ExplainPCB>,
+        getPcbRaw?: () => Promise<RawPcb>,
         checkPcbDrc?: (limit: number) => Promise<SimplifiedDrcCategory[]>,
         getAsmCircuit?: (primitiveIds?: string[]) => Promise<CircuitAssembly>,
         getLibraryUuidList?: (libraryUuid?: string) => Promise<string[]>,
