@@ -1,6 +1,6 @@
 import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import PQueue from "p-queue";
-import { withTimeout, yieldToEventLoop } from "./utils";
+import { VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
 
 const assembleBoardQueue = new PQueue({ concurrency: 1 });
 const MM_TO_MIL = 1000 / 25.4;
@@ -344,6 +344,52 @@ async function placeComponents(components: BoardAssemble["components"]) {
             );
         } catch (error) {
             warning(`PCB component placement failed ${component.designator}: ${(error as Error).message}`);
+        }
+
+        if (VERSION_EDASYEDA[0] >= 3) {
+            const attrs = await eda.pcb_PrimitiveAttribute.getAll(primitive.getState_PrimitiveId());
+            const attr = attrs.find(a => a.getState_Key() === "Designator");
+            if (attr) {
+                const modifyBody: Parameters<typeof eda.pcb_PrimitiveAttribute.modify>[1] = {};
+
+                if (component.designatorText) {
+                    modifyBody.x = mmToMil(component.designatorText.x);
+                    modifyBody.y = mmToMil(component.designatorText.y);
+                    modifyBody.valueVisible = true;
+                    modifyBody.rotation = component.designatorText.rotate;
+                    modifyBody.fontSize = mmToMil(component.designatorText.height);
+                    modifyBody.alignMode = EPCB_PrimitiveStringAlignMode.CENTER
+                }
+                else {
+                    modifyBody.valueVisible = false;
+                }
+
+                await eda.pcb_PrimitiveAttribute.modify(attr, modifyBody)
+                    .then(_ => {
+                        eda.sys_Log.add(
+                            `PCB skillkscrean placed: at ${modifyBody.x}, ${modifyBody.y}, ${modifyBody.valueVisible}`,
+                            ESYS_LogType.INFO,
+                        );
+                    })
+                    .catch(e => {
+                        eda.sys_Log.add(
+                            `PCB skillkscrean place failed: ${designator}, ${e.message}`,
+                            ESYS_LogType.INFO,
+                        );
+                    });
+            }
+            else {
+                eda.sys_Log.add(
+                    `PCB skillkscrean not found: ${designator}`,
+                    ESYS_LogType.INFO,
+                );
+            }
+        }
+        else {
+            eda.sys_Log.add(
+                `PCB skillkscrean not placed: VERSION_EDASYEDA[0] >= 3: v${VERSION_EDASYEDA[0]}`,
+                ESYS_LogType.INFO,
+            );
         }
 
         await yieldToEventLoop();

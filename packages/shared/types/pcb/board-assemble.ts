@@ -17,6 +17,12 @@ export const BoardAssembleSchema = () => z.object({
         y: z.number(),
         rotate: z.number(),
         layer: BoardAssembleLayerSchema(),
+        designatorText: z.object({
+            x: z.number(),
+            y: z.number(),
+            rotate: z.number(),
+            height: z.number(),
+        }).strict().optional(),
     }).strict()).optional(),
     tracks: z.array(z.object({
         net: z.string(),
