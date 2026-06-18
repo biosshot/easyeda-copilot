@@ -90,7 +90,7 @@ const TRACK_LABEL_CHAR_RATIO = 0.6;
 const POLYGON_LABEL_FONT_RATIO = 0.15;
 
 const COMPONENT_LABEL_MIN_FONT_MM = 0.5;
-const COMPONENT_LABEL_MAX_FONT_MM = 2.0;
+const COMPONENT_LABEL_MAX_FONT_MM = 1.5;
 const COMPONENT_LABEL_WIDTH_RATIO = 0.35;
 const COMPONENT_LABEL_HEIGHT_RATIO = 0.6;
 const COMPONENT_CROSS_SIZE_MM = 0.15;
@@ -317,27 +317,47 @@ function renderVia(via: RawPcbVia, options: PreviewOptions): string {
 
 function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
     if (options.show.pads === false) return '';
+    if (!pad.shape) return '';
 
     const highlightColor = netHighlightColor(pad.net, options);
     const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.MULTI);
-    const w = pad.width || 0.5;
-    const h = pad.height || 0.5;
 
     // EasyEDA pad rotation is stored in radians; convert to degrees for SVG.
-    const rot = -(pad.rotation || 0) * (180 / Math.PI);
-    const shape = pad.shapeType;
+    let rot = -(pad.rotation || 0) * (180 / Math.PI);
+    const shapeType = pad.shape[0];
+    const w = Number(pad.shape[1]);
+    const h = Number(pad.shape[2]);
+
+    let x = pad.x;
+    let y = pad.y;
 
     const stroke = `stroke="${LAYER_COLORS.DRILL_DRAWING}" stroke-width="0.05"`;
     let shapeSvg = '';
 
-    if (shape === 'OVAL') {
+    if (shapeType === 'OVAL') {
         const r = Math.min(w, h) / 2;
         shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${r}" ry="${r}" fill="${color}" ${stroke} />`;
-    } else if (shape === 'RECT') {
+    } else if (shapeType === 'RECT') {
         shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="${color}" ${stroke} />`;
-    } else if (shape === 'ELLIPSE' || shape === 'OBLONG' || shape === 'REGULAR_POLYGON') {
+    } else if (shapeType === 'ELLIPSE') {
         shapeSvg = `<ellipse cx="0" cy="0" rx="${w / 2}" ry="${h / 2}" fill="${color}" ${stroke} />`;
-    } else {
+    }
+    else if (shapeType === 'POLYGON' && Array.isArray(pad.shape[1])) {
+        const poly = pad.shape[1];
+        const sources = Array.isArray(poly[0]) ? poly : [poly];
+        shapeSvg = renderPolygon({
+            fill: true,
+            layer: pad.layer,
+            lineWidth: 0.127,
+            net: pad.net,
+            sources: sources as never
+        }, options);
+
+        rot = 0;
+        x = 0;
+        y = 0;
+    }
+    else {
         shapeSvg = `<ellipse cx="0" cy="0" rx="${w / 2}" ry="${h / 2}" fill="${color}" ${stroke} />`;
     }
 
@@ -346,31 +366,33 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
         const holeType = pad.hole.data[0];
         const ox = pad.hole.offsetX || 0;
         const oy = pad.hole.offsetY || 0;
-
         const holeRot = -(pad.hole.rotation || 0) * (180 / Math.PI);
 
-        let holeShape = '';
+        if (ox || oy || holeRot) {
 
-        const holeFill = LAYER_COLORS.DRILL_DRAWING;
+            let holeShape = '';
 
-        if (holeType === 'ROUND') {
-            const d = Number(pad.hole.data[1]) || 0;
-            holeShape = `<circle cx="0" cy="0" r="${d / 2}" fill="${holeFill}" />`;
-        }
-        else if (holeType === 'SLOT') {
-            const d = Number(pad.hole.data[1]) || 0;
-            let l = Number(pad.hole.data[2]) || d;
-            if (l < d) l = d;
-            const r = d / 2;
-            holeShape = `<rect x="${-l / 2}" y="${-d / 2}" width="${l}" height="${d}" rx="${r}" ry="${r}" fill="${holeFill}" />`;
-        }
+            const holeFill = LAYER_COLORS.DRILL_DRAWING;
 
-        if (holeShape) {
-            holeSvg = `<g transform="translate(${ox} ${-oy}) rotate(${holeRot})">${holeShape}</g>`;
+            if (holeType === 'ROUND') {
+                const d = Number(pad.hole.data[1]) || 0;
+                holeShape = `<circle cx="0" cy="0" r="${d / 2}" fill="${holeFill}" />`;
+            }
+            else if (holeType === 'SLOT') {
+                const d = Number(pad.hole.data[1]) || 0;
+                let l = Number(pad.hole.data[2]) || d;
+                if (l < d) l = d;
+                const r = d / 2;
+                holeShape = `<rect x="${-l / 2}" y="${-d / 2}" width="${l}" height="${d}" rx="${r}" ry="${r}" fill="${holeFill}" />`;
+            }
+
+            if (holeShape) {
+                holeSvg = `<g transform="translate(${ox} ${-oy}) rotate(${holeRot})">${holeShape}</g>`;
+            }
         }
     }
 
-    return `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${rot})">${shapeSvg}${holeSvg}</g>`;
+    return `<g transform="translate(${x} ${svgY(y)}) rotate(${rot})">${shapeSvg}${holeSvg}</g>`;
 }
 
 function renderComponent(comp: RawPcbComponent, options: PreviewOptions, data: RawPcb): string {
@@ -421,46 +443,21 @@ function boardBox(data: RawPcb): Box {
     return boxFromPoints(points);
 }
 
-function nearestComponent(data: RawPcb, x: number, y: number, exclude?: RawPcbComponent): RawPcbComponent | undefined {
-    let best: RawPcbComponent | undefined;
-    let bestDist = Infinity;
-    for (const c of data.components || []) {
-        if (c === exclude) continue;
-        const d = Math.hypot(c.x - x, c.y - y);
-        if (d < bestDist) {
-            bestDist = d;
-            best = c;
-        }
-    }
-    return best;
-}
-
 function componentBox(data: RawPcb, designator: string): Box | undefined {
     const component = data.components?.find(c => c.designator === designator);
     if (!component) return undefined;
 
-    // Find the nearest other component to decide a local search radius.
-    const nearestOther = nearestComponent(data, component.x, component.y, component);
-    const nearestDist = nearestOther ? Math.hypot(nearestOther.x - component.x, nearestOther.y - component.y) : Infinity;
-    const threshold = Math.min(5, nearestDist * 0.75);
+    if (component.bbox) return {
+        maxX: component.bbox.right,
+        minX: component.bbox.left,
+        minY: component.bbox.bottom,
+        maxY: component.bbox.top,
+    };
 
     const points: PcbPoint[] = [{ x: component.x, y: component.y }];
-    for (const p of data.pads || []) {
-        const d = Math.hypot(p.x - component.x, p.y - component.y);
-        if (d > threshold) continue;
-        // Only claim pads for which this component is the closest one.
-        const closest = nearestComponent(data, p.x, p.y);
-        if (closest === component) {
-            const hw = (p.width || 0.5) / 2;
-            const hh = (p.height || 0.5) / 2;
-            points.push({ x: p.x - hw, y: p.y - hh }, { x: p.x + hw, y: p.y + hh });
-        }
-    }
 
     const box = boxFromPoints(points);
     const hasGeometry = points.length > 1;
-    // If we couldn't find any pads, fall back to a small placeholder so the
-    // designator is still readable and not blown up to the board size.
     return hasGeometry ? box : expandBox(box, 0.5);
 }
 
@@ -528,7 +525,7 @@ function resolveZoomBox(data: RawPcb, zoom: ZoomTarget): Box {
     return boardBox(data);
 }
 
-export function computeViewBox(data: RawPcb, options: PreviewOptions): Box {
+function computeViewBox(data: RawPcb, options: PreviewOptions): Box {
     const rawBox = expandBox(resolveZoomBox(data, options.zoom), options.paddingMm);
     return {
         minX: rawBox.minX,
@@ -568,7 +565,7 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
 
         for (const poly of data.polygons || []) {
             if (poly.layer === layer) {
-                layerGroup.push(renderPolygon(poly, options, diagnostics));
+                layerGroup.push(renderPolygon({ ...poly, lineWidth: 0.254 }, options, diagnostics));
                 layerGroup.push(renderPolygonLabels(poly, options));
             }
         }
@@ -584,7 +581,7 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
         }
 
         for (const pad of data.pads || []) {
-            if (pad.layer === layer && layer !== 'MULTI') {
+            if (pad.layer === layer) {
                 layerGroup.push(renderPad(pad, options));
             }
         }
@@ -634,19 +631,5 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
             parts.join('\n'),
             '</svg>',
         ].join('\n')
-    };
-}
-
-export function renderDiagnostics(diagnostics: { polygons: PolygonDiagnostics[] } | undefined): Record<string, unknown> | undefined {
-    if (!diagnostics) return undefined;
-    const cmdStats: Record<string, number> = {};
-    for (const p of diagnostics.polygons) {
-        for (const c of p.commandsSeen || []) {
-            cmdStats[c] = (cmdStats[c] || 0) + 1;
-        }
-    }
-    return {
-        polygonCount: diagnostics.polygons.length,
-        commandStats: cmdStats,
     };
 }

@@ -989,21 +989,28 @@ export async function getPcbRaw(): Promise<RawPcb> {
             y: milToMm(c.getState_Y()),
             rotate: c.getState_Rotation(),
             layer: rawLayerName(c.getState_Layer()),
+            bbox: await eda.pcb_Primitive.getPrimitivesBBox([c.getState_PrimitiveId()]).then(box => box ? ({
+                left: milToMm(box.minX),
+                right: milToMm(box.maxY),
+                top: milToMm(box.maxY),
+                bottom: milToMm(box.minY),
+            }) : undefined)
         });
     }
 
     const pads: RawPcbPad[] = []
     for (const p of await eda.pcb_PrimitivePad.getAll().catch(() => [])) {
-        const shape = p.getState_Pad();
         pads.push({
             x: milToMm(p.getState_X()),
             y: milToMm(p.getState_Y()),
             net: safeString(p.getState_Net()) ?? '',
             padNumber: p.getState_PadNumber(),
             layer: rawLayerName(p.getState_Layer()),
-            shapeType: shape ? String(shape[0]) : undefined,
-            width: shape && typeof shape[1] === 'number' ? milToMm(shape[1]) : undefined,
-            height: shape && typeof shape[2] === 'number' ? milToMm(shape[2]) : undefined,
+            shape: p.getState_Pad()?.map(v => {
+                if (typeof v === 'number') return milToMm(v);
+                else if (Array.isArray(v)) return rawSourcesFromComplex(v, milToMm);
+                return v;
+            }),
             rotation: p.getState_Rotation(),
             hole: p.getState_Hole() ? {
                 data: p.getState_Hole()!.map(v => typeof v === 'number' ? milToMm(v) : v),

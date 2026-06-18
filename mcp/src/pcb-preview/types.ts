@@ -50,10 +50,4 @@ export interface PreviewOptions {
 export interface PreviewResult {
     svg: string;
     pngBuffer: Buffer;
-    viewBox: {
-        minX: number;
-        minY: number;
-        maxX: number;
-        maxY: number;
-    };
 }

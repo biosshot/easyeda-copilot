@@ -1,7 +1,7 @@
 import { writeFile } from 'node:fs/promises';
 import sharp from 'sharp';
 import type { PreviewOptions, PreviewResult } from './types.js';
-import { computeViewBox, renderPcbToSvg } from './renderer.js';
+import { renderPcbToSvg } from './renderer.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 
 export * from './types.js';
@@ -20,7 +20,6 @@ export async function renderPcbPreview(data: RawPcb, options: PreviewOptions): P
     return {
         svg: svg.svg,
         pngBuffer,
-        viewBox: computeViewBox(data, options),
     };
 }
 

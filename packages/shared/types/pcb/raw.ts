@@ -1,9 +1,10 @@
 import * as z from "zod";
-import { ExplainPcbBoardSchema, ExplainPcbViaSchema } from "./explain";
+import { ExplainPcbBoardSchema, ExplainPcbBoxSchema, ExplainPcbViaSchema } from "./explain";
 import { PcbLayerNameSchema } from "./shared";
 
 export const RawPcbBoardSchema = ExplainPcbBoardSchema;
 export const RawPcbViaSchema = ExplainPcbViaSchema;
+export const RawPcbBoxSchema = ExplainPcbBoxSchema;
 
 export const RawPcbComponentSchema = () => z.object({
     designator: z.string(),
@@ -11,6 +12,7 @@ export const RawPcbComponentSchema = () => z.object({
     y: z.number(),
     rotate: z.number(),
     layer: PcbLayerNameSchema(),
+    bbox: RawPcbBoxSchema().optional()
 });
 
 export const RawPcbPadSchema = () => z.object({
@@ -19,9 +21,12 @@ export const RawPcbPadSchema = () => z.object({
     net: z.string(),
     padNumber: z.string(),
     layer: PcbLayerNameSchema(),
-    shapeType: z.string().optional(),
-    width: z.number().optional(),
-    height: z.number().optional(),
+    shape: z.array(z.union([
+        z.number(),
+        z.string(),
+        z.array(z.union([z.number(), z.string()])),
+        z.array(z.array(z.union([z.number(), z.string()])))
+    ])).optional(),
     rotation: z.number(),
     hole: z.object({
         data: z.array(z.string().or(z.number())),
