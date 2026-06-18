@@ -163,10 +163,10 @@ async function clearCurrentPcbBoard() {
         ["polyline", eda.pcb_PrimitivePolyline],
         // ["string", eda.pcb_PrimitiveString],
         // ["attribute", eda.pcb_PrimitiveAttribute],
-        ["pad", eda.pcb_PrimitivePad],
-        ["dimension", eda.pcb_PrimitiveDimension],
-        ["image", eda.pcb_PrimitiveImage],
-        ["object", eda.pcb_PrimitiveObject],
+        // ["pad", eda.pcb_PrimitivePad],
+        // ["dimension", eda.pcb_PrimitiveDimension],
+        // ["image", eda.pcb_PrimitiveImage],
+        // ["object", eda.pcb_PrimitiveObject],
     ];
 
     for (const [name, api] of groups) {
@@ -180,10 +180,10 @@ async function commitPrimitive<T extends DoneablePrimitive<T>>(primitive: T | un
     return await Promise.resolve(primitive.done());
 }
 
-async function commitPourCopperRegion(pour: IPCB_PrimitivePour, net: string) {
+async function commitPourCopperRegion(pour: IPCB_PrimitivePour) {
     const poured = await pour.rebuildCopperRegion();
     if (!poured) {
-        warning(`PCB polygon copper rebuild returned empty region: ${net}`);
+        warning(`PCB polygon copper rebuild returned empty region: ${pour.getState_Net()}`);
     } else if (poured.isAsync()) {
         await Promise.resolve(poured.done());
     }
@@ -333,7 +333,6 @@ async function placeComponents(components: BoardAssemble["components"]) {
                     y: mmToMil(component.y),
                     rotation: normalizeRotation(component.rotate),
                     layer: layerToComponent(component.layer),
-                    designator,
                 }),
                 "modify returned undefined",
             );
@@ -601,7 +600,7 @@ async function drawDefaultGroundPours(board: BoardAssemble["board"]) {
                 lineWidth: mmToMil(DEFAULT_POUR_LINE_WIDTH_MM),
             });
 
-            // await commitPourCopperRegion(pour, DEFAULT_GND_NET);
+            await commitPourCopperRegion(pour);
         } catch (error) {
             warning(`PCB default GND pour failed ${layerName}: ${(error as Error).message}`);
         }
