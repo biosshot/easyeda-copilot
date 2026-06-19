@@ -99,7 +99,13 @@ export const ExplainPcbPolygonSchema = (opts?: ExplainPcbOptions) => z.object({
     }).strict()).optional(),
 }).strict();
 
+export const ExplainPcbLayer = (opts?: ExplainPcbOptions) => z.object({
+    layer: opts?.forLLM ? z.string() : PcbLayerNameSchema(),
+    type: z.string()
+}).strict();
+
 export const ExplainPcbSchema = (opts?: ExplainPcbOptions) => z.object({
+    layers: z.array(ExplainPcbLayer(opts)).optional(),
     board: ExplainPcbBoardSchema().optional(),
     components: z.array(ExplainPcbComponentSchema(opts)),
     wires: z.array(ExplainPcbWireSchema(opts)).optional(),

@@ -487,7 +487,7 @@ async function readTrackSegments() {
 
     for (const line of lines) {
         const net = safeString(line.getState_Net());
-        const layer = layerToSide(line.getState_Layer());
+        const layer = rawLayerName(line.getState_Layer());
         if (!net || !layer) continue;
 
         segments.push({
@@ -772,7 +772,16 @@ export async function getPcb(): Promise<ExplainPCB> {
 
     const fullPolygonConnected = polygons.flatMap(p => p.connects);
 
+    const allLayers = await eda.pcb_Layer.getAllLayers().catch(e => []);
+    const layers = allLayers
+        .filter(l => l.layerStatus && l.type === EPCB_LayerType.SIGNAL)
+        .map(l => ({
+            layer: rawLayerName(l.id),
+            type: l.type
+        }));
+
     return {
+        layers: layers.length ? layers : undefined,
         board: boardPolygon?.length
             ? { polygon: boardPolygon }
             : undefined,
