@@ -3,6 +3,7 @@ import { placeComponent } from "./place-component";
 import { getSchematic } from "./schematic";
 import { searchComponentInSCH } from "./search";
 import { getAllWiresByNet, normWireY, normalizeWireLine, to2 } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 const rotatePoint = (p: { x: number, y: number }, rotate: number) => {
     const radians = -rotate * (Math.PI / 180);
@@ -281,7 +282,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                             // if (validLine(wireData!)) {
                             eda.sys_Log.add(`Replacer ${savedProps.designator} modify wire ${wireDataIndex}; ${wireIndex}; ${wire.getState_PrimitiveId()}; ${JSON.stringify(wireData)}`);
 
-                            await eda.sch_PrimitiveWire.modify(wire.getState_PrimitiveId(), {
+                            await sch_PrimitiveWireSnap.modify(wire.getState_PrimitiveId(), {
                                 line: wireData
                             })
 
@@ -305,7 +306,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                 if (!maked) {
                     eda.sys_Log.add(`Replacer ${savedProps.designator} not found pin in sch ${pinMiss.pinNumber}`);
                     eda.sys_Log.add(`- ${JSON.stringify(pinMiss)}`);
-                    await eda.sch_PrimitiveWire.create([
+                    await sch_PrimitiveWireSnap.create([
                         pinMiss.oldX, -pinMiss.oldY,
                         pinMiss.oldX + pinMiss.missDX, -(pinMiss.oldY + pinMiss.missDY)]).catch(e => undefined);
                 }

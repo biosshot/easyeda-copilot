@@ -1,4 +1,5 @@
 import { getBBox, normWireY, normalizeWireLine, to2 } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 interface Offset {
     x: number | undefined;
@@ -34,7 +35,7 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
     }));
     // eda.sys_Log.add(`busyRects[0]: ${JSON.stringify(busyRects[0])}`);
 
-    const wires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
+    const wires = await sch_PrimitiveWireSnap.getAll().catch(e => []);
 
     for (const wire of wires) {
         const line_ = wire.getState_Line();

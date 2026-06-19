@@ -3,6 +3,7 @@ import { getSchematic } from "./schematic";
 import { findPin, getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet } from "./types";
 import { getAllWiresByNet, getPrimitiveById, normWireY, normalizeWireLine, rmPartFromDesignator, to2 } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 // Типы данных, соответствующие вашему JSON
 interface Point {
@@ -310,24 +311,24 @@ async function removeWiresFromComponentToFirstJunction(
             if (!Object.values(countPoints(mergedLines)).find(x => x >= 4)) {
                 eda.sys_Log.add(`modify wire`)
 
-                await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
+                await sch_PrimitiveWireSnap.modify(wireWithPin.primitiveId, {
                     line: mergedLines,
                 });
 
                 await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
 
-                await eda.sch_PrimitiveWire.modify(wireWithPin.primitiveId, {
+                await sch_PrimitiveWireSnap.modify(wireWithPin.primitiveId, {
                     net: wireWithPin.net
                 });
             }
             else {
                 eda.sys_Log.add(`rmIsDirect false`)
-                await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId)
+                await sch_PrimitiveWireSnap.delete(wireWithPin.primitiveId)
                 await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
 
                 for (const line of mergedLines) {
                     eda.sys_Log.add(`create wire: ${JSON.stringify(line)}, ${wireWithPin.net}`)
-                    const wire = await eda.sch_PrimitiveWire.create(line, wireWithPin.net).catch(e => undefined);
+                    const wire = await sch_PrimitiveWireSnap.create(line, wireWithPin.net).catch(e => undefined);
                     await wire?.done().catch(e => undefined);
                 }
 
@@ -338,7 +339,7 @@ async function removeWiresFromComponentToFirstJunction(
         }
         else {
             eda.sys_Log.add(`rmIsDirect`)
-            await eda.sch_PrimitiveWire.delete(wireWithPin.primitiveId);
+            await sch_PrimitiveWireSnap.delete(wireWithPin.primitiveId);
             await new Promise<void>((resolve, reject) => setTimeout(resolve, 100));
             return { end: false, allWires, rmIsDirect: true, wireWithPin, pin };
         }

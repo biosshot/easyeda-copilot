@@ -1,3 +1,5 @@
+import { sch_PrimitiveWireSnap } from "./wire-snap";
+
 export const to2 = (x: number) => {
     return Math.round(x / 5) * 5;
 };
@@ -175,8 +177,8 @@ export function normalizeWireLine(line: number[] | number[][]): number[][] {
 }
 
 export async function getAllWiresByNet(net: string) {
-    if (VERSION_EDASYEDA[0] < 3) return await eda.sch_PrimitiveWire.getAll(net).catch(e => []);
-    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
+    if (VERSION_EDASYEDA[0] < 3) return await sch_PrimitiveWireSnap.getAll(net).catch(e => [] as ISCH_PrimitiveWire[]);
+    const allWires = await sch_PrimitiveWireSnap.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
     return allWires.filter(w => w.getState_Net() === net);
 }
 

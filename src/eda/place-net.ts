@@ -3,6 +3,7 @@ import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-c
 import { findPin, hasDirectWire } from "./search";
 import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
 import { normWireY, normalizeWireLine, to2, VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 // Генератор диапазона (аналог range в Python)
 const range = (start: number, stop: number, step: number) =>
@@ -201,7 +202,7 @@ const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_Primi
 
 async function place(group: AddedNet[], myIndex: number, placeComponents: PlacedComponents, makePort: boolean) {
     const net: AddedNet = group[myIndex];
-    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
+    const allWires = await sch_PrimitiveWireSnap.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
     const allWireSegments = allWires.flatMap(getWireSegments);
     const allWireSegmentWithoutCurrentNet = allWires.filter(w => w.getState_Net() !== net.net).flatMap(getWireSegments);
 
@@ -268,7 +269,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
             }
 
             try {
-                const wire = await eda.sch_PrimitiveWire.create(line, net.net);
+                const wire = await sch_PrimitiveWireSnap.create(line, net.net);
                 if (wire) {
                     await wire.done();
                     // eda.sys_Log.add(`Create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
@@ -400,7 +401,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
                     }
 
                     try {
-                        wire = await eda.sch_PrimitiveWire.create(candidateLine, net.net);
+                        wire = await sch_PrimitiveWireSnap.create(candidateLine, net.net);
                         if (wire) {
                             // Обновляем список сегментов, чтобы последующие проверки в этом вызове учитывали созданный провод
                             allWireSegmentWithoutCurrentNet.push(...getWireSegments(wire));
@@ -456,7 +457,6 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
 
     for (const group of groups) {
         for (let index = 0; index < group.length; index++) {
-            const net = group[index];
             await place(group, index, placeComponents, makePort ? group.length < 5 : makePort);
             await yieldToEventLoop();
         }
