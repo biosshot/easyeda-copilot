@@ -441,7 +441,7 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'checkpoint-list') {
-            reply(true, await checkpointer.list());
+            reply(true, await checkpointer.list().then(cs => cs.slice(0, 16)));
             return;
         }
 

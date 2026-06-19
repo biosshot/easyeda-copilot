@@ -458,6 +458,7 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
         for (let index = 0; index < group.length; index++) {
             const net = group[index];
             await place(group, index, placeComponents, makePort ? group.length < 5 : makePort);
+            await yieldToEventLoop();
         }
     };
 }

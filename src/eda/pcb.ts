@@ -11,7 +11,7 @@ import type {
 import { RawPcb, RawPcbArc, RawPcbComponent, RawPcbPad, RawPcbPolygon, RawPcbTrack } from "@copilot/shared/types/pcb/raw";
 import { checkPcbDrc } from "./drc";
 import { PcbLayerName } from "@copilot/shared/types/pcb/shared";
-import { milToMm, mmToMil, round, safeString } from "./utils";
+import { milToMm, mmToMil, round, safeString, VERSION_EDASYEDA } from "./utils";
 
 const MIL_TO_MM = 25.4 / 1000;
 const SNAP_TOLERANCE_MIL = mmToMil(0.05);
@@ -978,6 +978,7 @@ function rawSourcesFromComplex(
 }
 
 export async function getPcbRaw(): Promise<RawPcb> {
+    if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
     const boardPolygon = await readBoardPolygon();
     if (!boardPolygon) throw new Error('Board outline is missing.')
 

@@ -240,16 +240,16 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
 
             try {
                 const wire = await eda.sch_PrimitiveWire.create(values, netName);
-                // await wire?.done();
+                await wire?.done().catch(e => e);
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
                     `- srcpin: ${srcpin?.component?.getState_Designator?.()}; trgpin: ${trgpin?.component?.getState_Designator?.()}`;
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
             }
-        }
 
-        await yieldToEventLoop();
+            await yieldToEventLoop();
+        }
     }
 
 }
