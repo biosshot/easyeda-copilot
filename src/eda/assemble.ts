@@ -247,9 +247,9 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
                 eda.sys_Log.add(msg);
                 eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.ERROR);
             }
-
-            await yieldToEventLoop();
         }
+
+        await yieldToEventLoop();
     }
 
 }
