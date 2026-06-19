@@ -957,21 +957,6 @@ server.registerTool(
 );
 
 server.registerTool(
-    'read_checkpoint',
-    {
-        title: 'Read EasyEDA Checkpoint',
-        description: 'Read one checkpoint by id.',
-        inputSchema: z.object({
-            id: z.string(),
-        }),
-    },
-    async ({ id }) => {
-        const result = await requestEasyEda('checkpoint-read', { checkpointId: id });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
     'restore_checkpoint_for_current_page',
     {
         title: 'Restore EasyEDA Checkpoint',
