@@ -819,8 +819,8 @@ server.registerTool(
 server.registerTool(
     'modify_name',
     {
-        title: 'Rename EasyEDA: Schematic, Schematic page or PCB',
-        description: 'Modify the name of an EasyEDA Schematic, Schematic page or PCB.',
+        title: 'Rename EasyEDA: Schematic, Schematic page, PCB',
+        description: 'Modify the name of an EasyEDA Schematic, Schematic page, PCB',
         inputSchema: z.object({
             uuid: z.string().min(1).describe('Schematic, Schematic page or PCB UUID.'),
             name: z.string().min(1).describe('New short name. Use UPPERCASE or PascalCase'),
@@ -833,55 +833,62 @@ server.registerTool(
 );
 
 server.registerTool(
-    'create_schematic',
+    'create_doc',
     {
-        title: 'Create EasyEDA Schematic',
-        description: 'Create a schematic in the current EasyEDA project. If board_name is omitted, EasyEDA creates a free schematic. Return schematic first page uuid',
+        title: 'Create EasyEDA Doc',
+        description: 'Create a doc in the current EasyEDA project',
         inputSchema: z.object({
-            parent_board_name: z.string().min(1).optional().describe('Optional parent board name.'),
-        }),
+            doc: z.union([
+                z.object({
+                    doc_type: z.literal('board'),
+                    schematic_uuid: z.string().min(1).optional().describe('Optional schematic UUID to link to the new board.'),
+                    pcb_uuid: z.string().min(1).optional().describe('Optional PCB UUID to link to the new board.'),
+                }),
+                z.object({
+                    doc_type: z.literal('schematic'),
+                    board_name: z.string().min(1).optional().describe('Optional parent board name.'),
+                }),
+                z.object({
+                    doc_type: z.literal('schematic_page'),
+                    schematic_uuid: z.string().min(1).describe('Parent schematic UUID.'),
+                }),
+                z.object({
+                    doc_type: z.literal('pcb'),
+                    board_name: z.string().min(1).optional().describe('Optional parent board name.'),
+                }),
+            ]),
+        })
     },
-    async ({ parent_board_name }) => {
-        const result = await requestEasyEda('create-schematic', {
-            boardName: parent_board_name,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'create_schematic_page',
-    {
-        title: 'Create EasyEDA Schematic Page',
-        description: 'Create a schematic page under an existing EasyEDA schematic.',
-        inputSchema: z.object({
-            schematic_uuid: z.string().min(1).describe('Parent schematic UUID.'),
-        }),
-    },
-    async ({ schematic_uuid }) => {
-        const result = await requestEasyEda('create-schematic-page', {
-            schematicUuid: schematic_uuid,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'create_board',
-    {
-        title: 'Create EasyEDA Board',
-        description: 'Create a board in the current EasyEDA project, optionally linking an existing schematic UUID and PCB UUID. Use get_current_project_info to inspect available document UUIDs first.',
-        inputSchema: z.object({
-            schematic_uuid: z.string().min(1).optional().describe('Optional schematic UUID to link to the new board.'),
-            pcb_uuid: z.string().min(1).optional().describe('Optional PCB UUID to link to the new board.'),
-        }),
-    },
-    async ({ schematic_uuid, pcb_uuid }) => {
-        const result = await requestEasyEda('create-board', {
-            schematicUuid: schematic_uuid,
-            pcbUuid: pcb_uuid,
-        });
-        return textResult(result);
+    async ({ doc }) => {
+        switch (doc.doc_type) {
+            case 'schematic': {
+                const result = await requestEasyEda('create-schematic', {
+                    boardName: doc.board_name,
+                });
+                return textResult(result);
+            }
+            case 'schematic_page': {
+                const result = await requestEasyEda('create-schematic-page', {
+                    schematicUuid: doc.schematic_uuid,
+                });
+                return textResult(result);
+            }
+            case 'board': {
+                const result = await requestEasyEda('create-board', {
+                    schematicUuid: doc.schematic_uuid,
+                    pcbUuid: doc.pcb_uuid,
+                });
+                return textResult(result);
+            }
+            case 'pcb': {
+                const result = await requestEasyEda('create-pcb', {
+                    boardName: doc.board_name,
+                });
+                return textResult(result);
+            }
+            default:
+                throw new Error(`Unsupported create_doc doc_type`);
+        }
     },
 );
 
@@ -896,23 +903,6 @@ server.registerTool(
     },
     async ({ board_name }) => {
         const result = await requestEasyEda('delete-board', {
-            boardName: board_name,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'create_pcb',
-    {
-        title: 'Create EasyEDA PCB',
-        description: 'Create a PCB in the current EasyEDA project. If board_name is omitted, EasyEDA creates a free PCB.',
-        inputSchema: z.object({
-            board_name: z.string().min(1).optional().describe('Optional parent board name.'),
-        }),
-    },
-    async ({ board_name }) => {
-        const result = await requestEasyEda('create-pcb', {
             boardName: board_name,
         });
         return textResult(result);

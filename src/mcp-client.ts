@@ -382,19 +382,15 @@ async function handleMessage(message: McpMessage) {
 
             if (!doc) return reply(false, undefined, "Not found doc with this uuid");
 
-            if (doc.itemType as EDMT_ItemType === EDMT_ItemType.BOARD) {
-                const success = await eda.dmt_Board.modifyBoardName(uuid, name);
-                return reply(true, { success, new_board_name: name });
-            }
-            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.SCHEMATIC) {
+            if (doc.itemType === EDMT_ItemType.SCHEMATIC) {
                 const success = await eda.dmt_Schematic.modifySchematicName(uuid, name);
                 reply(true, { success, new_sch_name: name });
             }
-            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.SCHEMATIC_PAGE) {
+            else if (doc.itemType === EDMT_ItemType.SCHEMATIC_PAGE) {
                 const success = await eda.dmt_Schematic.modifySchematicPageName(uuid, name);
                 return reply(true, { success, new_sch_page_name: name });
             }
-            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.PCB) {
+            else if (doc.itemType === EDMT_ItemType.PCB) {
                 const success = await eda.dmt_Pcb.modifyPcbName(uuid, name);
                 return reply(true, { success, new_pcb_name: name });
             }
