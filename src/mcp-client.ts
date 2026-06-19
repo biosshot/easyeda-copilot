@@ -461,10 +461,9 @@ async function handleMessage(message: McpMessage) {
         if (message.event === 'import-pcb-changes') {
             const schematicUuid = typeof body.schematicUuid === 'string' ? body.schematicUuid : undefined;
 
-            await checkpointer.save(false);
             const success = await eda.pcb_Document.importChanges(schematicUuid);
-            reply(true, { success, schematicUuid });
-            return;
+            if (success) return reply(true, { success, message: `In EasyEDA, when importing changes, the import dialog window opens if there are changes, or it does not open if there are no changes. In either case, the user must manually confirm the action within that dialog window (if it appears) to complete the import process.` });
+            return reply(true, { success });
         }
 
         if (message.event === 'assemble-circuit') {
