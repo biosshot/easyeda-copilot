@@ -816,18 +816,24 @@ server.registerTool(
     },
 );
 
+const DOC_QUERY = z.object({
+    uuid: z.string().min(1).describe('Schematic, Schematic page or PCB UUID.'),
+}).or(z.object({
+    board_name: z.string().min(1)
+}))
+
 server.registerTool(
     'modify_name',
     {
         title: 'Rename EasyEDA: Schematic, Schematic page, PCB',
         description: 'Modify the name of an EasyEDA Schematic, Schematic page, PCB',
         inputSchema: z.object({
-            uuid: z.string().min(1).describe('Schematic, Schematic page or PCB UUID.'),
+            doc: DOC_QUERY,
             name: z.string().min(1).describe('New short name. Use UPPERCASE or PascalCase'),
         }),
     },
-    async ({ name, uuid }) => {
-        const result = await requestEasyEda('modify-name', { name, uuid });
+    async ({ name, doc }) => {
+        const result = await requestEasyEda('modify-name', { name, ...doc });
         return textResult(result);
     },
 );
@@ -893,18 +899,16 @@ server.registerTool(
 );
 
 server.registerTool(
-    'delete_board',
+    'delete_doc',
     {
-        title: 'Delete EasyEDA Board',
-        description: 'Delete a board from the current EasyEDA project by board name. This is destructive; use get_current_project_info first to verify the exact board name.',
+        title: 'Delete EasyEDA Doc',
+        description: 'Delete a doc from the current EasyEDA project. This is destructive!',
         inputSchema: z.object({
-            board_name: z.string().min(1).describe('Board name to delete.'),
+            doc: DOC_QUERY,
         }),
     },
-    async ({ board_name }) => {
-        const result = await requestEasyEda('delete-board', {
-            boardName: board_name,
-        });
+    async ({ doc }) => {
+        const result = await requestEasyEda('delete-doc', { ...doc });
         return textResult(result);
     },
 );

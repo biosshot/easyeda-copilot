@@ -180,6 +180,30 @@ async function getProjectInfo() {
     };
 }
 
+const findDocWithUUID = (data: Awaited<ReturnType<typeof getProjectInfo>>['project_data'], uuid: string) => {
+    for (const element of data) {
+        if (element.uuid === uuid) {
+            return element;
+        }
+
+        if (element.pcb?.uuid === uuid) {
+            return element.pcb;
+        }
+
+        if (element.schematic?.uuid === uuid) {
+            return element.schematic;
+        }
+
+        for (const page of [...(element.page ?? []), ...(element.schematic?.page ?? [])]) {
+            if (page.uuid === uuid) {
+                return page;
+            }
+        }
+    }
+
+    return undefined;
+}
+
 async function handleMessage(message: McpMessage) {
     if (message.event === 'connected') {
         eda.sys_Log.add('MCP WebSocket connected', ESYS_LogType.INFO);
@@ -343,42 +367,24 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'modify-name') {
-            const uuid = body.uuid;
             const name = body.name;
-
-            if (typeof uuid !== 'string' || !uuid) {
-                throw new Error('Missing uuid');
-            }
             if (typeof name !== 'string' || !name) {
                 throw new Error('Missing name');
             }
 
-            const findUUID = (data: typeof projectData) => {
-                for (const element of data) {
-                    if (element.uuid === uuid) {
-                        return element;
-                    }
+            if (typeof body.board_name === 'string') {
+                const success = await eda.dmt_Board.modifyBoardName(body.board_name, name);
+                return reply(true, { success, new_board_name: name });
+            }
 
-                    if (element.pcb?.uuid === uuid) {
-                        return element.pcb;
-                    }
+            const uuid = body.uuid;
 
-                    if (element.schematic?.uuid === uuid) {
-                        return element.schematic;
-                    }
-
-                    for (const page of [...(element.page ?? []), ...(element.schematic?.page ?? [])]) {
-                        if (page.uuid === uuid) {
-                            return page;
-                        }
-                    }
-                }
-
-                return undefined;
+            if (typeof uuid !== 'string' || !uuid) {
+                throw new Error('Missing uuid');
             }
 
             const projectData = await getProjectInfo().then(d => d.project_data);
-            const doc = findUUID(projectData);
+            const doc = findDocWithUUID(projectData, uuid);
 
             if (!doc) return reply(false, undefined, "Not found doc with this uuid");
 
@@ -409,15 +415,37 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
-        if (message.event === 'delete-board') {
-            const boardName = body.boardName;
-            if (typeof boardName !== 'string' || !boardName) {
-                throw new Error('Missing boardName');
+        if (message.event === 'delete-doc') {
+            if (typeof body.board_name === 'string') {
+                const success = await eda.dmt_Board.deleteBoard(body.board_name);
+                reply(true, { success });
             }
 
-            const success = await eda.dmt_Board.deleteBoard(boardName);
-            reply(true, { success, boardName });
-            return;
+            const uuid = body.uuid;
+
+            if (typeof uuid !== 'string' || !uuid) {
+                throw new Error('Missing uuid');
+            }
+
+            const projectData = await getProjectInfo().then(d => d.project_data);
+            const doc = findDocWithUUID(projectData, uuid);
+
+            if (!doc) return reply(false, undefined, "Not found doc with this uuid");
+
+            if (doc.itemType === EDMT_ItemType.SCHEMATIC) {
+                const success = await eda.dmt_Schematic.deleteSchematic(uuid);
+                reply(true, { success });
+            }
+            else if (doc.itemType === EDMT_ItemType.SCHEMATIC_PAGE) {
+                const success = await eda.dmt_Schematic.deleteSchematicPage(uuid);
+                return reply(true, { success });
+            }
+            else if (doc.itemType === EDMT_ItemType.PCB) {
+                const success = await eda.dmt_Pcb.deletePcb(uuid);
+                return reply(true, { success });
+            }
+
+            return reply(false, undefined, "Unsupported doc format: " + doc.itemType);
         }
 
         if (message.event === 'create-pcb') {
