@@ -116,6 +116,70 @@ function startHeartbeat() {
     state.heartbeatTimer = setInterval(sendHeartbeatPing, MCP_HEARTBEAT_INTERVAL_MS);
 }
 
+async function getProjectInfo() {
+    const projectInfo = await eda.dmt_Project.getCurrentProjectInfo();
+    if (!projectInfo) throw new Error('Current project info not found');
+
+    const project_data = [];
+
+    const filterSchPage = (page: IDMT_SchematicPageItem) => {
+        return {
+            name: page.name,
+            itemType: page.itemType,
+            uuid: page.uuid
+        }
+    };
+
+    const filterSch = (sch: IDMT_SchematicItem) => {
+        return {
+            name: sch.name,
+            itemType: sch.itemType,
+            page: sch.page.map(filterSchPage),
+            uuid: sch.uuid
+        }
+    };
+
+    for (const item of projectInfo.data) {
+        if (item.itemType === EDMT_ItemType.BOARD) {
+
+            project_data.push({
+                name: item.name,
+                itemType: item.itemType,
+                schematic: filterSch(item.schematic),
+                pcb: {
+                    name: item.pcb.name,
+                    itemType: item.pcb.itemType,
+                    uuid: item.pcb.uuid,
+                    parentBoardName: item.pcb.parentBoardName
+                },
+            })
+        }
+        else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
+            project_data.push({
+                name: item.name,
+                itemType: item.itemType,
+                page: filterSch(item).page,
+                uuid: item.uuid,
+                parentBoardUuid: item.parentBoardUuid
+            })
+        }
+        else if (item.itemType === EDMT_ItemType.PCB) {
+            project_data.push({
+                name: item.name,
+                itemType: item.itemType,
+                uuid: item.uuid,
+                parentBoardName: item.parentBoardName
+            })
+        }
+    }
+
+    return {
+        project_data,
+        project_name: projectInfo.friendlyName,
+        description: projectInfo.description
+    };
+}
+
 async function handleMessage(message: McpMessage) {
     if (message.event === 'connected') {
         eda.sys_Log.add('MCP WebSocket connected', ESYS_LogType.INFO);
@@ -161,67 +225,11 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'get-current-project-info') {
-            const projectInfo = await eda.dmt_Project.getCurrentProjectInfo();
-            if (!projectInfo) throw new Error('Current project info not found');
-
-            const project_data = [];
-
-            const filterSchPage = (page: IDMT_SchematicPageItem) => {
-                return {
-                    name: page.name,
-                    itemType: page.itemType,
-                    uuid: page.uuid
-                }
-            };
-
-            const filterSch = (sch: IDMT_SchematicItem) => {
-                return {
-                    name: sch.name,
-                    itemType: sch.itemType,
-                    page: sch.page.map(filterSchPage),
-                    uuid: sch.uuid
-                }
-            };
-
-            for (const item of projectInfo.data) {
-                if (item.itemType === EDMT_ItemType.BOARD) {
-
-                    project_data.push({
-                        name: item.name,
-                        itemType: item.itemType,
-                        schematic: filterSch(item.schematic),
-                        pcb: {
-                            name: item.pcb.name,
-                            itemType: item.pcb.itemType,
-                            uuid: item.pcb.uuid,
-                            parentBoardName: item.pcb.parentBoardName
-                        },
-                    })
-                }
-                else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
-                    project_data.push({
-                        name: item.name,
-                        itemType: item.itemType,
-                        page: filterSch(item).page,
-                        uuid: item.uuid,
-                        parentBoardUuid: item.parentBoardUuid
-                    })
-                }
-                else if (item.itemType === EDMT_ItemType.PCB) {
-                    project_data.push({
-                        name: item.name,
-                        itemType: item.itemType,
-                        uuid: item.uuid,
-                        parentBoardName: item.parentBoardName
-                    })
-                }
-            }
+            const project_data = await getProjectInfo()
 
             reply(true, {
                 current_doc_uuid: await eda.dmt_SelectControl.getCurrentDocumentInfo().then(c => c?.uuid).catch(_ => undefined),
-                data: project_data,
-                project_name: projectInfo.friendlyName,
-                description: projectInfo.description
+                ...project_data
             });
             return;
         }
@@ -334,34 +342,64 @@ async function handleMessage(message: McpMessage) {
             return;
         }
 
-        if (message.event === 'modify-schematic-name') {
-            const schematicUuid = body.schematicUuid;
-            const schematicName = body.schematicName;
-            if (typeof schematicUuid !== 'string' || !schematicUuid) {
-                throw new Error('Missing schematicUuid');
+        if (message.event === 'modify-name') {
+            const uuid = body.uuid;
+            const name = body.name;
+
+            if (typeof uuid !== 'string' || !uuid) {
+                throw new Error('Missing uuid');
             }
-            if (typeof schematicName !== 'string' || !schematicName) {
-                throw new Error('Missing schematicName');
+            if (typeof name !== 'string' || !name) {
+                throw new Error('Missing name');
             }
 
-            const success = await eda.dmt_Schematic.modifySchematicName(schematicUuid, schematicName);
-            reply(true, { success, schematicUuid, schematicName });
-            return;
-        }
+            const findUUID = (data: typeof projectData) => {
+                for (const element of data) {
+                    if (element.uuid === uuid) {
+                        return element;
+                    }
 
-        if (message.event === 'modify-schematic-page-name') {
-            const schematicPageUuid = body.schematicPageUuid;
-            const schematicPageName = body.schematicPageName;
-            if (typeof schematicPageUuid !== 'string' || !schematicPageUuid) {
-                throw new Error('Missing schematicPageUuid');
-            }
-            if (typeof schematicPageName !== 'string' || !schematicPageName) {
-                throw new Error('Missing schematicPageName');
+                    if (element.pcb?.uuid === uuid) {
+                        return element.pcb;
+                    }
+
+                    if (element.schematic?.uuid === uuid) {
+                        return element.schematic;
+                    }
+
+                    for (const page of [...(element.page ?? []), ...(element.schematic?.page ?? [])]) {
+                        if (page.uuid === uuid) {
+                            return page;
+                        }
+                    }
+                }
+
+                return undefined;
             }
 
-            const success = await eda.dmt_Schematic.modifySchematicPageName(schematicPageUuid, schematicPageName);
-            reply(true, { success, schematicPageUuid, schematicPageName });
-            return;
+            const projectData = await getProjectInfo().then(d => d.project_data);
+            const doc = findUUID(projectData);
+
+            if (!doc) return reply(false, undefined, "Not found doc with this uuid");
+
+            if (doc.itemType as EDMT_ItemType === EDMT_ItemType.BOARD) {
+                const success = await eda.dmt_Board.modifyBoardName(uuid, name);
+                return reply(true, { success, new_board_name: name });
+            }
+            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.SCHEMATIC) {
+                const success = await eda.dmt_Schematic.modifySchematicName(uuid, name);
+                reply(true, { success, new_sch_name: name });
+            }
+            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.SCHEMATIC_PAGE) {
+                const success = await eda.dmt_Schematic.modifySchematicPageName(uuid, name);
+                return reply(true, { success, new_sch_page_name: name });
+            }
+            else if (doc.itemType as EDMT_ItemType === EDMT_ItemType.PCB) {
+                const success = await eda.dmt_Pcb.modifyPcbName(uuid, name);
+                return reply(true, { success, new_pcb_name: name });
+            }
+
+            return reply(false, undefined, "Unsupported doc format: " + doc.itemType);
         }
 
         if (message.event === 'create-board') {
@@ -393,21 +431,6 @@ async function handleMessage(message: McpMessage) {
             if (!pcbUuid) throw new Error('Failed to create PCB');
 
             reply(true, { pcbUuid, boardName });
-            return;
-        }
-
-        if (message.event === 'modify-pcb-name') {
-            const pcbUuid = body.pcbUuid;
-            const pcbName = body.pcbName;
-            if (typeof pcbUuid !== 'string' || !pcbUuid) {
-                throw new Error('Missing pcbUuid');
-            }
-            if (typeof pcbName !== 'string' || !pcbName) {
-                throw new Error('Missing pcbName');
-            }
-
-            const success = await eda.dmt_Pcb.modifyPcbName(pcbUuid, pcbName);
-            reply(true, { success, pcbUuid, pcbName });
             return;
         }
 

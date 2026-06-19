@@ -817,6 +817,22 @@ server.registerTool(
 );
 
 server.registerTool(
+    'modify_name',
+    {
+        title: 'Rename EasyEDA: Schematic, Schematic page or PCB',
+        description: 'Modify the name of an EasyEDA Schematic, Schematic page or PCB.',
+        inputSchema: z.object({
+            uuid: z.string().min(1).describe('Schematic, Schematic page or PCB UUID.'),
+            name: z.string().min(1).describe('New short name. Use UPPERCASE or PascalCase'),
+        }),
+    },
+    async ({ name, uuid }) => {
+        const result = await requestEasyEda('modify-name', { name, uuid });
+        return textResult(result);
+    },
+);
+
+server.registerTool(
     'create_schematic',
     {
         title: 'Create EasyEDA Schematic',
@@ -845,44 +861,6 @@ server.registerTool(
     async ({ schematic_uuid }) => {
         const result = await requestEasyEda('create-schematic-page', {
             schematicUuid: schematic_uuid,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'modify_schematic_name',
-    {
-        title: 'Rename EasyEDA Schematic',
-        description: 'Modify an EasyEDA schematic name.',
-        inputSchema: z.object({
-            schematic_uuid: z.string().min(1).describe('Schematic UUID.'),
-            schematic_name: z.string().min(1).describe('New schematic short name. Use UPPERCASE or PascalCase'),
-        }),
-    },
-    async ({ schematic_uuid, schematic_name }) => {
-        const result = await requestEasyEda('modify-schematic-name', {
-            schematicUuid: schematic_uuid,
-            schematicName: schematic_name,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'modify_schematic_page_name',
-    {
-        title: 'Rename EasyEDA Schematic Page',
-        description: 'Modify an EasyEDA schematic page name.',
-        inputSchema: z.object({
-            schematic_page_uuid: z.string().min(1).describe('Schematic page UUID.'),
-            schematic_page_name: z.string().min(1).describe('New schematic page short name. Use UPPERCASE or PascalCase'),
-        }),
-    },
-    async ({ schematic_page_uuid, schematic_page_name }) => {
-        const result = await requestEasyEda('modify-schematic-page-name', {
-            schematicPageUuid: schematic_page_uuid,
-            schematicPageName: schematic_page_name,
         });
         return textResult(result);
     },
@@ -936,25 +914,6 @@ server.registerTool(
     async ({ board_name }) => {
         const result = await requestEasyEda('create-pcb', {
             boardName: board_name,
-        });
-        return textResult(result);
-    },
-);
-
-server.registerTool(
-    'modify_pcb_name',
-    {
-        title: 'Rename EasyEDA PCB',
-        description: 'Modify an EasyEDA PCB name.',
-        inputSchema: z.object({
-            pcb_uuid: z.string().min(1).describe('PCB UUID.'),
-            pcb_name: z.string().min(1).describe('New PCB short name. Use UPPERCASE or PascalCase.'),
-        }),
-    },
-    async ({ pcb_uuid, pcb_name }) => {
-        const result = await requestEasyEda('modify-pcb-name', {
-            pcbUuid: pcb_uuid,
-            pcbName: pcb_name,
         });
         return textResult(result);
     },
