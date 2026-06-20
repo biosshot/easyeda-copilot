@@ -17,6 +17,7 @@ import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 import findUp from 'find-up';
 
+// eslint-disable-next-line no-constant-condition
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);

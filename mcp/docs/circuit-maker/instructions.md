@@ -32,3 +32,8 @@ Rules for "search_reused_block":
 - If you need to assemble a circuit or a block that resembles a standard unit (DC/DC, LDO, TTL, etc.), you must try to find it using "search_reused_block"
 - If the block doesnвЂ™t match the specific parameters (VIN, VOUT), pay attention to the adjustable parameters that can be recalculated.
 </SPECIAL_RULE>
+<OUTPUT_EXPECTATIONS>
+Call **extract_circuit_on_current_page** to apply the circuit changes to the currently opened EasyEDA schematic page.
+
+Every added component must include a real part_uuid. Use component_search when an exact part_uuid is not known.
+</OUTPUT_EXPECTATIONS>

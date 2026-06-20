@@ -1,55 +1,6 @@
+// Write JavaScript PCB layout rules using only the TypeScript declarations below. Do not output JSON.
+// For detailed usage guidance and examples see `instructions.md`.
 
-Write JavaScript PCB layout rules using only the TypeScript declarations below. Do not output JSON.
-
-Required shape:
-make_pcb_layout({ code: `
-  board.auto({ aspectRatio: 1.45, density: 0.4, minWidth: 40, minHeight: 25, layers: ["top", "bottom"], clearance: 1.3, edge: 2.5 });
-  silkscreen.designators({ height: 1.1, rotations: [0, 90] });
-  boardHole("MH1", { at: anchor("board.top_left"), offset: { x: 3, y: 3 }, drill: 3.2, keepout: 4 });
-  block("power", ["U1", "L1", "D1", "C1"], "power");
-  component("U1").block("power").role("main_ic").top().rotations(0, 180).noWiresUnder();
-  component("C1").block("power").role("decoupling_cap").top().rotations(0, 90, 180, 270);
-  veryNear(pin("C1", "1"), pin("U1", "VDD"), "critical");
-  bypass(["C1", "C2"], pin("U1", "VDD"), "critical", { axis: "x", rotate: 90 });
-  route.netClass("power", ["VIN", "VOUT"], { width: 0.5, clearance: 0.25, zIndex: 320 });
-  route.polygon(["VIN", "VOUT"], { expansion: 0.6, clearance: 0.45, minWidth: 0.5, minPadConnections: 2 });
-  route.ignore("GND");
-  route.run({ profile: "high", trace: "fortyfive", width: 0.2, clearance: 0.127, viaDiameter: 0.61, viaDrill: 0.305 });
-`})
-
-Placement guidance:
-- Keep functional blocks small and physical. For dense ICs and switching regulators, prefer one main block plus multiple satellite blocks for clock, flash, decoupling rows, switch/inductor, input, output, feedback, and auxiliary networks.
-- Assign every component to exactly one block. A satellite attaches to a parent with placement/attachTo/anchor; it must not duplicate component ownership.
-- Use comp("R1") only for real component designators. For block-level constraints use block("power")/block("mcu") targets, not comp("power").
-- Default component body clearance is 1.3mm. This is placement/body clearance only; copper clearance for wires is separate. Do not pack components tightly unless the board is intentionally constrained.
-- Default board edge clearance is 2.5mm. Keep ordinary components away from board edges unless they are mechanical edge parts.
-- Around dense IC packages with many pads, leave extra body clearance and routing escape room. Use blockClearance when support passives or neighboring blocks sit next to the IC body.
-- Spread major functional blocks across the board when possible instead of anchoring every block to the same side. Use board anchors and blockClearance to keep routing channels open.
-- For connectors/ports that must sit on a board edge, prefer component("J1").edgeMount("left"/"right"/"top"/"bottom", { overhang: 3 }) instead of hand-written fixed()/boardOverflow()/offset. edgeMount computes the fixed center from the real footprint bbox after rotation.
-- For board-level mounting holes, use boardHole("MH1", { at: anchor("board.top_left"), offset: { x: 3, y: 3 }, drill: 3.2, keepout: 4 }) or boardHole.corners({ inset: 3, drill: 3.2, keepout: 4 }). Holes are placed before components and create hard placement keepouts.
-- Add at least one mounting hole by default unless the user says not to, the board is very small, the board is a flex/castellated/module-style design, or mounting holes clearly do not fit the mechanical intent.
-- For directional parts that do not need fixed edge mounting, use component("J1").faceTo("board.left"/"board.right"/"board.top"/"board.bottom"). It hard-filters allowed rotations before placement. If faceAt0 is omitted, runtime auto-detects faceAt0 from footprint pads and reports a warning.
-- Use bbox and anchor limits to describe real geometry, not wishes. Too-tight hardBbox/hardAnchor commonly creates overlaps or timeouts.
-- For non-rectangular boards, use board.roundedRect/chamferedRect/notchedRect/circle/oval/L/inverseL/polygon. All shape coordinates and dimensions are in mm. board anchors still refer to the enclosing bbox, while boardHole.corners({ inset }) uses the real outline.
-- Use criticalPair/corePairs/coreIsland only for dominant pad-to-pad constraints. Keep coreIsland small, usually 2-3 components, and avoid overlapping islands that all share the same main IC.
-- Do not put several hard criticalPair rules with tiny maxDistance onto the same parent pin. Make the most important pair hard, keep secondary parts soft, and add bypass/line plus clearance or blockClearance for body spacing.
-- For capacitor banks on the same power/return nets, use capCluster(...) instead of line()/bypass(); it aligns same-net pads toward shared buses and locks the resulting rotations.
-- GND via stitching is enabled by default when a GND net exists, with a 4mm grid. Use route.stitch({ net: "GND", grid: 3 }) only to override the whole-board default or to add scoped stitching. Use route.polygon(..., { stitch: { grid: 3 } }) or route.powerPolygon(..., { stitch: { grid: 3 } }) when stitching should be limited to generated polygon copper.
-- Add blockClearance between a close satellite and its parent IC/block whenever their bodies could overlap.
-- Reference designator text is placed automatically on the same side as its component. Use silkscreen.designators({ height, rotations }) for global defaults and component("U1").designatorText(...) only for local overrides or enabled:false.
-- For 30+ component boards, prefer solver({ grid: 1, fallbackGrid: 2, localImproveIterations: 32-40 }) as a practical starting point. Avoid tiny grids and high iteration counts unless quality is worth the slower search.
-- board.auto({ density }) controls target component density from footprint area. Default is 0.4; lower values make a larger board with more routing room, higher values make a tighter board.
-- Routing defaults are wire width 0.2mm, wire clearance 0.127mm, via diameter 0.61mm, and via drill 0.305mm. Use these unless the user or manufacturing rules require different values.
-- In route.netClass, use zIndex for routing order control. Higher zIndex routes earlier. Missing zIndex is treated as 0; ties keep declaration order.
-- Use route.polygon(net, ...) for general post-route copper pours. Use route.powerPolygon(...) for local power copper around buck/input/output pads; do not put polygon options into route.netClass.
-
-Tool output:
-- make_pcb_layout returns collected image_url with label "PCB". It is routed SVG when routing succeeds, otherwise placement SVG.
-- make_pcb_layout also returns pcb_tool_report with compact placement/routing status, overlaps, outside-board issues, block violations, critical pair distance violations, and unrouted/partial nets.
-- In production mode no debug files may be saved. Use image_url and pcb_tool_report instead of filesystem paths.
-- When iterating after a bad layout, inspect pcb_tool_report first: overlaps, outsideBoard, blockViolations, criticalPairViolations, unroutedNets, and partiallyRoutedNets.
-
-```ts
 type RuleLevel = "low" | "normal" | "high" | "critical";
 type Priority = RuleLevel;
 type Layer = "top" | "bottom";
@@ -552,5 +503,3 @@ declare const route: {
   /** Ignore signal(s) in the autorouter, usually "GND" when it will be served by copper pour/stitching. */
   ignore(signals: string | string[]): void;
 };
-
-```
