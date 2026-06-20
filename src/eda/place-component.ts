@@ -41,7 +41,7 @@ export const placeComponent = async (data: { libraryUuid: string, uuid: string }
                 libraryUuid: lib,
             }, to2(x), to2(y), subPartName, rotate, mirror, addIntoBom, addIntoPcb);
 
-            comp = await withTimeout(compPromise, 25000);
+            comp = await withTimeout(compPromise, 10_000);
 
             eda.sys_Log.add(`done place component: ${JSON.stringify({
                 data: {

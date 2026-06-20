@@ -16,6 +16,9 @@ import { savePcbPreview, type PreviewOptions } from './pcb-preview/index.js';
 import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 import findUp from 'find-up';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // eslint-disable-next-line no-constant-condition
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
@@ -23,11 +26,11 @@ const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).re
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);
 const MCP_WS_HOST = process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1';
 
-const DOCS_DIR = join(dirname(findUp.sync('package.json')!), 'docs');
+const DOCS_DIR = join(dirname(findUp.sync('package.json', {
+    cwd: __dirname
+})!), 'docs');
 const SKILL_DOC_PATH = join(DOCS_DIR, 'SKILL.md');
 const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
-const CIRCUIT_DOCS_DIR = join(DOCS_DIR, 'circuit-maker');
-const PCB_LAYOUT_DOCS_DIR = join(DOCS_DIR, 'pcb-layout');
 const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
 
 const server = new McpServer({
@@ -357,7 +360,7 @@ server.registerTool(
     'search_reused_block',
     {
         title: 'Search Reused Block',
-        description: `Search pre-assembled EasyEDA Copilot reused blocks that can be recalculated and inserted into a circuit. For circuit workflow docs, read the local docs folder: ${CIRCUIT_DOCS_DIR}`,
+        description: `Search pre-assembled EasyEDA Copilot reused blocks that can be recalculated and inserted into a circuit. For circuit workflow docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             query: z.string().describe('Query example: "3.3V power regulator"'),
             page: z.number().min(1).default(1).describe('Current results page.'),
@@ -374,7 +377,7 @@ server.registerTool(
     'get_pcb_component_sizes',
     {
         title: 'Get PCB Component Sizes',
-        description: `Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions. For PCB layout docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
+        description: `Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             designators: z.array(z.string()).nullable().optional(),
             includeAll: z.boolean().nullable().optional(),
@@ -396,7 +399,7 @@ server.registerTool(
     'make_pcb_layout',
     {
         title: 'Make PCB Layout',
-        description: `Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
+        description: `Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
         }).refine(data => Boolean(data.file), {
@@ -443,7 +446,7 @@ server.registerTool(
     'assemble_pcb_layout_on_current_pcbdoc',
     {
         title: 'Assemble PCB Layout',
-        description: `Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid. For PCB assembly docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
+        description: `Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid. For PCB assembly docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             layoutId: z.string().min(1).describe('layoutId returned by make_pcb_layout.'),
         }),
@@ -472,7 +475,7 @@ server.registerTool(
     'extract_circuit_on_current_page',
     {
         title: 'Extract Circuit',
-        description: `Post-process circuit changes on the main EasyEDA Copilot server and sends the assembled result to EasyEDA. Every added component must include part_uuid. For circuit modification docs, read the local docs folder: ${CIRCUIT_DOCS_DIR}`,
+        description: `Post-process circuit changes on the main EasyEDA Copilot server and sends the assembled result to EasyEDA. Every added component must include part_uuid. For circuit modification docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: CircuitModStruct(),
     },
     async (circuit) => {
@@ -822,7 +825,7 @@ server.registerTool(
     'import_pcb_changes',
     {
         title: 'Import PCB Changes',
-        description: `Import schematic changes into the currently opened PCB document. If schematic_uuid is omitted, EasyEDA uses the schematic linked to the same board. Open the target PCB document first. For PCB docs, read the local docs folder: ${PCB_LAYOUT_DOCS_DIR}`,
+        description: `Import schematic changes into the currently opened PCB document. If schematic_uuid is omitted, EasyEDA uses the schematic linked to the same board. Open the target PCB document first. For PCB docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             schematic_uuid: z.string().min(1).optional().describe('Optional schematic UUID to import changes from.'),
         }),

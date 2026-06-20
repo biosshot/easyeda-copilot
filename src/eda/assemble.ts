@@ -33,7 +33,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     if (partUuid === 'GND') {
         comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate });
 
-        const s = (component.value || "GND").toUpperCase()
+        const s = component.pins[0]?.signal_name ?? 'GND';
         comp.setState_Name(s);
         comp.setState_OtherProperty({
             "Global Net Name": s
@@ -42,7 +42,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     else if (partUuid === 'VCC') {
         comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate });
 
-        const s = (component.value || "VCC").toUpperCase()
+        const s = component.pins[0]?.signal_name ?? 'VCC';
         comp.setState_Name(s);
         comp.setState_OtherProperty({
             "Global Net Name": s
