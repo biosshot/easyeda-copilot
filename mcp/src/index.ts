@@ -2,10 +2,10 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
-import { createHash, randomUUID } from 'node:crypto';
+import { randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { homedir, tmpdir } from 'node:os';
-import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
+import { tmpdir } from 'node:os';
+import { dirname, isAbsolute, join, resolve } from 'node:path';
 import sharp from 'sharp';
 import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
@@ -15,26 +15,23 @@ import { ExplainPcbSchema, type ExplainPCB } from '@copilot/shared/types/pcb/exp
 import { savePcbPreview, type PreviewOptions } from './pcb-preview/index.js';
 import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
+import findUp from 'find-up';
 
 const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);
 const MCP_WS_HOST = process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1';
-const DOCS_CACHE_DIR = resolve(process.env.EASYEDA_COPILOT_MCP_DOCS_DIR || join(
-    process.env.LOCALAPPDATA || join(homedir(), '.cache'),
-    'easyeda-copilot-mcp',
-    'docs',
-));
-const DOCS_MANIFEST_FILE = join(DOCS_CACHE_DIR, 'manifest.json');
-const SKILL_DOC_PATH = join(DOCS_CACHE_DIR, 'SKILL.md');
+
+const DOCS_DIR = join(dirname(findUp.sync('package.json')!), 'docs');
+const SKILL_DOC_PATH = join(DOCS_DIR, 'SKILL.md');
 const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
-const CIRCUIT_DOCS_DIR = join(DOCS_CACHE_DIR, 'circuit-maker');
-const PCB_LAYOUT_DOCS_DIR = join(DOCS_CACHE_DIR, 'pcb-layout');
+const CIRCUIT_DOCS_DIR = join(DOCS_DIR, 'circuit-maker');
+const PCB_LAYOUT_DOCS_DIR = join(DOCS_DIR, 'pcb-layout');
 const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
 
 const server = new McpServer({
     name: 'easyeda-copilot',
-    version: '1.0.0',
+    version: '1.1.4',
 });
 
 type WsMessage = {
@@ -70,24 +67,10 @@ type StoredPcbLayout = {
     createdAt: number;
 };
 
-type McpDocManifestEntry = {
-    id: string;
-    path: string;
-    sha256: string;
-    bytes: number;
-    url: string;
-};
-
-type McpDocsManifest = {
-    version: string;
-    docs: McpDocManifestEntry[];
-};
-
 const wsClients = new Set<WebSocket>();
 const pendingRequests = new Map<string, PendingRequest>();
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
 let wsServerReady = false;
-let docsSyncError: string | undefined;
 
 function handleWsMessage(message: WsMessage) {
     if (message.event === 'ping') {
@@ -220,91 +203,12 @@ async function postJson(path: string, payload: unknown): Promise<unknown> {
     return data;
 }
 
-async function getText(path: string): Promise<string> {
-    const response = await fetch(`${COPILOT_SERVER_URL}${path}`, {
-        headers: {
-            'Authorization': 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg='
-        }
-    });
-    const text = await response.text();
-
-    if (!response.ok) {
-        throw new Error(text || `HTTP ${response.status}`);
-    }
-
-    return text;
-}
-
-async function getJson<T>(path: string): Promise<T> {
-    return JSON.parse(await getText(path)) as T;
-}
-
-function sha256Text(text: string) {
-    return createHash('sha256').update(text, 'utf8').digest('hex');
-}
-
-function resolveDocCachePath(docPath: string) {
-    const root = resolve(DOCS_CACHE_DIR);
-    const target = resolve(root, docPath);
-    const rel = relative(root, target);
-
-    if (rel.startsWith('..') || isAbsolute(rel)) {
-        throw new Error(`Unsafe MCP doc path: ${docPath}`);
-    }
-
-    return target;
-}
-
-function normalizeDocApiPath(path: string) {
-    if (path.startsWith('/v1/')) return path;
-    if (path.startsWith('/mcp-tools/')) return `/v1${path}`;
-    return path;
-}
-
-async function syncLocalDocsFromServer() {
-    const manifest = await getJson<McpDocsManifest>('/v1/mcp-tools/docs/manifest');
-    await mkdir(DOCS_CACHE_DIR, { recursive: true });
-
-    for (const doc of manifest.docs) {
-        const filePath = resolveDocCachePath(doc.path);
-        let currentText: string | undefined;
-
-        try {
-            currentText = await readFile(filePath, 'utf8');
-        } catch {
-            currentText = undefined;
-        }
-
-        if (currentText && sha256Text(currentText) === doc.sha256) {
-            continue;
-        }
-
-        const text = await getText(normalizeDocApiPath(doc.url));
-        const actualSha = sha256Text(text);
-        if (actualSha !== doc.sha256) {
-            throw new Error(`MCP doc checksum mismatch for ${doc.id}. Expected ${doc.sha256}, got ${actualSha}.`);
-        }
-
-        await mkdir(dirname(filePath), { recursive: true });
-        await writeFile(filePath, text, 'utf8');
-    }
-
-    await writeFile(DOCS_MANIFEST_FILE, JSON.stringify({
-        ...manifest,
-        source: COPILOT_SERVER_URL,
-        cachedAt: new Date().toISOString(),
-    }, null, 2), 'utf8');
-}
-
 function localSkillDocText() {
     return [
         'EasyEDA Copilot MCP documentation is cached locally.',
-        '',
         `Skill file: ${SKILL_DOC_PATH}`,
-        `Docs directory: ${DOCS_CACHE_DIR}`,
-        '',
-        'Read SKILL.md first. It points to the rest of the local docs.',
-        docsSyncError ? `Last startup docs sync error: ${docsSyncError}` : undefined,
+        `Docs directory: ${DOCS_DIR}`,
+        'Read SKILL.md first. It points to the rest of the local docs.'
     ].filter(Boolean).join('\n');
 }
 
@@ -973,12 +877,6 @@ server.registerTool(
 
 async function main() {
     startWsServer();
-    try {
-        await syncLocalDocsFromServer();
-    } catch (error) {
-        docsSyncError = (error as Error).message;
-    }
-
     const transport = new StdioServerTransport();
     await server.connect(transport);
     // console.error(`EasyEDA Copilot MCP Server running on stdio. Server URL: ${COPILOT_SERVER_URL}`);
