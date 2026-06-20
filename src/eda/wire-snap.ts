@@ -67,12 +67,15 @@ function snapshotToWire(snapshot: WireSnapshot): ISCH_PrimitiveWire {
 
     return new Proxy(impl, {
         get(target, prop) {
+
             if (!allowed.has(prop)) {
-                throw new Error(
+                eda.sys_Log.add(
                     `[wire-snap] Snapshot wire does not implement "${String(prop)}". ` +
                     `Only ${[...allowed].map(String).join(", ")} are available.`,
+                    ESYS_LogType.WARNING
                 );
             }
+
             return (target as any)[prop];
         },
     }) as unknown as ISCH_PrimitiveWire;

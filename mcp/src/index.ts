@@ -776,7 +776,7 @@ server.registerTool(
         };
 
         await mkdir(TEMP_DIR, { recursive: true });
-        const { pngPath } = await savePcbPreview(data, options, join(TEMP_DIR, crypto.randomUUID().slice(0, 6)));
+        const { pngPath } = await savePcbPreview(data, options, join(TEMP_DIR, 'pcbprev-' + crypto.randomUUID().slice(0, 6)));
 
         return textResult({ image_path: pngPath });
     },
