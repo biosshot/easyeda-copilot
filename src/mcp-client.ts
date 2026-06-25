@@ -5,6 +5,7 @@ import { checkPcbDrc } from './eda/drc';
 import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
+import { ExplainCircuit } from '@copilot/shared/types/circuit';
 
 type McpMessage = {
     event: string;
@@ -235,6 +236,23 @@ async function handleMessage(message: McpMessage) {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds]);
             reply(true, schematic);
+            return;
+        }
+
+        if (message.event === 'get-multi-page-schematic') {
+            const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo();
+            if (!allPages || !allPages.length) throw new Error('Not open any sch or is empty sch');
+            const fullSch: ExplainCircuit = { components: [] };
+
+            for (const page of allPages) {
+                await eda.dmt_EditorControl.openDocument(page.uuid);
+                await new Promise(resolve => setTimeout(resolve, 400));
+                const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
+                const schematic = await getSchematic([...primitiveIds]);
+                fullSch.components.push(...schematic.components);
+            }
+
+            reply(true, fullSch);
             return;
         }
 

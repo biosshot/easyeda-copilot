@@ -1,6 +1,13 @@
 # PCB Layout MCP Workflow
 
-For output format and iteration rules see `instructions.md`.
+For placement/routing rules, examples, output format, and iteration rules see `instructions.md`.
+
+`make_pcb_layout` reads a JavaScript DSL file and returns text with:
+
+- the compact `pcb_tool_report` JSON from the layout server;
+- a `Run report` JSON object with `layoutId` and `previewImagePath`.
+
+Use `previewImagePath` for visual inspection after every non-trivial run. Do not assemble intermediate attempts.
 
 <MCP_PCB_ASSEMBLY_WORKFLOW>
 Only assemble a layout after verifying the EasyEDA project structure:

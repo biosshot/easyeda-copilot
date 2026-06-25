@@ -11,18 +11,7 @@ MCP server for EasyEDA Copilot.
 
 ## Local docs
 
-On startup the MCP server syncs docs from the EasyEDA Copilot server into a local cache. It exposes the local `SKILL.md` path through MCP, and agents should read that file instead of loading prompt text from the server.
-
-Default cache location:
-
-- Windows: `%LOCALAPPDATA%\easyeda-copilot-mcp\docs`
-- macOS/Linux: `~/.cache/easyeda-copilot-mcp/docs`
-
-Override the cache directory with:
-
-```bash
-EASYEDA_COPILOT_MCP_DOCS_DIR=/absolute/path/to/docs
-```
+The MCP package ships its own local docs in `mcp/docs`. The server exposes the local `SKILL.md` path through MCP, and agents should read that file before using schematic or PCB tools.
 
 ## Build
 

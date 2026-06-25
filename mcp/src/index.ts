@@ -408,7 +408,7 @@ server.registerTool(
     },
     async (input) => {
         const code = await readLayoutCode(input);
-        const circuit = await requestEasyEda('get-schematic');
+        const circuit = await requestEasyEda('get-multi-page-schematic');
         const result = await postJson('/v1/mcp-tools/make-pcb-layout', {
             code,
             circuit,
