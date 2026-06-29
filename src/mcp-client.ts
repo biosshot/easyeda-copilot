@@ -82,6 +82,141 @@ function assertDrcBundle(value: unknown): asserts value is PcbDrcBundle {
     }
 }
 
+function formatPath(path: Array<string | number>) {
+    return path.map(part => typeof part === 'number'
+        ? `[${part}]`
+        : /^[A-Za-z_$][A-Za-z0-9_$]*$/.test(part)
+            ? `.${part}`
+            : `[${JSON.stringify(part)}]`
+    ).join('').replace(/^\./, '');
+}
+
+function isLayerMapName(name: string) {
+    return name === 'data' || name === 'tables';
+}
+
+function isNumericObjectKey(key: string) {
+    return /^\d+$/.test(key);
+}
+
+function collectAllowedLayerMapKeys(value: unknown, path: string[] = [], result = new Map<string, Set<string>>()) {
+    if (!isRecord(value)) return result;
+
+    for (const [key, child] of Object.entries(value)) {
+        const childPath = [...path, key];
+
+        if (isLayerMapName(key) && isRecord(child)) {
+            const pathKey = childPath.join('.');
+            const keys = result.get(pathKey) ?? new Set<string>();
+            for (const childKey of Object.keys(child)) {
+                keys.add(childKey);
+            }
+            result.set(pathKey, keys);
+            continue;
+        }
+
+        collectAllowedLayerMapKeys(child, childPath, result);
+    }
+
+    return result;
+}
+
+function collectAllowedLayerMapKeysFromFamily(family: unknown) {
+    const result = new Map<string, Set<string>>();
+    if (!isRecord(family)) return result;
+
+    for (const preset of Object.values(family)) {
+        const presetKeys = collectAllowedLayerMapKeys(preset);
+
+        for (const [pathKey, keys] of presetKeys.entries()) {
+            const mergedKeys = result.get(pathKey) ?? new Set<string>();
+            for (const key of keys) {
+                mergedKeys.add(key);
+            }
+            result.set(pathKey, mergedKeys);
+        }
+    }
+
+    return result;
+}
+
+function validateLayerMapKeys(
+    value: unknown,
+    allowedKeysByPath: Map<string, Set<string>>,
+    path: Array<string | number>,
+    relativePath: string[] = [],
+    issues: string[] = [],
+) {
+    if (!isRecord(value)) return issues;
+
+    for (const [key, child] of Object.entries(value)) {
+        const childPath = [...path, key];
+        const childRelativePath = [...relativePath, key];
+
+        if (isLayerMapName(key) && isRecord(child)) {
+            const mapPath = childRelativePath.join('.');
+            const allowedKeys = allowedKeysByPath.get(mapPath);
+
+            for (const childKey of Object.keys(child)) {
+                if (isNumericObjectKey(childKey) || allowedKeys?.has(childKey)) continue;
+
+                issues.push(`${formatPath([...childPath, childKey])}: invalid key inside "${key}". ` +
+                    `This map is for layer/table indices, not preset names. Create a sibling preset in the rule family instead.`);
+            }
+
+            continue;
+        }
+
+        validateLayerMapKeys(child, allowedKeysByPath, childPath, childRelativePath, issues);
+    }
+
+    return issues;
+}
+
+function validateDrcRuleConfiguration(ruleConfiguration: PcbDrcRuleObject, baselineRuleConfiguration: PcbDrcRuleObject | undefined) {
+    const issues: string[] = [];
+
+    for (const [categoryName, category] of Object.entries(ruleConfiguration)) {
+        if (!isRecord(category)) continue;
+
+        const baselineCategory = baselineRuleConfiguration?.[categoryName];
+        if (baselineRuleConfiguration && !isRecord(baselineCategory)) {
+            issues.push(`ruleConfiguration[${JSON.stringify(categoryName)}]: unknown rule category.`);
+            continue;
+        }
+
+        for (const [familyName, family] of Object.entries(category)) {
+            if (!isRecord(family)) continue;
+
+            const baselineFamily = isRecord(baselineCategory) ? baselineCategory[familyName] : undefined;
+            if (isRecord(baselineCategory) && !isRecord(baselineFamily)) {
+                issues.push(`ruleConfiguration[${JSON.stringify(categoryName)}][${JSON.stringify(familyName)}]: unknown rule family.`);
+                continue;
+            }
+
+            const allowedLayerMapKeys = collectAllowedLayerMapKeysFromFamily(baselineFamily);
+
+            for (const [presetName, preset] of Object.entries(family)) {
+                validateLayerMapKeys(
+                    preset,
+                    allowedLayerMapKeys,
+                    ['ruleConfiguration', categoryName, familyName, presetName],
+                    [],
+                    issues,
+                );
+            }
+        }
+    }
+
+    if (!issues.length) return;
+
+    throw new Error([
+        'Invalid PCB DRC ruleConfiguration.',
+        ...issues.slice(0, 20),
+        issues.length > 20 ? `...and ${issues.length - 20} more issue(s).` : undefined,
+    ].filter(Boolean).join('\n'));
+}
+
 function getNetRuleByName(netRules: PcbDrcRuleObject[], netName: string) {
     return netRules.find(rule => rule.type === 'net' && rule.name === netName);
 }
@@ -346,6 +481,8 @@ async function exportPcbDrcRules(): Promise<PcbDrcBundle> {
 
 async function applyPcbDrcRules(bundle: PcbDrcBundle) {
     const { regularNetRules, differentialPairs } = splitDifferentialPairsFromNetRules(bundle.netRules);
+    const currentRuleConfiguration = await eda.pcb_Drc.getCurrentRuleConfiguration();
+    validateDrcRuleConfiguration(bundle.ruleConfiguration, currentRuleConfiguration.config);
 
     await checkpointer.save(false);
 

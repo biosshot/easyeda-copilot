@@ -34,6 +34,54 @@ Distances are normally millimeters when the preset has `"unit": "mm"`. Keep valu
 
 Preserve unknown fields. Prefer copying an existing similar preset instead of inventing a new shape.
 
+## Adding A New Preset
+
+New presets are added as siblings inside a rule family.
+
+Correct Track preset placement:
+
+```json
+{
+  "ruleConfiguration": {
+    "Physics": {
+      "Track": {
+        "copperThickness1oz": {},
+        "powerTrack": {
+          "editName": "powerTrack",
+          "unit": "mm",
+          "isSetDefault": false,
+          "form": {
+            "status": 1,
+            "data": {
+              "1": {
+                "minValue": 0.2,
+                "defaultValue": 0.3,
+                "maxValue": 2.54
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Wrong: do not put preset names inside `form.data`, `tables`, or nested `*.data` maps:
+
+```json
+{
+  "form": {
+    "data": {
+      "1": {},
+      "powerTrack": {}
+    }
+  }
+}
+```
+
+`data` and `tables` keys are layer/table indices such as `"1"` and `"2"`, not preset names. `apply_pcb_drc_rules` rejects preset-name keys inside these maps.
+
 ## Preset Locations
 
 Use this map to find where a `netRules` assignment points:
