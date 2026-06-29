@@ -18,6 +18,7 @@ import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
 import { PcbDrcBundleSchema, type PcbDrcBundle } from '@copilot/shared/types/pcb/drc.js';
 import findUp from 'find-up';
 import { fileURLToPath } from 'node:url';
+import { runEasyEdaAutoRouter } from './autorouter.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -70,6 +71,24 @@ type StoredPcbLayout = {
     toolReport?: unknown;
     previewImagePath?: string;
     createdAt: number;
+};
+
+type AutoRouteInputNet = {
+    net?: unknown;
+    routing?: unknown;
+    [key: string]: unknown;
+};
+
+type AutoRouteRunSummary = {
+    inputPath: string;
+    filteredInputPath: string;
+    resultPath: string;
+    ignoredNets: string[];
+    removedTopLevelNets: number;
+    progress?: number;
+    routabitity?: number;
+    traces: number;
+    vias: number;
 };
 
 const wsClients = new Set<WebSocket>();
@@ -242,6 +261,75 @@ async function readLayoutCode(input: { file: string; }) {
 async function readJsonFile(file: string) {
     const text = await readFile(resolveInputFilePath(file), 'utf8');
     return JSON.parse(text);
+}
+
+function parseJsonText(text: string, label: string) {
+    try {
+        return JSON.parse(text);
+    } catch (error) {
+        throw new Error(`${label} is not valid JSON: ${(error as Error).message}`);
+    }
+}
+
+function cloneJson<T>(value: T): T {
+    return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+    return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getBoardPolygonFromAutoRouteInput(inputJson: unknown) {
+    if (!isRecord(inputJson)) return undefined;
+    const boardOutline = inputJson.boardOutline;
+    if (!isRecord(boardOutline) || !Array.isArray(boardOutline.path)) return undefined;
+
+    const polygon = boardOutline.path
+        .filter((point): point is [number, number] =>
+            Array.isArray(point) &&
+            point.length >= 2 &&
+            typeof point[0] === 'number' &&
+            typeof point[1] === 'number' &&
+            Number.isFinite(point[0]) &&
+            Number.isFinite(point[1]),
+        )
+        .map(([x, y]) => ({ x, y }));
+
+    return polygon.length >= 3 ? polygon : undefined;
+}
+
+function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[]) {
+    const ignored = new Set(ignoredNets.map(net => net.trim()).filter(Boolean));
+    const filtered = cloneJson(inputJson);
+    let removedTopLevelNets = 0;
+
+    if (isRecord(filtered) && Array.isArray(filtered.nets)) {
+        const nets = filtered.nets as AutoRouteInputNet[];
+        filtered.nets = nets.filter(netRule => {
+            const netName = typeof netRule?.net === 'string' ? netRule.net : '';
+            if (!ignored.has(netName)) return true;
+            removedTopLevelNets++;
+            return false;
+        });
+    }
+
+    return { filtered, removedTopLevelNets };
+}
+
+function summarizeAutoRouteResult(result: Record<string, unknown>, paths: {
+    inputPath: string;
+    filteredInputPath: string;
+    resultPath: string;
+}, ignoredNets: string[], removedTopLevelNets: number): AutoRouteRunSummary {
+    return {
+        ...paths,
+        ignoredNets,
+        removedTopLevelNets,
+        progress: typeof result.progress === 'number' ? result.progress : undefined,
+        routabitity: typeof result.routabitity === 'number' ? result.routabitity : undefined,
+        traces: Array.isArray(result.traces) ? result.traces.length : 0,
+        vias: Array.isArray(result.vias) ? result.vias.length : 0,
+    };
 }
 
 function previewImageExtension(mimeType: string | undefined) {
@@ -473,6 +561,79 @@ server.registerTool(
         return textResult({
             content: 'PCB layout sent to EasyEDA for assembly.',
             layoutId,
+        });
+    },
+);
+
+server.registerTool(
+    'run_auto_route_on_current_pcbdoc',
+    {
+        title: 'Run PCB Auto Router',
+        description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Open the target PCB document first.',
+        inputSchema: z.object({
+            ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
+            timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
+            router_dir: z.string().min(1).optional().describe('Optional custom-router directory override. Usually leave empty.'),
+            pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
+            suture_gnd: z.boolean().default(true).describe('Add GND SUTURE vias after importing routes.'),
+            suture_grid_mm: z.number().min(0.5).max(50).default(4).describe('GND suture via grid step in millimeters.'),
+            suture_diameter_mm: z.number().min(0.05).max(5).default(0.61).describe('GND suture via outer diameter in millimeters.'),
+            suture_drill_mm: z.number().min(0.05).max(5).default(0.305).describe('GND suture via drill diameter in millimeters.'),
+            suture_edge_margin_mm: z.number().min(0).max(20).default(1).describe('Minimum distance from board bounding box edge for generated suture via candidates.'),
+            suture_max_count: z.number().int().min(0).max(2000).default(500).describe('Safety cap for generated GND suture vias.'),
+        }),
+    },
+    async (input) => {
+        await mkdir(TEMP_DIR, { recursive: true });
+        const runId = randomUUID().slice(0, 6);
+        const inputPath = join(TEMP_DIR, `autoroute-input-${runId}.json`);
+        const filteredInputPath = join(TEMP_DIR, `autoroute-input-filtered-${runId}.json`);
+        const resultPath = join(TEMP_DIR, `autoroute-result-${runId}.json`);
+
+        const exported = await requestEasyEda('export-pcb-autoroute-json', {}, 300000) as { text?: unknown };
+        const inputText = typeof exported.text === 'string' ? exported.text : '';
+        if (!inputText) throw new Error('EasyEDA returned empty autoroute JSON.');
+
+        await writeFile(inputPath, inputText);
+        const inputJson = parseJsonText(inputText, 'EasyEDA autoroute input');
+        const ignoredNets = input.ignore_nets.map(net => net.trim()).filter(Boolean);
+        const { filtered, removedTopLevelNets } = filterAutoRouteInput(inputJson, ignoredNets);
+        await writeFile(filteredInputPath, JSON.stringify(filtered, null, 2));
+
+        let lastProgress = 0;
+        const result = await runEasyEdaAutoRouter(filtered, {
+            routerDir: input.router_dir,
+            timeoutMs: input.timeout_sec * 1000,
+            onProgress: progress => {
+                lastProgress = Math.max(lastProgress, progress);
+            },
+        }) as Record<string, unknown>;
+
+        if (Number(result.progress ?? 0) < 1) {
+            throw new Error(`Auto router did not finish. Last progress: ${lastProgress}`);
+        }
+
+        await writeFile(resultPath, JSON.stringify(result, null, 2));
+
+        const boardPolygon = getBoardPolygonFromAutoRouteInput(inputJson);
+        const importResult = await requestEasyEda('import-pcb-autoroute-json', {
+            text: JSON.stringify(result),
+            boardPolygon,
+            pourGround: input.pour_gnd,
+            sutureGround: input.suture_gnd,
+            suture: {
+                gridMm: input.suture_grid_mm,
+                diameterMm: input.suture_diameter_mm,
+                drillMm: input.suture_drill_mm,
+                edgeMarginMm: input.suture_edge_margin_mm,
+                maxCount: input.suture_max_count,
+            },
+        }, 300000);
+
+        return textResult({
+            content: 'Auto route imported into EasyEDA.',
+            ...summarizeAutoRouteResult(result, { inputPath, filteredInputPath, resultPath }, ignoredNets, removedTopLevelNets),
+            importResult,
         });
     },
 );

@@ -1,5 +1,5 @@
 import { assembleCircuit } from './eda/assemble';
-import { assembleBoard } from './eda/pcb-assemble';
+import { assembleBoard, pourDefaultGroundAndSutureVias, type GroundSutureOptions } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { checkPcbDrc } from './eda/drc';
 import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
@@ -10,6 +10,7 @@ import {
     PcbDrcDifferentialPairType,
     type PcbDrcBundle,
     type PcbDrcDifferentialPairRule,
+    type PcbDrcDifferentialPairSubRule,
     type PcbDrcRuleObject,
 } from '@copilot/shared/types/pcb/drc';
 
@@ -89,6 +90,34 @@ function formatPath(path: Array<string | number>) {
             ? `.${part}`
             : `[${JSON.stringify(part)}]`
     ).join('').replace(/^\./, '');
+}
+
+function readBoardPolygon(value: unknown): Parameters<typeof pourDefaultGroundAndSutureVias>[0] | undefined {
+    if (!Array.isArray(value)) return undefined;
+
+    const polygon = value
+        .filter((point): point is { x: number; y: number } =>
+            isRecord(point) &&
+            typeof point.x === 'number' &&
+            typeof point.y === 'number' &&
+            Number.isFinite(point.x) &&
+            Number.isFinite(point.y),
+        )
+        .map(point => ({ x: point.x, y: point.y }));
+
+    return polygon.length >= 3 ? { polygon } : undefined;
+}
+
+function readGroundSutureOptions(value: unknown): GroundSutureOptions {
+    if (!isRecord(value)) return {};
+
+    return {
+        gridMm: typeof value.gridMm === 'number' ? value.gridMm : undefined,
+        diameterMm: typeof value.diameterMm === 'number' ? value.diameterMm : undefined,
+        drillMm: typeof value.drillMm === 'number' ? value.drillMm : undefined,
+        edgeMarginMm: typeof value.edgeMarginMm === 'number' ? value.edgeMarginMm : undefined,
+        maxCount: typeof value.maxCount === 'number' ? value.maxCount : undefined,
+    };
 }
 
 function isLayerMapName(name: string) {
@@ -237,7 +266,7 @@ function readDifferentialPairRule(rule: unknown): DesiredDifferentialPair | unde
     return undefined;
 }
 
-function makeDifferentialPairSubRule(rule: PcbDrcRuleObject | undefined, name: string) {
+function makeDifferentialPairSubRule(rule: PcbDrcRuleObject | undefined, name: string): PcbDrcDifferentialPairSubRule {
     return {
         ...(rule ?? {}),
         type: 'net',
@@ -482,6 +511,7 @@ async function exportPcbDrcRules(): Promise<PcbDrcBundle> {
 async function applyPcbDrcRules(bundle: PcbDrcBundle) {
     const { regularNetRules, differentialPairs } = splitDifferentialPairsFromNetRules(bundle.netRules);
     const currentRuleConfiguration = await eda.pcb_Drc.getCurrentRuleConfiguration();
+    if (!currentRuleConfiguration) throw new Error('Failed to read current PCB DRC rule configuration.');
     validateDrcRuleConfiguration(bundle.ruleConfiguration, currentRuleConfiguration.config);
 
     await checkpointer.save(false);
@@ -709,6 +739,41 @@ async function handleMessage(message: McpMessage) {
 
         if (message.event === 'get-pcb-raw') {
             reply(true, await getPcbRaw());
+            return;
+        }
+
+        if (message.event === 'export-pcb-autoroute-json') {
+            const file = await eda.pcb_ManufactureData.getAutoRouteJsonFile('Copilot_AutoRoute_Json');
+            if (!file) throw new Error('EasyEDA returned empty autoroute JSON file');
+
+            reply(true, {
+                name: file.name,
+                size: file.size,
+                type: file.type,
+                text: await file.text(),
+            });
+            return;
+        }
+
+        if (message.event === 'import-pcb-autoroute-json') {
+            const text = typeof body.text === 'string' ? body.text : '';
+            if (!text) throw new Error('Missing routed autoroute JSON text');
+
+            const routeFile = new File([text], 'Copilot_AutoRoute_Result.json', {
+                type: 'application/json',
+            });
+
+            await checkpointer.save(false);
+            const imported = await eda.pcb_Document.importAutoRouteJsonFile(routeFile);
+            if (!imported) throw new Error('EasyEDA failed to import autoroute JSON');
+
+            const groundResult = await pourDefaultGroundAndSutureVias(readBoardPolygon(body.boardPolygon), {
+                pourGround: body.pourGround !== false,
+                sutureGround: body.sutureGround !== false,
+                suture: readGroundSutureOptions(body.suture),
+            });
+
+            reply(true, { imported, groundResult });
             return;
         }
 

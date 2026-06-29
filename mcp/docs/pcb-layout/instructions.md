@@ -106,7 +106,7 @@ criticalPair(pin("Rdm", "2"), pin("U4", "USB_DM"), { maxDistance: 4, hard: true,
 - Use `route.polygon(net, options)` for general post-route copper pours. Use `route.powerPolygon({ net, connect, around, ... })` for local buck/input/output copper. Do not put polygon options into `route.netClass`.
 - Use `route.stitch({ net, grid, around, margin })` only to override the whole-board default or to add scoped stitching.
 - Use `route.polygon(signals, { ..., stitch: { grid: 3 } })` or `route.powerPolygon({ net, ..., stitch: { grid: 3 } })` when stitching should be limited to generated polygon copper.
-- Omit `route.run` for placement-only output; include it when routing is required.
+- For MCP EasyEDA routing, prefer placement assembly followed by `run_auto_route_on_current_pcbdoc`. Use `route.run` only when the layout server route output is explicitly desired.
 
 Good GND polygon pattern:
 

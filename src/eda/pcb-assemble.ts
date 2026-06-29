@@ -20,6 +20,14 @@ type BoardPoint = {
 
 type BoardLayer = NonNullable<BoardAssemble["components"]>[number]["layer"];
 
+export type GroundSutureOptions = {
+    gridMm?: number;
+    diameterMm?: number;
+    drillMm?: number;
+    edgeMarginMm?: number;
+    maxCount?: number;
+};
+
 type DoneablePrimitive<T> = {
     isAsync(): boolean;
     done(): T | Promise<T>;
@@ -63,6 +71,33 @@ function trimClosingPoint(points: BoardPoint[]) {
     }
 
     return points;
+}
+
+function pointInPolygon(point: BoardPoint, polygon: BoardPoint[]) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const a = polygon[i];
+        const b = polygon[j];
+        const intersects = ((a.y > point.y) !== (b.y > point.y)) &&
+            point.x < ((b.x - a.x) * (point.y - a.y)) / (b.y - a.y) + a.x;
+        if (intersects) inside = !inside;
+    }
+
+    return inside;
+}
+
+function polygonBounds(points: BoardPoint[]) {
+    return points.reduce((bounds, point) => ({
+        minX: Math.min(bounds.minX, point.x),
+        maxX: Math.max(bounds.maxX, point.x),
+        minY: Math.min(bounds.minY, point.y),
+        maxY: Math.max(bounds.maxY, point.y),
+    }), {
+        minX: Number.POSITIVE_INFINITY,
+        maxX: Number.NEGATIVE_INFINITY,
+        minY: Number.POSITIVE_INFINITY,
+        maxY: Number.NEGATIVE_INFINITY,
+    });
 }
 
 function normalizePolygonPoints(points: BoardPoint[]) {
@@ -609,6 +644,156 @@ async function drawDefaultGroundPours(board: BoardAssemble["board"]) {
     }
 }
 
+async function removeOldDefaultGroundSutureVias() {
+    const oldVias = await eda.pcb_PrimitiveVia.getAll(DEFAULT_GND_NET, true).catch(() => []);
+    const targets = oldVias.filter(via => via.getState_ViaType() === EPCB_PrimitiveViaType.SUTURE);
+
+    if (targets.length) {
+        await eda.pcb_PrimitiveVia.delete(targets).catch(error => {
+            warning(`PCB old GND suture via cleanup failed: ${(error as Error).message}`);
+            return false;
+        });
+    }
+}
+
+function collectClearanceViolationObjectIds(drcResult: unknown) {
+    const ids = new Set<string>();
+    const categories = Array.isArray(drcResult) ? drcResult : [];
+
+    for (const category of categories) {
+        if (!category || typeof category !== "object") continue;
+        const rawCategory = category as Record<string, unknown>;
+        if (rawCategory.name !== "Clearance Error") continue;
+
+        const groups = Array.isArray(rawCategory.list) ? rawCategory.list : [];
+        for (const group of groups) {
+            if (!group || typeof group !== "object") continue;
+            const rawGroup = group as Record<string, unknown>;
+            const items = Array.isArray(rawGroup.list) ? rawGroup.list : [];
+
+            for (const item of items) {
+                if (!item || typeof item !== "object") continue;
+                const rawItem = item as Record<string, unknown>;
+
+                if (Array.isArray(rawItem.objs)) {
+                    for (const obj of rawItem.objs) {
+                        if (typeof obj === "string") ids.add(obj);
+                    }
+                }
+
+                const explanation = rawItem.explanation;
+                const errData = explanation && typeof explanation === "object"
+                    ? (explanation as Record<string, unknown>).errData
+                    : undefined;
+                if (errData && typeof errData === "object") {
+                    const rawErrData = errData as Record<string, unknown>;
+                    if (typeof rawErrData.obj1 === "string") ids.add(rawErrData.obj1);
+                    if (typeof rawErrData.obj2 === "string") ids.add(rawErrData.obj2);
+                }
+            }
+        }
+    }
+
+    return ids;
+}
+
+async function deleteGroundSutureViasWithClearanceErrors(createdViaIds: Set<string>) {
+    if (!createdViaIds.size) return 0;
+
+    const drcResult = await eda.pcb_Drc.check(true, true, true).catch(error => {
+        warning(`PCB GND suture via DRC post-clean skipped: ${(error as Error).message}`);
+        return [];
+    });
+    const violationIds = collectClearanceViolationObjectIds(drcResult);
+    const deleteIds = [...createdViaIds].filter(id => violationIds.has(id));
+
+    if (!deleteIds.length) return 0;
+
+    const deleted = await eda.pcb_PrimitiveVia.delete(deleteIds).catch(error => {
+        warning(`PCB GND suture via DRC post-clean delete failed: ${(error as Error).message}`);
+        return false;
+    });
+
+    if (!deleted) return 0;
+
+    eda.sys_Log.add(`PCB GND suture via DRC post-clean deleted: ${deleteIds.length}`, ESYS_LogType.INFO);
+    return deleteIds.length;
+}
+
+async function drawDefaultGroundSutureVias(board: BoardAssemble["board"], options: GroundSutureOptions = {}) {
+    if (!board) return { created: 0, skipped: true };
+
+    const points = normalizePolygonPoints(board.polygon);
+    if (points.length < 3) {
+        warning("PCB GND suture vias skipped: board polygon must contain at least 3 points");
+        return { created: 0, skipped: true };
+    }
+
+    await removeOldDefaultGroundSutureVias();
+
+    const gridMm = validLengthMm(options.gridMm, 4);
+    const drillMm = validLengthMm(options.drillMm, 0.305);
+    const diameterMm = Math.max(validLengthMm(options.diameterMm, 0.61), drillMm);
+    const edgeMarginMm = Math.max(0, Number.isFinite(options.edgeMarginMm) ? options.edgeMarginMm! : 1);
+    const maxCount = Math.max(0, Math.floor(Number.isFinite(options.maxCount) ? options.maxCount! : 500));
+    const bounds = polygonBounds(points);
+    const drill = mmToMil(drillMm);
+    const diameter = mmToMil(diameterMm);
+    const createdViaIds = new Set<string>();
+    let created = 0;
+
+    outer: for (let x = bounds.minX + edgeMarginMm; x <= bounds.maxX - edgeMarginMm; x += gridMm) {
+        for (let y = bounds.minY + edgeMarginMm; y <= bounds.maxY - edgeMarginMm; y += gridMm) {
+            if (created >= maxCount) break outer;
+            if (!pointInPolygon({ x, y }, points)) continue;
+
+            try {
+                const via = await eda.pcb_PrimitiveVia.create(
+                    DEFAULT_GND_NET,
+                    mmToMil(x),
+                    mmToMil(y),
+                    drill,
+                    diameter,
+                    EPCB_PrimitiveViaType.SUTURE
+                );
+                if (!via) throw new Error('Failed create via')
+                createdViaIds.add(via.getState_PrimitiveId());
+                created++;
+            } catch (error) {
+                warning(`PCB GND suture via failed: ${(error as Error).message}`);
+            }
+
+            await yieldToEventLoop();
+        }
+    }
+
+    eda.sys_Log.add(`Create vias: ${created}; ${JSON.stringify(createdViaIds)}`, ESYS_LogType.INFO);
+    const deletedByDrc = await deleteGroundSutureViasWithClearanceErrors(createdViaIds);
+    return { created, deletedByDrc, skipped: false };
+}
+
+export async function pourDefaultGroundAndSutureVias(board: BoardAssemble["board"], options: {
+    pourGround?: boolean;
+    sutureGround?: boolean;
+    suture?: GroundSutureOptions;
+} = {}) {
+    const pourGround = options.pourGround ?? true;
+    const sutureGround = options.sutureGround ?? true;
+    const result: { poured?: boolean; suture?: Awaited<ReturnType<typeof drawDefaultGroundSutureVias>> } = {};
+
+    if (pourGround) {
+        await drawDefaultGroundPours(board);
+        result.poured = true;
+    }
+
+    if (sutureGround) {
+        result.suture = await drawDefaultGroundSutureVias(board, options.suture);
+    }
+
+    await refreshPcbState();
+    return result;
+}
+
 async function refreshPcbState() {
     await eda.pcb_Document.startCalculatingRatline().catch(error => {
         warning(`PCB ratline recalculation failed: ${(error as Error).message}`);
@@ -676,7 +861,6 @@ async function assembleBoardTask(board: BoardAssemble) {
     await runStep("Draw tracks", () => drawTracks(board.tracks));
     await runStep("Draw vias", () => drawVias(board.vias));
     await runStep("Draw copper fills", () => drawPolygons(board.polygons));
-    await runStep("Draw default GND pours", () => drawDefaultGroundPours(board.board));
     await runStep("Refresh PCB state", refreshPcbState);
     await runStep("Post-assemble settle", yieldToEventLoop);
 
