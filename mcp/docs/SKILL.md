@@ -15,3 +15,4 @@ Treat the local files as the documentation source for MCP work. Do not fetch or 
 - `pcb-layout/instructions.md`: PCB layout workflow and heuristics.
 - `pcb-layout/dsl.ts`: authoritative PCB layout DSL declarations and examples.
 - `pcb-layout/mcp-workflow.md`: MCP-specific PCB assembly workflow.
+- `pcb-drc/rules.md`: PCB DRC rule export/edit/apply workflow, including differential pair handling.

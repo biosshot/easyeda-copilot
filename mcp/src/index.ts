@@ -15,6 +15,7 @@ import { ExplainPcbSchema, type ExplainPCB } from '@copilot/shared/types/pcb/exp
 import { savePcbPreview, type PreviewOptions } from './pcb-preview/index.js';
 import { PcbLayerNameSchema } from '@copilot/shared/types/pcb/shared.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
+import { PcbDrcBundleSchema, type PcbDrcBundle } from '@copilot/shared/types/pcb/drc.js';
 import findUp from 'find-up';
 import { fileURLToPath } from 'node:url';
 
@@ -236,6 +237,11 @@ async function readLayoutCode(input: { file: string; }) {
     }
 
     return await readFile(resolveInputFilePath(filePath), 'utf8');
+}
+
+async function readJsonFile(file: string) {
+    const text = await readFile(resolveInputFilePath(file), 'utf8');
+    return JSON.parse(text);
 }
 
 function previewImageExtension(mimeType: string | undefined) {
@@ -569,14 +575,44 @@ server.registerTool(
 );
 
 server.registerTool(
-    'get_current_drc_rules',
+    'export_pcb_drc_rules',
     {
-        title: 'Get Current PCB DRC Rules',
-        description: 'Return the current EasyEDA PCB DRC rule configuration as JSON. Open the target PCB document first.',
-        inputSchema: z.object({}),
+        title: 'Export PCB DRC Rules',
+        description: 'Export the full current PCB DRC bundle to a JSON file. The bundle contains ruleConfiguration and netRules; differential pairs are injected into netRules as synthetic entries with type "differentialPair". Open the target PCB document first.',
+        inputSchema: z.object({
+            file: z.string().min(1).optional().describe('Optional output JSON file path. Defaults to a temp file.'),
+        }),
     },
-    async () => {
-        const result = await requestEasyEda('get-current-drc-rules');
+    async ({ file }) => {
+        const result = PcbDrcBundleSchema().parse(await requestEasyEda('export-pcb-drc-rules')) as PcbDrcBundle;
+        const savePath = file?.trim()
+            ? resolveInputFilePath(file)
+            : join(TEMP_DIR, `pcb-drc-${randomUUID().slice(0, 6)}.json`);
+
+        await mkdir(dirname(savePath), { recursive: true });
+        await writeFile(savePath, JSON.stringify(result, null, 2));
+
+        return textResult({
+            path: savePath,
+            ruleConfigurationName: typeof result.ruleConfiguration.name === 'string' ? result.ruleConfiguration.name : undefined,
+            netRules: result.netRules.length,
+            differentialPairs: result.netRules.filter(rule => rule.type === 'differentialPair').length,
+        });
+    },
+);
+
+server.registerTool(
+    'apply_pcb_drc_rules',
+    {
+        title: 'Apply PCB DRC Rules',
+        description: `Apply a PCB DRC bundle JSON file exported by export_pcb_drc_rules. Synthetic netRules entries with type "differentialPair" are reconciled through EasyEDA differential-pair APIs before regular netRules are overwritten. Open the target PCB document first. First read doc ${SKILL_DOC_PATH}`,
+        inputSchema: z.object({
+            file: z.string().min(1).describe('Path to the edited PCB DRC bundle JSON file.'),
+        }),
+    },
+    async ({ file }) => {
+        const bundle = PcbDrcBundleSchema().parse(await readJsonFile(file)) as PcbDrcBundle;
+        const result = await requestEasyEda('apply-pcb-drc-rules', { bundle }, 300000);
         return textResult(result);
     },
 );
