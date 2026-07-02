@@ -716,6 +716,7 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'get-multi-page-schematic') {
+            const extractFootprintUuid = !!body.extractFootprintUuid;
             const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo();
             if (!allPages || !allPages.length) throw new Error('Not open any sch or is empty sch');
             const fullSch: ExplainCircuit = { components: [] };
@@ -724,7 +725,7 @@ async function handleMessage(message: McpMessage) {
                 await eda.dmt_EditorControl.openDocument(page.uuid);
                 await new Promise(resolve => setTimeout(resolve, 400));
                 const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
-                const schematic = await getSchematic([...primitiveIds]);
+                const schematic = await getSchematic([...primitiveIds], { extractFootprintUuid });
                 fullSch.components.push(...schematic.components);
             }
 

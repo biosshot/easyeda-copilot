@@ -128,7 +128,7 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
     return pinToSignal;
 }
 
-export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
+export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean }) {
     const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
 
     if (docType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
@@ -239,7 +239,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             }
         }
 
-        componentsMap.set(designator, {
+        const component_ = {
             designator,
             part_uuid: null,
             pins: [...(component?.pins ?? []), ...pins],
@@ -251,8 +251,15 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                 mirror: primitiveComponent.getState_Mirror()
             },
             code: primitiveComponent.getState_SupplierId()?.toString() || undefined,
-            footprint_name: component?.footprint_name ?? getFootprintNameFromOtherProperty(otherProperty)
-        })
+            footprint_name: component?.footprint_name ?? getFootprintNameFromOtherProperty(otherProperty),
+            footprint_uuid: null as string | null | undefined
+        }
+
+        if (options?.extractFootprintUuid) {
+            component_.footprint_uuid = primitiveComponent.getState_Footprint()?.uuid;
+        }
+
+        componentsMap.set(designator, component_);
     }
 
     // const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
@@ -311,7 +318,8 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             footprint_name: device?.footprint?.display_title
                 ?? device?.footprint?.title
                 ?? device?.attributes?.['Supplier Footprint']?.toString()
-                ?? component.footprint_name
+                ?? component.footprint_name,
+            footprint_uuid: component.footprint_uuid
         };
     });
 
