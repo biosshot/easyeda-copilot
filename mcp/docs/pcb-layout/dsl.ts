@@ -53,8 +53,28 @@ interface BlockOptions {
   placementClearance?: number;
 }
 
+interface ModuleOptions {
+  /** Optional module anchor. The module bbox is softly attracted to this target after block/satellite placement. */
+  anchor?: TargetRef;
+  /** Preferred coarse side of the board for this module. */
+  sidePreference?: BoardEdge;
+  /** Maximum module bbox scale over estimated packed size. Use to keep large functional areas from spreading too much. */
+  maxBboxScale?: number;
+  /** Absolute module bbox limits in mm. */
+  maxWidth?: number;
+  maxHeight?: number;
+  /** Treat module bbox limits as hard placement penalties. Use only for real envelopes. */
+  hardBbox?: boolean;
+  /** Keep module blocks as a rigid macro group after internal placement. Defaults true. */
+  lockInternalAfterPlace?: boolean;
+  /** Reserved for future module-local refinement. */
+  allowInternalRefine?: false | "satellitesOnly" | "all";
+  /** Higher-priority modules move first during macro placement. */
+  placementPriority?: Priority;
+}
+
 interface BoardOptions {
-  /** Allowed PCB layers for placement/routing. Default: ["top"]. */
+  /** Allowed PCB layers for placement. Default: ["top"]. */
   layers?: Layer[];
   /** Default component side. Default: "top". */
   defaultLayer?: Layer;
@@ -107,11 +127,11 @@ interface PolygonBoardOptions extends BoardShapeBaseOptions { }
 interface AutoBoardOptions extends BoardOptions {
   /** Preferred width/height ratio. Default around 1.45. */
   aspectRatio?: number;
-  /** Target component density = total footprint area / board area. Default 0.4. Lower values create more routing room; higher values create tighter boards. */
+  /** Target component density = total footprint area / board area. Default 0.4. Lower values create more room for the client-side router; higher values create tighter boards. */
   density?: number;
   /** Alias for density. */
   componentDensity?: number;
-  /** Minimum board width/height. Keep compact and based on component sizes plus routing margin. */
+  /** Minimum board width/height. Keep compact and based on component sizes plus placement margin. */
   minWidth?: number;
   minHeight?: number;
   /** Maximum board width/height. Use sparingly; too small can make placement impossible. */
@@ -189,6 +209,8 @@ declare const silkscreen: {
 
 /** Define a functional block and assign listed components to it. Unknown roles should be "generic". */
 declare function block(name: string, designators?: string[], role?: BlockRole, descriptionOrOptions?: string | null | BlockOptions, options?: BlockOptions): TargetRef;
+/** Define a macro placement module from existing block names. Use for major board areas such as power, mcu, usb, sensors. */
+declare function module(name: string, blockNames: string[], options?: ModuleOptions): void;
 
 interface ComponentBuilder {
   /** Assign component to a block. */
@@ -215,12 +237,6 @@ interface ComponentBuilder {
   place(options: FixedPlacementOptions): ComponentBuilder;
   /** Allow this component footprint to extend past the board edge by the given millimeters. Use only for mechanical edge parts such as USB connectors. */
   boardOverflow(options: BoardOverflowOptions): ComponentBuilder;
-  /** Prohibit routed wires/vias under component body while leaving pad access windows.
-   * Use only when routing under the component is genuinely harmful, such as sensitive feedback resistors or specific connector bodies.
-   * allowOwnNets opens a local cross-shaped access window centered on each pad.
-   * Use allowOwnNets for connectors whose body is much larger than their pads.
-   */
-  noWiresUnder(options?: boolean | { enabled?: boolean; allowOwnNets?: boolean }): ComponentBuilder;
   /** Override automatic reference/designator text placement for this component. Use enabled:false to hide it. */
   designatorText(options?: DesignatorTextOptions): ComponentBuilder;
 }
@@ -339,17 +355,6 @@ interface LineOptions {
 /** Arrange components in one horizontal/vertical row. Use sparingly for true arrays, matched groups, or explicit user-requested alignment. */
 declare function line(components: string[], axis: Axis, options?: LineOptions): void;
 
-interface PairedLineOptions {
-  gap?: number;
-  rowGap?: number;
-  primaryRotate?: number;
-  secondaryRotate?: number;
-  priority?: Priority;
-}
-
-/** Arrange primary/secondary pairs in two aligned rows. Useful for diode+resistor arrays. */
-declare function pairedLine(pairs: Array<{ primary: string; secondary: string }>, axis: Axis, options?: PairedLineOptions): void;
-
 interface BypassOptions {
   /** Row axis. If omitted, solver chooses by footprint long axis. */
   axis?: Axis;
@@ -403,103 +408,3 @@ interface SolverOptions {
 }
 
 declare function solver(options: SolverOptions): void;
-
-interface RouteRunOptions {
-  /** Router effort level. Use the unified RuleLevel vocabulary. */
-  profile?: RuleLevel;
-  trace?: "orthogonal" | "fortyfive" | "free_angle";
-  /** Default trace width in mm. Default 0.2mm unless explicitly required otherwise. */
-  width?: number;
-  /** Default copper clearance in mm. Default 0.127mm unless explicitly required otherwise. */
-  clearance?: number;
-  /** Default via diameter in mm. Default 0.61mm unless explicitly required otherwise. */
-  viaDiameter?: number;
-  /** Default via drill in mm. Default 0.305mm unless explicitly required otherwise. */
-  viaDrill?: number;
-  completion?: RuleLevel;
-  compactness?: RuleLevel;
-  viaAvoidance?: RuleLevel;
-  cleanup?: RuleLevel;
-  designName?: string;
-}
-
-interface RouteNetClassOptions {
-  /** Trace width in mm. Default route width is 0.2mm; only widen high-current/power nets with a concrete reason. */
-  width?: number;
-  /** Copper clearance in mm. Default route clearance is 0.127mm unless the user or manufacturing rules require more. */
-  clearance?: number;
-  viaAvoidance?: RuleLevel;
-  /** Explicit routing order. Higher values route earlier. Missing zIndex is treated as 0; ties keep declaration order. */
-  zIndex?: number;
-}
-
-interface StitchOptionsBase {
-  /** Via grid step in mm. */
-  grid?: number;
-  /** Via diameter in mm. Defaults to route.run viaDiameter. */
-  diameter?: number;
-  /** Via drill in mm. Defaults to route.run viaDrill. */
-  drill?: number;
-  /** Keepout from pads/tracks/vias/board holes in mm. Defaults to net clearance. */
-  clearance?: number;
-  /** Board edge keepout in mm. Defaults to board edge clearance. */
-  edge?: number;
-  /** Safety cap for generated stitching vias. */
-  maxCount?: number;
-}
-
-interface StitchOptions extends StitchOptionsBase {
-  /** Net to stitch. */
-  net: string;
-  /** Optional scoped area around a component, pin, or block. Without around, this replaces the whole-board default stitch rule for this net. */
-  around?: TargetRef;
-  /** Margin around the resolved around target bbox. */
-  margin?: number;
-}
-
-interface PolygonOptions {
-  /** Optional scoped area around a component, pin, block, or board anchor. */
-  around?: TargetRef;
-  /** Margin around the resolved around target bbox. */
-  margin?: number;
-  /** Max polygon growth distance from own tracks/pads/vias before hitting board edge or obstacles. Prefer about 0.4-0.8mm for compact pours. */
-  expansion?: number;
-  /** Clearance from polygon to other nets and other polygons. Prefer about 0.45mm by default. */
-  clearance?: number;
-  /** Drop polygon regions narrower than this. Prefer about 0.5mm by default. */
-  minWidth?: number;
-  /** Drop polygon islands with area smaller than this, in mm^2. Default 1mm^2. */
-  minArea?: number;
-  /** Keep a polygon island only when it touches at least this many same-net pads. Default 2 for route.polygon, 1 for route.powerPolygon. */
-  minPadConnections?: number;
-  /** Shape style for post-processing. */
-  style?: "compact" | "smooth" | "orthogonal45";
-  /** Cleanup strength for small steps, protrusions, and notches. */
-  cleanup?: "none" | "normal" | "strong";
-  /** Stitch vias inside this generated polygon only. */
-  stitch?: StitchOptionsBase;
-}
-
-interface PowerPolygonOptions extends PolygonOptions {
-  /** Net to generate local power copper for. */
-  net: string;
-  /** Dominant pads that should seed and constrain the local power copper. */
-  connect?: PinTargetRef[];
-}
-
-declare const route: {
-  /** Disable routing. Placement only. */
-  skip(): void;
-  /** Run Freerouting after placement. */
-  run(options?: RouteRunOptions): void;
-  /** Define routing rules for a group of signals. */
-  netClass(name: string, signals: string | string[], options?: RouteNetClassOptions): void;
-  /** Generate general post-route polygon copper for one or more nets. Use for board/local distribution pours, not for defining routing class width/clearance. */
-  polygon(signals: string | string[], options?: PolygonOptions): void;
-  /** Generate local intent-based power copper around specific pads or a block, e.g. buck VIN/VOUT copper. */
-  powerPolygon(options: PowerPolygonOptions): void;
-  /** Add post-routing via stitching. GND has a default whole-board rule when present; without around this replaces the whole-board default for the same net. */
-  stitch(options: StitchOptions): void;
-  /** Ignore signal(s) in the autorouter, usually "GND" when it will be served by copper pour/stitching. */
-  ignore(signals: string | string[]): void;
-};

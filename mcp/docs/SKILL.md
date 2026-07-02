@@ -1,6 +1,6 @@
 ---
 name: easyeda-copilot-mcp
-description: Use when EasyEDA Copilot MCP tools are available. This local skill file is the MCP documentation entry point; read it and the referenced local docs before creating circuits, modifying schematics, generating PCB layout DSL, or assembling PCB layout results.
+description: Use when EasyEDA Copilot MCP tools are available. This local skill file is the MCP documentation entry point; read it and the referenced local docs before creating circuits, modifying schematics, generating placement-only PCB layout DSL, assembling PCB placement results, or running PCB routing/DRC tools.
 ---
 
 # EasyEDA Copilot MCP

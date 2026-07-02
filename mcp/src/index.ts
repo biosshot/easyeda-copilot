@@ -493,7 +493,7 @@ server.registerTool(
     'make_pcb_layout',
     {
         title: 'Make PCB Layout',
-        description: `Create PCB placement and optional routing from the current EasyEDA schematic using JavaScript PCB layout DSL code. Returns reports, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+        description: `Create PCB component placement from the current EasyEDA schematic using JavaScript PCB layout DSL code. Server-side routing is disabled: route the assembled PCB later in EasyEDA/client tools. Returns placement report, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
         }).refine(data => Boolean(data.file), {
