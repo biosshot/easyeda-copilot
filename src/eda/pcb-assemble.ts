@@ -163,49 +163,47 @@ type PcbPrimitiveCleanupApi = {
     delete(primitiveIds: Array<string>): Promise<boolean>;
 };
 
-async function clearPrimitiveGroup(name: string, api: PcbPrimitiveCleanupApi) {
-    const ids = await withTimeout(
-        api.getAllPrimitiveId(),
-        PCB_CLEAR_TIMEOUT_MS,
-        `PCB cleanup ${name} get timeout`,
-    ).catch(error => {
-        warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
-        return [];
-    });
-
-    if (!ids.length) return;
-
-    await withTimeout(
-        api.delete(ids),
-        PCB_CLEAR_TIMEOUT_MS,
-        `PCB cleanup ${name} delete timeout`,
-    ).catch(error => {
-        warning(`PCB cleanup ${name} delete failed: ${(error as Error).message}`);
-        return false;
-    });
-
-    await yieldToEventLoop();
-}
 
 async function clearCurrentPcbBoard() {
-    const groups: Array<[string, PcbPrimitiveCleanupApi]> = [
-        ["pour", eda.pcb_PrimitivePour],
-        ["fill", eda.pcb_PrimitiveFill],
-        ["region", eda.pcb_PrimitiveRegion],
-        ["via", eda.pcb_PrimitiveVia],
-        ["line", eda.pcb_PrimitiveLine],
-        ["arc", eda.pcb_PrimitiveArc],
-        ["polyline", eda.pcb_PrimitivePolyline],
+    const groups: Array<[string, { api: PcbPrimitiveCleanupApi, filter?: (id: string) => boolean }]> = [
+        ["pour", { api: eda.pcb_PrimitivePour }],
+        ["fill", { api: eda.pcb_PrimitiveFill }],
+        ["region", { api: eda.pcb_PrimitiveRegion }],
+        ["via", { api: eda.pcb_PrimitiveVia }],
+        ["line", { api: eda.pcb_PrimitiveLine }],
+        ["arc", { api: eda.pcb_PrimitiveArc }],
+        ["polyline", { api: eda.pcb_PrimitivePolyline }],
         // ["string", eda.pcb_PrimitiveString],
         // ["attribute", eda.pcb_PrimitiveAttribute],
-        // ["pad", eda.pcb_PrimitivePad],
+        ["pad", { api: eda.pcb_PrimitivePad, filter: (id) => !id.startsWith('e') }],
         // ["dimension", eda.pcb_PrimitiveDimension],
         // ["image", eda.pcb_PrimitiveImage],
         // ["object", eda.pcb_PrimitiveObject],
     ];
 
     for (const [name, api] of groups) {
-        await clearPrimitiveGroup(name, api);
+        let ids = await withTimeout(
+            api.api.getAllPrimitiveId(),
+            PCB_CLEAR_TIMEOUT_MS,
+            `PCB cleanup ${name} get timeout`,
+        ).catch(error => {
+            warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
+            return [];
+        });
+
+        if (!ids.length) continue;
+        if (api.filter) ids = ids.filter(api.filter)
+
+        await withTimeout(
+            api.api.delete(ids),
+            PCB_CLEAR_TIMEOUT_MS,
+            `PCB cleanup ${name} delete timeout`,
+        ).catch(error => {
+            warning(`PCB cleanup ${name} delete failed: ${(error as Error).message}`);
+            return false;
+        });
+
+        await yieldToEventLoop();
     }
 }
 
