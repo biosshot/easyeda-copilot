@@ -19,6 +19,8 @@ type BoardPoint = {
 };
 
 type BoardLayer = NonNullable<BoardAssemble["components"]>[number]["layer"];
+type BoardPad = NonNullable<BoardAssemble["pads"]>[number];
+type BoardPadLayer = BoardPad["layer"];
 
 export type GroundSutureOptions = {
     gridMm?: number;
@@ -42,6 +44,12 @@ function layerToCopper(layer: BoardLayer): TPCB_LayersOfCopper {
 }
 
 function layerToLine(layer: BoardLayer): TPCB_LayersOfLine {
+    return layer === "bottom" ? EPCB_LayerId.BOTTOM : EPCB_LayerId.TOP;
+}
+
+function layerToPad(layer: BoardPadLayer): TPCB_LayersOfPad {
+    if (layer === "multi") return EPCB_LayerId.MULTI;
+
     return layer === "bottom" ? EPCB_LayerId.BOTTOM : EPCB_LayerId.TOP;
 }
 
@@ -175,7 +183,7 @@ async function clearCurrentPcbBoard() {
         ["polyline", { api: eda.pcb_PrimitivePolyline }],
         // ["string", eda.pcb_PrimitiveString],
         // ["attribute", eda.pcb_PrimitiveAttribute],
-        ["pad", { api: eda.pcb_PrimitivePad, filter: (id) => !id.startsWith('e') }],
+        // ["pad", { api: eda.pcb_PrimitivePad, filter: (id) => !id.startsWith('e') }],
         // ["dimension", eda.pcb_PrimitiveDimension],
         // ["image", eda.pcb_PrimitiveImage],
         // ["object", eda.pcb_PrimitiveObject],
@@ -535,6 +543,78 @@ async function drawVias(vias: BoardAssemble["vias"]) {
     }
 }
 
+function boardPadShape(pad: BoardPad): TPCB_PrimitivePadShape {
+    if (pad.shape === "round") {
+        const diameter = validLengthMmToMil(pad.diameter ?? pad.width ?? pad.height, MIN_COPPER_WIDTH_MM);
+        return [EPCB_PrimitivePadShapeType.ELLIPSE, diameter, diameter];
+    }
+
+    const widthMm = validLengthMm(pad.width ?? pad.diameter, MIN_COPPER_WIDTH_MM);
+    const heightMm = validLengthMm(pad.height ?? pad.diameter ?? pad.width, widthMm);
+    const width = mmToMil(widthMm);
+    const height = mmToMil(heightMm);
+
+    if (pad.shape === "oval") {
+        return [EPCB_PrimitivePadShapeType.OBLONG, width, height];
+    }
+
+    return [EPCB_PrimitivePadShapeType.RECTANGLE, width, height, 0];
+}
+
+function boardPadHole(pad: BoardPad): TPCB_PrimitivePadHole | null {
+    if (!pad.hole) return null;
+
+    return [EPCB_PrimitivePadHoleType.ROUND, validLengthMmToMil(pad.hole.diameter, MIN_COPPER_WIDTH_MM)];
+}
+
+function boardPadLayers(pad: BoardPad): TPCB_LayersOfPad[] {
+    if (pad.layer !== "multi") return [layerToPad(pad.layer)];
+    if (pad.hole) return [EPCB_LayerId.MULTI];
+
+    return [EPCB_LayerId.TOP, EPCB_LayerId.BOTTOM];
+}
+
+async function createBoardPad(pad: BoardPad, name: string, layer: TPCB_LayersOfPad, hole: TPCB_PrimitivePadHole | null) {
+    await eda.pcb_PrimitivePad.create(
+        layer,
+        name,
+        mmToMil(pad.x),
+        mmToMil(pad.y),
+        0,
+        boardPadShape(pad),
+        safeNetName(pad.net) || undefined,
+        hole,
+        mmToMil(pad.hole?.x ?? 0),
+        mmToMil(pad.hole?.y ?? 0),
+    ).catch(e => undefined);
+}
+
+async function drawPads(pads: BoardAssemble["pads"]) {
+    if (!pads?.length) return;
+
+    for (let i = 0; i < pads.length; i++) {
+        const pad = pads[i];
+        const name = safePrimitiveName(pad.name.trim() || `P${i + 1}`);
+        const hole = boardPadHole(pad);
+        const layers = boardPadLayers(pad);
+
+        try {
+            for (const layer of layers) {
+                await createBoardPad(pad, name, layer, hole);
+            }
+
+            eda.sys_Log.add(
+                `PCB pad created: ${name} net: ${pad.net || "none"} at ${pad.x}mm ${pad.y}mm layer: ${pad.layer} primitives: ${layers.length}`,
+                ESYS_LogType.INFO,
+            );
+        } catch (error) {
+            warning(`PCB pad failed ${name}: ${(error as Error).message}`);
+        }
+
+        await yieldToEventLoop();
+    }
+}
+
 async function drawPolygons(polygons: BoardAssemble["polygons"]) {
     if (!polygons?.length) return;
 
@@ -856,6 +936,7 @@ async function assembleBoardTask(board: BoardAssemble) {
     await runStep("Save PCB after clear", saveCurrentPcbDocument);
     await runStep("Draw board outline", () => drawBoardOutline(board.board));
     await runStep("Place components", () => placeComponents(board.components));
+    await runStep("Draw pads", () => drawPads(board.pads));
     await runStep("Draw tracks", () => drawTracks(board.tracks));
     await runStep("Draw vias", () => drawVias(board.vias));
     await runStep("Draw copper fills", () => drawPolygons(board.polygons));

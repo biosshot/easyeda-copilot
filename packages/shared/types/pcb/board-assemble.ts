@@ -6,6 +6,8 @@ export const BoardAssemblePointSchema = () => z.object({
 })
 
 export const BoardAssembleLayerSchema = () => z.enum(["top", "bottom"]);
+export const BoardAssemblePadLayerSchema = () => z.enum(["top", "bottom", "multi"]);
+export const BoardAssemblePadShapeSchema = () => z.enum(["rect", "oval", "round"]);
 
 export const BoardAssembleSchema = () => z.object({
     board: z.object({
@@ -36,6 +38,22 @@ export const BoardAssembleSchema = () => z.object({
         y: z.number(),
         diameter: z.number(),
         drill: z.number(),
+    }).strict()).optional(),
+    pads: z.array(z.object({
+        name: z.string(),
+        net: z.string(),
+        x: z.number(),
+        y: z.number(),
+        layer: BoardAssemblePadLayerSchema(),
+        shape: BoardAssemblePadShapeSchema(),
+        width: z.number().optional(),
+        height: z.number().optional(),
+        diameter: z.number().optional(),
+        hole: z.object({
+            diameter: z.number(),
+            x: z.number().optional(),
+            y: z.number().optional(),
+        }).strict().optional(),
     }).strict()).optional(),
     polygons: z.array(z.object({
         net: z.string(),
