@@ -1,0 +1,1230 @@
+{
+    "components": [
+        {
+            "designator": "C10",
+            "value": "1uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "83444fb60f7c440d83c686de398b64a8",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C9",
+            "value": "1uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "VBUS_5V"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "83444fb60f7c440d83c686de398b64a8",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "R7",
+            "value": "1.2kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "PROG_SET"
+                }
+            ],
+            "part_uuid": "0e5106f6d4f245efb944cb0e20fa3104",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R1",
+            "value": "5.1kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "CC1"
+                }
+            ],
+            "part_uuid": "3348f8142a6c42d99dcb8c8fa9328f21",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "J1",
+            "value": "B2B-PH-K-S(LF)(SN)",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "30e4e60376dc4414ba151b7f1f4fbd96",
+            "footprint_name": "CONN-TH_B2B-PH-K-S"
+        },
+        {
+            "designator": "U2",
+            "value": "TP4056",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "TEMP",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "PROG",
+                    "signal_name": "PROG_SET"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "VCC",
+                    "signal_name": "VBUS_5V"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "BAT",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "STDBY",
+                    "signal_name": "NC_STDBY"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "CHRG",
+                    "signal_name": "NC_CHRG"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "CE",
+                    "signal_name": "VBUS_5V"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "PAD",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "4d5df75e676d47f4948dbba93f707c41",
+            "footprint_name": "ESOP-8_L4.9-W3.9-P1.27-LS6.0-BL-EP-4"
+        },
+        {
+            "designator": "R6",
+            "value": "5.1kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "CC2"
+                }
+            ],
+            "part_uuid": "3348f8142a6c42d99dcb8c8fa9328f21",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "J2",
+            "value": "BX-TYPE-C-MWT16P",
+            "pins": [
+                {
+                    "pin_number": "16",
+                    "name": "EH",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "15",
+                    "name": "EH",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "14",
+                    "name": "EH",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "EH",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "B8",
+                    "name": "SBU2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "B7",
+                    "name": "DN2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "B6",
+                    "name": "DP2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "B5",
+                    "name": "CC2",
+                    "signal_name": "CC2"
+                },
+                {
+                    "pin_number": "B4A9",
+                    "name": "VBUS",
+                    "signal_name": "VBUS_5V"
+                },
+                {
+                    "pin_number": "B1A12",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "A8",
+                    "name": "SBU1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "A7",
+                    "name": "DN1",
+                    "signal_name": "USB_DM"
+                },
+                {
+                    "pin_number": "A6",
+                    "name": "DP1",
+                    "signal_name": "USB_DP"
+                },
+                {
+                    "pin_number": "A5",
+                    "name": "CC1",
+                    "signal_name": "CC1"
+                },
+                {
+                    "pin_number": "A4B9",
+                    "name": "VBUS",
+                    "signal_name": "VBUS_5V"
+                },
+                {
+                    "pin_number": "A1B12",
+                    "name": "GND",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "c3527fa70bbc48508ddc24bfa42f497e",
+            "footprint_name": "USB-TYPE-C-SMD_BX-TYPE-C-MWT16P"
+        },
+        {
+            "designator": "C4",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N33016"
+                }
+            ],
+            "part_uuid": "2d54042cc37148c7837be7cdcb72646f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "R5",
+            "value": "100kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N33015"
+                }
+            ],
+            "part_uuid": "63f36718007a410e91ecdc02f05d06ac",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "C1",
+            "value": "10pF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "e102ae3170974e47ba688599365f238a",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C2",
+            "value": "10uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "ea550bc079734adea2874585391da424",
+            "footprint_name": "C0805"
+        },
+        {
+            "designator": "C6",
+            "value": "22uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "62543c83a82941c6a1e006b874ff7036",
+            "footprint_name": "C0805"
+        },
+        {
+            "designator": "C3",
+            "value": "10uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "BAT+"
+                }
+            ],
+            "part_uuid": "ea550bc079734adea2874585391da424",
+            "footprint_name": "C0805"
+        },
+        {
+            "designator": "R4",
+            "value": "1MΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N33022"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "60479e0364284da4a2720dc86428b721",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "C7",
+            "value": "22uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "62543c83a82941c6a1e006b874ff7036",
+            "footprint_name": "C0805"
+        },
+        {
+            "designator": "C5",
+            "value": "22uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "62543c83a82941c6a1e006b874ff7036",
+            "footprint_name": "C0805"
+        },
+        {
+            "designator": "C8",
+            "value": "10pF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N33015"
+                }
+            ],
+            "part_uuid": "e102ae3170974e47ba688599365f238a",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "R3",
+            "value": "560kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N33015"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "5a63d399daa24005877042a6540c0685",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R2",
+            "value": "100kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "NU_EN_E192"
+                }
+            ],
+            "part_uuid": "63f36718007a410e91ecdc02f05d06ac",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "U1",
+            "value": "TPS63060DSCR",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "L1",
+                    "signal_name": "$1N33019"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "VIN",
+                    "signal_name": "BAT+"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "EN",
+                    "signal_name": "NU_EN_E192"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "PS/SYNC",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "PG",
+                    "signal_name": "$1N33022"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "VAUX",
+                    "signal_name": "$1N33016"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "FB",
+                    "signal_name": "$1N33015"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "VOUT",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "10",
+                    "name": "L2",
+                    "signal_name": "$1N33024"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "PAD",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "52e165114cb04db9a396db397dab05c4",
+            "footprint_name": "WSON-10_L3.0-W3.0-P0.50-BL-EP-A"
+        },
+        {
+            "designator": "L1",
+            "value": "2.2uH",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N33024"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N33019"
+                }
+            ],
+            "part_uuid": "8070d23500fc4df5b9604c68cd927d82",
+            "footprint_name": "IND-SMD_L7.0-W6.6"
+        },
+        {
+            "designator": "C20",
+            "value": "1uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "83444fb60f7c440d83c686de398b64a8",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C13",
+            "value": "10pF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "XIN"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "e102ae3170974e47ba688599365f238a",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C19",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C16",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C11",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C18",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C12",
+            "value": "10pF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "XOUT"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "e102ae3170974e47ba688599365f238a",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C15",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C17",
+            "value": "100nF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "a35954a36d9f4242a62f806de28eab4f",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "C14",
+            "value": "1uF",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+1V1"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "83444fb60f7c440d83c686de398b64a8",
+            "footprint_name": "C0603"
+        },
+        {
+            "designator": "U3",
+            "value": "W25Q16JVUXIQ",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "CS#",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "DO(IO1)",
+                    "signal_name": "QSPI_SD1"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "WP#(IO2)",
+                    "signal_name": "QSPI_SD2"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "DI(IO0)",
+                    "signal_name": "QSPI_SD0"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "CLK",
+                    "signal_name": "QSPI_SCLK"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "HOLD#orRESET#(IO3)",
+                    "signal_name": "QSPI_SD3"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "VCC",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "EP",
+                    "signal_name": "GND"
+                }
+            ],
+            "part_uuid": "00ce7028eac8404e9e6051443f6b3b68",
+            "footprint_name": "USON-8_L3.0-W2.0-P0.50-BL-EP"
+        },
+        {
+            "designator": "R12",
+            "value": "10kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "QSPI_SS"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "2770dae56a1144b893e276f2b232c00f",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R11",
+            "value": "1MΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "XOUT"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "XIN"
+                }
+            ],
+            "part_uuid": "d18cd5412321449d8fa88959204fb84f",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R10",
+            "value": "10kΩ",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "RUN"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "+3V3"
+                }
+            ],
+            "part_uuid": "2770dae56a1144b893e276f2b232c00f",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R8",
+            "value": "27Ω",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB_DP_MCU"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "USB_DP"
+                }
+            ],
+            "part_uuid": "88112585f8ec414c99c6c6fe6f41212b",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "R9",
+            "value": "27Ω",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB_DM_MCU"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "USB_DM"
+                }
+            ],
+            "part_uuid": "88112585f8ec414c99c6c6fe6f41212b",
+            "footprint_name": "R0603"
+        },
+        {
+            "designator": "U4",
+            "value": "RP2040",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "10",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "GPIO8",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "12",
+                    "name": "GPIO9",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "13",
+                    "name": "GPIO10",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "14",
+                    "name": "GPIO11",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "15",
+                    "name": "GPIO12",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "16",
+                    "name": "GPIO13",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "17",
+                    "name": "GPIO14",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "18",
+                    "name": "GPIO15",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "19",
+                    "name": "TESTEN",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "GPIO0",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "20",
+                    "name": "XIN",
+                    "signal_name": "XIN"
+                },
+                {
+                    "pin_number": "21",
+                    "name": "XOUT",
+                    "signal_name": "XOUT"
+                },
+                {
+                    "pin_number": "22",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "23",
+                    "name": "DVDD",
+                    "signal_name": "+1V1"
+                },
+                {
+                    "pin_number": "24",
+                    "name": "SWCLK",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "25",
+                    "name": "SWD",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "26",
+                    "name": "RUN",
+                    "signal_name": "RUN"
+                },
+                {
+                    "pin_number": "27",
+                    "name": "GPIO16",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "28",
+                    "name": "GPIO17",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "29",
+                    "name": "GPIO18",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "3",
+                    "name": "GPIO1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "30",
+                    "name": "GPIO19",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "31",
+                    "name": "GPIO20",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "32",
+                    "name": "GPIO21",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "33",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "34",
+                    "name": "GPIO22",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "35",
+                    "name": "GPIO23",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "36",
+                    "name": "GPIO24",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "37",
+                    "name": "GPIO25",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "38",
+                    "name": "GPIO26_ADC0",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "39",
+                    "name": "GPIO27_ADC1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "GPIO2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "40",
+                    "name": "GPIO28_ADC2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "41",
+                    "name": "GPIO29_ADC3",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "42",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "43",
+                    "name": "ADC_AVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "44",
+                    "name": "VREG_IN",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "45",
+                    "name": "VREG_VOUT",
+                    "signal_name": "+1V1"
+                },
+                {
+                    "pin_number": "46",
+                    "name": "USB_DM",
+                    "signal_name": "USB_DM_MCU"
+                },
+                {
+                    "pin_number": "47",
+                    "name": "USB_DP",
+                    "signal_name": "USB_DP_MCU"
+                },
+                {
+                    "pin_number": "48",
+                    "name": "USB_VDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "49",
+                    "name": "IOVDD",
+                    "signal_name": "+3V3"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "GPIO3",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "50",
+                    "name": "DVDD",
+                    "signal_name": "+1V1"
+                },
+                {
+                    "pin_number": "51",
+                    "name": "QSPI_SD3",
+                    "signal_name": "QSPI_SD3"
+                },
+                {
+                    "pin_number": "52",
+                    "name": "QSPI_SCLK",
+                    "signal_name": "QSPI_SCLK"
+                },
+                {
+                    "pin_number": "53",
+                    "name": "QSPI_SD0",
+                    "signal_name": "QSPI_SD0"
+                },
+                {
+                    "pin_number": "54",
+                    "name": "QSPI_SD2",
+                    "signal_name": "QSPI_SD2"
+                },
+                {
+                    "pin_number": "55",
+                    "name": "QSPI_SD1",
+                    "signal_name": "QSPI_SD1"
+                },
+                {
+                    "pin_number": "56",
+                    "name": "QSPI_SS",
+                    "signal_name": "QSPI_SS"
+                },
+                {
+                    "pin_number": "57",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "GPIO4",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "7",
+                    "name": "GPIO5",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "8",
+                    "name": "GPIO6",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "9",
+                    "name": "GPIO7",
+                    "signal_name": ""
+                }
+            ],
+            "part_uuid": "a550c651585f4e7a9cc06e26cce54f4f",
+            "footprint_name": "QFN-56_L7.0-W7.0-P0.40-TL-EP4.0"
+        },
+        {
+            "designator": "X1",
+            "value": "12MHz",
+            "pins": [
+                {
+                    "pin_number": "4",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "OSC1",
+                    "signal_name": "XIN"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "OSC2",
+                    "signal_name": "XOUT"
+                }
+            ],
+            "part_uuid": "63e004b8c86a4f37bc883bf90c3a833a",
+            "footprint_name": "CRYSTAL-SMD_4P-L3.2-W2.5-BL-1"
+        },
+        {
+            "designator": "SW2",
+            "value": "YZA-009",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "QSPI_SS"
+                }
+            ],
+            "part_uuid": "b9842f60f1b24910be1f53554b9e7e0f",
+            "footprint_name": "SW-SMD_YZA-009"
+        },
+        {
+            "designator": "SW1",
+            "value": "YZA-009",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "RUN"
+                }
+            ],
+            "part_uuid": "b9842f60f1b24910be1f53554b9e7e0f",
+            "footprint_name": "SW-SMD_YZA-009"
+        }
+    ]
+}

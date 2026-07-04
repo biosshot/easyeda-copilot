@@ -2,16 +2,38 @@
 
 MCP server for EasyEDA Copilot.
 
+It connects MCP clients such as Codex or Claude Code to EasyEDA Pro through the EasyEDA Copilot extension and exposes tools for schematic extraction, circuit modification, PCB placement, PCB assembly, preview, DRC, and routing helpers.
+
 ## Usage
 
 1. Add this MCP server to your agent.
-2. Start Codex, Claude Code, or another MCP client with this MCP server enabled.
-3. Open a schematic in EasyEDA Pro.
-4. EasyEDA Copilot will connect automatically. Use `Copilot -> MCP` only to pause or resume scanning.
+2. Start the MCP client with this server enabled.
+3. Open EasyEDA Pro.
+4. Open the target schematic or PCB document.
+5. EasyEDA Copilot connects automatically. Use `Copilot -> MCP` only to pause or resume scanning.
 
-## Local docs
+## Local Docs
 
-The MCP package ships its own local docs in `mcp/docs`. The server exposes the local `SKILL.md` path through MCP, and agents should read that file before using schematic or PCB tools.
+The package ships local docs in `mcp/docs`. The MCP server exposes the local `SKILL.md` path through the `easyeda_copilot_mcp_skill` resource/prompt.
+
+Agents should read:
+
+- `docs/SKILL.md` first.
+- `docs/pcb-layout/dsl.ts` before writing `make_pcb_layout` DSL.
+- `docs/pcb-layout/instructions.md` for placement heuristics and examples.
+- `docs/pcb-layout/mcp-workflow.md` for placement, assembly, preview, and routing flow.
+- `docs/pcb-drc/rules.md` for DRC export/apply/check workflows.
+
+## PCB Flow
+
+`make_pcb_layout` is placement-only. It returns a compact text report plus:
+
+- `layoutId`: stored MCP-side board assembly payload id.
+- `previewImagePath`: local PNG preview path.
+
+Then open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc({ layoutId })`.
+
+Routing is done after assembly in EasyEDA/client tools. The MCP also provides `run_auto_route_on_current_pcbdoc`, `check_pcb_drc`, `inspect_net`, `inspect_component`, and `preview_pcb`.
 
 ## Build
 
@@ -22,7 +44,7 @@ npm install
 npm run build
 ```
 
-## MCP config with npx
+## MCP Config With npx
 
 Codex:
 
@@ -49,7 +71,7 @@ Generic MCP config:
 }
 ```
 
-## MCP config with node
+## MCP Config With node
 
 ```json
 {

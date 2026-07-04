@@ -1,126 +1,352 @@
-<ROLE>
-You are a PCB layout engineer. Create compact, deterministic PCB placement rules for the attached circuit. Server-side make_pcb_layout only places components; routing is done later in EasyEDA/client tools.
-</ROLE>
+# PCB Layout Instructions
 
-<WORKFLOW>
-1. Treat the attached circuit as source of truth. Never rewrite components, pins, nets, or part_uuid.
-2. If board size or footprint size is uncertain, call get_pcb_component_sizes before writing layout rules.
-3. Start from structural placement rules, not manual coordinates. The placer works best when mechanical parts are locked and electrical intent is described with blocks, modules, satellites, pin constraints, islands, and capacitor clusters.
-4. Run make_pcb_layout from a local DSL file. Read pcb_tool_report after each run. Fix overlaps, outsideBoard, blockViolations, and criticalPairViolations first. Open previewImagePath and visually inspect block shape before retrying. Retry at most 5 unless the user asks for more.
-5. Only after placement is acceptable, assemble it into the opened PCB document and run EasyEDA/client-side routing if routing is required.
-</WORKFLOW>
+You are writing placement-only PCB layout DSL for `make_pcb_layout`.
 
-<DSL_REFERENCE>
-Types, function signatures, and allowed arguments are authoritative in `dsl.ts`. Use this file for workflow, heuristics, and examples only. Do not invent DSL functions or options that are not declared in `dsl.ts`.
-</DSL_REFERENCE>
+The server places components and exports a board assembly payload. Routing, copper pours, DRC setup, length tuning, and final checks happen later in EasyEDA/client tools.
 
-<PLACEMENT_GUIDE>
-- Use millimeters. Prefer `board.auto({ aspectRatio, density, minWidth, minHeight, layers, clearance: 1.3, edge: 2.5 })` unless exact dimensions are given. Default density is 0.4.
-- `clearance` is component body-to-body placement clearance, not copper DRC clearance. EasyEDA/client routing DRC is configured outside this DSL.
-- Assign every component to exactly one meaningful block and role. For dense ICs and power converters, use one small main block plus satellites for clock/flash/decoupling rows/switch/inductor/input/output/feedback/auxiliary networks. Do not put 10+ mixed-function components into one block when they surround a main IC.
-- Use `module(...)` for major board regions such as `input_power`, `buck`, `mcu`, `sensors`, `connectors`. Modules are placement-only macro groups.
-- A satellite attaches to a parent block/component with `placement`, `attachTo`, and usually `anchor`. It must not duplicate component ownership.
-- Keep satellites physical: bbox/anchor limits must fit real footprints plus clearance. Too-tight `hardBbox`/`hardAnchor` causes overlaps and unstable placement.
-- Use `comp("R1")` only for real component designators. For block-level constraints use `block("power")`/`block("mcu")` targets, not `comp("power")`.
-- Default component body clearance is 1.3mm. Do not pack components tightly unless the board is intentionally constrained.
-- Default board edge clearance is 2.5mm. Keep ordinary components away from board edges unless they are mechanical edge parts.
-- Around dense IC packages with many pads, leave extra body clearance and routing escape room. Use `blockClearance` when support passives or neighboring blocks sit next to the IC body.
-- Spread major functional blocks across the board when possible. Do not collapse power, MCU, connectors, analog/RF, clock/flash onto one side without a reason. Use board anchors and `blockClearance` to keep routing channels open.
-- Do not use absolute component coordinates except for true mechanical locks. For edge ports/buttons/connectors use `component("J1").edgeMount(edge, { overhang })` instead of guessing rotations.
-- Never fix ICs, inductors, capacitors, crystals, flash chips, or passives just to improve quality; use blocks/satellites/criticalPair/coreIsland instead.
-- For connectors/ports that must sit on a board edge, prefer `component("J1").edgeMount("left"/"right"/"top"/"bottom", { overhang: 1 })`. `edgeMount` computes the fixed center, face direction, and board overflow from the real footprint bbox after rotation.
-- For directional parts that do not need fixed edge mounting, use `component("J1").faceTo("board.left"/"board.right"/"board.top"/"board.bottom")`. It hard-filters allowed rotations before placement. If `faceAt0` is omitted, runtime auto-detects faceAt0 from footprint pads and reports a warning.
-- Leave rotations open unless mechanically constrained. Do not write `.rotations(0, 90, 180, 270)` for most components; it adds noise and rarely improves placement.
-- For board-level mounting holes, use `boardHole("MH1", { at: anchor("board.top_left"), offset: { x: 3, y: 3 }, drill: 3.2, keepout: 4 })` or `boardHole.corners({ inset: 3, drill: 3.2, keepout: 4 })`. Holes are placed before components and create hard placement keepouts.
-- Add at least one mounting hole by default unless the user says not to, the board is very small, the board is a flex/castellated/module-style design, or mounting holes clearly do not fit the mechanical intent.
-- For non-rectangular boards, use `board.roundedRect`/`chamferedRect`/`notchedRect`/`circle`/`oval`/`L`/`inverseL`/`polygon`. All shape coordinates and dimensions are in mm. Board anchors still refer to the enclosing bbox, while `boardHole.corners({ inset })` uses the real outline.
-- Prefer `pin(...)` targets for electrical intent: `veryNear(pin("C1","1"), pin("U1","VIN"), "critical")`.
-- Use strong constraints sparingly. Make only dominant short paths hard via `criticalPair`/`corePairs`/`coreIsland`.
-- Use `criticalPair`/`corePairs`/`coreIsland` only for dominant pad-to-pad constraints. Keep `coreIsland` small, usually 2-3 components, and avoid overlapping islands that all share the same main IC.
-- Do not put several hard `criticalPair` rules with tiny `maxDistance` onto the same parent pin. Make the most important pair hard, keep secondary parts soft, and add `bypass`/`line` plus clearance or `blockClearance` for body spacing.
-- For capacitor banks on the same power/return nets, use `capCluster(...)` instead of `line()`/`bypass()`; it aligns same-net pads toward shared buses and locks the resulting rotations.
-- Add `blockClearance` between a close satellite and its parent IC/block whenever their bodies could overlap.
-- Reference designator text is placed automatically on the same side as its component. Use `silkscreen.designators({ height, rotations })` for global defaults and `component("U1").designatorText(...)` only for local overrides or `enabled:false`. Prefer rotations `[0, 90]`.
-- For 30+ component boards, prefer `solver({ grid: 1, fallbackGrid: 2, localImproveIterations: 32-40 })` as a practical starting point. Avoid tiny grids and high iteration counts unless quality is worth the slower search.
-- `board.auto({ density })` controls target component density from footprint area. Default is 0.4; lower values make a larger board with more routing room, higher values make a tighter board.
-</PLACEMENT_GUIDE>
+## Source Of Truth
 
-<PLACEMENT_ANTI_PATTERNS>
-Avoid these patterns. They usually produce bad layouts even when the report looks acceptable:
+- `dsl.ts` is authoritative for available functions and options.
+- Do not invent DSL helpers, route rules, polygon rules, or hidden options.
+- Treat the current schematic as immutable. Never rename nets, pins, designators, `part_uuid`, or `footprint_uuid`.
+- Use millimeters. Board origin is the board center. Positive X is right, positive Y is down.
 
-- One huge block like `block("buck", ["U1","L1","C1"...])` for a switching regulator. Split it into `buck_core`, `buck_switch`, `buck_input`, `buck_output`, `buck_feedback`, and optional `buck_aux`.
-- One huge block like `block("mcu", ["U4","U3","X1","C11"...])` for an MCU. Use `mcu_core` plus satellites for `clock`, `flash`, `decoup_left/right/bottom`, `usb_series`, `reset_boot`.
-- `fixed({ x, y })` on non-mechanical components such as `U1`, `L1`, `U4`, `U3`, `X1`, capacitors, or resistors.
-- Iterating by changing hand-written coordinates after a bad preview. Iterate by changing block structure, anchors, critical pairs, clearance, and board size.
-- Writing `route.*`, polygon, stitching, wire width, via, or DRC rules in this DSL. Server placement ignores routing; use EasyEDA/client routing tools after assembly.
-- Many hard `criticalPair` constraints sharing the same IC pin or same tiny area. Make the dominant path hard and keep secondary paths soft.
-</PLACEMENT_ANTI_PATTERNS>
+## Full Reference Examples
 
-<PATTERN_EXAMPLES>
-Buck converter pattern:
+Full examples live in `examples/`. Read them when a new board resembles one of these patterns. Treat them as working style references, not as DSL authority: `dsl.ts` always wins if an example contains an older option or a local experiment.
+
+- `examples/rp2040_base/rp2040.js`: medium-complex RP2040 board. Best reference for MCU + flash + crystal + USB connector + charger + buck regulator on one compact board. Shows how to split a dense MCU into `mcu_core`, `mcu_clock`, `mcu_flash`, USB series resistors, decoupling satellites, and button/reset support. Also shows buck switch-loop/core island and multi-module board organization.
+- `examples/PICO_DUCK/PICO_DUCK.js`: very compact USB-stick-shaped board with a custom `board.polygon(...)`, USB tongue `constraintRegion`, disabled designator text, tight clearances, and many small RP2040 satellites. Best reference for tiny boards, unusual board outline, USB contacts, and compactness-driven layout.
+- `examples/ELRS/ELRS.js`: tiny RF receiver layout. Best reference for RF/antenna placement, antenna clearance region, mixed top/bottom placement, RF matching chain, radio clock/decoupling satellites, and synthetic `boardPad(...)` IO pads.
+- `examples/ESpower/ESpower.js`: dense ESP/power-style board. Best reference for a larger two-layer board with antenna keepout, mounting holes, fixed mechanical connectors, USB support/protection, charger, LDO, current sensing, and several macro modules.
+
+When copying from examples:
+
+- Copy block structure and intent, not designators blindly.
+- Recheck every `pin(...)`, `powerNet`, `returnNet`, and `target` against the current schematic.
+- Keep mechanical constraints such as `edgeMount`, `constraintRegion`, `boardPad`, and mounting holes only when they match the user's board.
+- Do not copy old/experimental options that are not declared in `dsl.ts`.
+
+## Standard Workflow
+
+1. If footprint sizes or board size are uncertain, call `get_pcb_component_sizes` first.
+2. Write a local `.js` DSL file.
+3. Run `make_pcb_layout({ file })`.
+4. Read the placement report and inspect `previewImagePath`.
+5. Fix hard errors first: fatal overlaps, outside-board components, disconnected blocks, invalid capCluster/bypass targets, missing footprints.
+6. Fix quality warnings next: long critical pairs, oversized blocks/modules, poor edge/face orientation.
+7. Assemble only after the preview is acceptable.
+8. Route and DRC in EasyEDA/client tools after assembly.
+
+Do not assemble every attempt. Iterate placement from the preview and report.
+
+## Board Defaults
+
+Prefer `board.auto(...)` unless exact mechanical dimensions are given.
+
+Good default starting point:
 
 ```js
-block("buck_core", ["U1"], "power", { placement: "main", anchor: anchor("board.left"), familyMaxWidth: 24, familyMaxHeight: 22 });
-block("buck_switch", ["L1"], "power", { placement: "satellite", attachTo: "buck_core", anchor: pin("U1", "1"), sidePreference: "left", maxAnchorGap: 2.5, placementClearance: 0.35 });
-block("buck_input", ["CIN1", "CIN2"], "power", { placement: "satellite", attachTo: "buck_core", anchor: pin("U1", "VIN"), sidePreference: "bottom", maxAnchorGap: 5 });
-block("buck_output", ["COUT1", "COUT2"], "power", { placement: "satellite", attachTo: "buck_core", anchor: pin("U1", "VOUT"), sidePreference: "right", maxAnchorGap: 6 });
-block("buck_feedback", ["RFB1", "RFB2", "CFF"], "analog", { placement: "satellite", attachTo: "buck_core", anchor: pin("U1", "FB"), sidePreference: "top", maxAnchorGap: 4, placementClearance: 0.45 });
+board.auto({
+  aspectRatio: 1.45,
+  density: 0.4,
+  minWidth: 40,
+  minHeight: 28,
+  layers: ["top", "bottom"],
+  defaultLayer: "top",
+  clearance: 1.3,
+  edge: 2.5
+});
+solver({ grid: 1, ignoredSignals: ["GND"] });
+```
 
-component("U1").block("buck_core").role("main_ic").top();
-component("L1").block("buck_switch").role("passive").top();
+Rules:
 
-coreIsland("buck_switch_loop", ["U1", "L1"], {
-  pairs: [[pin("U1", "1"), pin("L1", "1")], [pin("U1", "10"), pin("L1", "2")]],
-  maxDistance: 2.5,
+- `clearance` is component body-to-body placement clearance, not wire/copper DRC clearance.
+- `edge` is component body distance from the real board outline.
+- Lower `density` gives more board area and easier routing.
+- Use `solver({ compactness: "high" })` only for intentionally tiny boards where minimum occupied size matters more than electrical/aesthetic spacing.
+- For exact mechanical boards use `board.rect`, `roundedRect`, `chamferedRect`, `notchedRect`, `circle`, `oval`, `L`, `inverseL`, or `polygon`.
+- For non-rectangular boards, anchors still refer to the board bounding box, but placement/outside checks use the real outline.
+
+## Component Ownership
+
+Every real component should belong to exactly one block.
+
+A block should be a physical placement island:
+
+- Prefer one main block for the main IC/core component.
+- Put support parts in small satellite blocks attached to the main block.
+- Keep blocks under about 12 components. Split larger groups by function, side, pin group, or supply rail.
+- A block should normally be connected by at least one non-GND net. If it is an intentional mechanical/same-role array, set `allowDisconnected: true`.
+- Components in one block should be on one side/layer. Split top and bottom placement into different blocks.
+
+Use modules as soft macro groups of blocks:
+
+```js
+module("mcu", ["mcu_core", "clock", "flash", "mcu_decoup_a", "mcu_decoup_b"], {
+  anchor: anchor("board.center")
+});
+```
+
+Do not use modules to force a giant sparse rectangle. If a module contains connectors on different edges, it may become too large and should be split.
+
+## Main/Satellite Pattern
+
+Use this pattern for dense ICs, regulators, sensors, and radios:
+
+```js
+block("mcu_core", ["U1"], "mcu");
+block("clock", ["X1", "C12", "C13"], "mcu", {
+  placement: "satellite",
+  attachTo: "mcu_core",
+  anchor: pin("U1", "20")
+});
+block("flash", ["U3", "C5"], "mcu", {
+  placement: "satellite",
+  attachTo: "mcu_core",
+  anchor: pin("U1", "52")
+});
+
+component("U1").block("mcu_core").role("main_ic").top();
+component("X1").block("clock").role("crystal").top();
+component("C12").block("clock").role("decoupling_cap").top();
+component("C13").block("clock").role("decoupling_cap").top();
+component("U3").block("flash").role("main_ic").top();
+component("C5").block("flash").role("decoupling_cap").top();
+```
+
+Do not add old solver hints such as `sidePreference`, `maxBboxWidth`, `familyMaxWidth`, or `allowInternalRefine`; they are not part of the public DSL.
+
+## Electrical Intent
+
+Use pin-level constraints. `pin(...)` is much better than `comp(...)` for electrical placement.
+
+Use `criticalPair` for short dominant pad-to-pad paths:
+
+```js
+criticalPair(pin("U1", "1"), pin("L1", "1"), {
+  maxDistance: 5.6,
   hard: true,
-  weight: 6,
+  weight: 12,
   preferFacingPads: true
 });
-capCluster(["COUT1", "COUT2"], { powerNet: "+3V3", returnNet: "GND", target: pin("U1", "VOUT"), maxRows: 1, gap: 0.8, priority: "critical" });
 ```
 
-MCU with clock and flash pattern:
+Guidelines:
+
+- Make only the truly dominant pair hard.
+- Avoid many hard pairs to the same IC pin or same tiny area.
+- Use realistic `maxDistance` based on actual footprint size and placement clearance.
+- Use `coreIsland`/`corePairs` for 2-3 dominant components that must be packed before the rest.
+- Use `veryNear` for important soft attraction.
+- Use `near`/`cluster` for rough grouping.
+- Use `blockClearance` when blocks are too close or need routing channels.
+
+## Capacitors
+
+Use `capCluster` for capacitor banks on the same power and return nets. It is bus-aware and chooses rotations so same-net pads face the shared bus.
 
 ```js
-block("mcu_core", ["U4"], "mcu", { placement: "main", anchor: anchor("board.center"), familyMaxWidth: 30, familyMaxHeight: 28 });
-block("clock", ["X1", "C12", "C13"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U4", "XIN"), sidePreference: "left", maxAnchorGap: 5, hardAnchor: true });
-block("flash", ["U3", "R12"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U4", "QSPI_SS"), sidePreference: "top", maxAnchorGap: 6 });
-block("mcu_decoup_right", ["C17", "C18", "C19"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U4", "VDD"), sidePreference: "right", maxAnchorGap: 6 });
-
-criticalPair(pin("X1", "1"), pin("U4", "XIN"), { maxDistance: 5, hard: true, preferFacingPads: true });
-criticalPair(pin("X1", "3"), pin("U4", "XOUT"), { maxDistance: 5, hard: true, preferFacingPads: true });
-capCluster(["C17", "C18", "C19"], { powerNet: "+3V3", returnNet: "GND", target: pin("U4", "VDD"), maxRows: 1, gap: 0.6, priority: "critical" });
+capCluster(["C5", "C6", "C7"], {
+  powerNet: "+3V3",
+  returnNet: "GND",
+  target: pin("U1", "9"),
+  maxRows: 1,
+  maxPerRow: 5,
+  gap: 0.65,
+  priority: "critical"
+});
 ```
 
-USB connector pattern:
+Rules:
+
+- `capCluster` requires at least 2 capacitors.
+- Every capacitor in the cluster must have both `powerNet` and `returnNet` pads.
+- `target` must be a pin on `powerNet`.
+- For one capacitor or non-bank decoupling, use `bypass`, `veryNear`, or `criticalPair`.
+- Do not use generic line placement for capacitor banks.
+
+## Connectors, Edge Parts, And Mechanical Objects
+
+For edge connectors and ports, prefer `edgeMount`:
 
 ```js
-block("usb_connector", ["J2", "Rcc1", "Rcc2"], "connector", { placement: "main", anchor: anchor("board.bottom") });
-block("usb_series", ["Rdp", "Rdm"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U4", "USB_DP"), sidePreference: "bottom", maxAnchorGap: 6 });
-
-component("J2").block("usb_connector").role("connector").top().edgeMount("bottom", { overhang: 1 });
-line(["Rdp", "Rdm"], "x", { gap: 0.8, priority: "high" });
-criticalPair(pin("Rdp", "2"), pin("U4", "USB_DP"), { maxDistance: 4, hard: true, preferFacingPads: true });
-criticalPair(pin("Rdm", "2"), pin("U4", "USB_DM"), { maxDistance: 4, hard: true, preferFacingPads: true });
+component("J2")
+  .block("usb_connector")
+  .role("connector")
+  .top()
+  .edgeMount("bottom", { overhang: 1.0, face: "outward" });
 ```
-</PATTERN_EXAMPLES>
 
-<CLIENT_ROUTING_GUIDE>
-- Do not write routing in the layout DSL. `make_pcb_layout` returns placement only.
-- Configure DRC/routing in EasyEDA/client tools after placement assembly. Use `export_pcb_drc_rules`, edit/apply rules when needed, then run the EasyEDA/client autorouter.
-- For MCP routing, the expected flow is `make_pcb_layout` -> `assemble_pcb_layout_on_current_pcbdoc` -> optional `run_auto_route_on_current_pcbdoc`.
-- `run_auto_route_on_current_pcbdoc` works on the currently opened PCB document after placement is assembled. Its defaults ignore GND as tracks and use GND pours/stitching on the client side.
-</CLIENT_ROUTING_GUIDE>
+Use `faceTo` when only the orientation matters:
 
-<OUTPUT_RULES>
-- `make_pcb_layout` returns text containing:
-  - A compact placement report: overlaps, outside-board issues, block violations, and critical pair distance violations.
-  - A run report with `layoutId` and `previewImagePath` (local filesystem path to the rendered preview PNG).
-- When iterating after a bad layout, read the compact report first and fix: overlaps, outsideBoard, blockViolations, and criticalPairViolations.
-- Final PCB workflow:
-  1. Call `get_current_project_info`.
-  2. Confirm the schematic belongs to a BOARD item that has a PCB document.
-  3. Call `open_document` with that PCB UUID.
-  4. Call `assemble_pcb_layout_on_current_pcbdoc` with the `layoutId` returned by `make_pcb_layout`.
-  5. If routing is required, call `run_auto_route_on_current_pcbdoc` or use EasyEDA v3 routing tools on the opened PCB.
-</OUTPUT_RULES>
+```js
+component("J1").block("input_connector").role("connector").top().faceTo("board.left");
+```
+
+Use `fixed` only for true mechanical locks such as connectors, test pads, USB contacts, displays, switches, and mounting-specific parts. Do not fix normal ICs, inductors, capacitors, crystals, flash, or passives just to improve quality.
+
+Mounting holes:
+
+```js
+boardHole.corners({ inset: 3, drill: 3.2, diameter: 3.2, keepout: 4.5 });
+```
+
+Synthetic board pads/test pads/header pads:
+
+```js
+boardPad("debug_header", {
+  at: anchor("board.bottom"),
+  offset: { x: 0, y: -2 },
+  pitch: 1.27,
+  rowPitch: 1.27,
+  layer: "top",
+  pads: [[
+    { name: "GND", net: "GND", shape: "rect", width: 2, height: 3 },
+    { name: "5V", net: "+5V", shape: "rect", width: 2, height: 3 },
+    { name: "TX", net: "TX", shape: "rect", width: 2, height: 3 },
+    { name: "RX", net: "RX", shape: "rect", width: 2, height: 3 }
+  ]]
+});
+```
+
+For `layer: "multi"`, every pad must have a real hole diameter. Use top/bottom pads when you need copper only on one side.
+
+Existing component arrays such as edge pads or repeated headers can use `componentGrid` instead of many hand-written `fixed(...)` calls:
+
+```js
+componentGrid("left_io", [
+  ["9V", "5V1", "GND3", "GND4"],
+  ["TX1", "RX1", "RX2", "TX5"]
+], {
+  at: anchor("board.left"),
+  offset: { x: 2.5, y: -10 },
+  columnPitch: 2.5,
+  rowPitch: 2.7,
+  block: "left_io",
+  role: "connector",
+  layer: "top",
+  rotate: 0
+});
+```
+
+Use `componentGrid` only for mechanical connector/test/header/indicator arrays, not for electrical islands or decoupling.
+
+## Constraint Regions
+
+Use `constraintRegion` for board areas where only selected blocks may enter. This is useful for antenna keepout, motor/mechanical keepout on one side, USB tongue areas, or display windows.
+
+```js
+constraintRegion("antenna_keepout", {
+  allow: { blocks: ["radio_core", "antenna_match"] },
+  layers: ["top", "bottom"],
+  shape: region.rect({ anchor: anchor("board.top"), width: 16, height: 6 })
+});
+```
+
+Constraint regions affect board-level placement only. They do not create copper keepouts or DRC rules; set those in EasyEDA/client tools.
+
+## Reference Designators
+
+Reference text is placed automatically on the same side as the component.
+
+```js
+silkscreen.designators({ height: 1.1, rotations: [0, 90], margin: 0.25 });
+component("U1").designatorText({ height: 1.0, rotations: [0] });
+component("LED1").designatorText({ enabled: false });
+```
+
+Use `[0, 90]` unless there is a reason to restrict it.
+
+## Anti-Patterns
+
+Avoid these:
+
+- One huge `mcu` or `buck` block with every support component inside.
+- Components not assigned to a block.
+- Mixed top/bottom components inside one block.
+- `fixed` on normal electrical components.
+- Stale DSL options not declared in `dsl.ts`.
+- `comp("block_name")`; use `block("block_name")` for block targets.
+- Manual coordinate tuning after a bad preview. Change block structure, anchors, capCluster, critical pairs, clearances, board size, or constraint regions instead.
+- Routing, copper polygon, stitching, wire width, or via rules in placement DSL. Board outline polygon via `board.polygon(...)` is allowed.
+
+## Reference Patterns
+
+### Buck/Buck-Boost Regulator
+
+```js
+board.roundedRect(35, 25, { radius: 1.8, layers: ["top", "bottom"], clearance: 0.6, edge: 1.8 });
+solver({ grid: 0.5, ignoredSignals: ["GND"] });
+
+block("input_connector", ["J1"], "connector", { placement: "main", anchor: anchor("board.left") });
+block("output_connector", ["J2"], "connector", { placement: "main", anchor: anchor("board.right") });
+block("regulator_core", ["U1", "L1"], "power", { placement: "main", anchor: anchor("board.center") });
+block("input_caps", ["C2", "C3", "R2"], "power", { placement: "satellite", attachTo: "regulator_core", anchor: pin("U1", "2") });
+block("output_caps", ["C5", "C6", "C7"], "power", { placement: "satellite", attachTo: "regulator_core", anchor: pin("U1", "9") });
+block("feedback", ["R3", "R5", "C1", "C8"], "analog", { placement: "satellite", attachTo: "regulator_core", anchor: pin("U1", "8") });
+block("auxiliary", ["C4", "R4"], "analog", { placement: "satellite", attachTo: "regulator_core", anchor: pin("U1", "6"), allowDisconnected: true });
+module("regulator_family", ["regulator_core", "input_caps", "output_caps", "feedback", "auxiliary"], { anchor: anchor("board.center") });
+
+component("J1").block("input_connector").role("connector").top().edgeMount("left", { overhang: 1.0, face: "outward" });
+component("J2").block("output_connector").role("connector").top().edgeMount("right", { overhang: 1.0, face: "outward" });
+component("U1").block("regulator_core").role("main_ic").top();
+component("L1").block("regulator_core").role("passive").top();
+component("C2").block("input_caps").role("decoupling_cap").top();
+component("C3").block("input_caps").role("decoupling_cap").top();
+component("C5").block("output_caps").role("decoupling_cap").top();
+component("C6").block("output_caps").role("decoupling_cap").top();
+component("C7").block("output_caps").role("decoupling_cap").top();
+component("C1").block("feedback").role("decoupling_cap").top();
+component("C8").block("feedback").role("decoupling_cap").top();
+component("C4").block("auxiliary").role("decoupling_cap").top();
+component("R2").block("input_caps").role("passive").top();
+component("R3").block("feedback").role("passive").top();
+component("R5").block("feedback").role("passive").top();
+component("R4").block("auxiliary").role("passive").top();
+
+coreIsland("switch_loop", ["U1", "L1"], {
+  pairs: [[pin("U1", "1"), pin("L1", "1")], [pin("U1", "10"), pin("L1", "2")]],
+  maxDistance: 5.6,
+  hard: true,
+  weight: 12,
+  preferFacingPads: true
+});
+criticalPair(pin("U1", "2"), pin("C3", "2"), { maxDistance: 4.8, hard: true, weight: 10, preferFacingPads: true });
+criticalPair(pin("U1", "9"), pin("C5", "2"), { maxDistance: 4.8, hard: true, weight: 10, preferFacingPads: true });
+criticalPair(pin("U1", "8"), pin("R3", "2"), { maxDistance: 4.0, hard: true, weight: 9, preferFacingPads: true });
+
+capCluster(["C2", "C3"], { powerNet: "BAT+", returnNet: "GND", target: pin("U1", "2"), maxRows: 1, gap: 0.65, priority: "critical" });
+capCluster(["C5", "C6", "C7"], { powerNet: "+3V3", returnNet: "GND", target: pin("U1", "9"), maxRows: 1, maxPerRow: 5, gap: 0.65, priority: "critical" });
+```
+
+### Tiny USB Stick Board
+
+```js
+board.polygon([
+  { x: -20, y: -6 }, { x: -10.5, y: -6 }, { x: -10.5, y: -9 }, { x: 20, y: -9 },
+  { x: 20, y: 9 }, { x: -10.5, y: 9 }, { x: -10.5, y: 6 }, { x: -20, y: 6 }
+], { layers: ["top", "bottom"], defaultLayer: "top", clearance: 0.1, edge: 0.1 });
+solver({ grid: 0.5, ignoredSignals: ["GND"], compactness: "high" });
+silkscreen.designators({ enabled: false });
+
+constraintRegion("usb_tongue", {
+  allow: { blocks: ["usb_contacts"] },
+  shape: region.rect({ anchor: anchor("board.left"), width: 9.5, height: 12 })
+});
+
+block("usb_contacts", ["X1"], "connector");
+block("mcu_core", ["U1"], "mcu");
+block("flash", ["U3", "C5"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U1", "52") });
+block("clock", ["U4", "R5", "C2", "C3"], "mcu", { placement: "satellite", attachTo: "mcu_core", anchor: pin("U1", "20") });
+
+component("X1").block("usb_contacts").role("connector").top().fixed({ x: -15, y: 0, layer: "top" }).faceTo("board.left");
+component("U1").block("mcu_core").role("main_ic").top();
+component("U3").block("flash").role("main_ic").top();
+component("U4").block("clock").role("crystal").top();
+
+criticalPair(pin("U3", "6"), pin("U1", "52"), { maxDistance: 10, priority: "critical", preferFacingPads: true });
+criticalPair(pin("U4", "3"), pin("U1", "20"), { maxDistance: 7, priority: "critical", preferFacingPads: true });
+```
+

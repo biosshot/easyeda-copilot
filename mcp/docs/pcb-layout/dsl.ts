@@ -1,6 +1,3 @@
-// Write JavaScript PCB layout rules using only the TypeScript declarations below. Do not output JSON.
-// For detailed usage guidance and examples see `instructions.md`.
-
 type RuleLevel = "low" | "normal" | "high" | "critical";
 type Priority = RuleLevel;
 type Layer = "top" | "bottom";
@@ -8,8 +5,9 @@ type BlockRole = "power" | "mcu" | "analog" | "rf" | "connector" | "sensor" | "g
 type BlockPlacement = "main" | "satellite";
 type ComponentRole = "connector" | "main_ic" | "decoupling_cap" | "crystal" | "passive" | "indicator";
 type MechanicalFaceDirection = "left" | "right" | "top" | "bottom" | "board.left" | "board.right" | "board.top" | "board.bottom";
-type Axis = "x" | "y";
 type BoardEdge = "left" | "right" | "top" | "bottom";
+type BoardPadLayer = "top" | "bottom" | "multi";
+type BoardPadShape = "rect" | "oval" | "round";
 type BoardAnchor =
   | "board.center" | "board.left" | "board.right" | "board.top" | "board.bottom"
   | "board.top_left" | "board.top_right" | "board.bottom_left" | "board.bottom_right";
@@ -28,49 +26,13 @@ interface BlockOptions {
   attachTo?: string;
   /** Soft parent-side anchor for satellite placement, usually a pin(...) on the parent IC. */
   anchor?: TargetRef;
-  /** Offset in mm applied to the anchor target before block attraction/anchor-gap scoring. Useful for board-edge main blocks that need internal room for satellites. Positive X is right, positive Y is down. */
-  anchorOffset?: { x?: number; y?: number };
-  /** Preferred side of the parent block for satellite placement. */
-  sidePreference?: BoardEdge;
-  /** Near-hard maximum bbox scale over estimated packed block size. Useful for clock/flash/small buck satellites; keep large enough for real footprints plus clearance. */
-  maxBboxScale?: number;
-  /** Absolute maximum block bbox width/height in mm. */
-  maxBboxWidth?: number;
-  maxBboxHeight?: number;
-  /** Treat block bbox limit as a hard placement constraint. Use sparingly; too-tight hard bbox limits can create overlaps or timeouts. Defaults hard for satellite blocks with bbox limits. */
-  hardBbox?: boolean;
-  /** Maximum distance from anchor point to this block bbox in mm. Leave enough space for body clearance from the parent package. */
-  maxAnchorGap?: number;
-  /** Treat maxAnchorGap as hard. Use sparingly; too-tight hard anchors can force body overlap near ICs. */
-  hardAnchor?: boolean;
-  /** Limit bbox of parent block plus all attached satellite blocks. Useful to keep a functional family together without forcing all parts into one block. */
-  familyMaxBboxScale?: number;
-  familyMaxWidth?: number;
-  familyMaxHeight?: number;
-  /** Treat family bbox as hard. Prefer soft family limits unless the user gave a real mechanical/electrical envelope. */
-  familyHard?: boolean;
-  /** Local body-to-body placement clearance in mm for this exact block/satellite. Use for tight switch/current-loop islands such as U1/L1 without lowering whole-board clearance. It is intentionally not inherited by all child satellites. */
-  placementClearance?: number;
+  /** Escape hatch for small same-role placement groups that intentionally do not share a non-GND net, e.g. USB DP/DM series resistor pairs or repeated indicators. Do not use for real functional blocks; split unrelated power/MCU/RF support into separate blocks instead. */
+  allowDisconnected?: boolean;
 }
 
 interface ModuleOptions {
   /** Optional module anchor. The module bbox is softly attracted to this target after block/satellite placement. */
   anchor?: TargetRef;
-  /** Preferred coarse side of the board for this module. */
-  sidePreference?: BoardEdge;
-  /** Maximum module bbox scale over estimated packed size. Use to keep large functional areas from spreading too much. */
-  maxBboxScale?: number;
-  /** Absolute module bbox limits in mm. */
-  maxWidth?: number;
-  maxHeight?: number;
-  /** Treat module bbox limits as hard placement penalties. Use only for real envelopes. */
-  hardBbox?: boolean;
-  /** Keep module blocks as a rigid macro group after internal placement. Defaults true. */
-  lockInternalAfterPlace?: boolean;
-  /** Reserved for future module-local refinement. */
-  allowInternalRefine?: false | "satellitesOnly" | "all";
-  /** Higher-priority modules move first during macro placement. */
-  placementPriority?: Priority;
 }
 
 interface BoardOptions {
@@ -191,6 +153,109 @@ interface BoardHoleFunction {
 
 declare const boardHole: BoardHoleFunction;
 
+interface BoardPadHoleOptions {
+  /** Drill diameter in mm. Must be > 0. Required for layer:"multi"; forbidden for top/bottom pads. */
+  diameter: number;
+  /** Relative EasyEDA hole offset from this pad center. */
+  offset?: { x?: number; y?: number };
+}
+
+type BoardPadCell =
+  | {
+    name: string;
+    net: string;
+    shape: "round";
+    diameter: number;
+    hole?: BoardPadHoleOptions;
+  }
+  | {
+    name: string;
+    net: string;
+    shape: "rect" | "oval";
+    width: number;
+    height: number;
+    hole?: BoardPadHoleOptions;
+  };
+
+interface BoardPadOptions {
+  /** Fixed board anchor for the synthetic pad group. */
+  at: Extract<TargetRef, { type: "board_anchor" }>;
+  /** Offset in mm from at. Positive X is right, positive Y is down. */
+  offset?: { x?: number; y?: number };
+  /** Column pitch in mm. */
+  pitch: number;
+  /** Row pitch in mm. Defaults to pitch. */
+  rowPitch?: number;
+  /** Copper side for all pads. layer:"multi" requires hole.diameter > 0 on every pad. Default "multi". */
+  layer?: BoardPadLayer;
+  /** Optional block owner. If omitted, a connector block with the same name is created. */
+  block?: string;
+  /** Matrix of pads. One row creates a line; multiple rows create a full pad header/grid. */
+  pads: BoardPadCell[][];
+}
+
+/** Create a synthetic fixed component made from external board pads/test pads/header pads. Exported as BoardAssemble.pads, not components[]. */
+declare function boardPad(name: string, options: BoardPadOptions): void;
+
+interface ComponentGridOptions {
+  /** Absolute board coordinate of matrix[0][0]. Board origin is center. Use either origin or at, not both. */
+  origin?: { x: number; y: number };
+  /** Board anchor for matrix[0][0]. Use either origin or at, not both. */
+  at?: Extract<TargetRef, { type: "board_anchor" }>;
+  /** Offset in mm from at. Positive X is right, positive Y is down. */
+  offset?: { x?: number; y?: number };
+  /** Column pitch in mm. */
+  columnPitch: number;
+  /** Row pitch in mm. Defaults to columnPitch. */
+  rowPitch?: number;
+  /** Block owner for all listed components. The block is treated as allowDisconnected because this is a mechanical array. */
+  block: string;
+  /** Role for all listed components. Default "connector". Use only connector/test/indicator-style arrays. */
+  role?: ComponentRole;
+  /** Locked layer for all listed components. Default "top". */
+  layer?: Layer;
+  /** Locked rotation for all listed components. Default 0. */
+  rotate?: number;
+}
+
+/** Place existing mechanical connector/test/header/indicator components as a fixed regular matrix. matrix[row][column]; not for electrical islands, decoupling, feedback, or power passives. */
+declare function componentGrid(name: string, matrix: string[][], options: ComponentGridOptions): void;
+
+interface RegionRectOptions {
+  /** Board anchor for region placement. Edge/corner anchors make the rect grow inward from that edge/corner. */
+  anchor: Extract<TargetRef, { type: "board_anchor" }>;
+  /** Region width in mm. */
+  width: number;
+  /** Region height in mm. */
+  height: number;
+  /** Optional offset in mm. Positive X is right, positive Y is down. */
+  offset?: { x?: number; y?: number };
+}
+
+type ConstraintRegionShape = {
+  type: "rect";
+  anchor: Extract<TargetRef, { type: "board_anchor" }>;
+  width: number;
+  height: number;
+  offset?: { x?: number; y?: number };
+};
+
+interface ConstraintRegionOptions {
+  /** Only blocks listed here may intersect the region. All other blocks/components are excluded at board placement. */
+  allow?: { blocks?: string[] };
+  /** Board layers affected by this placement keepout. Defaults to both top and bottom. */
+  layers?: Layer[];
+  shape: ConstraintRegionShape;
+}
+
+declare const region: {
+  /** Rectangular board-level placement region. Width/height/offset are in mm. */
+  rect(options: RegionRectOptions): ConstraintRegionShape;
+};
+
+/** Board-level placement constraint region. Supports allow.blocks and optional layer filtering; affects board placement only. */
+declare function constraintRegion(name: string, options: ConstraintRegionOptions): void;
+
 interface DesignatorTextOptions {
   /** Enable/disable reference designator placement. Default true. */
   enabled?: boolean;
@@ -231,7 +296,7 @@ interface ComponentBuilder {
   faceTo(direction: MechanicalFaceDirection): ComponentBuilder;
   /** Mount a mechanical component on a board edge. Computes fixed center, face direction, and board overflow from the real footprint bbox after rotation. Prefer this for USB/ports/buttons on edges instead of fixed()+offset+boardOverflow. */
   edgeMount(edge: BoardEdge, options?: EdgeMountOptions): ComponentBuilder;
-  /** Lock this component to an exact board position. Fixed components are placed before auto-placement and are never moved by repair. */
+  /** Lock this component to an exact board position. Allowed only for role("connector") mechanical parts; normal components must be placed by blocks/hints. */
   fixed(options: FixedPlacementOptions): ComponentBuilder;
   /** Alias for fixed(). */
   place(options: FixedPlacementOptions): ComponentBuilder;
@@ -285,7 +350,7 @@ interface EdgeMountOptions {
   slide?: boolean;
 }
 
-/** Lock a component to an exact/anchor-relative board position. Use for mechanical connectors such as USB, buttons, mounting-related parts. */
+/** Lock a component to an exact/anchor-relative board position. Allowed only for role("connector") mechanical parts. */
 declare function fixed(designator: string, options: FixedPlacementOptions): void;
 /** Global helper equivalent to component(designator).edgeMount(edge, options). */
 declare function edgeMount(designator: string, edge: BoardEdge, options?: EdgeMountOptions): void;
@@ -313,8 +378,6 @@ interface CriticalPairOptions {
   weight?: number;
   /** Treat maxDistance as a hard placement limit. Make only the truly dominant pair hard; do not make many hard pairs to the same parent pin. */
   hard?: boolean;
-  /** Secondary penalty for ratsnest segment crossings from this pair. Keep small, e.g. 1-3. */
-  crossingPenalty?: number;
   /** Prefer rotations where the two pads face each other. */
   preferFacingPads?: boolean;
 }
@@ -344,24 +407,9 @@ declare function blockClearance(sourceBlock: string, targetBlock: string | "all"
 /** Place component/block near a board edge while respecting board edge clearance. Prefer near(comp(...), anchor("board.left"), ...) unless edge orientation is mechanically required. */
 declare function edge(source: TargetRef | string, edge: BoardEdge, priority?: Priority, orientation?: "outward" | "inward" | "any" | null): void;
 
-interface LineOptions {
-  /** Gap between component bodies. Effective gap will not be less than board.clearance. */
-  gap?: number;
-  /** Force common rotation when allowed. */
-  rotate?: number;
-  priority?: Priority;
-}
-
-/** Arrange components in one horizontal/vertical row. Use sparingly for true arrays, matched groups, or explicit user-requested alignment. */
-declare function line(components: string[], axis: Axis, options?: LineOptions): void;
-
 interface BypassOptions {
-  /** Row axis. If omitted, solver chooses by footprint long axis. */
-  axis?: Axis;
   /** Gap between capacitor bodies. Effective gap will not be less than board.clearance. */
   gap?: number;
-  /** Force capacitor rotation when allowed. */
-  rotate?: number;
 }
 
 /** Place bypass capacitors in a row near a target supply pin. Add clearance/blockClearance when the row is close enough to overlap an IC body. */
@@ -372,10 +420,8 @@ interface CapClusterOptions {
   powerNet: string;
   /** Return net, usually "GND". */
   returnNet: string;
-  /** Optional target supply pin to keep the bank near. */
-  target?: Extract<TargetRef, { type: "pin" }>;
-  /** Cluster axis. For horizontal capacitor banks use "x". */
-  axis?: Axis;
+  /** Required target supply pin to keep the bank near. The target pin must be on powerNet. */
+  target: Extract<TargetRef, { type: "pin" }>;
   /** Maximum rows. Only 1 or 2 are supported; default chooses 1 for small banks and 2 for larger banks. */
   maxRows?: 1 | 2;
   /** Maximum capacitors per row before using a second row. Default 3. */
@@ -389,22 +435,16 @@ interface CapClusterOptions {
   priority?: Priority;
 }
 
-/** Place a bank of capacitors as a bus-aware cluster. Unlike line()/bypass(), this chooses rotations so same-net pads face the shared bus: one row uses power on one side and return on the other; two rows put power pads inward toward a center bus and return pads outward. */
+/** Place a bank of 2+ capacitors as a bus-aware cluster. Every capacitor must have both powerNet and returnNet pads. For a single capacitor, crystal load capacitors, or unrelated capacitors use veryNear/bypass instead. Unlike generic row placement, this chooses rotations so same-net pads face the shared bus: one row uses power on one side and return on the other; two rows put power pads inward toward a center bus and return pads outward. */
 declare function capCluster(capacitors: string[], options: CapClusterOptions): void;
 
 interface SolverOptions {
   /** Placement grid in mm. Larger values are faster and cleaner; smaller values allow tighter placement. For complex boards, 1mm is a good starting point. */
   grid?: number;
-  /** Fallback candidate grid in mm. Do not set smaller than needed; tiny values can make placement slow. For complex boards, about 2mm is a good starting point. */
-  fallbackGrid?: number;
   /** Signals ignored during placement ratsnest scoring, usually ["GND"]. */
   ignoredSignals?: string[];
-  /** Local improvement iterations after initial placement. Keep around 32-40 for complex 30+ component boards unless the user asks for slower placement quality. */
-  localImproveIterations?: number;
-  /** Minimum score improvement accepted per local move. */
-  localImproveMinDelta?: number;
-  /** Move functional blocks as rigid groups after local component placement. Default true; disable only for tiny/simple boards. */
-  hierarchicalBlocks?: boolean;
+  /** "normal" keeps balanced electrical/aesthetic placement. "high" heavily prefers minimum block/module/board occupied size for very compact boards. Default "normal". */
+  compactness?: "normal" | "high";
 }
 
 declare function solver(options: SolverOptions): void;

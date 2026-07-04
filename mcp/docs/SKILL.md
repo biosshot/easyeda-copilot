@@ -1,18 +1,31 @@
 ---
 name: easyeda-copilot-mcp
-description: Use when EasyEDA Copilot MCP tools are available. This local skill file is the MCP documentation entry point; read it and the referenced local docs before creating circuits, modifying schematics, generating placement-only PCB layout DSL, assembling PCB placement results, or running PCB routing/DRC tools.
+description: Use when EasyEDA Copilot MCP tools are available. This local skill file is the entry point for EasyEDA schematic, PCB placement, assembly, DRC, preview, and routing workflows.
 ---
 
 # EasyEDA Copilot MCP
 
 Use this skill when an EasyEDA Copilot MCP server provides EasyEDA schematic and PCB tools.
 
-Treat the local files as the documentation source for MCP work. Do not fetch or rely on server prompt endpoints for MCP context.
+The local files in this directory are the documentation source for MCP work. Do not fetch server prompt endpoints for MCP context. Read only the docs needed for the task.
 
 ## References
 
-- `circuit-maker/instructions.md`: circuit modification rules.
-- `pcb-layout/instructions.md`: PCB layout workflow and heuristics.
-- `pcb-layout/dsl.ts`: authoritative PCB layout DSL declarations and examples.
-- `pcb-layout/mcp-workflow.md`: MCP-specific PCB assembly workflow.
-- `pcb-drc/rules.md`: PCB DRC rule export/edit/apply workflow, including differential pair handling.
+- `circuit-maker/instructions.md`: circuit creation and schematic modification rules.
+- `pcb-layout/dsl.ts`: authoritative PCB placement DSL declarations. Use this before writing `make_pcb_layout` code.
+- `pcb-layout/instructions.md`: PCB placement workflow, heuristics, anti-patterns, and examples.
+- `pcb-layout/mcp-workflow.md`: MCP-specific flow for placement, assembly, preview, DRC, and routing.
+- `pcb-layout/examples/`: full reference layout files. Use them as patterns after reading `dsl.ts`; if an example conflicts with `dsl.ts`, `dsl.ts` wins.
+- `pcb-drc/rules.md`: PCB DRC export/edit/apply workflow, including differential pair handling.
+
+## Current PCB Model
+
+`make_pcb_layout` is placement-only. It creates board outline, fixed mechanical objects, component placement, synthetic board pads, mounting holes, and reference text positions. It does not route tracks, create final copper pours, tune DRC rules, or replace EasyEDA v3 routing.
+
+Normal PCB flow:
+
+1. Write a local JavaScript DSL file using `pcb-layout/dsl.ts`.
+2. Call `make_pcb_layout` with the file path.
+3. Inspect the text report and `previewImagePath`.
+4. If acceptable, open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc` with `layoutId`.
+5. Run EasyEDA/client routing and DRC tools on the assembled PCB.
