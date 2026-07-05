@@ -128,7 +128,7 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
     return pinToSignal;
 }
 
-export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean }) {
+export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean, disableExtractPos?: boolean, }) {
     const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
 
     if (docType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
@@ -309,18 +309,29 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     const components: ExplainCircuit['components'] = [...componentsMap.values()].map(component => {
         const device = component.code ? deviceByLcscId.get(component.code) : null;
 
-        return {
+        const comp: ExplainCircuit['components'][0] = {
             designator: component.designator,
             pins: component.pins,
             value: component.value,
-            pos: component.pos,
             part_uuid: device?.uuid ?? null,
-            footprint_name: device?.footprint?.display_title
+        };
+
+        if (component.footprint_uuid) {
+            comp.footprint_uuid = component.footprint_uuid;
+        }
+
+        if (component.footprint_name) {
+            comp.footprint_name = device?.footprint?.display_title
                 ?? device?.footprint?.title
                 ?? device?.attributes?.['Supplier Footprint']?.toString()
-                ?? component.footprint_name,
-            footprint_uuid: component.footprint_uuid
-        };
+                ?? component.footprint_name;
+        }
+
+        if (!options?.disableExtractPos && component.pos) {
+            comp.pos = component.pos;
+        }
+
+        return comp;
     });
 
     const explainCircuit: ExplainCircuit = { components };

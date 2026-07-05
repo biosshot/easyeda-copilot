@@ -34,6 +34,8 @@ const DOCS_DIR = join(dirname(findUp.sync('package.json', {
 const SKILL_DOC_PATH = join(DOCS_DIR, 'SKILL.md');
 const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
 const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
+const PCB_LAYOUT_TASK_PATH = '/v1/mcp-tools/make-pcb-layout';
+const DEFAULT_PCB_LAYOUT_WAIT_MS = 60_000;
 
 const server = new McpServer({
     name: 'easyeda-copilot',
@@ -204,18 +206,33 @@ function startWsServer() {
     });
 }
 
+const SERVER_AUTHORIZATION = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';
+
+type AsyncOperationResponse<T = unknown> = {
+    status: 'pending' | 'completed' | 'failed' | 'cancelled';
+    result?: T;
+    intermediateResult?: unknown;
+    error?: string;
+    createdAt: string;
+    completedAt?: string;
+};
+
+async function parseJsonResponse(response: Response) {
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+}
+
 async function postJson(path: string, payload: unknown): Promise<unknown> {
     const response = await fetch(`${COPILOT_SERVER_URL}${path}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg='
+            'Authorization': SERVER_AUTHORIZATION
         },
         body: JSON.stringify(payload),
     });
 
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : null;
+    const data = await parseJsonResponse(response);
 
     if (!response.ok) {
         const message = typeof data === 'object' && data && 'error' in data
@@ -225,6 +242,96 @@ async function postJson(path: string, payload: unknown): Promise<unknown> {
     }
 
     return data;
+}
+
+function asyncProgressText(intermediate: unknown) {
+    if (!isRecord(intermediate)) return undefined;
+    if (typeof intermediate.content === 'string') return intermediate.content;
+    if (typeof intermediate.action === 'string') return intermediate.action;
+    if (typeof intermediate.stage === 'string') return `PCB layout stage: ${intermediate.stage}`;
+    return undefined;
+}
+
+async function sleep(ms: number) {
+    await new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function startAsyncTask(path: string, payload: unknown) {
+    const startResponse = await fetch(`${COPILOT_SERVER_URL}${path}/start`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': SERVER_AUTHORIZATION,
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const startData = await parseJsonResponse(startResponse);
+    if (!startResponse.ok) {
+        throw new Error(`Failed to start operation: ${startResponse.status} ${JSON.stringify(startData)}`);
+    }
+
+    const operationId = isRecord(startData) && typeof startData.operationId === 'string'
+        ? startData.operationId
+        : undefined;
+    if (!operationId) throw new Error('Missing operationId');
+
+    return operationId;
+}
+
+async function getAsyncTaskStatus<T = unknown>(path: string, operationId: string) {
+    const statusResponse = await fetch(`${COPILOT_SERVER_URL}${path}/status/${encodeURIComponent(operationId)}`, {
+        headers: { 'Authorization': SERVER_AUTHORIZATION },
+    });
+    const operation = await parseJsonResponse(statusResponse) as AsyncOperationResponse<T>;
+
+    if (!statusResponse.ok) {
+        throw new Error(`Status check failed: ${statusResponse.status} ${JSON.stringify(operation)}`);
+    }
+
+    return operation;
+}
+
+async function cancelAsyncTask(path: string, operationId: string) {
+    const cancelResponse = await fetch(`${COPILOT_SERVER_URL}${path}/cancel/${encodeURIComponent(operationId)}`, {
+        headers: { 'Authorization': SERVER_AUTHORIZATION },
+    });
+    const result = await parseJsonResponse(cancelResponse);
+
+    if (!cancelResponse.ok) {
+        throw new Error(`Cancel failed: ${cancelResponse.status} ${JSON.stringify(result)}`);
+    }
+
+    return result;
+}
+
+async function waitForAsyncTask<T = unknown>(path: string, operationId: string, options: {
+    pollIntervalMs?: number;
+    waitMs?: number;
+} = {}) {
+    const pollIntervalMs = options.pollIntervalMs ?? 2000;
+    const waitMs = options.waitMs ?? 60_000;
+    const startedAt = Date.now();
+    let lastProgress = '';
+
+    while (true) {
+        const operation = await getAsyncTaskStatus<T>(path, operationId);
+        const progress = asyncProgressText(operation.intermediateResult);
+        if (progress && progress !== lastProgress) {
+            lastProgress = progress;
+            console.error(`[make_pcb_layout] ${progress}`);
+        }
+
+        if (operation.status !== 'pending') {
+            return operation;
+        }
+
+        if (Date.now() - startedAt >= waitMs) {
+            return operation;
+        }
+
+        await sleep(Math.min(pollIntervalMs, Math.max(0, waitMs - (Date.now() - startedAt))));
+    }
 }
 
 function localSkillDocText() {
@@ -394,6 +501,67 @@ function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
 
     if (oldest) storedPcbLayouts.delete(oldest);
 }
+async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
+    const runId = randomUUID();
+    const layoutId = result.pcb ? runId : undefined;
+    const previewImagePath = await writePreviewImageFile(result.preview_image_url, runId);
+
+    if (result.pcb && layoutId) {
+        rememberPcbLayout(layoutId, {
+            pcb: result.pcb,
+            content: result.content,
+            toolReport: result.toolReport,
+            previewImagePath,
+            createdAt: Date.now(),
+        });
+    }
+
+    return {
+        layoutId,
+        previewImagePath,
+    };
+}
+
+async function formatPcbLayoutOperationResult(operationId: string, operation: AsyncOperationResponse<MakePcbLayoutResponse>) {
+    if (operation.status === 'completed') {
+        if (!operation.result) {
+            return textResult({
+                status: 'error',
+                operationId,
+                error: 'PCB layout operation completed without result.',
+            });
+        }
+
+        const report = {
+            operationId,
+            status: 'completed',
+            ...await storeMakePcbLayoutResult(operation.result),
+        };
+
+        const lines = [
+            operation.result.content ?? operation.result.error ?? 'PCB layout finished.',
+            `Run report:\n${JSON.stringify(report, null, 2)}`,
+        ];
+
+        return textResult(lines.join('\n\n'));
+    }
+
+    if (operation.status === 'failed' || operation.status === 'cancelled') {
+        return textResult({
+            status: operation.status,
+            operationId,
+            error: operation.error ?? `PCB layout operation ${operation.status}.`,
+        });
+    }
+
+    return textResult({
+        status: 'pending',
+        operationId,
+        progress: asyncProgressText(operation.intermediateResult),
+        message: 'PCB layout is still running. Call wait_pcb_layout with this operationId.',
+        nextTool: 'wait_pcb_layout',
+    });
+}
 
 server.registerResource(
     'easyeda_copilot_mcp_skill',
@@ -493,9 +661,10 @@ server.registerTool(
     'make_pcb_layout',
     {
         title: 'Make PCB Layout',
-        description: `Create PCB component placement from the current EasyEDA schematic using JavaScript PCB layout DSL code. Server-side routing is disabled: route the assembled PCB later in EasyEDA/client tools. Returns placement report, previewImagePath, and a layoutId for later assembly. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+        description: `Create PCB component placement from the current EasyEDA schematic using JavaScript PCB layout DSL code. Starts a long-running server operation, waits up to 60 seconds, then returns either the finished layoutId/preview or an operationId for wait_pcb_layout. Server-side routing is disabled: route the assembled PCB later in EasyEDA/client tools. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
+            wait_ms: z.number().min(60_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
         }).refine(data => Boolean(data.file), {
             message: 'Fill one: code, file.',
         }),
@@ -505,36 +674,56 @@ server.registerTool(
         const circuit = await requestEasyEda('get-multi-page-schematic', {
             extractFootprintUuid: true
         });
-        const result = await postJson('/v1/mcp-tools/make-pcb-layout', {
+
+        const operationId = await startAsyncTask(PCB_LAYOUT_TASK_PATH, {
             code,
             circuit,
-        }) as MakePcbLayoutResponse;
+        });
+        const operation = await waitForAsyncTask<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, operationId, {
+            pollIntervalMs: 2000,
+            waitMs: input.wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
+        });
 
-        const runId = randomUUID();
-        const layoutId = result.pcb ? runId : undefined;
-        const previewImagePath = await writePreviewImageFile(result.preview_image_url, runId);
+        return await formatPcbLayoutOperationResult(operationId, operation);
+    },
+);
 
-        if (result.pcb && layoutId) {
-            rememberPcbLayout(layoutId, {
-                pcb: result.pcb,
-                content: result.content,
-                toolReport: result.toolReport,
-                previewImagePath,
-                createdAt: Date.now(),
-            });
-        }
+server.registerTool(
+    'wait_pcb_layout',
+    {
+        title: 'Wait PCB Layout',
+        description: 'Wait for a previously started make_pcb_layout operation. Use operationId returned by make_pcb_layout when it says the layout is still running.',
+        inputSchema: z.object({
+            operationId: z.string().min(1).describe('operationId returned by make_pcb_layout.'),
+            wait_ms: z.number().min(60_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
+        }),
+    },
+    async ({ operationId, wait_ms }) => {
+        const operation = await waitForAsyncTask<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, operationId, {
+            pollIntervalMs: 2000,
+            waitMs: wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
+        });
 
-        const report = {
-            layoutId,
-            previewImagePath,
-        };
+        return await formatPcbLayoutOperationResult(operationId, operation);
+    },
+);
 
-        const lines = [
-            result.content ?? result.error ?? 'PCB layout finished.',
-            `Run report:\n${JSON.stringify(report, null, 2)}`,
-        ];
-
-        return textResult(lines.join('\n\n'));
+server.registerTool(
+    'cancel_pcb_layout',
+    {
+        title: 'Cancel PCB Layout',
+        description: 'Cancel a previously started make_pcb_layout operation by operationId.',
+        inputSchema: z.object({
+            operationId: z.string().min(1).describe('operationId returned by make_pcb_layout.'),
+        }),
+    },
+    async ({ operationId }) => {
+        const result = await cancelAsyncTask(PCB_LAYOUT_TASK_PATH, operationId);
+        return textResult({
+            status: 'cancel_requested',
+            operationId,
+            result,
+        });
     },
 );
 

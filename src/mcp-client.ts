@@ -710,7 +710,7 @@ async function handleMessage(message: McpMessage) {
 
         if (message.event === 'get-schematic') {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
-            const schematic = await getSchematic([...primitiveIds]);
+            const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true });
             reply(true, schematic);
             return;
         }
@@ -725,7 +725,7 @@ async function handleMessage(message: McpMessage) {
                 await eda.dmt_EditorControl.openDocument(page.uuid);
                 await new Promise(resolve => setTimeout(resolve, 400));
                 const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
-                const schematic = await getSchematic([...primitiveIds], { extractFootprintUuid });
+                const schematic = await getSchematic([...primitiveIds], { extractFootprintUuid, disableExtractPos: true });
                 fullSch.components.push(...schematic.components);
             }
 
