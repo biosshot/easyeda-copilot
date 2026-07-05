@@ -169,7 +169,7 @@ Rules:
 
 ## Connectors, Edge Parts, And Mechanical Objects
 
-For edge connectors and ports, prefer `edgeMount`:
+For ports/connectors that physically protrude outside the board, use `edgeMount`. Do not use `edgeMount` for ordinary buttons, LEDs, or connectors that stay inside the board:
 
 ```js
 component("J2")
@@ -179,6 +179,12 @@ component("J2")
   .edgeMount("bottom", { overhang: 1.0, face: "outward" });
 ```
 
+For buttons, LEDs, side-access connectors, and controls that should stay inside the board but near an edge, use `edgePlace`:
+
+```js
+edgePlace(["SW1", "SW2"], { edges: ["top", "right"], inset: 1.0, face: "outward", layer: "top" });
+component("LED1").block("status").role("indicator").top().edgePlace("bottom", { inset: 1.0, face: "any" });
+```
 Use `faceTo` when only the orientation matters:
 
 ```js

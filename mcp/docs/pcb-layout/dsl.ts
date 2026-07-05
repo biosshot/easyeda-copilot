@@ -294,8 +294,10 @@ interface ComponentBuilder {
   faceAt0(direction: MechanicalFaceDirection): ComponentBuilder;
   /** Hard-constrain rotation so the component's mechanical face points to this board direction. Use for USB/connectors/buttons/displays. */
   faceTo(direction: MechanicalFaceDirection): ComponentBuilder;
-  /** Mount a mechanical component on a board edge. Computes fixed center, face direction, and board overflow from the real footprint bbox after rotation. Prefer this for USB/ports/buttons on edges instead of fixed()+offset+boardOverflow. */
+  /** Mount a mechanical component on a board edge with real overhang outside the board. Use for USB/ports only, not ordinary buttons. */
   edgeMount(edge: BoardEdge, options?: EdgeMountOptions): ComponentBuilder;
+  /** Place a mechanical component near one or more board edges while keeping it inside the board. Use for buttons/LEDs/side controls. If face auto-detection is wrong, call faceAt0(...) before this. */
+  edgePlace(edgeOrEdges: BoardEdge | BoardEdge[], options?: EdgePlaceOptions): ComponentBuilder;
   /** Lock this component to an exact board position. Allowed only for role("connector") mechanical parts; normal components must be placed by blocks/hints. */
   fixed(options: FixedPlacementOptions): ComponentBuilder;
   /** Alias for fixed(). */
@@ -350,6 +352,29 @@ interface EdgeMountOptions {
   slide?: boolean;
 }
 
+interface EdgePlaceOptions {
+  /** One allowed board edge, or use edges for multiple choices. Component stays inside the board. */
+  edge?: BoardEdge;
+  /** Allowed board edges. Solver chooses a free slot along one of them. */
+  edges?: BoardEdge[];
+  /** Distance from the real board edge inward in mm. Default 0. */
+  inset?: number;
+  /** Default "outward". With one edge, this filters rotation so the mechanical face points correctly. Use "any" for non-directional edge parts. */
+  face?: "outward" | "inward" | "any" | MechanicalFaceDirection;
+  /** Preferred cross-edge alignment. The solver may still slide if needed. Default center. */
+  align?: "center" | "start" | "end";
+  /** Preferred/exact X coordinate for top/bottom edge placement. */
+  x?: number;
+  /** Preferred/exact Y coordinate for left/right edge placement. */
+  y?: number;
+  /** Additional cross-edge offset in mm. */
+  offset?: number;
+  /** Optional locked layer for this edge-placed component. */
+  layer?: Layer;
+}
+
+/** Place mechanical components near board edge(s) but inside the board. Use for buttons, LEDs, side-access connectors, and edge controls. Not for USB/ports that must overhang; use edgeMount for those. */
+declare function edgePlace(designators: string | string[], options: EdgePlaceOptions): void;
 /** Lock a component to an exact/anchor-relative board position. Allowed only for role("connector") mechanical parts. */
 declare function fixed(designator: string, options: FixedPlacementOptions): void;
 /** Global helper equivalent to component(designator).edgeMount(edge, options). */
