@@ -37,6 +37,14 @@ const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
 const PCB_LAYOUT_TASK_PATH = '/v1/mcp-tools/make-pcb-layout';
 const DEFAULT_PCB_LAYOUT_WAIT_MS = 60_000;
 
+function isPcbRoutingLayer(layer: string) {
+    return layer === 'TOP' || layer === 'BOTTOM' || /^INNER_(?:[1-9]|[12]\d|30)$/.test(layer);
+}
+
+const PcbRoutingLayerSchema = PcbLayerNameSchema().refine(isPcbRoutingLayer, {
+    message: 'Expected a copper signal layer: TOP, BOTTOM, or INNER_1..INNER_30.',
+});
+
 const server = new McpServer({
     name: 'easyeda-copilot',
     version: '1.1.4',
@@ -87,6 +95,8 @@ type AutoRouteRunSummary = {
     filteredInputPath: string;
     resultPath: string;
     ignoredNets: string[];
+    routeLayers?: string[];
+    routeLayerIds?: number[];
     removedTopLevelNets: number;
     progress?: number;
     routabitity?: number;
@@ -406,10 +416,46 @@ function getBoardPolygonFromAutoRouteInput(inputJson: unknown) {
     return polygon.length >= 3 ? polygon : undefined;
 }
 
-function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[]) {
+function autoRouteLayerNameToId(layer: string) {
+    if (layer === 'TOP') return 1;
+    if (layer === 'BOTTOM') return 2;
+
+    const innerMatch = /^INNER_(\d+)$/.exec(layer);
+    if (innerMatch) return 14 + Number(innerMatch[1]);
+
+    return undefined;
+}
+
+function replaceAutoRouteRuleLayers(value: unknown, selectedLayerIds: number[]) {
+    if (Array.isArray(value)) {
+        for (const item of value) replaceAutoRouteRuleLayers(item, selectedLayerIds);
+        return;
+    }
+
+    if (!isRecord(value)) return;
+
+    for (const [key, child] of Object.entries(value)) {
+        if (key === 'layers' && Array.isArray(child) && child.every(item => typeof item === 'number')) {
+            const intersection = child.filter(layer => selectedLayerIds.includes(layer));
+            value[key] = intersection.length ? intersection : selectedLayerIds;
+            continue;
+        }
+
+        replaceAutoRouteRuleLayers(child, selectedLayerIds);
+    }
+}
+
+function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[], routeLayers?: string[]) {
     const ignored = new Set(ignoredNets.map(net => net.trim()).filter(Boolean));
     const filtered = cloneJson(inputJson);
     let removedTopLevelNets = 0;
+    const routeLayerIds = routeLayers
+        ?.map(layer => autoRouteLayerNameToId(layer))
+        .filter((id): id is number => typeof id === 'number');
+
+    if (routeLayers?.length && routeLayerIds?.length !== routeLayers.length) {
+        throw new Error(`Auto route layers must be copper signal layers: ${routeLayers.join(', ')}`);
+    }
 
     if (isRecord(filtered) && Array.isArray(filtered.nets)) {
         const nets = filtered.nets as AutoRouteInputNet[];
@@ -421,17 +467,29 @@ function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[]) {
         });
     }
 
-    return { filtered, removedTopLevelNets };
+    if (isRecord(filtered) && routeLayerIds?.length) {
+        const layers = isRecord(filtered.layers) ? filtered.layers : {};
+        const previousRoute = Array.isArray(layers.route) ? layers.route.filter(item => typeof item === 'number') : [];
+        layers.route = routeLayerIds;
+        layers.notRoute = previousRoute.filter(layer => !routeLayerIds.includes(layer));
+        filtered.layers = layers;
+        replaceAutoRouteRuleLayers(filtered.rules, routeLayerIds);
+        replaceAutoRouteRuleLayers(filtered.classes, routeLayerIds);
+    }
+
+    return { filtered, removedTopLevelNets, routeLayerIds };
 }
 
 function summarizeAutoRouteResult(result: Record<string, unknown>, paths: {
     inputPath: string;
     filteredInputPath: string;
     resultPath: string;
-}, ignoredNets: string[], removedTopLevelNets: number): AutoRouteRunSummary {
+}, ignoredNets: string[], removedTopLevelNets: number, routeLayers?: string[], routeLayerIds?: number[]): AutoRouteRunSummary {
     return {
         ...paths,
         ignoredNets,
+        routeLayers,
+        routeLayerIds,
         removedTopLevelNets,
         progress: typeof result.progress === 'number' ? result.progress : undefined,
         routabitity: typeof result.routabitity === 'number' ? result.routabitity : undefined,
@@ -774,6 +832,7 @@ server.registerTool(
         description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Open the target PCB document first.',
         inputSchema: z.object({
             ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
+            route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
             timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
             router_dir: z.string().min(1).optional().describe('Optional custom-router directory override. Usually leave empty.'),
             pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
@@ -799,7 +858,7 @@ server.registerTool(
         await writeFile(inputPath, inputText);
         const inputJson = parseJsonText(inputText, 'EasyEDA autoroute input');
         const ignoredNets = input.ignore_nets.map(net => net.trim()).filter(Boolean);
-        const { filtered, removedTopLevelNets } = filterAutoRouteInput(inputJson, ignoredNets);
+        const { filtered, removedTopLevelNets, routeLayerIds } = filterAutoRouteInput(inputJson, ignoredNets, input.route_layers);
         await writeFile(filteredInputPath, JSON.stringify(filtered, null, 2));
 
         let lastProgress = 0;
@@ -834,7 +893,7 @@ server.registerTool(
 
         return textResult({
             content: 'Auto route imported into EasyEDA.',
-            ...summarizeAutoRouteResult(result, { inputPath, filteredInputPath, resultPath }, ignoredNets, removedTopLevelNets),
+            ...summarizeAutoRouteResult(result, { inputPath, filteredInputPath, resultPath }, ignoredNets, removedTopLevelNets, input.route_layers, routeLayerIds),
             importResult,
         });
     },
@@ -920,6 +979,51 @@ server.registerTool(
         }
 
 
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'get_pcb_stack_layers',
+    {
+        title: 'Get PCB Stack Layers',
+        description: 'Return the current PCB copper layer count and active signal routing layers. Open the target PCB document first. Use before choosing route_layers for run_auto_route_on_current_pcbdoc.',
+        inputSchema: z.object({}),
+    },
+    async () => {
+        const result = await requestEasyEda('get-pcb-stack-layers');
+        return textResult(result);
+    },
+);
+
+server.registerTool(
+    'set_pcb_copper_layer_count',
+    {
+        title: 'Set PCB Copper Layer Count',
+        description: 'Set the number of copper layers in the currently opened PCB document. This changes the PCB stack; use get_pcb_stack_layers afterwards to verify available routing layers.',
+        inputSchema: z.object({
+            count: z.union([
+                z.literal(2),
+                z.literal(4),
+                z.literal(6),
+                z.literal(8),
+                z.literal(10),
+                z.literal(12),
+                z.literal(14),
+                z.literal(16),
+                z.literal(18),
+                z.literal(20),
+                z.literal(22),
+                z.literal(24),
+                z.literal(26),
+                z.literal(28),
+                z.literal(30),
+                z.literal(32),
+            ]).describe('Allowed copper layer count. EasyEDA supports even counts from 2 to 32.'),
+        }),
+    },
+    async ({ count }) => {
+        const result = await requestEasyEda('set-pcb-copper-layer-count', { count }, 300000);
         return textResult(result);
     },
 );

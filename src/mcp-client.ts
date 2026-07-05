@@ -120,6 +120,42 @@ function readGroundSutureOptions(value: unknown): GroundSutureOptions {
     };
 }
 
+function rawLayerName(raw: number | string) {
+    if (typeof raw === 'string') return raw;
+    return EPCB_LayerId[raw] ?? String(raw);
+}
+
+async function getPcbStackLayers() {
+    const [allLayers, copperLayerCount] = await Promise.all([
+        eda.pcb_Layer.getAllLayers().catch(() => []),
+        eda.pcb_Layer.getTheNumberOfCopperLayers().catch(() => undefined),
+    ]);
+    const layers = allLayers
+        .filter(l => l.layerStatus && l.type === EPCB_LayerType.SIGNAL)
+        .map(l => ({
+            id: l.id,
+            layer: rawLayerName(l.id),
+            name: l.name,
+            type: l.type,
+            status: l.layerStatus,
+            locked: l.locked,
+        }));
+
+    return {
+        copperLayerCount,
+        layers,
+    };
+}
+
+function readCopperLayerCount(value: unknown): 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22 | 24 | 26 | 28 | 30 | 32 {
+    const allowed = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32] as const;
+    if (typeof value === 'number' && allowed.includes(value as typeof allowed[number])) {
+        return value as typeof allowed[number];
+    }
+
+    throw new Error('Invalid copper layer count. Expected an even number from 2 to 32.');
+}
+
 function isLayerMapName(name: string) {
     return name === 'data' || name === 'tables';
 }
@@ -740,6 +776,25 @@ async function handleMessage(message: McpMessage) {
 
         if (message.event === 'get-pcb-raw') {
             reply(true, await getPcbRaw());
+            return;
+        }
+
+        if (message.event === 'get-pcb-stack-layers') {
+            reply(true, await getPcbStackLayers());
+            return;
+        }
+
+        if (message.event === 'set-pcb-copper-layer-count') {
+            const count = readCopperLayerCount(body.count);
+            await checkpointer.save(false);
+            const success = await eda.pcb_Layer.setTheNumberOfCopperLayers(count);
+            if (!success) throw new Error(`Failed to set PCB copper layer count: ${count}`);
+
+            reply(true, {
+                success,
+                count,
+                stack: await getPcbStackLayers(),
+            });
             return;
         }
 

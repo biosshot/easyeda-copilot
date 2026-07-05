@@ -69,13 +69,16 @@ Do not assemble into an unrelated PCB document or an ambiguous project structure
 After assembly:
 
 1. Configure or import DRC rules if needed.
-2. Run EasyEDA v3/client routing, or call `run_auto_route_on_current_pcbdoc`.
-3. Run `check_pcb_drc`.
-4. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
+2. Call `get_pcb_stack_layers` if layer selection matters.
+3. If the user asks for a different board stack, call `set_pcb_copper_layer_count`, then call `get_pcb_stack_layers` again.
+4. Run EasyEDA v3/client routing, or call `run_auto_route_on_current_pcbdoc`.
+5. Run `check_pcb_drc`.
+6. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
 
 MCP router defaults are intentionally conservative:
 
 - `ignore_nets: ["GND"]`: GND is expected to be served by copper pour/stitching.
+- `route_layers` omitted: use the routing layer set exported by EasyEDA autoroute JSON. If provided, use layer names returned by `get_pcb_stack_layers`, such as `["TOP"]`, `["BOTTOM"]`, or `["TOP", "BOTTOM", "INNER_1"]`.
 - `pour_gnd: true`: rebuilds GND copper pours after routing.
 - `suture_gnd: true`: adds GND stitching vias.
 - `suture_grid_mm: 4`, `suture_diameter_mm: 0.61`, `suture_drill_mm: 0.305`.
