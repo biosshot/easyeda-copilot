@@ -72,6 +72,7 @@ type StoredPcbLayout = {
     content?: string;
     toolReport?: unknown;
     previewImagePath?: string;
+    previewSvgPath?: string;
     createdAt: number;
 };
 
@@ -466,8 +467,8 @@ async function renderPreviewImage(bytes: Buffer, mimeType: string | undefined) {
     };
 }
 
-async function writePreviewImageFile(previewImage: string | undefined, layoutId: string) {
-    if (!previewImage) return undefined;
+async function writePreviewImageFiles(previewImage: string | undefined, layoutId: string) {
+    if (!previewImage) return {};
 
     const dataUrlMatch = /^data:([^;,]+)?(;base64)?,(.*)$/s.exec(previewImage);
     const mimeType = dataUrlMatch?.[1];
@@ -484,10 +485,17 @@ async function writePreviewImageFile(previewImage: string | undefined, layoutId:
     const previewDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-previews');
     await mkdir(previewDir, { recursive: true });
 
+    let svgPath: string | undefined;
+    if (isSvgImage(sourceBytes, mimeType)) {
+        svgPath = join(previewDir, `${layoutId}.svg`);
+        await writeFile(svgPath, sourceBytes);
+    }
+
     const { bytes, extension } = await renderPreviewImage(sourceBytes, mimeType);
-    const filePath = join(previewDir, `${layoutId}${extension}`);
-    await writeFile(filePath, bytes);
-    return filePath;
+    const pngPath = join(previewDir, `${layoutId}${extension}`);
+    await writeFile(pngPath, bytes);
+
+    return { pngPath, svgPath };
 }
 
 function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
@@ -501,10 +509,11 @@ function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
 
     if (oldest) storedPcbLayouts.delete(oldest);
 }
+
 async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
     const runId = randomUUID();
     const layoutId = result.pcb ? runId : undefined;
-    const previewImagePath = await writePreviewImageFile(result.preview_image_url, runId);
+    const { pngPath: previewImagePath, svgPath: previewSvgPath } = await writePreviewImageFiles(result.preview_image_url, runId);
 
     if (result.pcb && layoutId) {
         rememberPcbLayout(layoutId, {
@@ -512,6 +521,7 @@ async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
             content: result.content,
             toolReport: result.toolReport,
             previewImagePath,
+            previewSvgPath,
             createdAt: Date.now(),
         });
     }
@@ -519,6 +529,7 @@ async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
     return {
         layoutId,
         previewImagePath,
+        previewSvgPath,
     };
 }
 
