@@ -66,7 +66,22 @@ type MakePcbLayoutResponse = {
     toolReport?: unknown;
     pcb?: BoardAssemble;
     preview_image_url?: string;
+    placement_debug_artifacts?: PlacementDebugArtifactsResponse;
     error?: string;
+};
+
+type PlacementDebugArtifactResponse = {
+    type?: string;
+    name?: string;
+    fileName?: string;
+    components?: string[];
+    svg_url?: string;
+    svg?: string;
+    path?: string;
+};
+
+type PlacementDebugArtifactsResponse = {
+    items?: PlacementDebugArtifactResponse[];
 };
 
 type PcbComponentSizesResponse = {
@@ -81,7 +96,22 @@ type StoredPcbLayout = {
     toolReport?: unknown;
     previewImagePath?: string;
     previewSvgPath?: string;
+    debugArtifactsDir?: string;
+    debugArtifacts?: SavedPlacementDebugArtifact[];
     createdAt: number;
+};
+
+type SavedPlacementDebugArtifact = {
+    type: string;
+    name: string;
+    components: string[];
+    path: string;
+};
+
+type SavedPlacementDebugArtifacts = {
+    debugArtifactsDir?: string;
+    debugArtifactsIndexPath?: string;
+    debugArtifacts?: SavedPlacementDebugArtifact[];
 };
 
 type AutoRouteInputNet = {
@@ -556,6 +586,63 @@ async function writePreviewImageFiles(previewImage: string | undefined, layoutId
     return { pngPath, svgPath };
 }
 
+function safeFileSegment(value: string) {
+    return value.replace(/[^a-z0-9_.-]+/gi, '_').replace(/^_+|_+$/g, '') || 'unnamed';
+}
+
+function decodeSvgPayload(value: string | undefined) {
+    if (!value) return undefined;
+
+    const dataUrlMatch = /^data:([^;,]+)?(;base64)?,(.*)$/s.exec(value);
+    if (!dataUrlMatch) {
+        return value.trimStart().startsWith('<svg') ? Buffer.from(value, 'utf8') : undefined;
+    }
+
+    const isBase64 = Boolean(dataUrlMatch[2]);
+    const payload = dataUrlMatch[3] ?? '';
+    return isBase64
+        ? Buffer.from(payload, 'base64')
+        : Buffer.from(decodeURIComponent(payload), 'utf8');
+}
+
+async function writePlacementDebugArtifactFiles(artifacts: PlacementDebugArtifactsResponse | undefined, layoutId: string): Promise<SavedPlacementDebugArtifacts> {
+    const items = artifacts?.items?.filter(item => item && typeof item.name === 'string' && typeof item.type === 'string') ?? [];
+    if (!items.length) return {};
+
+    const debugArtifactsDir = join(tmpdir(), 'easyeda-copilot-mcp', 'pcb-layout-debug', layoutId);
+    const saved: SavedPlacementDebugArtifact[] = [];
+
+    for (const item of items) {
+        const svgBytes = decodeSvgPayload(item.svg_url ?? item.svg);
+        if (!svgBytes) continue;
+
+        const type = safeFileSegment(item.type!);
+        const name = safeFileSegment(item.fileName ?? item.name!);
+        const dir = join(debugArtifactsDir, type);
+        const path = join(dir, `${name}.svg`);
+        await mkdir(dir, { recursive: true });
+        await writeFile(path, svgBytes);
+        saved.push({
+            type: item.type!,
+            name: item.name!,
+            components: Array.isArray(item.components) ? item.components : [],
+            path,
+        });
+    }
+
+    if (!saved.length) return {};
+
+    const indexPath = join(debugArtifactsDir, 'index.json');
+    await mkdir(debugArtifactsDir, { recursive: true });
+    await writeFile(indexPath, JSON.stringify(saved, null, 2));
+
+    return {
+        debugArtifactsDir,
+        debugArtifactsIndexPath: indexPath,
+        debugArtifacts: saved,
+    };
+}
+
 function rememberPcbLayout(layoutId: string, layout: StoredPcbLayout) {
     storedPcbLayouts.set(layoutId, layout);
 
@@ -572,6 +659,7 @@ async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
     const runId = randomUUID();
     const layoutId = result.pcb ? runId : undefined;
     const { pngPath: previewImagePath, svgPath: previewSvgPath } = await writePreviewImageFiles(result.preview_image_url, runId);
+    const debugArtifacts = await writePlacementDebugArtifactFiles(result.placement_debug_artifacts, runId);
 
     if (result.pcb && layoutId) {
         rememberPcbLayout(layoutId, {
@@ -580,6 +668,8 @@ async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
             toolReport: result.toolReport,
             previewImagePath,
             previewSvgPath,
+            debugArtifactsDir: debugArtifacts.debugArtifactsDir,
+            debugArtifacts: debugArtifacts.debugArtifacts,
             createdAt: Date.now(),
         });
     }
@@ -588,6 +678,7 @@ async function storeMakePcbLayoutResult(result: MakePcbLayoutResponse) {
         layoutId,
         previewImagePath,
         previewSvgPath,
+        ...debugArtifacts,
     };
 }
 
