@@ -470,6 +470,12 @@ interface SolverOptions {
   ignoredSignals?: string[];
   /** "normal" keeps balanced electrical/aesthetic placement. "high" heavily prefers minimum block/module/board occupied size for very compact boards. Default "normal". */
   compactness?: "normal" | "high";
+  /** Debug/mechanical preview mode. The result is not a final PCB; report.preview.enabled will be true. */
+  preview?: boolean;
+  /** Place only these circuit/boardPad designators. Automatically enables preview mode and skips footprint resolve/placement for all other components. */
+  placeOnlyComponents?: string[];
+  /** Exclude these circuit/boardPad designators. Automatically enables preview mode. Do not combine with placeOnlyComponents. */
+  ignoreComponents?: string[];
 }
 
 declare function solver(options: SolverOptions): void;

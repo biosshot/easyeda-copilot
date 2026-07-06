@@ -40,6 +40,28 @@ When copying from examples:
 
 Do not assemble every attempt. Iterate placement from the preview and report.
 
+## Mechanical Preview Mode
+
+Use preview mode when you only need to check a few mechanical parts: USB connectors, buttons, LEDs, edge pads, board pads, mounting holes, antenna/display keepouts, or face orientation. This is much faster than placing the full board.
+
+```js
+board.roundedRect(50, 35, { radius: 2, layers: ["top", "bottom"], clearance: 1.0, edge: 2.0 });
+solver({ preview: true, placeOnlyComponents: ["J2", "SW1", "LED1"], grid: 0.5 });
+
+component("J2").role("connector").top().edgeMount("bottom", { overhang: 1.0, face: "outward" });
+component("SW1").role("connector").top().edgePlace("right", { inset: 1.0, face: "outward" });
+component("LED1").role("indicator").top().edgePlace("bottom", { inset: 1.0, face: "any" });
+```
+
+Preview behavior:
+
+- `placeOnlyComponents` resolves footprints and places only the listed circuit/boardPad designators.
+- `ignoreComponents` excludes listed designators and also enables preview mode. Do not combine it with `placeOnlyComponents`.
+- Unrelated blocks, modules, hints, critical pairs, capClusters, and component rules are filtered out before placement.
+- Selected components without explicit block ownership are put into an automatic `preview_auto` block, so a one-button preview can stay short.
+- The report will show `status: preview` and `PREVIEW ONLY: true` when there are no hard placement errors.
+- Never assemble or treat a preview as the final board. Use it to verify mechanics, then write the full DSL.
+
 ## Board Defaults
 
 Prefer `board.auto(...)` unless exact mechanical dimensions are given.

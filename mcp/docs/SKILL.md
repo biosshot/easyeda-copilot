@@ -29,3 +29,5 @@ Normal PCB flow:
 3. Inspect the text report and `previewImagePath`.
 4. If acceptable, open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc` with `layoutId`.
 5. Run EasyEDA/client routing and DRC tools on the assembled PCB.
+
+For fast mechanical checks, use `solver({ preview: true, placeOnlyComponents: [...] })`. Preview results are marked in the report and must not be assembled as final boards.

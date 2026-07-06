@@ -52,6 +52,18 @@ Fix in this order:
 
 Do not solve placement problems by fixing normal electrical components to coordinates. Change the block structure or constraints instead.
 
+## Mechanical Preview Flow
+
+Use `solver({ preview: true, placeOnlyComponents: [...] })` before full placement when the main risk is mechanical: connectors facing the wrong way, buttons/LEDs at the wrong edge, USB overhang, board pads, mounting holes, or keepout regions.
+
+Preview rules:
+
+1. Keep the DSL small: board shape, holes/regions/pads, and only the selected mechanical components.
+2. `placeOnlyComponents` resolves and places only those designators, so preview is fast.
+3. `ignoreComponents` can temporarily exclude parts, but do not combine it with `placeOnlyComponents`.
+4. Read the report. A successful preview has `status: preview` and `PREVIEW ONLY: true`.
+5. Do not call `assemble_pcb_layout_on_current_pcbdoc` for preview results. Rebuild the full DSL without the preview filter first.
+
 ## Assembly Flow
 
 Before assembly, verify the target PCB document:
