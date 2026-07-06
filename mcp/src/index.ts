@@ -806,7 +806,9 @@ server.registerTool(
         }),
     },
     async ({ designators, includeAll }) => {
-        const circuit = await requestEasyEda('get-schematic');
+        const circuit = await requestEasyEda('get-multi-page-schematic', {
+            extractFootprintUuid: true
+        });
         const result = await postJson('/v1/mcp-tools/get-pcb-component-sizes', {
             circuit,
             designators,
