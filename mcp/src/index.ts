@@ -826,7 +826,7 @@ server.registerTool(
         description: `Create PCB component placement from the current EasyEDA schematic using JavaScript PCB layout DSL code. Starts a long-running server operation, waits up to 60 seconds, then returns either the finished layoutId/preview or an operationId for wait_pcb_layout. Server-side routing is disabled: route the assembled PCB later in EasyEDA/client tools. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
             file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
-            wait_ms: z.number().min(60_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
+            wait_ms: z.number().min(30_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
         }).refine(data => Boolean(data.file), {
             message: 'Fill one: code, file.',
         }),
@@ -857,7 +857,7 @@ server.registerTool(
         description: 'Wait for a previously started make_pcb_layout operation. Use operationId returned by make_pcb_layout when it says the layout is still running.',
         inputSchema: z.object({
             operationId: z.string().min(1).describe('operationId returned by make_pcb_layout.'),
-            wait_ms: z.number().min(60_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
+            wait_ms: z.number().min(30_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
         }),
     },
     async ({ operationId, wait_ms }) => {
