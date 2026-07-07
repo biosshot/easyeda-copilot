@@ -62,6 +62,9 @@ function electionDelayMs() {
     return 100 + Math.floor(Math.random() * 901);
 }
 
+const RECOVERY_WAIT_MS = Number(process.env.EASYEDA_COPILOT_MCP_RECOVERY_WAIT_MS || 10_000);
+const RECOVERY_POLL_MS = 500;
+
 class OwnerBroker {
     private readonly easyEdaClients = new Map<string, EasyEdaClient>();
     private readonly pendingEasyEdaRequests = new Map<string, PendingRequest>();
@@ -511,6 +514,8 @@ class MeshBridge implements Bridge {
     }
 
     async requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000) {
+        await this.waitForRecoverableConnection();
+
         if (this.owner) {
             return this.owner.requestEasyEda(event, body, timeoutMs, this.selectedEasyEdaInstanceId);
         }
@@ -518,6 +523,31 @@ class MeshBridge implements Bridge {
             return this.proxy.requestEasyEda(event, body, timeoutMs, this.selectedEasyEdaInstanceId);
         }
         throw new Error('EasyEDA bridge is not ready yet.');
+    }
+
+    private async waitForRecoverableConnection() {
+        const deadline = Date.now() + RECOVERY_WAIT_MS;
+
+        while (Date.now() < deadline) {
+            if (!this.owner && !this.proxy) {
+                await delay(RECOVERY_POLL_MS);
+                continue;
+            }
+
+            try {
+                const instances = await this.listEasyEdaInstances();
+
+                if (this.selectedEasyEdaInstanceId) {
+                    if (instances.some(instance => instance.instanceId === this.selectedEasyEdaInstanceId)) return;
+                } else if (instances.length > 0) {
+                    return;
+                }
+            } catch {
+                // Owner/proxy may be switching during election; keep the next MCP call pending briefly.
+            }
+
+            await delay(RECOVERY_POLL_MS);
+        }
     }
 
     async listEasyEdaInstances() {
