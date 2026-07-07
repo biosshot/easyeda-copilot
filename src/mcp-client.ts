@@ -33,6 +33,7 @@ const MCP_HEARTBEAT_INTERVAL_MS = 10000;
 const MCP_HEARTBEAT_TIMEOUT_MS = 3000;
 
 type McpClientState = {
+    instanceId: string;
     isRegistered: boolean;
     isConnecting: boolean;
     isScanEnabled: boolean;
@@ -44,9 +45,16 @@ type McpClientState = {
     heartbeatTimeout?: ReturnType<typeof setTimeout>;
 };
 
+function makeMcpInstanceId() {
+    const cryptoApi = (globalThis as { crypto?: { randomUUID?: () => string } }).crypto;
+    if (cryptoApi?.randomUUID) return cryptoApi.randomUUID();
+    return `easyeda-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
 const state = ((eda as typeof eda & {
     __easyedaCopilotMcpState?: McpClientState;
 }).__easyedaCopilotMcpState ??= {
+    instanceId: makeMcpInstanceId(),
     isRegistered: false,
     isConnecting: false,
     isScanEnabled: false,
@@ -693,6 +701,27 @@ async function getProjectInfo() {
     };
 }
 
+async function sendEasyEdaHello() {
+    let projectName = 'Untitled EasyEDA project';
+
+    send('easyeda:hello', {
+        instanceId: state.instanceId,
+        projectName,
+    });
+
+    try {
+        projectName = (await getProjectInfo()).project_name || projectName;
+    } catch {
+        // The project may not be fully available immediately after EasyEDA startup.
+        return;
+    }
+
+    send('easyeda:hello', {
+        instanceId: state.instanceId,
+        projectName,
+    });
+}
+
 const findDocWithUUID = (data: Awaited<ReturnType<typeof getProjectInfo>>['project_data'], uuid: string) => {
     for (const element of data) {
         if (element.uuid === uuid) {
@@ -1156,6 +1185,9 @@ function tryConnectMcp(showErrors = false) {
             state.isRegistered = true;
             state.isConnecting = false;
             clearConnectTimeout();
+            sendEasyEdaHello().catch(error => {
+                eda.sys_Log.add(`MCP hello failed: ${(error as Error).message}`, ESYS_LogType.WARNING);
+            });
             startHeartbeat();
             eda.sys_Log.add(`MCP WebSocket opened: ${MCP_WS_URL}`, ESYS_LogType.INFO);
             eda.sys_Message.showToastMessage('MCP connected', ESYS_ToastMessageType.SUCCESS);

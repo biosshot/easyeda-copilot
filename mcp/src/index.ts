@@ -7,7 +7,6 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, isAbsolute, join, resolve } from 'node:path';
 import sharp from 'sharp';
-import { WebSocketServer, type WebSocket } from 'ws';
 import * as z from 'zod/v4';
 import { CircuitModStruct, ExplainCircuitStruct, type ExplainCircuit } from '@copilot/shared/types/circuit';
 import type { BoardAssemble } from '@copilot/shared/types/pcb/board-assemble';
@@ -19,6 +18,7 @@ import { PcbDrcBundleSchema, type PcbDrcBundle } from '@copilot/shared/types/pcb
 import findUp from 'find-up';
 import { fileURLToPath } from 'node:url';
 import { runEasyEdaAutoRouter } from './autorouter.js';
+import { startBridge, type Bridge } from './bridge/index.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -49,17 +49,7 @@ const server = new McpServer({
     name: 'easyeda-copilot',
     version: '1.1.4',
 });
-
-type WsMessage = {
-    event: string;
-    body: string;
-};
-
-type PendingRequest = {
-    resolve: (value: unknown) => void;
-    reject: (reason: Error) => void;
-    timer: ReturnType<typeof setTimeout>;
-};
+let bridge: Bridge | undefined;
 
 type MakePcbLayoutResponse = {
     content?: string;
@@ -134,117 +124,11 @@ type AutoRouteRunSummary = {
     vias: number;
 };
 
-const wsClients = new Set<WebSocket>();
-const pendingRequests = new Map<string, PendingRequest>();
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
-let wsServerReady = false;
-
-function handleWsMessage(message: WsMessage) {
-    if (message.event === 'ping') {
-        return;
-    }
-
-    const parsedBody = message.body ? JSON.parse(message.body) : {};
-    const id = parsedBody?.id;
-    if (!id || typeof id !== 'string') return;
-
-    const pending = pendingRequests.get(id);
-    if (!pending) return;
-
-    clearTimeout(pending.timer);
-    pendingRequests.delete(id);
-
-    if (parsedBody.ok === false) {
-        pending.reject(new Error(parsedBody.error || `EasyEDA event failed: ${message.event}`));
-        return;
-    }
-
-    pending.resolve(parsedBody.result);
-}
-
-function sendWs(socket: WebSocket, message: WsMessage) {
-    socket.send(JSON.stringify(message));
-}
 
 async function requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120000) {
-    if (!wsServerReady) {
-        throw new Error(`EasyEDA MCP WebSocket server is not available on ${MCP_WS_HOST}:${MCP_WS_PORT}.
-Another easyeda-copilot-mcp process may already be using this port.`);
-    }
-
-    const client = [...wsClients].at(-1);
-    if (!client) {
-        throw new Error(`EasyEDA MCP interface is not connected.
-1. Open EasyEda Pro
-2. Open any schematic
-3. Copilot -> MCP
-4. Ensure the connection is successful`);
-    }
-
-    const id = randomUUID();
-    const response = new Promise<unknown>((resolve, reject) => {
-        const timer = setTimeout(() => {
-            pendingRequests.delete(id);
-            reject(new Error(`Timeout waiting EasyEDA event: ${event}`));
-        }, timeoutMs);
-
-        pendingRequests.set(id, { resolve, reject, timer });
-    });
-
-    sendWs(client, {
-        event,
-        body: JSON.stringify({ ...body, id }),
-    });
-
-    return response;
-}
-
-function startWsServer() {
-    const wsServer = new WebSocketServer({
-        host: MCP_WS_HOST,
-        port: MCP_WS_PORT,
-    });
-
-    wsServer.on('connection', socket => {
-        wsClients.add(socket);
-        sendWs(socket, {
-            event: 'connected',
-            body: JSON.stringify({ ok: true }),
-        });
-
-        socket.on('message', data => {
-            const raw = typeof data === 'string' ? data : data.toString();
-            const message = JSON.parse(raw) as WsMessage;
-
-            if (message.event === 'ping') {
-                sendWs(socket, {
-                    event: 'pong',
-                    body: message.body || JSON.stringify({ ok: true }),
-                });
-                return;
-            }
-
-            handleWsMessage(message);
-        });
-
-        socket.on('close', () => wsClients.delete(socket));
-        socket.on('error', () => wsClients.delete(socket));
-    });
-
-    wsServer.on('listening', () => {
-        wsServerReady = true;
-        // console.error(`EasyEDA Copilot MCP WebSocket listening on ws://${MCP_WS_HOST}:${MCP_WS_PORT}`);
-    });
-
-    wsServer.on('error', (error: NodeJS.ErrnoException) => {
-        wsServerReady = false;
-        if (error.code === 'EADDRINUSE') {
-            // Keep the MCP stdio server alive. Only the EasyEDA bridge is unavailable for this process.
-            return;
-        }
-
-        throw error;
-    });
+    if (!bridge) throw new Error('EasyEDA bridge is not initialized yet.');
+    return bridge.requestEasyEda(event, body, timeoutMs);
 }
 
 const SERVER_AUTHORIZATION = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';
@@ -756,6 +640,41 @@ server.registerPrompt(
             },
         }],
     }),
+);
+
+server.registerTool(
+    'list_easyeda_instances',
+    {
+        title: 'List EasyEDA Instances',
+        description: 'List currently connected EasyEDA Copilot extension instances. Use this when more than one EasyEDA window/project may be open.',
+        inputSchema: z.object({}),
+    },
+    async () => {
+        if (!bridge) throw new Error('EasyEDA bridge is not initialized yet.');
+        const selected = await bridge.getSelectedEasyEdaInstance();
+        return textResult({
+            selected,
+            instances: await bridge.listEasyEdaInstances(),
+        });
+    },
+);
+
+server.registerTool(
+    'select_easyeda_instance',
+    {
+        title: 'Select EasyEDA Instance',
+        description: 'Select which connected EasyEDA project this MCP process should use when multiple EasyEDA instances are connected.',
+        inputSchema: z.object({
+            instanceId: z.string().min(1).describe('instanceId returned by list_easyeda_instances.'),
+        }),
+    },
+    async ({ instanceId }) => {
+        if (!bridge) throw new Error('EasyEDA bridge is not initialized yet.');
+        const selected = await bridge.selectEasyEdaInstance(instanceId);
+        return textResult({
+            selected,
+        });
+    },
 );
 
 server.registerTool(
@@ -1476,7 +1395,10 @@ server.registerTool(
 );
 
 async function main() {
-    startWsServer();
+    bridge = await startBridge({
+        host: MCP_WS_HOST,
+        port: MCP_WS_PORT,
+    });
     const transport = new StdioServerTransport();
     await server.connect(transport);
     // console.error(`EasyEDA Copilot MCP Server running on stdio. Server URL: ${COPILOT_SERVER_URL}`);
