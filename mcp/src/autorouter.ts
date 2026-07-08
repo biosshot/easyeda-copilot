@@ -6,6 +6,7 @@ import { Worker } from 'node:worker_threads';
 type RouterRunOptions = {
     routerDir?: string;
     timeoutMs: number;
+    signal?: AbortSignal;
     onProgress?: (progress: number) => void;
 };
 
@@ -85,6 +86,10 @@ export function resolveRouterDir(baseDir: string, requestedDir?: string) {
 }
 
 export function runEasyEdaAutoRouter(inputJson: unknown, options: RouterRunOptions): Promise<RouterResult> {
+    if (options.signal?.aborted) {
+        return Promise.reject(new Error('Auto router operation cancelled.'));
+    }
+
     const routerDir = resolveRouterDir(dirname(fileURLToPath(import.meta.url)), options.routerDir);
     const workerPath = join(routerDir, 'pcbRouterWorker.js');
     const wasmPath = join(routerDir, 'PCBRouter-YFDILLBW-YFDILLBW.wasm');
@@ -101,10 +106,17 @@ export function runEasyEdaAutoRouter(inputJson: unknown, options: RouterRunOptio
             if (settled) return;
             settled = true;
             clearTimeout(timer);
+            options.signal?.removeEventListener('abort', onAbort);
             await worker.terminate().catch(() => undefined);
             if (error) rejectPromise(error);
             else resolvePromise(result ?? {});
         };
+
+        const onAbort = () => {
+            finish(new Error('Auto router operation cancelled.'));
+        };
+
+        options.signal?.addEventListener('abort', onAbort, { once: true });
 
         const timer = setTimeout(() => {
             finish(new Error(`Router timeout after ${options.timeoutMs}ms`));

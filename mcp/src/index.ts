@@ -36,6 +36,8 @@ const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
 const TEMP_DIR = join(tmpdir(), 'easyeda-copilot-mcp');
 const PCB_LAYOUT_TASK_PATH = '/v1/mcp-tools/make-pcb-layout';
 const DEFAULT_PCB_LAYOUT_WAIT_MS = 60_000;
+const DEFAULT_AUTO_ROUTE_WAIT_MS = 60_000;
+const LOCAL_OPERATION_LIMIT = 25;
 
 function isPcbRoutingLayer(layer: string) {
     return layer === 'TOP' || layer === 'BOTTOM' || /^INNER_(?:[1-9]|[12]\d|30)$/.test(layer);
@@ -44,6 +46,23 @@ function isPcbRoutingLayer(layer: string) {
 const PcbRoutingLayerSchema = PcbLayerNameSchema().refine(isPcbRoutingLayer, {
     message: 'Expected a copper signal layer: TOP, BOTTOM, or INNER_1..INNER_30.',
 });
+
+const AutoRouteInputSchema = z.object({
+    ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
+    route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
+    timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
+    router_dir: z.string().min(1).optional().describe('Optional custom-router directory override. Usually leave empty.'),
+    pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
+    suture_gnd: z.boolean().default(true).describe('Add GND SUTURE vias after importing routes.'),
+    suture_grid_mm: z.number().min(0.5).max(50).default(4).describe('GND suture via grid step in millimeters.'),
+    suture_diameter_mm: z.number().min(0.05).max(5).default(0.61).describe('GND suture via outer diameter in millimeters.'),
+    suture_drill_mm: z.number().min(0.05).max(5).default(0.305).describe('GND suture via drill diameter in millimeters.'),
+    suture_edge_margin_mm: z.number().min(0).max(20).default(1).describe('Minimum distance from board bounding box edge for generated suture via candidates.'),
+    suture_max_count: z.number().int().min(0).max(2000).default(500).describe('Safety cap for generated GND suture vias.'),
+    wait_ms: z.number().min(30_000).max(180000).default(DEFAULT_AUTO_ROUTE_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
+});
+
+type AutoRouteToolInput = z.infer<typeof AutoRouteInputSchema>;
 
 const server = new McpServer({
     name: 'easyeda-copilot',
@@ -124,6 +143,11 @@ type AutoRouteRunSummary = {
     vias: number;
 };
 
+type AutoRouteToolResult = AutoRouteRunSummary & {
+    content: string;
+    importResult: unknown;
+};
+
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
 
 async function requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120000) {
@@ -179,6 +203,138 @@ function asyncProgressText(intermediate: unknown) {
 
 async function sleep(ms: number) {
     await new Promise(resolve => setTimeout(resolve, ms));
+}
+
+type LocalOperation<T = unknown> = AsyncOperationResponse<T> & {
+    label: string;
+    controller: AbortController;
+};
+
+type LocalOperationContext = {
+    signal: AbortSignal;
+    setProgress: (intermediateResult: unknown) => void;
+};
+
+const localOperations = new Map<string, LocalOperation<unknown>>();
+
+function operationErrorMessage(error: unknown) {
+    return error instanceof Error ? error.message : String(error);
+}
+
+function isCancelledError(error: unknown) {
+    return /cancel/i.test(operationErrorMessage(error));
+}
+
+function assertOperationNotCancelled(signal: AbortSignal) {
+    if (signal.aborted) throw new Error('Operation cancelled.');
+}
+
+function localOperationResponse<T>(operation: LocalOperation<unknown>): AsyncOperationResponse<T> {
+    return {
+        status: operation.status,
+        result: operation.result as T | undefined,
+        intermediateResult: operation.intermediateResult,
+        error: operation.error,
+        createdAt: operation.createdAt,
+        completedAt: operation.completedAt,
+    };
+}
+
+function trimLocalOperations() {
+    if (localOperations.size <= LOCAL_OPERATION_LIMIT) return;
+
+    const finished = [...localOperations.entries()]
+        .filter(([, operation]) => operation.status !== 'pending')
+        .sort((a, b) => Date.parse(a[1].createdAt) - Date.parse(b[1].createdAt));
+
+    for (const [operationId] of finished) {
+        if (localOperations.size <= LOCAL_OPERATION_LIMIT) break;
+        localOperations.delete(operationId);
+    }
+}
+
+function startLocalOperation<T>(
+    label: string,
+    runner: (context: LocalOperationContext) => Promise<T>,
+) {
+    const operationId = randomUUID();
+    const controller = new AbortController();
+    const operation: LocalOperation<T> = {
+        label,
+        controller,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+    };
+
+    localOperations.set(operationId, operation as LocalOperation<unknown>);
+    trimLocalOperations();
+
+    void (async () => {
+        try {
+            const result = await runner({
+                signal: controller.signal,
+                setProgress: intermediateResult => {
+                    operation.intermediateResult = intermediateResult;
+                },
+            });
+
+            if (operation.status === 'pending') {
+                operation.status = 'completed';
+                operation.result = result;
+            }
+        } catch (error) {
+            if (operation.status === 'pending') {
+                operation.status = controller.signal.aborted || isCancelledError(error) ? 'cancelled' : 'failed';
+                operation.error = operationErrorMessage(error);
+            }
+        } finally {
+            operation.completedAt ??= new Date().toISOString();
+            trimLocalOperations();
+        }
+    })();
+
+    return operationId;
+}
+
+async function waitForLocalOperation<T = unknown>(operationId: string, options: {
+    pollIntervalMs?: number;
+    waitMs?: number;
+} = {}) {
+    const pollIntervalMs = options.pollIntervalMs ?? 1000;
+    const waitMs = options.waitMs ?? 60_000;
+    const startedAt = Date.now();
+
+    while (true) {
+        const operation = localOperations.get(operationId);
+        if (!operation) throw new Error(`Unknown operationId: ${operationId}`);
+        if (operation.status !== 'pending') return localOperationResponse<T>(operation);
+        if (Date.now() - startedAt >= waitMs) return localOperationResponse<T>(operation);
+
+        await sleep(Math.min(pollIntervalMs, Math.max(0, waitMs - (Date.now() - startedAt))));
+    }
+}
+
+function cancelLocalOperation(operationId: string) {
+    const operation = localOperations.get(operationId);
+    if (!operation) throw new Error(`Unknown operationId: ${operationId}`);
+
+    if (operation.status === 'pending') {
+        operation.controller.abort();
+        operation.intermediateResult = {
+            stage: 'cancelling',
+            message: 'Cancellation requested. Waiting for the current cancellable stage to stop.',
+        };
+        return {
+            status: 'cancel_requested',
+            operationId,
+        };
+    }
+
+    return {
+        status: operation.status,
+        operationId,
+        error: operation.error,
+    };
 }
 
 async function startAsyncTask(path: string, payload: unknown) {
@@ -412,6 +568,85 @@ function summarizeAutoRouteResult(result: Record<string, unknown>, paths: {
     };
 }
 
+function autoRouteProgressText(intermediate: unknown) {
+    if (!isRecord(intermediate)) return undefined;
+    if (typeof intermediate.message === 'string') return intermediate.message;
+
+    const stage = typeof intermediate.stage === 'string' ? intermediate.stage : undefined;
+    const progress = typeof intermediate.progress === 'number' && Number.isFinite(intermediate.progress)
+        ? Math.round(intermediate.progress * 100)
+        : undefined;
+
+    if (stage && typeof progress === 'number') return `${stage}: ${progress}%`;
+    return stage;
+}
+
+async function runAutoRouteOnCurrentPcbDoc(input: AutoRouteToolInput, context: LocalOperationContext): Promise<AutoRouteToolResult> {
+    const { signal, setProgress } = context;
+
+    await mkdir(TEMP_DIR, { recursive: true });
+    const runId = randomUUID().slice(0, 6);
+    const inputPath = join(TEMP_DIR, `autoroute-input-${runId}.json`);
+    const filteredInputPath = join(TEMP_DIR, `autoroute-input-filtered-${runId}.json`);
+    const resultPath = join(TEMP_DIR, `autoroute-result-${runId}.json`);
+
+    assertOperationNotCancelled(signal);
+    setProgress({ stage: 'exporting' });
+    const exported = await requestEasyEda('export-pcb-autoroute-json', {}, 300000) as { text?: unknown };
+    assertOperationNotCancelled(signal);
+
+    const inputText = typeof exported.text === 'string' ? exported.text : '';
+    if (!inputText) throw new Error('EasyEDA returned empty autoroute JSON.');
+
+    await writeFile(inputPath, inputText);
+    const inputJson = parseJsonText(inputText, 'EasyEDA autoroute input');
+    const ignoredNets = input.ignore_nets.map(net => net.trim()).filter(Boolean);
+    const { filtered, removedTopLevelNets, routeLayerIds } = filterAutoRouteInput(inputJson, ignoredNets, input.route_layers);
+    await writeFile(filteredInputPath, JSON.stringify(filtered, null, 2));
+
+    assertOperationNotCancelled(signal);
+    setProgress({ stage: 'routing', progress: 0 });
+    let lastProgress = 0;
+    const result = await runEasyEdaAutoRouter(filtered, {
+        routerDir: input.router_dir,
+        timeoutMs: input.timeout_sec * 1000,
+        signal,
+        onProgress: progress => {
+            lastProgress = Math.max(lastProgress, progress);
+            setProgress({ stage: 'routing', progress: lastProgress });
+        },
+    }) as Record<string, unknown>;
+
+    if (Number(result.progress ?? 0) < 1) {
+        throw new Error(`Auto router did not finish. Last progress: ${lastProgress}`);
+    }
+
+    await writeFile(resultPath, JSON.stringify(result, null, 2));
+
+    assertOperationNotCancelled(signal);
+    setProgress({ stage: 'importing' });
+    const boardPolygon = getBoardPolygonFromAutoRouteInput(inputJson);
+    const importResult = await requestEasyEda('import-pcb-autoroute-json', {
+        text: JSON.stringify(result),
+        boardPolygon,
+        pourGround: input.pour_gnd,
+        sutureGround: input.suture_gnd,
+        suture: {
+            gridMm: input.suture_grid_mm,
+            diameterMm: input.suture_diameter_mm,
+            drillMm: input.suture_drill_mm,
+            edgeMarginMm: input.suture_edge_margin_mm,
+            maxCount: input.suture_max_count,
+        },
+    }, 300000);
+
+    return {
+        content: 'Auto route imported into EasyEDA.',
+        ...summarizeAutoRouteResult(result, { inputPath, filteredInputPath, resultPath }, ignoredNets, removedTopLevelNets, input.route_layers, routeLayerIds),
+        importResult,
+    };
+}
+
 function previewImageExtension(mimeType: string | undefined) {
     if (mimeType === 'image/svg+xml') return '.png';
     if (mimeType === 'image/png') return '.png';
@@ -604,6 +839,40 @@ async function formatPcbLayoutOperationResult(operationId: string, operation: As
         progress: asyncProgressText(operation.intermediateResult),
         message: 'PCB layout is still running. Call wait_pcb_layout with this operationId.',
         nextTool: 'wait_pcb_layout',
+    });
+}
+
+function formatAutoRouteOperationResult(operationId: string, operation: AsyncOperationResponse<AutoRouteToolResult>) {
+    if (operation.status === 'completed') {
+        if (!operation.result) {
+            return textResult({
+                status: 'error',
+                operationId,
+                error: 'Auto route operation completed without result.',
+            });
+        }
+
+        return textResult({
+            operationId,
+            status: 'completed',
+            ...operation.result,
+        });
+    }
+
+    if (operation.status === 'failed' || operation.status === 'cancelled') {
+        return textResult({
+            status: operation.status,
+            operationId,
+            error: operation.error ?? `Auto route operation ${operation.status}.`,
+        });
+    }
+
+    return textResult({
+        status: 'pending',
+        operationId,
+        progress: autoRouteProgressText(operation.intermediateResult),
+        message: 'Auto route is still running. Call wait_auto_route_on_current_pcbdoc with this operationId.',
+        nextTool: 'wait_auto_route_on_current_pcbdoc',
     });
 }
 
@@ -841,73 +1110,54 @@ server.registerTool(
     'run_auto_route_on_current_pcbdoc',
     {
         title: 'Run PCB Auto Router',
-        description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Open the target PCB document first.',
-        inputSchema: z.object({
-            ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
-            route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
-            timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
-            router_dir: z.string().min(1).optional().describe('Optional custom-router directory override. Usually leave empty.'),
-            pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
-            suture_gnd: z.boolean().default(true).describe('Add GND SUTURE vias after importing routes.'),
-            suture_grid_mm: z.number().min(0.5).max(50).default(4).describe('GND suture via grid step in millimeters.'),
-            suture_diameter_mm: z.number().min(0.05).max(5).default(0.61).describe('GND suture via outer diameter in millimeters.'),
-            suture_drill_mm: z.number().min(0.05).max(5).default(0.305).describe('GND suture via drill diameter in millimeters.'),
-            suture_edge_margin_mm: z.number().min(0).max(20).default(1).describe('Minimum distance from board bounding box edge for generated suture via candidates.'),
-            suture_max_count: z.number().int().min(0).max(2000).default(500).describe('Safety cap for generated GND suture vias.'),
-        }),
+        description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Starts a long-running local operation, waits up to 60 seconds, then returns either the finished result or an operationId for wait_auto_route_on_current_pcbdoc. Open the target PCB document first.',
+        inputSchema: AutoRouteInputSchema,
     },
     async (input) => {
-        await mkdir(TEMP_DIR, { recursive: true });
-        const runId = randomUUID().slice(0, 6);
-        const inputPath = join(TEMP_DIR, `autoroute-input-${runId}.json`);
-        const filteredInputPath = join(TEMP_DIR, `autoroute-input-filtered-${runId}.json`);
-        const resultPath = join(TEMP_DIR, `autoroute-result-${runId}.json`);
-
-        const exported = await requestEasyEda('export-pcb-autoroute-json', {}, 300000) as { text?: unknown };
-        const inputText = typeof exported.text === 'string' ? exported.text : '';
-        if (!inputText) throw new Error('EasyEDA returned empty autoroute JSON.');
-
-        await writeFile(inputPath, inputText);
-        const inputJson = parseJsonText(inputText, 'EasyEDA autoroute input');
-        const ignoredNets = input.ignore_nets.map(net => net.trim()).filter(Boolean);
-        const { filtered, removedTopLevelNets, routeLayerIds } = filterAutoRouteInput(inputJson, ignoredNets, input.route_layers);
-        await writeFile(filteredInputPath, JSON.stringify(filtered, null, 2));
-
-        let lastProgress = 0;
-        const result = await runEasyEdaAutoRouter(filtered, {
-            routerDir: input.router_dir,
-            timeoutMs: input.timeout_sec * 1000,
-            onProgress: progress => {
-                lastProgress = Math.max(lastProgress, progress);
-            },
-        }) as Record<string, unknown>;
-
-        if (Number(result.progress ?? 0) < 1) {
-            throw new Error(`Auto router did not finish. Last progress: ${lastProgress}`);
-        }
-
-        await writeFile(resultPath, JSON.stringify(result, null, 2));
-
-        const boardPolygon = getBoardPolygonFromAutoRouteInput(inputJson);
-        const importResult = await requestEasyEda('import-pcb-autoroute-json', {
-            text: JSON.stringify(result),
-            boardPolygon,
-            pourGround: input.pour_gnd,
-            sutureGround: input.suture_gnd,
-            suture: {
-                gridMm: input.suture_grid_mm,
-                diameterMm: input.suture_diameter_mm,
-                drillMm: input.suture_drill_mm,
-                edgeMarginMm: input.suture_edge_margin_mm,
-                maxCount: input.suture_max_count,
-            },
-        }, 300000);
-
-        return textResult({
-            content: 'Auto route imported into EasyEDA.',
-            ...summarizeAutoRouteResult(result, { inputPath, filteredInputPath, resultPath }, ignoredNets, removedTopLevelNets, input.route_layers, routeLayerIds),
-            importResult,
+        const operationId = startLocalOperation<AutoRouteToolResult>(
+            'run_auto_route_on_current_pcbdoc',
+            context => runAutoRouteOnCurrentPcbDoc(input, context),
+        );
+        const operation = await waitForLocalOperation<AutoRouteToolResult>(operationId, {
+            pollIntervalMs: 1000,
+            waitMs: input.wait_ms ?? DEFAULT_AUTO_ROUTE_WAIT_MS,
         });
+
+        return formatAutoRouteOperationResult(operationId, operation);
+    },
+);
+
+server.registerTool(
+    'wait_auto_route_on_current_pcbdoc',
+    {
+        title: 'Wait PCB Auto Router',
+        description: 'Wait for a previously started run_auto_route_on_current_pcbdoc operation. Use operationId returned by run_auto_route_on_current_pcbdoc when it says the auto route is still running.',
+        inputSchema: z.object({
+            operationId: z.string().min(1).describe('operationId returned by run_auto_route_on_current_pcbdoc.'),
+            wait_ms: z.number().min(30_000).max(180000).default(DEFAULT_AUTO_ROUTE_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
+        }),
+    },
+    async ({ operationId, wait_ms }) => {
+        const operation = await waitForLocalOperation<AutoRouteToolResult>(operationId, {
+            pollIntervalMs: 1000,
+            waitMs: wait_ms ?? DEFAULT_AUTO_ROUTE_WAIT_MS,
+        });
+
+        return formatAutoRouteOperationResult(operationId, operation);
+    },
+);
+
+server.registerTool(
+    'cancel_auto_route_on_current_pcbdoc',
+    {
+        title: 'Cancel PCB Auto Router',
+        description: 'Cancel a previously started run_auto_route_on_current_pcbdoc operation by operationId. Cancellation stops before import if possible; if import already started, the board may still be updated.',
+        inputSchema: z.object({
+            operationId: z.string().min(1).describe('operationId returned by run_auto_route_on_current_pcbdoc.'),
+        }),
+    },
+    async ({ operationId }) => {
+        return textResult(cancelLocalOperation(operationId));
     },
 );
 
