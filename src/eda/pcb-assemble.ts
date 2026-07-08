@@ -30,6 +30,16 @@ export type GroundSutureOptions = {
     maxCount?: number;
 };
 
+export type ClearPcbBoardOptions = {
+    ignoreToClearNet?: string[];
+    clearOnlyNet?: string[];
+    preserveBoardOutline?: boolean;
+};
+
+export type ClearPcbBoardResult = {
+    deleted: Record<string, number>;
+};
+
 type DoneablePrimitive<T> = {
     isAsync(): boolean;
     done(): T | Promise<T>;
@@ -168,11 +178,37 @@ function warning(message: string) {
 
 type PcbPrimitiveCleanupApi = {
     getAllPrimitiveId(): Promise<Array<string>>;
+    getAll?: () => Promise<Array<PcbCleanupPrimitive>>;
     delete(primitiveIds: Array<string>): Promise<boolean>;
 };
 
+type PcbCleanupPrimitive = {
+    getState_PrimitiveId?: () => string;
+    getState_Net?: () => string | undefined;
+    getState_Layer?: () => unknown;
+};
 
-async function clearCurrentPcbBoard() {
+function normalizeNetFilter(nets: string[] | undefined) {
+    return new Set((nets ?? [])
+        .map(net => safeNetName(net).toUpperCase())
+        .filter(Boolean));
+}
+
+function shouldClearPrimitive(primitive: PcbCleanupPrimitive, options: ClearPcbBoardOptions) {
+    if (options.preserveBoardOutline && primitive.getState_Layer?.() === EPCB_LayerId.BOARD_OUTLINE) {
+        return false;
+    }
+
+    const net = safeNetName(primitive.getState_Net?.()).toUpperCase();
+    const only = normalizeNetFilter(options.clearOnlyNet);
+    const ignored = normalizeNetFilter(options.ignoreToClearNet);
+
+    if (only.size && !only.has(net)) return false;
+    if (ignored.size && ignored.has(net)) return false;
+    return true;
+}
+
+export async function clearCurrentPcbBoard(options: ClearPcbBoardOptions = {}): Promise<ClearPcbBoardResult> {
     const groups: Array<[string, { api: PcbPrimitiveCleanupApi, filter?: (id: string) => boolean }]> = [
         ["pour", { api: eda.pcb_PrimitivePour }],
         ["fill", { api: eda.pcb_PrimitiveFill }],
@@ -189,15 +225,45 @@ async function clearCurrentPcbBoard() {
         // ["object", eda.pcb_PrimitiveObject],
     ];
 
+    const deleted: Record<string, number> = {};
+    const needsPrimitiveRead = Boolean(
+        options.preserveBoardOutline ||
+        options.clearOnlyNet?.length ||
+        options.ignoreToClearNet?.length,
+    );
+
     for (const [name, api] of groups) {
-        let ids = await withTimeout(
-            api.api.getAllPrimitiveId(),
-            PCB_CLEAR_TIMEOUT_MS,
-            `PCB cleanup ${name} get timeout`,
-        ).catch(error => {
-            warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
-            return [];
-        });
+        let ids: string[] = [];
+
+        if (needsPrimitiveRead) {
+            if (!api.api.getAll) {
+                warning(`PCB cleanup ${name} skipped: primitive filtering is not supported`);
+                continue;
+            }
+
+            const primitives = await withTimeout(
+                api.api.getAll(),
+                PCB_CLEAR_TIMEOUT_MS,
+                `PCB cleanup ${name} get timeout`,
+            ).catch(error => {
+                warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
+                return [];
+            });
+
+            ids = primitives
+                .filter(primitive => shouldClearPrimitive(primitive, options))
+                .map(primitive => primitive.getState_PrimitiveId?.())
+                .filter((id): id is string => Boolean(id));
+        } else {
+            ids = await withTimeout(
+                api.api.getAllPrimitiveId(),
+                PCB_CLEAR_TIMEOUT_MS,
+                `PCB cleanup ${name} get timeout`,
+            ).catch(error => {
+                warning(`PCB cleanup ${name} get failed: ${(error as Error).message}`);
+                return [];
+            });
+        }
 
         if (!ids.length) continue;
         if (api.filter) ids = ids.filter(api.filter)
@@ -210,9 +276,12 @@ async function clearCurrentPcbBoard() {
             warning(`PCB cleanup ${name} delete failed: ${(error as Error).message}`);
             return false;
         });
+        deleted[name] = (deleted[name] ?? 0) + ids.length;
 
         await yieldToEventLoop();
     }
+
+    return { deleted };
 }
 
 async function commitPrimitive<T extends DoneablePrimitive<T>>(primitive: T | undefined, message: string) {

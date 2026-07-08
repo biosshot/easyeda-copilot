@@ -27,6 +27,8 @@ For DSL signatures read `dsl.ts`. For placement heuristics and examples read `in
 - runs the MCP-side router;
 - imports the routed JSON back into EasyEDA;
 - can rebuild GND pours and add GND stitching vias.
+- does not clear existing tracks/vias before routing;
+- does not route nets that are already routed in the exported EasyEDA autoroute JSON. Use `clear_routing` first when old routing should be replaced.
 
 EasyEDA v3/client routing may be preferred when available.
 
@@ -83,9 +85,10 @@ After assembly:
 1. Configure or import DRC rules if needed.
 2. Call `get_pcb_stack_layers` if layer selection matters.
 3. If the user asks for a different board stack, call `set_pcb_copper_layer_count`, then call `get_pcb_stack_layers` again.
-4. Run EasyEDA v3/client routing, or call `run_auto_route_on_current_pcbdoc`.
-5. Run `check_pcb_drc`.
-6. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
+4. If replacing previous routing, call `clear_routing` first. Use `ignoreToClearNet` to preserve nets or `clearOnlyNet` to clear selected nets only.
+5. Run EasyEDA v3/client routing, or call `run_auto_route_on_current_pcbdoc`.
+6. Run `check_pcb_drc`.
+7. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
 
 MCP router defaults are intentionally conservative:
 

@@ -47,6 +47,8 @@ const PcbRoutingLayerSchema = PcbLayerNameSchema().refine(isPcbRoutingLayer, {
     message: 'Expected a copper signal layer: TOP, BOTTOM, or INNER_1..INNER_30.',
 });
 
+const NetNameListSchema = z.union([z.string().min(1), z.array(z.string().min(1))]).optional();
+
 const AutoRouteInputSchema = z.object({
     ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
     route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
@@ -465,6 +467,12 @@ function cloneJson<T>(value: T): T {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function normalizeNetNameList(value: string | string[] | undefined) {
+    return (Array.isArray(value) ? value : value ? [value] : [])
+        .map(net => net.trim())
+        .filter(Boolean);
 }
 
 function getBoardPolygonFromAutoRouteInput(inputJson: unknown) {
@@ -1124,6 +1132,25 @@ server.registerTool(
         });
 
         return formatAutoRouteOperationResult(operationId, operation);
+    },
+);
+
+server.registerTool(
+    'clear_routing',
+    {
+        title: 'Clear PCB Routing',
+        description: 'Delete existing PCB routing primitives from the currently opened EasyEDA PCB document: tracks, arcs, polylines, pours, fills, regions, and vias. Board outline is preserved. Use before run_auto_route_on_current_pcbdoc when old routing should be replaced.',
+        inputSchema: z.object({
+            ignoreToClearNet: NetNameListSchema.describe('Net name or net names to preserve while clearing routing, e.g. "GND" or ["GND"].'),
+            clearOnlyNet: NetNameListSchema.describe('If set, clear only this net name or these net names. ignoreToClearNet still excludes matching nets.'),
+        }),
+    },
+    async ({ ignoreToClearNet, clearOnlyNet }) => {
+        const result = await requestEasyEda('clear-pcb-routing', {
+            ignoreToClearNet: normalizeNetNameList(ignoreToClearNet),
+            clearOnlyNet: normalizeNetNameList(clearOnlyNet),
+        }, 300000);
+        return textResult(result);
     },
 );
 

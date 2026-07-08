@@ -1,5 +1,5 @@
 import { assembleCircuit } from './eda/assemble';
-import { assembleBoard, pourDefaultGroundAndSutureVias, type GroundSutureOptions } from './eda/pcb-assemble';
+import { assembleBoard, clearCurrentPcbBoard, pourDefaultGroundAndSutureVias, type GroundSutureOptions } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { checkPcbDrc } from './eda/drc';
 import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
@@ -126,6 +126,16 @@ function readGroundSutureOptions(value: unknown): GroundSutureOptions {
         edgeMarginMm: typeof value.edgeMarginMm === 'number' ? value.edgeMarginMm : undefined,
         maxCount: typeof value.maxCount === 'number' ? value.maxCount : undefined,
     };
+}
+
+function readStringList(value: unknown) {
+    if (typeof value === 'string') return value.trim() ? [value.trim()] : [];
+    if (!Array.isArray(value)) return [];
+
+    return value
+        .filter((item): item is string => typeof item === 'string')
+        .map(item => item.trim())
+        .filter(Boolean);
 }
 
 function rawLayerName(raw: number | string) {
@@ -859,6 +869,19 @@ async function handleMessage(message: McpMessage) {
             });
 
             reply(true, { imported, groundResult });
+            return;
+        }
+
+        if (message.event === 'clear-pcb-routing') {
+            await checkpointer.save(false);
+            const result = await clearCurrentPcbBoard({
+                ignoreToClearNet: readStringList(body.ignoreToClearNet),
+                clearOnlyNet: readStringList(body.clearOnlyNet),
+                preserveBoardOutline: true,
+            });
+            await eda.pcb_Document.startCalculatingRatline().catch(() => false);
+
+            reply(true, result);
             return;
         }
 

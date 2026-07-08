@@ -33,7 +33,9 @@ Agents should read:
 
 Then open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc({ layoutId })`.
 
-Routing is done after assembly in EasyEDA/client tools. The MCP also provides `run_auto_route_on_current_pcbdoc`, `check_pcb_drc`, `inspect_net`, `inspect_component`, and `preview_pcb`.
+Routing is done after assembly in EasyEDA/client tools. The MCP also provides `clear_routing`, `run_auto_route_on_current_pcbdoc`, `check_pcb_drc`, `inspect_net`, `inspect_component`, and `preview_pcb`.
+
+`run_auto_route_on_current_pcbdoc` does not clear existing tracks/vias first and does not route nets that are already routed in EasyEDA's exported autoroute JSON. Call `clear_routing` first when old routing should be replaced.
 
 ## Build
 
