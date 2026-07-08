@@ -38,6 +38,7 @@ const PCB_LAYOUT_TASK_PATH = '/v1/mcp-tools/make-pcb-layout';
 const DEFAULT_PCB_LAYOUT_WAIT_MS = 60_000;
 const DEFAULT_AUTO_ROUTE_WAIT_MS = 60_000;
 const LOCAL_OPERATION_LIMIT = 25;
+const AUTO_ROUTE_OPERATION_LABEL = 'run_auto_route_on_current_pcbdoc';
 
 function isPcbRoutingLayer(layer: string) {
     return layer === 'TOP' || layer === 'BOTTOM' || /^INNER_(?:[1-9]|[12]\d|30)$/.test(layer);
@@ -218,6 +219,10 @@ type LocalOperationContext = {
 };
 
 const localOperations = new Map<string, LocalOperation<unknown>>();
+let pcbLayoutOperationLock: {
+    operationId?: string;
+    startedAt: number;
+} | undefined;
 
 function operationErrorMessage(error: unknown) {
     return error instanceof Error ? error.message : String(error);
@@ -253,6 +258,20 @@ function trimLocalOperations() {
         if (localOperations.size <= LOCAL_OPERATION_LIMIT) break;
         localOperations.delete(operationId);
     }
+}
+
+function findPendingLocalOperation(label: string) {
+    return [...localOperations.entries()].find(([, operation]) =>
+        operation.label === label && operation.status === 'pending',
+    );
+}
+
+function assertNoPendingLocalOperation(label: string, toolName: string, waitToolName: string) {
+    const pending = findPendingLocalOperation(label);
+    if (!pending) return;
+
+    const [operationId] = pending;
+    throw new Error(`${toolName} is already running. Wait for it with ${waitToolName} or cancel it first. operationId: ${operationId}`);
 }
 
 function startLocalOperation<T>(
@@ -296,6 +315,27 @@ function startLocalOperation<T>(
     })();
 
     return operationId;
+}
+
+async function assertNoPendingPcbLayoutOperation() {
+    if (!pcbLayoutOperationLock) return;
+
+    if (!pcbLayoutOperationLock.operationId) {
+        throw new Error('make_pcb_layout is already starting. Wait for it to return an operationId before starting another layout.');
+    }
+
+    const operation = await getAsyncTaskStatus<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, pcbLayoutOperationLock.operationId);
+    if (operation.status === 'pending') {
+        throw new Error(`make_pcb_layout is already running. Wait for it with wait_pcb_layout or cancel it first. operationId: ${pcbLayoutOperationLock.operationId}`);
+    }
+
+    pcbLayoutOperationLock = undefined;
+}
+
+function releasePcbLayoutLockIfFinished(operationId: string, operation: AsyncOperationResponse<unknown>) {
+    if (pcbLayoutOperationLock?.operationId !== operationId) return;
+    if (operation.status === 'pending') return;
+    pcbLayoutOperationLock = undefined;
 }
 
 async function waitForLocalOperation<T = unknown>(operationId: string, options: {
@@ -1028,19 +1068,38 @@ server.registerTool(
         }),
     },
     async (input) => {
-        const code = await readLayoutCode(input);
-        const circuit = await requestEasyEda('get-multi-page-schematic', {
-            extractFootprintUuid: true
-        });
+        await assertNoPendingPcbLayoutOperation();
+        assertNoPendingLocalOperation(
+            AUTO_ROUTE_OPERATION_LABEL,
+            'run_auto_route_on_current_pcbdoc',
+            'wait_auto_route_on_current_pcbdoc',
+        );
+        pcbLayoutOperationLock = { startedAt: Date.now() };
 
-        const operationId = await startAsyncTask(PCB_LAYOUT_TASK_PATH, {
-            code,
-            circuit,
-        });
-        const operation = await waitForAsyncTask<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, operationId, {
-            pollIntervalMs: 2000,
-            waitMs: input.wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
-        });
+        let operationId: string | undefined;
+        let operation: AsyncOperationResponse<MakePcbLayoutResponse>;
+
+        try {
+            const code = await readLayoutCode(input);
+            const circuit = await requestEasyEda('get-multi-page-schematic', {
+                extractFootprintUuid: true
+            });
+
+            operationId = await startAsyncTask(PCB_LAYOUT_TASK_PATH, {
+                code,
+                circuit,
+            });
+            pcbLayoutOperationLock.operationId = operationId;
+
+            operation = await waitForAsyncTask<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, operationId, {
+                pollIntervalMs: 2000,
+                waitMs: input.wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
+            });
+            releasePcbLayoutLockIfFinished(operationId, operation);
+        } catch (error) {
+            if (!operationId) pcbLayoutOperationLock = undefined;
+            throw error;
+        }
 
         return await formatPcbLayoutOperationResult(operationId, operation);
     },
@@ -1061,6 +1120,7 @@ server.registerTool(
             pollIntervalMs: 2000,
             waitMs: wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
         });
+        releasePcbLayoutLockIfFinished(operationId, operation);
 
         return await formatPcbLayoutOperationResult(operationId, operation);
     },
@@ -1077,6 +1137,9 @@ server.registerTool(
     },
     async ({ operationId }) => {
         const result = await cancelAsyncTask(PCB_LAYOUT_TASK_PATH, operationId);
+        await getAsyncTaskStatus<MakePcbLayoutResponse>(PCB_LAYOUT_TASK_PATH, operationId)
+            .then(operation => releasePcbLayoutLockIfFinished(operationId, operation))
+            .catch(() => undefined);
         return textResult({
             status: 'cancel_requested',
             operationId,
@@ -1122,8 +1185,14 @@ server.registerTool(
         inputSchema: AutoRouteInputSchema,
     },
     async (input) => {
-        const operationId = startLocalOperation<AutoRouteToolResult>(
+        await assertNoPendingPcbLayoutOperation();
+        assertNoPendingLocalOperation(
+            AUTO_ROUTE_OPERATION_LABEL,
             'run_auto_route_on_current_pcbdoc',
+            'wait_auto_route_on_current_pcbdoc',
+        );
+        const operationId = startLocalOperation<AutoRouteToolResult>(
+            AUTO_ROUTE_OPERATION_LABEL,
             context => runAutoRouteOnCurrentPcbDoc(input, context),
         );
         const operation = await waitForLocalOperation<AutoRouteToolResult>(operationId, {
