@@ -198,6 +198,11 @@ async function postJson(path: string, payload: unknown): Promise<unknown> {
 
 function asyncProgressText(intermediate: unknown) {
     if (!isRecord(intermediate)) return undefined;
+    if (typeof intermediate.stage === 'string' && typeof intermediate.progress === 'number') {
+        const percent = Math.max(0, Math.min(100, Math.round(intermediate.progress)));
+        const content = typeof intermediate.content === 'string' ? intermediate.content : `PCB layout stage: ${intermediate.stage}`;
+        return `${percent}% ${intermediate.stage}: ${content}`;
+    }
     if (typeof intermediate.content === 'string') return intermediate.content;
     if (typeof intermediate.action === 'string') return intermediate.action;
     if (typeof intermediate.stage === 'string') return `PCB layout stage: ${intermediate.stage}`;
@@ -885,6 +890,7 @@ async function formatPcbLayoutOperationResult(operationId: string, operation: As
         status: 'pending',
         operationId,
         progress: asyncProgressText(operation.intermediateResult),
+        progressDetails: operation.intermediateResult,
         message: 'PCB layout is still running. Call wait_pcb_layout with this operationId.',
         nextTool: 'wait_pcb_layout',
     });
