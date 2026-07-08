@@ -225,7 +225,7 @@ let pcbLayoutOperationLock: {
 } | undefined;
 
 function operationErrorMessage(error: unknown) {
-    return error instanceof Error ? error.message : String(error);
+    return error instanceof Error ? error.message : JSON.stringify(error);
 }
 
 function isCancelledError(error: unknown) {
@@ -1061,7 +1061,7 @@ server.registerTool(
         title: 'Make PCB Layout',
         description: `Create PCB component placement from the current EasyEDA schematic using JavaScript PCB layout DSL code. Starts a long-running server operation, waits up to 60 seconds, then returns either the finished layoutId/preview or an operationId for wait_pcb_layout. Server-side routing is disabled: route the assembled PCB later in EasyEDA/client tools. This tool does not assemble the board. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
         inputSchema: z.object({
-            file: z.string().min(1).describe('PREFER! Path to a JavaScript PCB layout DSL code file.'),
+            file: z.string().min(1).describe('Path to a JavaScript PCB layout DSL code file.'),
             wait_ms: z.number().min(30_000).max(180000).default(DEFAULT_PCB_LAYOUT_WAIT_MS).describe('How long this call may wait for completion. Default: 60000ms.'),
         }).refine(data => Boolean(data.file), {
             message: 'Fill one: code, file.',
