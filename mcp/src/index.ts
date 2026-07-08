@@ -1118,7 +1118,7 @@ server.registerTool(
     'run_auto_route_on_current_pcbdoc',
     {
         title: 'Run PCB Auto Router',
-        description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Starts a long-running local operation, waits up to 60 seconds, then returns either the finished result or an operationId for wait_auto_route_on_current_pcbdoc. Open the target PCB document first.',
+        description: 'Export the current EasyEDA PCB autoroute JSON, run the bundled custom router on the MCP side, import the routed result back into EasyEDA, then rebuild GND pours and add GND suture vias. Starts a long-running local operation, waits up to 60 seconds, then returns either the finished result or an operationId for wait_auto_route_on_current_pcbdoc. This tool does not clear existing tracks/vias before routing and does not route nets that are already routed in EasyEDA autoroute export; call clear_routing first when old routing should be replaced. Open the target PCB document first.',
         inputSchema: AutoRouteInputSchema,
     },
     async (input) => {
