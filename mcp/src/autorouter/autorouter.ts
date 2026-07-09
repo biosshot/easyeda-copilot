@@ -1,6 +1,4 @@
-import { existsSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { ROOT_DIR } from '../utils/dirs';
 

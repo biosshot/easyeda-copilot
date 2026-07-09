@@ -761,8 +761,8 @@ async function openSchematic() {
     if (!currentDoc) return;
     if (currentDoc.documentType === EDMT_EditorDocumentType.SCHEMATIC_PAGE) return;
     const board = await eda.dmt_Board.getCurrentBoardInfo().catch(e => undefined);
-    if (!board || !board.schematic) return;
-    await eda.dmt_EditorControl.openDocument(board.schematic.uuid).catch(e => undefined);
+    if (!board || !board.schematic || !board.schematic.page?.[0]?.uuid) return;
+    await eda.dmt_EditorControl.openDocument(board.schematic.page[0].uuid).catch(e => undefined);
     await new Promise(resolve => setTimeout(resolve, 400));
 }
 
@@ -794,7 +794,6 @@ async function handleMessage(message: McpMessage) {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
 
         if (message.event === 'get-schematic') {
-            await openSchematic();
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true });
             reply(true, schematic);
