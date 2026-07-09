@@ -760,9 +760,9 @@ async function openSchematic() {
     const currentDoc = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(_ => undefined);
     if (!currentDoc) return;
     if (currentDoc.documentType === EDMT_EditorDocumentType.SCHEMATIC_PAGE) return;
-    const board = await eda.dmt_Board.getCurrentBoardInfo();
+    const board = await eda.dmt_Board.getCurrentBoardInfo().catch(e => undefined);
     if (!board || !board.schematic) return;
-    await eda.dmt_EditorControl.openDocument(board.schematic.uuid);
+    await eda.dmt_EditorControl.openDocument(board.schematic.uuid).catch(e => undefined);
     await new Promise(resolve => setTimeout(resolve, 400));
 }
 
