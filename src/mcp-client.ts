@@ -756,6 +756,16 @@ const findDocWithUUID = (data: Awaited<ReturnType<typeof getProjectInfo>>['proje
     return undefined;
 }
 
+async function openSchematic() {
+    const currentDoc = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(_ => undefined);
+    if (!currentDoc) return;
+    if (currentDoc.documentType === EDMT_EditorDocumentType.SCHEMATIC_PAGE) return;
+    const board = await eda.dmt_Board.getCurrentBoardInfo();
+    if (!board || !board.schematic) return;
+    await eda.dmt_EditorControl.openDocument(board.schematic.uuid);
+    await new Promise(resolve => setTimeout(resolve, 400));
+}
+
 async function handleMessage(message: McpMessage) {
     if (message.event === 'connected') {
         eda.sys_Log.add('MCP WebSocket connected', ESYS_LogType.INFO);
@@ -784,6 +794,7 @@ async function handleMessage(message: McpMessage) {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
 
         if (message.event === 'get-schematic') {
+            await openSchematic();
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true });
             reply(true, schematic);
@@ -791,8 +802,9 @@ async function handleMessage(message: McpMessage) {
         }
 
         if (message.event === 'get-multi-page-schematic') {
+            await openSchematic();
             const extractFootprintUuid = !!body.extractFootprintUuid;
-            const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo();
+            const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo().catch(e => undefined);
             if (!allPages || !allPages.length) throw new Error('Not open any sch or is empty sch');
             const fullSch: ExplainCircuit = { components: [] };
 
