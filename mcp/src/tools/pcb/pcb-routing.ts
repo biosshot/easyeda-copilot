@@ -59,6 +59,7 @@ const NetNameListSchema = z.union([z.string().min(1), z.array(z.string().min(1))
 
 const AutoRouteInputSchema = z.object({
     ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
+    routing_effect_priority: z.enum(['SPEED_FIRST', 'COMPLETION_FIRST',]).default('COMPLETION_FIRST').describe('Auto router effect priority. SPEED_FIRST limits routing attempts. COMPLETION_FIRST prioritizes route completion.'),
     route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
     timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
     pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
@@ -289,7 +290,7 @@ function cancelLocalOperation(operationId: string) {
     };
 }
 
-function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[], routeLayers?: string[]) {
+function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[], routeLayers: string[] | undefined, routingEffectPriority: 'SPEED_FIRST' | 'COMPLETION_FIRST') {
     const ignored = new Set(ignoredNets.map(net => net.trim()).filter(Boolean));
     const filtered = JSON.parse(JSON.stringify(inputJson));
     let removedTopLevelNets = 0;
@@ -320,6 +321,13 @@ function filterAutoRouteInput(inputJson: unknown, ignoredNets: string[], routeLa
         replaceAutoRouteRuleLayers(filtered.rules, routeLayerIds);
         replaceAutoRouteRuleLayers(filtered.classes, routeLayerIds);
     }
+
+    if (isRecord(filtered))
+        if (routingEffectPriority === 'SPEED_FIRST') {
+            filtered.iterationCount = 2;
+        } else {
+            delete filtered.iterationCount;
+        }
 
     return { filtered, removedTopLevelNets, routeLayerIds };
 }
@@ -375,7 +383,7 @@ async function runAutoRouteOnCurrentPcbDoc(bridge: Bridge, input: AutoRouteToolI
     await writeFile(inputPath, inputText);
     const inputJson = parseJsonText(inputText, 'EasyEDA autoroute input');
     const ignoredNets = input.ignore_nets.map(net => net.trim()).filter(Boolean);
-    const { filtered, removedTopLevelNets, routeLayerIds } = filterAutoRouteInput(inputJson, ignoredNets, input.route_layers);
+    const { filtered, removedTopLevelNets, routeLayerIds } = filterAutoRouteInput(inputJson, ignoredNets, input.route_layers, input.routing_effect_priority);
     await writeFile(filteredInputPath, JSON.stringify(filtered, null, 2));
 
     assertOperationNotCancelled(signal);
