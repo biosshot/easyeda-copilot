@@ -34,7 +34,6 @@ const AutoRouteInputSchema = z.object({
     ignore_nets: z.array(z.string().min(1)).default(['GND']).describe('Nets removed from the routing task. Default: ["GND"].'),
     route_layers: z.array(PcbRoutingLayerSchema).min(1).optional().describe('Optional copper signal layers allowed for routing, e.g. ["TOP"], ["BOTTOM"], or ["TOP","BOTTOM","INNER_1"]. Use get_pcb_stack_layers first.'),
     timeout_sec: z.number().min(10).max(1800).default(600).describe('Router timeout in seconds.'),
-    router_dir: z.string().min(1).optional().describe('Optional custom-router directory override. Usually leave empty.'),
     pour_gnd: z.boolean().default(true).describe('Create/rebuild full-board GND pours after importing routes.'),
     suture_gnd: z.boolean().default(true).describe('Add GND SUTURE vias after importing routes.'),
     suture_grid_mm: z.number().min(0.5).max(50).default(4).describe('GND suture via grid step in millimeters.'),
@@ -356,7 +355,6 @@ async function runAutoRouteOnCurrentPcbDoc(bridge: Bridge, input: AutoRouteToolI
     setProgress({ stage: 'routing', progress: 0 });
     let lastProgress = 0;
     const result = await runEasyEdaAutoRouter(filtered, {
-        routerDir: input.router_dir,
         timeoutMs: input.timeout_sec * 1000,
         signal,
         onProgress: progress => {

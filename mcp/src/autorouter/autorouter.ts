@@ -2,9 +2,9 @@ import { existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Worker } from 'node:worker_threads';
+import { ROOT_DIR } from '../utils/dirs';
 
 type RouterRunOptions = {
-    routerDir?: string;
     timeoutMs: number;
     signal?: AbortSignal;
     onProgress?: (progress: number) => void;
@@ -53,44 +53,12 @@ globalThis.fetch = async (url, options) => {
 require(workerData.workerPath);
 `;
 
-function routerDirCandidates(baseDir: string) {
-    return [
-        process.env.EASYEDA_CUSTOM_ROUTER_DIR,
-        process.env.EASYEDA_ROUTER_DIR,
-        join(process.cwd(), 'custom-router'),
-        join(process.cwd(), '..', 'custom-router'),
-        join(process.cwd(), '..', '..', 'custom-router'),
-        join(baseDir, '..', 'router'),
-        join(baseDir, '..', '..', 'router'),
-        join(baseDir, '..', '..', '..', 'custom-router'),
-        join(baseDir, '..', '..', '..', '..', 'custom-router'),
-    ].filter((value): value is string => Boolean(value));
-}
-
-export function resolveRouterDir(baseDir: string, requestedDir?: string) {
-    const candidates = requestedDir ? [requestedDir] : routerDirCandidates(baseDir);
-
-    for (const candidate of candidates) {
-        const dir = resolve(candidate);
-        if (
-            existsSync(join(dir, 'pcbRouterWorker.js')) &&
-            existsSync(join(dir, 'PCBRouter-YFDILLBW-YFDILLBW.wasm'))
-        ) {
-            return dir;
-        }
-    }
-
-    throw new Error(
-        'EasyEDA custom router assets were not found. Set EASYEDA_CUSTOM_ROUTER_DIR to the custom-router directory.',
-    );
-}
-
 export function runEasyEdaAutoRouter(inputJson: unknown, options: RouterRunOptions): Promise<RouterResult> {
     if (options.signal?.aborted) {
         return Promise.reject(new Error('Auto router operation cancelled.'));
     }
 
-    const routerDir = resolveRouterDir(dirname(fileURLToPath(import.meta.url)), options.routerDir);
+    const routerDir = join(ROOT_DIR, 'autorouter', 'assets');
     const workerPath = join(routerDir, 'pcbRouterWorker.js');
     const wasmPath = join(routerDir, 'PCBRouter-YFDILLBW-YFDILLBW.wasm');
 
