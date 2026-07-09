@@ -20,13 +20,40 @@ function operationErrorMessage(error: unknown) {
 
 const LOCAL_OPERATION_LIMIT = 10;
 
-function isPcbRoutingLayer(layer: string) {
-    return layer === 'TOP' || layer === 'BOTTOM' || /^INNER_(?:[1-9]|[12]\d|30)$/.test(layer);
-}
-
-const PcbRoutingLayerSchema = PcbLayerNameSchema().refine(isPcbRoutingLayer, {
-    message: 'Expected a copper signal layer: TOP, BOTTOM, or INNER_1..INNER_30.',
-});
+export const PcbRoutingLayerSchema = PcbLayerNameSchema().extract([
+    "TOP",
+    "BOTTOM",
+    "INNER_1",
+    "INNER_2",
+    "INNER_3",
+    "INNER_4",
+    "INNER_5",
+    "INNER_6",
+    "INNER_7",
+    "INNER_8",
+    "INNER_9",
+    "INNER_10",
+    "INNER_11",
+    "INNER_12",
+    "INNER_13",
+    "INNER_14",
+    "INNER_15",
+    "INNER_16",
+    "INNER_17",
+    "INNER_18",
+    "INNER_19",
+    "INNER_20",
+    "INNER_21",
+    "INNER_22",
+    "INNER_23",
+    "INNER_24",
+    "INNER_25",
+    "INNER_26",
+    "INNER_27",
+    "INNER_28",
+    "INNER_29",
+    "INNER_30",
+]);
 
 const NetNameListSchema = z.union([z.string().min(1), z.array(z.string().min(1))]).optional();
 

@@ -56,7 +56,7 @@ export function runEasyEdaAutoRouter(inputJson: unknown, options: RouterRunOptio
         return Promise.reject(new Error('Auto router operation cancelled.'));
     }
 
-    const routerDir = join(ROOT_DIR, 'autorouter', 'assets');
+    const routerDir = join(ROOT_DIR, 'src', 'autorouter', 'assets');
     const workerPath = join(routerDir, 'pcbRouterWorker.js');
     const wasmPath = join(routerDir, 'PCBRouter-YFDILLBW-YFDILLBW.wasm');
 
