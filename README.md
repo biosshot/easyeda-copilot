@@ -28,6 +28,7 @@ EasyEDA Copilot adds an AI design layer to EasyEDA Pro:
 - **Use reusable blocks**: insert reviewed standard subcircuits such as regulators, interfaces and protection blocks.
 - **Explain and analyze circuits**: discuss schematic behavior, signal flow and design tradeoffs.
 - **Run SPICE simulations**: simulate supported circuits and inspect selected models before trusting the result.
+- **Design PCBs through MCP**: generate placement, assemble the board, route it, inspect results, and run DRC from an MCP client.
 
 More examples are available on [Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples).
 
@@ -68,10 +69,52 @@ Recommended order:
 
 See [MCP package README](mcp/README.md)
 
+## PCB Workflow (MCP only)
+
+PCB placement is available only through an external MCP client such as Codex or Claude Code. It is not available in the built-in Copilot chat.
+
+MCP creates placement: board outline, mechanical constraints, components, mounting holes, board pads, and designator positions. Review the mechanical preview first, approve the final placement, then import it into EasyEDA. After assembly, MCP can run its bundled auto-router, inspect PCB objects, and invoke EasyEDA DRC on the open Desktop document.
+
+PCB assembly, preview, and client routing support are verified with **EasyEDA Desktop V3.2.149**.
+
+### RP2040 board: Copilot and Quilter
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_copilot_top.png" alt="RP2040 Copilot, top layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_quiliter_top.png" alt="RP2040 Quilter, top layer" width="48%">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_copilot_bot.png" alt="RP2040 Copilot, bottom layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="RP2040 Quilter, bottom layer" width="48%">
+</p>
+
+### PICO Duck compact board: Copilot and Quilter
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_copilot_top.png" alt="PICO Duck Copilot, top layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quilter_top.png" alt="PICO Duck Quilter, top layer" width="48%">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck Copilot, bottom layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quiliter_bot.png" alt="PICO Duck Quilter, bottom layer" width="48%">
+</p>
+
+### ESPower board: Copilot and Quilter
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_copilot_top.png" alt="ESPower Copilot, top layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_quiliter_top.png" alt="ESPower Quilter, top layer" width="48%">
+</p>
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_copilot_bot.png" alt="ESPower Copilot, bottom layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_quiliter_bot.png" alt="ESPower Quilter, bottom layer" width="48%">
+</p>
+
 ## Compatibility
 
 | EasyEDA Pro version | Status   |
 | ------------------- | -------- |
+| Desktop V3.2.149    | Verified |
 | Desktop V2.2.45     | Verified |
 | Desktop V2.2.47     | Verified |
 

@@ -2,40 +2,38 @@
 
 MCP server for EasyEDA Copilot.
 
-It connects MCP clients such as Codex or Claude Code to EasyEDA Pro through the EasyEDA Copilot extension and exposes tools for schematic extraction, circuit modification, PCB placement, PCB assembly, preview, DRC, and routing helpers.
+It connects MCP clients such as Codex or Claude Code to EasyEDA Desktop through the EasyEDA Copilot extension. It supports schematic work, component search, PCB placement, assembly, routing, inspection, and DRC.
+
+## Requirements
+
+- EasyEDA Desktop V3.2.149.
+- EasyEDA Copilot extension with `External Interactions` enabled.
+- An MCP-capable client such as Codex or Claude Code.
 
 ## Usage
 
-1. Add this MCP server to your agent.
+1. Add this MCP server to your MCP client.
 2. Start the MCP client with this server enabled.
-3. Open EasyEDA Pro.
+3. Open EasyEDA Desktop.
 4. Open the target schematic or PCB document.
 5. EasyEDA Copilot connects automatically. Use `Copilot -> MCP` only to pause or resume scanning.
 
-## Local Docs
+## PCB Workflow
 
-The package ships local docs in `mcp/docs`. The MCP server exposes the local `SKILL.md` path through the `easyeda_copilot_mcp_skill` resource/prompt.
+PCB features are available through MCP clients, not through the built-in Copilot chat.
 
-Agents should read:
+The MCP integration can:
 
-- `docs/SKILL.md` first.
-- `docs/pcb-layout/dsl.ts` before writing `make_pcb_layout` DSL.
-- `docs/pcb-layout/instructions.md` for placement heuristics and examples.
-- `docs/pcb-layout/mcp-workflow.md` for placement, assembly, preview, and routing flow.
-- `docs/pcb-drc/rules.md` for DRC export/apply/check workflows.
+- generate board outline and component placement from a schematic;
+- create mechanical and final placement previews before import;
+- assemble approved placement into the opened EasyEDA PCB document;
+- run the bundled auto-router and import the generated tracks;
+- rebuild GND pours and stitching vias after auto-routing;
+- clear existing routing when it must be regenerated;
+- preview and inspect PCB objects, nets, and components;
+- run EasyEDA PCB DRC and manage the copper-layer count.
 
-## PCB Flow
-
-`make_pcb_layout` is placement-only. It returns a compact text report plus:
-
-- `layoutId`: stored MCP-side board assembly payload id.
-- `previewImagePath`: local PNG preview path.
-
-Then open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc({ layoutId })`.
-
-Routing is done after assembly in EasyEDA/client tools. The MCP also provides `clear_routing`, `run_auto_route_on_current_pcbdoc`, `check_pcb_drc`, `inspect_net`, `inspect_component`, and `preview_pcb`.
-
-`run_auto_route_on_current_pcbdoc` does not clear existing tracks/vias first and does not route nets that are already routed in EasyEDA's exported autoroute JSON. Call `clear_routing` first when old routing should be replaced.
+Typical workflow: review mechanical preview, approve final placement, import it into the target PCB document, then route and run DRC. Existing tracks are preserved by default; clear routing before requesting a full reroute.
 
 ## Build
 
