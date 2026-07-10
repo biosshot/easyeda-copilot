@@ -26,7 +26,7 @@ async function buildAll() {
                 outDir: resolve(__dirname, 'iframe'),  // теперь __dirname определена
                 emptyOutDir: emptyDir,
                 sourcemap: false,
-                minify: 'terser',
+                minify: false, //'terser',
                 terserOptions: { format: { comments: false } },
                 rollupOptions: {
                     input: { [page.name]: resolve(__dirname, page.html) },

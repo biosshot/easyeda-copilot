@@ -1,32 +1,54 @@
+import { ECHOSYS_LIB } from "./types";
 import { to2, withTimeout } from "./utils";
 
 const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
 
+const SYS_LIB_UUID = eda.lib_LibrariesList.getSystemLibraryUuid();
+
+export async function getLibraryUuidList(libraryUuid?: string) {
+    const maybeLibUuid = [];
+    const sys_lib = await SYS_LIB_UUID;
+
+    if (libraryUuid && libraryUuid?.toLowerCase() !== 'lcsc') {
+        maybeLibUuid.push(libraryUuid);
+    }
+
+    if (sys_lib) {
+        maybeLibUuid.push(sys_lib);
+    }
+
+    maybeLibUuid.push(ECHOSYS_LIB);
+
+    return maybeLibUuid
+}
+
 export const placeComponent = async (data: { libraryUuid: string, uuid: string }, { x, y, rotate, mirror, addIntoBom, addIntoPcb, subPartName }:
     { x: number, y: number, rotate?: number, mirror?: boolean, addIntoBom?: boolean, addIntoPcb?: boolean, subPartName?: string }) => {
-    let maybeLibUuid;
-
-    if (isOffline) {
-        maybeLibUuid = [...new Set(['0819f05c4eef4c71ace90d822a990e87', 'f5af0881d090439f925343ec8aedf154', data.libraryUuid])];
-    }
-    else {
-        maybeLibUuid = [data.libraryUuid];
-    }
-
+    const maybeLibUuid = await getLibraryUuidList(data.libraryUuid);
     let comp;
 
     for (const lib of maybeLibUuid) {
         try {
+            eda.sys_Log.add(`place component: ${JSON.stringify({
+                data: {
+                    uuid: data.uuid,
+                    libraryUuid: lib,
+                }, x: to2(x), y: to2(y), subPartName, rotate, mirror, addIntoBom, addIntoPcb
+            })}`)
+
             const compPromise = eda.sch_PrimitiveComponent.create({
                 uuid: data.uuid,
                 libraryUuid: lib,
             }, to2(x), to2(y), subPartName, rotate, mirror, addIntoBom, addIntoPcb);
 
-            if (isOffline)
-                comp = await withTimeout(compPromise, 25000);
-            else
-                comp = await compPromise;
+            comp = await withTimeout(compPromise, 10_000);
 
+            eda.sys_Log.add(`done place component: ${JSON.stringify({
+                data: {
+                    uuid: data.uuid,
+                    libraryUuid: lib,
+                }, x: to2(x), y: to2(y), subPartName, rotate, mirror, addIntoBom, addIntoPcb
+            })}, done`)
         } catch (error) {
             comp = undefined;
         }
@@ -34,7 +56,7 @@ export const placeComponent = async (data: { libraryUuid: string, uuid: string }
         if (comp) break;
     }
 
-    if (!comp) throw new Error("Component not found");
+    if (!comp) throw new Error(`Component not found: ${data.uuid}; ${data.libraryUuid}`);
 
     return comp as ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
 };

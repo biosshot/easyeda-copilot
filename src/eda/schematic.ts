@@ -1,6 +1,6 @@
 import type { CircuitAssembly, ExplainCircuit } from '@copilot/shared/types/circuit';
 import { searchComponentInSCH } from './search';
-import { getBBox, getPrimitiveById, withTimeout } from './utils';
+import { getBBox, getPrimitiveById, normalizeWireLine, to2, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -128,7 +128,13 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
     return pinToSignal;
 }
 
-export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid: boolean }) {
+export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean, disableExtractPos?: boolean, }) {
+    const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
+
+    if (docType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
+        throw new Error('Failed getSchematic. Open schematic page doc to fix.')
+    }
+
     const now = Date.now();
     // @ts-ignore
     if (now - lastToastTime > TOAST_THROTTLE_MS) {
@@ -233,7 +239,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             }
         }
 
-        componentsMap.set(designator, {
+        const component_ = {
             designator,
             part_uuid: null,
             pins: [...(component?.pins ?? []), ...pins],
@@ -245,8 +251,15 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                 mirror: primitiveComponent.getState_Mirror()
             },
             code: primitiveComponent.getState_SupplierId()?.toString() || undefined,
-            footprint_name: component?.footprint_name ?? getFootprintNameFromOtherProperty(otherProperty)
-        })
+            footprint_name: component?.footprint_name ?? getFootprintNameFromOtherProperty(otherProperty),
+            footprint_uuid: null as string | null | undefined
+        }
+
+        if (options?.extractFootprintUuid) {
+            component_.footprint_uuid = primitiveComponent.getState_Footprint()?.uuid;
+        }
+
+        componentsMap.set(designator, component_);
     }
 
     // const componentsPromises = componentsMap.values().map((component): Promise<ExplainCircuit['components'][0]> => new Promise(async (resolve) => {
@@ -296,17 +309,29 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     const components: ExplainCircuit['components'] = [...componentsMap.values()].map(component => {
         const device = component.code ? deviceByLcscId.get(component.code) : null;
 
-        return {
+        const comp: ExplainCircuit['components'][0] = {
             designator: component.designator,
             pins: component.pins,
             value: component.value,
-            pos: component.pos,
             part_uuid: device?.uuid ?? null,
-            footprint_name: device?.footprint?.display_title
+        };
+
+        if (component.footprint_uuid) {
+            comp.footprint_uuid = component.footprint_uuid;
+        }
+
+        if (component.footprint_name) {
+            comp.footprint_name = device?.footprint?.display_title
                 ?? device?.footprint?.title
                 ?? device?.attributes?.['Supplier Footprint']?.toString()
-                ?? component.footprint_name
-        };
+                ?? component.footprint_name;
+        }
+
+        if (!options?.disableExtractPos && component.pos) {
+            comp.pos = component.pos;
+        }
+
+        return comp;
     });
 
     const explainCircuit: ExplainCircuit = { components };
@@ -388,7 +413,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
             for (const p of compPins ?? []) {
                 const px = p.getState_X();
                 const py = p.getState_Y();
-                pinCoordMap.set(`${px},${py}`, {
+                pinCoordMap.set(`${to2(px)},${to2(py)}`, {
                     designator: component.designator,
                     pin_number: p.getState_PinNumber(),
                 });
@@ -413,14 +438,14 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
     }
 
     // Строим граф проводов ПО ЦЕПЯМ: для каждого net — свой граф смежности
-    const ptKey = (p: { x: number; y: number }) => `${p.x},${p.y}`;
+    const ptKey = (p: { x: number; y: number }) => `${to2(p.x)},${to2(p.y)}`;
     const netToWireGraph = new Map<string, Map<string, Set<string>>>();
 
     for (const wire of allWires) {
         const lineRaw = wire.getState_Line();
         if (!lineRaw || !Array.isArray(lineRaw)) continue;
 
-        const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+        const wireData = normalizeWireLine(lineRaw);
 
         // Собираем все точки этого провода
         const wirePoints = new Set<string>();

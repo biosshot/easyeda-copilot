@@ -52,12 +52,12 @@ import ChatControls from './components/chat/ChatControls.vue';
 import SettingsView from './components/settings/SettingsView.vue';
 import { useSettingsStore } from './stores/settings-store';
 import SettingsControls from './components/settings/SettingsControls.vue';
-import { __MODE__ } from './mode';
 import { ThemeName } from './theme/themes';
 import IconButton from './components/shared/IconButton.vue';
 import { isEasyEda, showToastMessage } from './eda/utils';
 import SimulateView from './components/simulate/SimulateView.vue';
 import { startRelay, stopRelay } from './api/relay';
+import { __MODE__ } from '@copilot/shared/mode';
 // import VoltageChart from './components/shared/VoltageChart.vue';
 
 const { checkpointer } = eda;

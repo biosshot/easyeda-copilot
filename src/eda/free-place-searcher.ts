@@ -1,4 +1,5 @@
-import { getBBox, to2 } from "./utils";
+import { getBBox, normWireY, normalizeWireLine, to2 } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 interface Offset {
     x: number | undefined;
@@ -27,18 +28,18 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
 
         return {
             x: bbox.minX - PADDING,
-            y: (-bbox.minY) + PADDING,
+            y: normWireY(bbox.minY) + PADDING,
             w: bbox.width + PADDING * 2,
             h: bbox.height + PADDING * 2
         }
     }));
     // eda.sys_Log.add(`busyRects[0]: ${JSON.stringify(busyRects[0])}`);
 
-    const wires = await eda.sch_PrimitiveWire.getAll().catch(e => []);
+    const wires = await sch_PrimitiveWireSnap.getAll().catch(e => []);
 
     for (const wire of wires) {
         const line_ = wire.getState_Line();
-        const line = (Array.isArray(line_[0]) ? line_ : [line_]) as number[][];
+        const line = normalizeWireLine(line_);
 
         for (const segment of line) {
             if (segment.length !== 4) {
@@ -46,9 +47,9 @@ export async function searchFreePlaceV2(targetPoint: { x: number, y: number }, t
                 continue;
             }
             const rect = {
-                h: Math.abs((-segment[1]) - (-segment[3])) + PADDING * 2,
+                h: Math.abs(normWireY(segment[1]) - normWireY(segment[3])) + PADDING * 2,
                 w: Math.abs(segment[0] - segment[2]) + PADDING * 2,
-                y: Math.max(-segment[1], -segment[3]) + PADDING,
+                y: Math.max(normWireY(segment[1]), normWireY(segment[3])) + PADDING,
                 x: Math.min(segment[0], segment[2]) - PADDING,
             };
             busyRects.push(rect);

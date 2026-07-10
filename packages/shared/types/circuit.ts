@@ -147,7 +147,8 @@ export const ExplainComponentSchema = () => z.object({
         rotate: z.number().optional(),
         mirror: z.boolean().optional()
     }).optional(),
-    footprint_name: z.string().nullish()
+    footprint_name: z.string().nullish(),
+    footprint_uuid: z.string().nullish(),
 });
 
 export const ExplainCircuitStruct = () => z.object({

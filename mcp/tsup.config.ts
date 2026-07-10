@@ -9,7 +9,7 @@ const sdkEsmPath = (...parts: string[]) =>
     join(sdkDistDir, 'esm', ...parts);
 
 export default defineConfig({
-    entry: ['src/index.ts'],
+    entry: ['src/index.ts', 'src/pcb-preview/cli.ts', 'src/pcb-preview/index.ts'],
     format: ['esm'],
     clean: true,
     dts: false,

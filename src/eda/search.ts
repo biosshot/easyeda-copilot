@@ -1,5 +1,5 @@
 import { PlacedComponents } from "./types";
-import { getPrimitiveById, rmPartFromDesignator, to2 } from "./utils";
+import { getAllWiresByNet, getPrimitiveById, normalizeWireLine, rmPartFromDesignator, to2 } from "./utils";
 
 export const searchComponentInSCH = async (designator: string) => {
     designator = rmPartFromDesignator(designator);
@@ -48,12 +48,12 @@ export async function getAllPrimitivePins() {
 }
 
 export async function hasDirectWire(net: string, p1: { x: number, y: number }, p2: { x: number, y: number }) {
-    const wires = await eda.sch_PrimitiveWire.getAll(net);
+    const wires = await getAllWiresByNet(net);
 
     for (const wire of wires) {
         const lineRaw = wire.getState_Line()
 
-        const wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+        const wireData = normalizeWireLine(lineRaw);
 
         const hasP1 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? fuzzyRound(v, p1.x) && fuzzyRound(w[i + 1], p1.y) : false))
         const hasP2 = wireData.find(w => w.find((v, i) => i % 2 === 0 ? fuzzyRound(v, p2.x) && fuzzyRound(w[i + 1], p2.y) : false))

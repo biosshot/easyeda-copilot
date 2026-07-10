@@ -2,6 +2,8 @@ import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import { placeComponent } from "./place-component";
 import { getSchematic } from "./schematic";
 import { searchComponentInSCH } from "./search";
+import { getAllWiresByNet, normWireY, normalizeWireLine, to2 } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 const rotatePoint = (p: { x: number, y: number }, rotate: number) => {
     const radians = -rotate * (Math.PI / 180);
@@ -18,13 +20,13 @@ const rotatePoint = (p: { x: number, y: number }, rotate: number) => {
 const validLine = (values: number[][]) => {
     for (let i = 0; i < values.length; i++) {
 
-        if (values[i][0] !== values[i][2] && values[i][1] !== values[i][3])
+        if (to2(values[i][0]) !== to2(values[i][2]) && to2(values[i][1]) !== to2(values[i][3]))
             return false;
 
         if (values.length <= i + 1) continue;
 
-        const hasP1 = values[i][2] === values[i + 1][0] || values[i][3] === values[i + 1][1];
-        const hasP2 = values[i][2] === values[i + 1][2] || values[i][3] === values[i + 1][3];
+        const hasP1 = to2(values[i][2]) === to2(values[i + 1][0]) || to2(values[i][3]) === to2(values[i + 1][1]);
+        const hasP2 = to2(values[i][2]) === to2(values[i + 1][2]) || to2(values[i][3]) === to2(values[i + 1][3]);
 
         if (!hasP1 && !hasP2)
             return false;
@@ -115,7 +117,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
                 let npincoords = {
                     x: Math.round(npin.getState_X() - newComp!.getState_X()),
-                    y: Math.round(-npin.getState_Y() - newComp!.getState_Y())
+                    y: Math.round(normWireY(npin.getState_Y()) - newComp!.getState_Y())
                 }
 
                 if (npin.getState_Rotation() !== opin.getState_Rotation() && rotate === undefined) {
@@ -126,20 +128,20 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                     npincoords = rotatePoint(npincoords, -rotate)
 
                 const ox = Math.round(opin.getState_X() - savedProps.x);
-                const oy = Math.round(-opin.getState_Y() - savedProps.y);
+                const oy = Math.round(normWireY(opin.getState_Y()) - savedProps.y);
 
                 if (npincoords.x !== ox || npincoords.y !== oy) {
                     if (npincoords.x !== ox && npincoords.y !== oy)
-                        throw new Error('Not safe replace pins coord not eq');
+                        throw new Error(`Not safe replace pins coord not eq ${JSON.stringify(npincoords)} ox ${ox} oy ${oy}`);
                     else if (Math.abs(npincoords.x - ox) < 30 && Math.abs(npincoords.y - oy) < 30) {
                         // pass
                     }
-                    else throw new Error('Not safe replace pins coord not eq');
+                    else throw new Error(`Not safe replace pins coord not eq ${JSON.stringify(npincoords)} ox ${ox} oy ${oy}`);
                 }
 
                 pinMissSizes.push({
                     oldX: opin.getState_X(),
-                    oldY: -opin.getState_Y(),
+                    oldY: normWireY(opin.getState_Y()),
                     missDX: npincoords.x - ox,
                     missDY: npincoords.y - oy,
                     pinNumber: npinNumber
@@ -216,13 +218,13 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
             const offsetY = (allEqualY ? (offsetsY[0] ?? 0) : 0);
 
             newComp.setState_X(savedProps.x + offsetX);
-            newComp.setState_Y(savedProps.y - offsetY);
+            newComp.setState_Y(savedProps.y + normWireY(offsetY));
 
             if (allEqualX) {
                 pinMissSizes = pinMissSizes.map(p => ({ ...p, missDX: p.missDX + offsetX }))
             }
             if (allEqualY) {
-                pinMissSizes = pinMissSizes.map(p => ({ ...p, missDY: p.missDY - offsetY }))
+                pinMissSizes = pinMissSizes.map(p => ({ ...p, missDY: p.missDY + normWireY(offsetY) }))
             }
 
             pinMissSizes = pinMissSizes.filter(p => p.missDX || p.missDY);
@@ -243,7 +245,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
                 if (pin) {
                     eda.sys_Log.add(`Replacer ${savedProps.designator} found pin in sch '${pinMiss.pinNumber}' ${JSON.stringify(componentCircuit)}`);
-                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name).catch(e => []);
+                    const wires = await getAllWiresByNet(pin.signal_name);
                     let wire;
                     let wireData;
                     let wireIndex;
@@ -252,13 +254,13 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                     for (const wire_ of wires) {
                         const lineRaw = wire_.getState_Line()
 
-                        wireData = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
+                        wireData = normalizeWireLine(lineRaw);
 
                         for (let index = 0; index < wireData.length; index++) {
                             wireDataIndex = index;
                             const w = wireData[index];
 
-                            wireIndex = w.findIndex((v, i) => i % 2 === 0 ? v === pinMiss.oldX && w[i + 1] === -pinMiss.oldY : false);
+                            wireIndex = w.findIndex((v, i) => i % 2 === 0 ? to2(v) === to2(pinMiss.oldX) && to2(w[i + 1]) === to2(normWireY(pinMiss.oldY)) : false);
                             if (wireIndex !== -1) break;
                         }
 
@@ -274,13 +276,13 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                         eda.sys_Log.add(`Replacer ${savedProps.designator} modify wire apply ${JSON.stringify(pinMiss)}`);
 
                         wireData![wireDataIndex!][wireIndex!] += pinMiss.missDX;
-                        wireData![wireDataIndex!][wireIndex! + 1] -= pinMiss.missDY;
+                        wireData![wireDataIndex!][wireIndex! + 1] += normWireY(pinMiss.missDY);
 
                         try {
                             // if (validLine(wireData!)) {
                             eda.sys_Log.add(`Replacer ${savedProps.designator} modify wire ${wireDataIndex}; ${wireIndex}; ${wire.getState_PrimitiveId()}; ${JSON.stringify(wireData)}`);
 
-                            await eda.sch_PrimitiveWire.modify(wire.getState_PrimitiveId(), {
+                            await sch_PrimitiveWireSnap.modify(wire.getState_PrimitiveId(), {
                                 line: wireData
                             })
 
@@ -304,7 +306,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
                 if (!maked) {
                     eda.sys_Log.add(`Replacer ${savedProps.designator} not found pin in sch ${pinMiss.pinNumber}`);
                     eda.sys_Log.add(`- ${JSON.stringify(pinMiss)}`);
-                    await eda.sch_PrimitiveWire.create([
+                    await sch_PrimitiveWireSnap.create([
                         pinMiss.oldX, -pinMiss.oldY,
                         pinMiss.oldX + pinMiss.missDX, -(pinMiss.oldY + pinMiss.missDY)]).catch(e => undefined);
                 }
@@ -312,7 +314,7 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
             if (!pinMissSizes.length && componentCircuit?.pins.length) {
                 for (const pin of componentCircuit.pins) {
-                    const wires = await eda.sch_PrimitiveWire.getAll(pin.signal_name).catch(e => []);
+                    const wires = await getAllWiresByNet(pin.signal_name);
                     for (const wire of wires) {
                         await wire.done().catch(e => undefined);
                     }

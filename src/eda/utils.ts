@@ -1,3 +1,5 @@
+import { sch_PrimitiveWireSnap } from "./wire-snap";
+
 export const to2 = (x: number) => {
     return Math.round(x / 5) * 5;
 };
@@ -129,4 +131,71 @@ export function getPrimitiveById(primitiveId: string | string[]) {
 
 export async function yieldToEventLoop() {
     await Promise.resolve();
+}
+
+export const VERSION_EDASYEDA = eda.sys_Environment.getEditorCurrentVersion().split('.').map(Number);
+
+export function normWireY(y: number) {
+    if (VERSION_EDASYEDA[0] >= 3) return y;
+    return -y
+}
+
+/**
+ * Нормализует line провода в массив сегментов [[x1,y1,x2,y2], ...].
+ * Учитывает версию EasyEDA:
+ * - v2: line уже массив сегментов или один сегмент [x1,y1,x2,y2]
+ * - v3: line — плоский массив сегментов [x1,y1,x2,y2,x3,y3,x4,y4,...]
+ */
+export function normalizeWireLine(line: number[] | number[][]): number[][] {
+    if (!line || line.length === 0) return [];
+
+    // v2: массив сегментов [[x1,y1,x2,y2], ...]
+    if (Array.isArray(line[0])) {
+        return (line as number[][]).filter(seg => seg.length >= 4);
+    }
+
+    const flat = line as number[];
+
+    // v3: плоский массив сегментов [x1,y1,x2,y2,x3,y3,x4,y4,...]
+    if (VERSION_EDASYEDA[0] >= 3) {
+        if (flat.length >= 4 && flat.length % 4 === 0) {
+            const segments: number[][] = [];
+            for (let i = 0; i < flat.length; i += 4) {
+                segments.push([flat[i], flat[i + 1], flat[i + 2], flat[i + 3]]);
+            }
+            return segments;
+        }
+        return [];
+    }
+
+    // v2 fallback: один сегмент [x1,y1,x2,y2]
+    if (flat.length === 4) {
+        return [flat];
+    }
+
+    return [];
+}
+
+export async function getAllWiresByNet(net: string) {
+    if (VERSION_EDASYEDA[0] < 3) return await sch_PrimitiveWireSnap.getAll(net).catch(e => [] as ISCH_PrimitiveWire[]);
+    const allWires = await sch_PrimitiveWireSnap.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
+    return allWires.filter(w => w.getState_Net() === net);
+}
+
+export function round(value: number, ROUND_DIGITS: number = 10000) {
+    return Math.round(value * ROUND_DIGITS) / ROUND_DIGITS;
+}
+
+export function milToMm(value: number) {
+    const MIL_TO_MM = 25.4 / 1000;
+    return round(value * MIL_TO_MM);
+}
+
+export function mmToMil(value: number) {
+    const MIL_TO_MM = 25.4 / 1000;
+    return round(value / MIL_TO_MM);
+}
+
+export function safeString(value: unknown) {
+    return typeof value === "string" && value.trim() ? value.trim() : undefined;
 }

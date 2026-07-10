@@ -2,7 +2,8 @@ import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
 import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
-import { withTimeout } from "./utils";
+import { normWireY, normalizeWireLine, to2, VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 
 // Генератор диапазона (аналог range в Python)
 const range = (start: number, stop: number, step: number) =>
@@ -13,11 +14,127 @@ const trialPortOffsetLengths = range(10, 800, 10);
 
 // Направления: 0 - Вправо, 1 - Вниз (экранная Y), 2 - Влево, 3 - Вверх
 const directions = [
-    { dx: 1, dy: 0, port_offset_y: -1 },   // rigth
-    { dx: 0, dy: -1, port_offset_y: 0 },  // top
-    { dx: -1, dy: 0, port_offset_y: -1 },  // left
-    { dx: 0, dy: 1, port_offset_y: 0 },    // bottom
+    { dx: 1, dy: 0, port_offset_y: normWireY(1) },   // rigth
+    { dx: 0, dy: normWireY(1), port_offset_y: 0 },  // top
+    { dx: -1, dy: 0, port_offset_y: normWireY(1) },  // left
+    { dx: 0, dy: normWireY(-1), port_offset_y: 0 },    // bottom
 ];
+
+const isApiV3 = VERSION_EDASYEDA[0] >= 3;
+
+function getWireSegments(wire: ISCH_PrimitiveWire): number[][] {
+    return normalizeWireLine(wire.getState_Line());
+}
+
+function candidateWireOverlaps(candidateLine: number[], existingSegments: number[][]): boolean {
+    for (let i = 0; i < candidateLine.length - 2; i += 2) {
+        const candidateSeg: [number, number, number, number] = [
+            candidateLine[i],
+            candidateLine[i + 1],
+            candidateLine[i + 2],
+            candidateLine[i + 3],
+        ];
+
+        if (isZeroLength(candidateSeg)) continue;
+
+        for (const existingSeg of existingSegments) {
+            if (segmentsOverlapOrTouch(candidateSeg, existingSeg as [number, number, number, number])) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function segmentsOverlapOrTouch(
+    seg1: [number, number, number, number],
+    seg2: [number, number, number, number]
+): boolean {
+    const [x1, y1, x2, y2] = seg1;
+    const [x3, y3, x4, y4] = seg2;
+
+    if (isZeroLength(seg1) || isZeroLength(seg2)) return false;
+
+    const h1 = to2(y1) === to2(y2);
+    const v1 = to2(x1) === to2(x2);
+    const h2 = to2(y3) === to2(y4);
+    const v2 = to2(x3) === to2(x4);
+
+    // Collinear overlap
+    if (h1 && h2 && to2(y1) === to2(y3)) {
+        const min1 = Math.min(x1, x2);
+        const max1 = Math.max(x1, x2);
+        const min2 = Math.min(x3, x4);
+        const max2 = Math.max(x3, x4);
+        return Math.min(max1, max2) > Math.max(min1, min2);
+    }
+
+    if (v1 && v2 && to2(x1) === to2(x3)) {
+        const min1 = Math.min(y1, y2);
+        const max1 = Math.max(y1, y2);
+        const min2 = Math.min(y3, y4);
+        const max2 = Math.max(y3, y4);
+        return Math.min(max1, max2) > Math.max(min1, min2);
+    }
+
+    // Perpendicular intersection
+    if ((h1 && v2) || (v1 && h2)) {
+        const ix = h1 ? x3 : x1;
+        const iy = h1 ? y1 : y3;
+
+        if (!pointOnSegment(ix, iy, seg1) || !pointOnSegment(ix, iy, seg2)) {
+            return false;
+        }
+
+        const isEndpoint1 = pointIsEndpoint(ix, iy, seg1);
+        const isEndpoint2 = pointIsEndpoint(ix, iy, seg2);
+
+        // Cross in the middle of both segments is allowed.
+        // T-junction / endpoint touch is forbidden.
+        return isEndpoint1 || isEndpoint2;
+    }
+
+    return false;
+}
+
+function pointOnSegment(
+    px: number,
+    py: number,
+    seg: [number, number, number, number]
+): boolean {
+    const [x1, y1, x2, y2] = seg;
+
+    if (to2(x1) === to2(x2)) {
+        return to2(px) === to2(x1) && between(py, y1, y2);
+    }
+
+    if (to2(y1) === to2(y2)) {
+        return to2(py) === to2(y1) && between(px, x1, x2);
+    }
+
+    return false;
+}
+
+function pointIsEndpoint(
+    px: number,
+    py: number,
+    seg: [number, number, number, number]
+): boolean {
+    const [x1, y1, x2, y2] = seg;
+    return (
+        (to2(px) === to2(x1) && to2(py) === to2(y1)) ||
+        (to2(px) === to2(x2) && to2(py) === to2(y2))
+    );
+}
+
+function between(v: number, a: number, b: number): boolean {
+    return to2(v) >= to2(Math.min(a, b)) && to2(v) <= to2(Math.max(a, b));
+}
+
+function isZeroLength(seg: [number, number, number, number]): boolean {
+    const [x1, y1, x2, y2] = seg;
+    return to2(x1) === to2(x2) && to2(y1) === to2(y2);
+}
 
 const selectPortForNet = (net: string) => {
     const name = Object.keys(shortSymbolsMap).find(t => shortSymbolsMap[t as keyof typeof shortSymbolsMap].is(net));
@@ -85,7 +202,9 @@ const checkNeedMakePort = async (simComps: (ISCH_PrimitiveComponent | ISCH_Primi
 
 async function place(group: AddedNet[], myIndex: number, placeComponents: PlacedComponents, makePort: boolean) {
     const net: AddedNet = group[myIndex];
-    const allWires = await eda.sch_PrimitiveWire.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
+    const allWires = await sch_PrimitiveWireSnap.getAll().catch(e => [] as ISCH_PrimitiveWire[]);
+    const allWireSegments = allWires.flatMap(getWireSegments);
+    const allWireSegmentWithoutCurrentNet = allWires.filter(w => w.getState_Net() !== net.net).flatMap(getWireSegments);
 
     const pin = await findPin(net.designator, { num: net.pin_number, name: net.pin_name }, placeComponents);
     if (!pin) {
@@ -115,7 +234,7 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
             const myPinY = pin.pin.getState_Y();
             const prevPinX = prevPin.getState_X();
             const prevPinY = prevPin.getState_Y();
-            if (prevPinX !== myPinX && prevPinY !== myPinY) continue;
+            if (to2(prevPinX) !== to2(myPinX) && to2(prevPinY) !== to2(myPinY)) continue;
             if (prevPin.getState_Rotation() !== pin.pin.getState_Rotation()) {
                 eda.sys_Log.add(`Fail merget wire rotation not eq ${net.designator} ${net.net}`);
                 continue;
@@ -144,9 +263,15 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
             const line = [myPinX, myPinY, prevPinX, prevPinY];
 
+            if (isApiV3 && candidateWireOverlaps(line, allWireSegmentWithoutCurrentNet)) {
+                eda.sys_Log.add(`Overlap detected for merge wire ${net.designator} ${net.net} ${JSON.stringify(line)}`);
+                continue;
+            }
+
             try {
-                const wire = await eda.sch_PrimitiveWire.create(line, net.net);
+                const wire = await sch_PrimitiveWireSnap.create(line, net.net);
                 if (wire) {
+                    await wire.done();
                     // eda.sys_Log.add(`Create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
                     return;
                 }
@@ -156,6 +281,8 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
             } catch (err) {
                 eda.sys_Log.add(`Failded create merget wire between ${net.designator} ${net.net} ${JSON.stringify(line)}`)
             }
+
+            await yieldToEventLoop();
         }
     }
     else {
@@ -194,13 +321,8 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
     // Функция проверки коллизии: возвращает true, если endY совпадает с Y любого пина компонента
     const hasCollisionForPort = (checkX: number, checkY: number) => {
-        return allComponentPins.some(p => p.getState_Y() === checkY && p.getState_PinNumber() != net.pin_number && p.getState_Rotation() === rot) ||
-            allWires.some(w => {
-                const lineRaw = w.getState_Line();
-                const line = (Array.isArray(lineRaw[0]) ? lineRaw : [lineRaw]) as number[][];
-
-                return line.some(segment => isPointOnSegment({ x: checkX, y: checkY }, { originalIndex: -1, start: { x: segment[0], y: segment[1] }, end: { x: segment[2], y: segment[3] } }))
-            });
+        return allComponentPins.some(p => to2(p.getState_Y()) === to2(checkY) && p.getState_PinNumber() != net.pin_number && p.getState_Rotation() === rot) ||
+            allWireSegments.some(segment => isPointOnSegment({ x: checkX, y: checkY }, { originalIndex: -1, start: { x: segment[0], y: segment[1] }, end: { x: segment[2], y: segment[3] } }));
     };
 
     // Определение индекса основного направления на основе вращения
@@ -271,14 +393,26 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
                         continue;
                     }
 
+                    const candidateLine = [pinX, pinY, endX, endY, endX, endYPort];
+
+                    // В API v3 создание провода не выбрасывает ошибку при наложении, поэтому проверяем самостоятельно
+                    if (isApiV3 && candidateWireOverlaps(candidateLine, allWireSegmentWithoutCurrentNet)) {
+                        continue;
+                    }
+
                     try {
-                        wire = await eda.sch_PrimitiveWire.create([pinX, pinY, endX, endY, endX, endYPort], net.net);
+                        wire = await sch_PrimitiveWireSnap.create(candidateLine, net.net);
                         if (wire) {
+                            // Обновляем список сегментов, чтобы последующие проверки в этом вызове учитывали созданный провод
+                            allWireSegmentWithoutCurrentNet.push(...getWireSegments(wire));
+                            await wire.done();
                             break;
                         }
                     } catch (err) {
                         // pass
                     }
+
+                    await yieldToEventLoop();
                 }
             }
         }
@@ -292,10 +426,10 @@ async function place(group: AddedNet[], myIndex: number, placeComponents: Placed
 
     if (wire && makePortForThis && endX && endYPort && dir) {
         const portData = selectPortForNet(net.net);
-        let rotation = (dir.dy === 1 ? 180 : 0);
+        let rotation = (dir.dy === normWireY(-1) ? 180 : 0);
         if (portData.rotateToIdle === -1) rotation += 180;
 
-        const comp = await placeComponent(portData, { x: endX, y: -endYPort, rotate: rotation }).catch(e => undefined);
+        const comp = await placeComponent(portData, { x: endX, y: normWireY(endYPort), rotate: rotation }).catch(e => undefined);
 
         if (comp) {
             comp.setState_Name(net.net);
@@ -323,8 +457,8 @@ export async function placeNet(nets: AddedNet[], placeComponents: PlacedComponen
 
     for (const group of groups) {
         for (let index = 0; index < group.length; index++) {
-            const net = group[index];
-            await place(group, index, placeComponents, makePort ? group.length < 8 : makePort)
+            await place(group, index, placeComponents, makePort ? group.length < 5 : makePort);
+            await yieldToEventLoop();
         }
     };
 }

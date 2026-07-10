@@ -14,18 +14,27 @@
  * https://prodocs.lceda.cn/cn/api/guide/
  */
 import { assembleCircuit } from './eda/assemble';
+import { assembleBoard } from './eda/pcb-assemble';
 import extension from '../extension.json';
 import { getAsmCircuit, getSchematic } from './eda/schematic';
+import { getPcb, getPcbRaw } from './eda/pcb';
 import '@copilot/shared/types/eda';
 import { searchComponentInSCH } from './eda/search';
 import { checkpointer } from './eda/checkpointer';
 import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
+import { checkPcbDrc } from './eda/drc';
+import { getLibraryUuidList } from './eda/place-component';
 
 eda.assembleCircuit = assembleCircuit;
+eda.assembleBoard = assembleBoard;
 eda.getSchematic = getSchematic;
+eda.getPcb = getPcb;
+eda.getPcbRaw = getPcbRaw;
 eda.getAsmCircuit = getAsmCircuit;
 eda.searchComponentInSCH = searchComponentInSCH;
 eda.checkpointer = checkpointer;
+eda.checkPcbDrc = checkPcbDrc;
+eda.getLibraryUuidList = getLibraryUuidList;
 
 startMcpScanOnStartup();
 
@@ -51,6 +60,15 @@ export async function importAsmCircuit() {
 		const text = await file.text();
 		const json = JSON.parse(text);
 		assembleCircuit(json);
+	});
+}
+
+export async function importAsmBoard() {
+	eda.sys_FileSystem.openReadFileDialog(undefined, false).then(async (file) => {
+		if (!file) return eda.sys_Message.showToastMessage("No file", ESYS_ToastMessageType.ERROR);
+		const text = await file.text();
+		const json = JSON.parse(text);
+		assembleBoard(json);
 	});
 }
 

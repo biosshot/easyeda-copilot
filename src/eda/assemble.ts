@@ -6,8 +6,9 @@ import { ComponentReplacer } from "./replacer";
 import { getShortSymPos, removeComponent } from "./rm-compoment-with-connections";
 import { getSchematic } from "./schematic";
 import { findPin, getPrimitiveComponentPins, hasDirectWire, searchComponentInSCH } from "./search";
-import { AddedNet, ComponentToReplace, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
-import { chunkArray, getPageSize, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
+import { AddedNet, ComponentToReplace, ECHOSYS_LIB, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, PlacedComponents, VCC_PORT_COMPONENT } from "./types";
+import { chunkArray, getPageSize, normWireY, rmPartFromDesignator, to2, withTimeout, yieldToEventLoop } from "./utils";
+import { sch_PrimitiveWireSnap } from "./wire-snap";
 import PQueue from 'p-queue';
 
 const assembleQueue = new PQueue({ concurrency: 1 });
@@ -32,7 +33,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     if (partUuid === 'GND') {
         comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate });
 
-        const s = (component.value || "GND").toUpperCase()
+        const s = component.pins[0]?.signal_name ?? 'GND';
         comp.setState_Name(s);
         comp.setState_OtherProperty({
             "Global Net Name": s
@@ -41,7 +42,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     else if (partUuid === 'VCC') {
         comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate });
 
-        const s = (component.value || "VCC").toUpperCase()
+        const s = component.pins[0]?.signal_name ?? 'VCC';
         comp.setState_Name(s);
         comp.setState_OtherProperty({
             "Global Net Name": s
@@ -58,6 +59,24 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
         comp.setState_OtherProperty({
             "Global Net Name": s
         });
+    }
+    else if (component.designator.includes('|')) {
+        comp = await placeComponent({
+            libraryUuid: ECHOSYS_LIB,
+            uuid: partUuid
+        }, { x, y, rotate });
+
+        const s = component.pins[0]?.signal_name ?? 'Unknown';
+
+        try {
+            comp.setState_Name(s);
+            comp.setState_OtherProperty({
+                "Global Net Name": s
+            });
+        } catch (error) {
+            // pass
+        }
+
     }
     else {
         comp = await placeComponent({
@@ -129,7 +148,7 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
     placeComponents: PlacedComponents, offset: Offset = { x: 0, y: 0 }) {
     const pointToArr = (p: { x: number, y: number }) => {
         const { x, y } = applyOffset(p.x, p.y, offset);
-        return [x, -y];
+        return [x, normWireY(y)];
     }
 
     const searchSignalName = (designator: string, pin: string | number) => {
@@ -221,8 +240,8 @@ async function drawEdges(edges: CircuitAssembly['edges'], components: CircuitAss
             values = filterUniqueCoordinatePairs(values);
 
             try {
-                const wire = await eda.sch_PrimitiveWire.create(values, netName);
-                // await wire?.done();
+                const wire = await sch_PrimitiveWireSnap.create(values, netName);
+                await wire?.done().catch(e => e);
             } catch (err) {
                 const msg = `Wire error: ${(err as Error).message} ${JSON.stringify(values)} ${netName} ${section.incomingShape} -> ${section.outgoingShape};\n` +
                     `- srcpin: ${srcpin?.component?.getState_Designator?.()}; trgpin: ${trgpin?.component?.getState_Designator?.()}`;
@@ -598,5 +617,12 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
 }
 
 export function assembleCircuit(...args: Parameters<typeof assembleCircuitTask>) {
-    return assembleQueue.add(() => assembleCircuitTask(...args))
+    return assembleQueue.add(async () => {
+        await sch_PrimitiveWireSnap.activate();
+        try {
+            return await assembleCircuitTask(...args);
+        } finally {
+            sch_PrimitiveWireSnap.deactivate();
+        }
+    });
 }
