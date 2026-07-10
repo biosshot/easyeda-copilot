@@ -14,7 +14,7 @@ The local files in this directory are the documentation source for MCP work. Do 
 - `circuit-maker/instructions.md`: circuit creation and schematic modification rules.
 - `pcb-layout/dsl.ts`: authoritative PCB placement DSL declarations. Use this before writing `make_pcb_layout` code.
 - `pcb-layout/instructions.md`: PCB placement workflow, heuristics, anti-patterns, and examples.
-- `pcb-layout/mcp-workflow.md`: MCP-specific flow for placement, assembly, preview, DRC, and routing.
+- `pcb-layout/mcp-workflow.md`: MCP-specific flow for placement, async operation handling, assembly, preview, and DRC.
 - `pcb-layout/examples/`: full reference layout files. Use them as patterns after reading `dsl.ts`; if an example conflicts with `dsl.ts`, `dsl.ts` wins.
 - `pcb-drc/rules.md`: PCB DRC export/edit/apply workflow, including differential pair handling.
 
@@ -26,8 +26,8 @@ Normal PCB flow:
 
 1. Write a local JavaScript DSL file using `pcb-layout/dsl.ts`.
 2. Call `make_pcb_layout` with the file path.
-3. Inspect the text report and `previewImagePath`.
+3. Inspect the text report, `previewSvgPath` (preferred) or `previewImagePath`, and block/module debug SVGs when present.
 4. If acceptable, open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc` with `layoutId`.
-5. Run EasyEDA/client routing and DRC tools on the assembled PCB.
+5. Route and run DRC in EasyEDA v3/client tools on the assembled PCB.
 
 For fast mechanical checks, use `solver({ preview: true, placeOnlyComponents: [...] })`. Preview results are marked in the report and must not be assembled as final boards.

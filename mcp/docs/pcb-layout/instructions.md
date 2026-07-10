@@ -32,13 +32,15 @@ When copying from examples:
 1. If footprint sizes or board size are uncertain, call `get_pcb_component_sizes` first.
 2. Write a local `.js` DSL file.
 3. Run `make_pcb_layout({ file })`.
-4. Read the placement report and inspect `previewImagePath`.
+4. Read the placement report and inspect `previewSvgPath` when returned (`previewImagePath` is its PNG rendering). For a poor local family/block, inspect the returned debug SVGs before changing DSL.
 5. Fix hard errors first: fatal overlaps, outside-board components, disconnected blocks, invalid capCluster/bypass targets, missing footprints.
 6. Fix quality warnings next: long critical pairs, oversized blocks/modules, poor edge/face orientation.
 7. Assemble only after the preview is acceptable.
 8. Route and DRC in EasyEDA/client tools after assembly.
 
 Do not assemble every attempt. Iterate placement from the preview and report.
+
+`make_pcb_layout` waits up to 60 seconds by default. If it returns `status: "pending"`, keep its `operationId` and call `wait_pcb_layout`. Use `cancel_pcb_layout` only to stop an obsolete attempt before starting another one.
 
 ## Mechanical Preview Mode
 

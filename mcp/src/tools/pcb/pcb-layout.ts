@@ -52,9 +52,9 @@ type StoredPcbLayout = {
 };
 
 type SavedPlacementDebugArtifact = {
-    type: string;
+    // type: string;
     name: string;
-    components: string[];
+    // components: string[];
     path: string;
 };
 
@@ -182,15 +182,19 @@ async function formatPcbLayoutOperationResult(operationId: string, operation: As
             });
         }
 
+        const stored = await storeMakePcbLayoutResult(operation.result);
+
         const report = {
             operationId,
             status: 'completed',
-            ...await storeMakePcbLayoutResult(operation.result),
+            ...stored,
+            debugArtifactsDir: undefined,
+            debugArtifactsIndexPath: undefined
         };
 
         const lines = [
             operation.result.content ?? operation.result.error ?? 'PCB layout finished.',
-            `Run report:\n${JSON.stringify(report, null, 2)}`,
+            `Run report:\n${JSON.stringify(report)}`,
         ];
 
         return textResult(lines.join('\n\n'));
@@ -272,9 +276,9 @@ async function writePlacementDebugArtifactFiles(artifacts: PlacementDebugArtifac
         await mkdir(dir, { recursive: true });
         await writeFile(path, svgBytes);
         saved.push({
-            type: item.type!,
+            // type: item.type!,
             name: item.name!,
-            components: Array.isArray(item.components) ? item.components : [],
+            // components: Array.isArray(item.components) ? item.components : [],
             path,
         });
     }

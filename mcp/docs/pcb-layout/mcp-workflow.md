@@ -11,7 +11,8 @@ For DSL signatures read `dsl.ts`. For placement heuristics and examples read `in
 - sends schematic + DSL to the layout server;
 - returns a compact placement report as text;
 - stores the board assembly payload in MCP memory;
-- returns `layoutId` and `previewImagePath` in the `Run report` block.
+- waits up to 60 seconds by default, then returns either a completed run or a pending `operationId`;
+- returns `layoutId`, `previewImagePath`, `previewSvgPath`, and available block/module debug SVG paths in the `Run report` block.
 
 `make_pcb_layout` does not assemble the board and does not route tracks.
 
@@ -20,17 +21,13 @@ For DSL signatures read `dsl.ts`. For placement heuristics and examples read `in
 - takes a `layoutId` from a previous successful `make_pcb_layout` call;
 - sends the stored BoardAssemble payload to the currently opened EasyEDA PCB document.
 
-`run_auto_route_on_current_pcbdoc`:
+`wait_pcb_layout` and `cancel_pcb_layout`:
 
-- works only after a PCB document is open and placement is assembled;
-- exports EasyEDA PCB autoroute JSON;
-- runs the MCP-side router;
-- imports the routed JSON back into EasyEDA;
-- can rebuild GND pours and add GND stitching vias.
-- does not clear existing tracks/vias before routing;
-- does not route nets that are already routed in the exported EasyEDA autoroute JSON. Use `clear_routing` first when old routing should be replaced.
+- wait for or cancel the pending operation identified by `operationId`;
+- preserve the single active layout operation in the MCP process;
+- return the same completed result shape as `make_pcb_layout` when work finishes.
 
-EasyEDA v3/client routing may be preferred when available.
+The primary routing path is EasyEDA v3/client routing. The legacy MCP-side autorouter may still be installed for compatibility, but it is not the recommended PCB workflow and is not covered by this placement documentation.
 
 ## Placement Iteration Flow
 
@@ -38,9 +35,10 @@ EasyEDA v3/client routing may be preferred when available.
 2. Create or edit a local layout DSL file.
 3. Call `make_pcb_layout({ file })`.
 4. Read the compact text report.
-5. Open `previewImagePath` and visually inspect the layout.
-6. If needed, edit the DSL and rerun `make_pcb_layout`.
-7. Stop iterating when placement has no fatal errors and the preview is mechanically/electrically reasonable.
+5. Open `previewSvgPath` and visually inspect the layout. Use `previewImagePath` only where raster preview is more convenient.
+6. When present, inspect `debugArtifacts` for the suspicious block, family, or module before changing the DSL.
+7. If the result is pending, call `wait_pcb_layout({ operationId })`; otherwise edit the DSL and rerun `make_pcb_layout` as needed.
+8. Stop iterating when placement has no fatal errors and the preview is mechanically/electrically reasonable.
 
 Fix in this order:
 
@@ -78,27 +76,17 @@ Before assembly, verify the target PCB document:
 
 Do not assemble into an unrelated PCB document or an ambiguous project structure.
 
-## Routing Flow
+## Routing And DRC Flow
 
 After assembly:
 
 1. Configure or import DRC rules if needed.
-2. Call `get_pcb_stack_layers` if layer selection matters.
-3. If the user asks for a different board stack, call `set_pcb_copper_layer_count`, then call `get_pcb_stack_layers` again.
-4. If replacing previous routing, call `clear_routing` first. Use `ignoreToClearNet` to preserve nets or `clearOnlyNet` to clear selected nets only.
-5. Run EasyEDA v3/client routing, or call `run_auto_route_on_current_pcbdoc`.
-6. Run `check_pcb_drc`.
-7. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
+2. Configure the board stack and DRC rules in EasyEDA when required.
+3. Route with EasyEDA v3/client tools.
+4. Run `check_pcb_drc`.
+5. Use `inspect_net`, `inspect_component`, and `preview_pcb` for targeted review.
 
-MCP router defaults are intentionally conservative:
-
-- `ignore_nets: ["GND"]`: GND is expected to be served by copper pour/stitching.
-- `route_layers` omitted: use the routing layer set exported by EasyEDA autoroute JSON. If provided, use layer names returned by `get_pcb_stack_layers`, such as `["TOP"]`, `["BOTTOM"]`, or `["TOP", "BOTTOM", "INNER_1"]`.
-- `pour_gnd: true`: rebuilds GND copper pours after routing.
-- `suture_gnd: true`: adds GND stitching vias.
-- `suture_grid_mm: 4`, `suture_diameter_mm: 0.61`, `suture_drill_mm: 0.305`.
-
-Only override defaults when the user gives manufacturing, RF, power-layout, or DRC constraints.
+Placement DSL deliberately contains no copper, polygon, stitching, width, via, differential-pair, or length-matching settings. Those belong to the EasyEDA routing/DRC stage.
 
 ## Result Shape
 
@@ -115,8 +103,23 @@ diagnostics: 3
 Run report:
 {
   "layoutId": "...",
-  "previewImagePath": "C:\\Users\\...\\pcb-previews\\....png"
+  "previewImagePath": "C:\\Users\\...\\pcb-previews\\....png",
+  "previewSvgPath": "C:\\Users\\...\\pcb-previews\\....svg",
+  "debugArtifacts": [
+    { "name": "mcu_core__family", "path": "C:\\Users\\...\\pcb-layout-debug\\...\\families\\mcu_core__family.svg" }
+  ]
 }
 ```
 
-Use `layoutId` only for assembly. Use `previewImagePath` for visual inspection. The full board payload is stored internally by the MCP server and is not shown to the agent by default.
+Use `layoutId` only for assembly. Prefer `previewSvgPath` for visual inspection and use `previewImagePath` as a PNG fallback. `debugArtifacts` are optional and identify the local primitive whose geometry should be reviewed. The full board payload is stored internally by the MCP server and is not shown to the agent by default.
+
+For a pending run the result is instead:
+
+```json
+{
+  "status": "pending",
+  "operationId": "...",
+  "progress": "solve_board: 85%",
+  "nextTool": "wait_pcb_layout"
+}
+```

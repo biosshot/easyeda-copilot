@@ -28,9 +28,6 @@ constraintRegion("antenna_clearance", {
 block("radio_core", ["U2"], "rf", {
   placement: "main",
   anchor: anchor("board.top"),
-  familyMaxWidth: 13,
-  familyMaxHeight: 12,
-  placementClearance: 0.45
 });
 block("radio_antenna", ["U3"], "rf", {
   placement: "main",
@@ -40,148 +37,81 @@ block("radio_matching", ["Z1", "Z2", "Z3"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "22"),
-  maxAnchorGap: 4.8,
-  maxBboxWidth: 7,
-  maxBboxHeight: 7,
-  hardAnchor: true,
-  placementClearance: 0.25
 });
 block("radio_clock", ["U4"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "4"),
-  maxAnchorGap: 4.5,
-  maxBboxWidth: 7,
-  maxBboxHeight: 6,
-  hardAnchor: true,
-  placementClearance: 0.25
 });
 block("radio_dcc_caps", ["C7", "C15"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "2"),
-  maxAnchorGap: 4.5,
-  maxBboxWidth: 5,
-  maxBboxHeight: 5,
-  placementClearance: 0.2
 });
 block("radio_vr_pa", ["C8"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "1"),
-  maxAnchorGap: 3.5,
-  maxBboxWidth: 3,
-  maxBboxHeight: 3,
-  placementClearance: 0.2
 });
 block("radio_decoup", ["C10", "C11", "C19"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "11"),
-  maxAnchorGap: 5.5,
-  maxBboxWidth: 7,
-  maxBboxHeight: 6,
-  placementClearance: 0.25
 });
 block("radio_control", ["R3"], "rf", {
   placement: "satellite",
   attachTo: "radio_core",
   anchor: pin("U2", "3"),
-  maxAnchorGap: 4.5,
-  maxBboxWidth: 4,
-  maxBboxHeight: 4,
-  placementClearance: 0.2
 });
 
 block("mcu_core", ["U1"], "mcu", {
   placement: "main",
   anchor: anchor("board.bottom"),
-  familyMaxWidth: 14,
-  familyMaxHeight: 15,
-  placementClearance: 0.45
 });
 block("mcu_rf_feed", ["L1"], "rf", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "2"),
-  maxAnchorGap: 3.8,
-  maxBboxWidth: 4,
-  maxBboxHeight: 4,
-  hardAnchor: true,
-  placementClearance: 0.2
 });
 block("mcu_xtal", ["X1", "C16", "C17"], "mcu", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "29"),
-  maxAnchorGap: 4.0,
-  maxBboxWidth: 7,
-  maxBboxHeight: 5,
-  hardAnchor: true,
-  placementClearance: 0.25
 });
 block("mcu_decoup", ["C3", "C4", "C5", "C6", "C9", "C13", "C14"], "mcu", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "11"),
-  maxAnchorGap: 6.0,
-  maxBboxWidth: 10,
-  maxBboxHeight: 8,
-  placementClearance: 0.2
 });
 block("mcu_vdd_spi", ["C12"], "mcu", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "18"),
-  maxAnchorGap: 3.5,
-  maxBboxWidth: 3,
-  maxBboxHeight: 3,
-  placementClearance: 0.2
 });
 block("mcu_control", ["R1", "R2", "C2", "SW1"], "mcu", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "15"),
-  maxAnchorGap: 5.5,
-  maxBboxWidth: 8,
-  maxBboxHeight: 6,
-  placementClearance: 0.25
 });
 block("status_led", ["LED1", "R4", "C1"], "generic", {
   placement: "satellite",
   attachTo: "mcu_core",
   anchor: pin("U1", "14"),
-  maxAnchorGap: 6.5,
-  maxBboxWidth: 7,
-  maxBboxHeight: 6,
-  placementClearance: 0.25
 });
 
 block("power_3v3", ["U5", "C18"], "power", {
   placement: "main",
   anchor: anchor("board.bottom_right"),
-  familyMaxWidth: 13,
-  familyMaxHeight: 7,
-  placementClearance: 0.35
 });
 
 module("rf_section", ["radio_antenna", "radio_core"], {
   anchor: anchor("board.top"),
-  placementPriority: "high",
-  maxWidth: 16,
-  maxHeight: 11
 });
 module("mcu_section", ["mcu_core"], {
   anchor: anchor("board.bottom"),
-  placementPriority: "high",
-  maxWidth: 16,
-  maxHeight: 14
 });
 module("power_section", ["power_3v3"], {
   anchor: anchor("board.bottom_right"),
-  placementPriority: "normal",
-  maxWidth: 14,
-  maxHeight: 7
 });
 
 component("U2").block("radio_core").role("main_ic").top();
