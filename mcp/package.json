@@ -1,6 +1,6 @@
 {
   "name": "easyeda-copilot-mcp",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "description": "MCP server for EasyEDA Copilot",
   "type": "module",
   "license": "MIT",
@@ -14,6 +14,7 @@
   "files": [
     "dist",
     "docs",
+    "autorouter",
     "README.md",
     "LICENSE"
   ],
