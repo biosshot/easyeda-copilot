@@ -18,16 +18,6 @@ The local files in this directory are the documentation source for MCP work. Do 
 - `pcb-layout/examples/`: full reference layout files. Use them as patterns after reading `dsl.ts`; if an example conflicts with `dsl.ts`, `dsl.ts` wins.
 - `pcb-drc/rules.md`: PCB DRC export/edit/apply workflow, including differential pair handling.
 
-## Current PCB Model
+## PCB Contract
 
-`make_pcb_layout` is placement-only. It creates board outline, fixed mechanical objects, component placement, synthetic board pads, mounting holes, and reference text positions. It does not route tracks, create final copper pours, tune DRC rules, or replace EasyEDA v3 routing.
-
-Normal PCB flow:
-
-1. Write a local JavaScript DSL file using `pcb-layout/dsl.ts`.
-2. Call `make_pcb_layout` with the file path.
-3. Inspect the text report, `previewSvgPath` (preferred) or `previewImagePath`, and block/module debug SVGs when present.
-4. If acceptable, open the correct PCB document and call `assemble_pcb_layout_on_current_pcbdoc` with `layoutId`.
-5. Route and run DRC in EasyEDA v3/client tools on the assembled PCB.
-
-For fast mechanical checks, use `solver({ preview: true, placeOnlyComponents: [...] })`. Preview results are marked in the report and must not be assembled as final boards.
+`make_pcb_layout` creates placement only: outline, mechanical objects, components, synthetic pads, holes, and designator positions. It does not route tracks, create copper pours, or configure DRC. Read `pcb-layout/mcp-workflow.md` before calling it.

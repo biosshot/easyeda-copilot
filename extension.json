@@ -4,7 +4,7 @@
 	"displayName": "EasyEda Copilot",
 	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
 	"version": "1.1.4",
-	"publisher": "echosystem",
+	"publisher": "biosshot",
 	"engines": {
 		"eda": "^2.2.45"
 	},
@@ -28,8 +28,8 @@
 	"images": {
 		"logo": "./images/logo.png"
 	},
-	"homepage": "https://echosystem.ru/",
-	"bugs": "https://echosystem.ru/#contact",
+	"homepage": "https://github.com/biosshot/easyeda-copilot",
+	"bugs": "https://github.com/biosshot/easyeda-copilot",
 	"entry": "./dist/index",
 	"dependentExtensions": [],
 	"headerMenus": {
