@@ -1,6 +1,7 @@
 import { isRecord, sleep } from "./utils";
+import { __MODE__ } from '@copilot/shared/mode';
 
-export const apiUrl = true ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
+export const apiUrl = __MODE__ === 'DEV' ? 'http://localhost:5120' : 'https://circuit.tech.ru.net';
 export const COPILOT_SERVER_URL = (process.env.EASYEDA_COPILOT_SERVER_URL || apiUrl).replace(/\/$/, '');
 export const SERVER_AUTHORIZATION = 'Basic Y2lyY3VpdDp4eU9BTE5INHBmb05HNjB2VmtBNTg0MTg=';
 

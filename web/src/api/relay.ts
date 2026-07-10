@@ -13,8 +13,8 @@
  *                     { type: "error", id, message }            (error)
  */
 
+import { __MODE__ } from "@copilot/shared/mode";
 import { authorization } from ".";
-import { __MODE__ } from "../mode";
 
 // ─── Config ────────────────────────────────────────────────────────────────
 

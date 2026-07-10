@@ -1,7 +1,7 @@
-import { __MODE__ } from "../mode";
 import { isEasyEda } from "../eda/utils";
 import { getUserAuth } from "../eda/user";
 import { type EventSourceMessage, EventStreamContentType, fetchEventSource } from './fetch-sse/index';
+import { __MODE__ } from "@copilot/shared/mode";
 
 type MyRequestInit = Omit<RequestInit, 'body'> & { body?: string | Blob | FormData | URLSearchParams | undefined };
 
