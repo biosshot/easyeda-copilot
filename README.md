@@ -96,7 +96,7 @@ PCB assembly, preview, and client routing support are verified with **EasyEDA De
 </p>
 <p align="center">
   <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck Copilot, bottom layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quiliter_bot.png" alt="PICO Duck Quilter, bottom layer" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="PICO Duck Quilter, bottom layer" width="48%">
 </p>
 
 ### ESPower board: Copilot and Quilter
