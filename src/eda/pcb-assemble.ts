@@ -965,6 +965,7 @@ async function saveCurrentPcbDocument() {
 }
 
 async function assembleBoardTask(board: BoardAssemble) {
+    if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
     const startTimeTotal = Date.now();
     const logTiming = (label: string, startTime: number) => {
         const duration = Date.now() - startTime;

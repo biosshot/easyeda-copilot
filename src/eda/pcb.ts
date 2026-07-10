@@ -754,6 +754,8 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
 }
 
 export async function getPcb(): Promise<ExplainPCB> {
+    if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
+
     const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(() => undefined);
     if (docType !== EDMT_EditorDocumentType.PCB) {
         throw new Error("Failed getPcb. Open PCB doc to fix.");
@@ -799,6 +801,8 @@ function padRefKey(ref: ExplainPcbPadRef) {
 }
 
 export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: number): Promise<ExplainPcbWire[]> {
+    if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
+
     const wires = pcb.wires?.filter(wire => wire.net === netName) ?? [];
     if (!wires.length) return [];
 
@@ -869,6 +873,8 @@ export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: num
 }
 
 export async function inspectComponent(pcb: ExplainPCB, designator: string, radius: number): Promise<ExplainPcbComponent> {
+    if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
+
     const target = pcb.components.find(component => component.designator === designator);
     if (!target) throw new Error(`Component not found: ${designator}`);
 
