@@ -1,37 +1,34 @@
 {
 	"name": "easyeda-copilot",
-	"uuid": "d4e8704645c241dcadfa57ef58b7ed33",
+	"uuid": "64651de62a944308a56e3b42eb2cb248",
 	"displayName": "EasyEda Copilot",
-	"description": "AI-powered assistant for EasyEDA & JLCEDA — generate schematics from natural language, export BOMs (GOST), browse LCSC components, and get interactive circuit design help.",
+	"description": "AI-powered assistant for EasyEDA — generate schematics from natural language, browse LCSC components, design PCBs with custom DRC configurations, and get interactive circuit design help.",
 	"version": "1.1.4",
 	"publisher": "biosshot",
 	"engines": {
-		"eda": "^2.2.45"
+		"eda": "^3.2.149"
 	},
-	"license": "MIT",
+	"license": "MIT License",
 	"repository": {
-		"type": "git",
+		"type": "github",
 		"url": "https://github.com/biosshot/easyeda-copilot"
 	},
-	"categories": [
-		"Other",
-		"AI",
-		"Tools"
-	],
+	"categories": "Other",
 	"keywords": [
 		"AI",
-		"EDA",
-		"EasyEDA",
-		"circuit",
-		"LCSC"
+		"Schematic",
+		"PCB",
+		"MCP"
 	],
 	"images": {
-		"logo": "./images/logo.png"
+		"logo": "./images/logo.png",
+		"banner": "./images/banner.png"
 	},
 	"homepage": "https://github.com/biosshot/easyeda-copilot",
-	"bugs": "https://github.com/biosshot/easyeda-copilot",
+	"bugs": "https://github.com/biosshot/easyeda-copilot/issues",
 	"entry": "./dist/index",
-	"dependentExtensions": [],
+	"activationEvents": {},
+	"dependentExtensions": {},
 	"headerMenus": {
 		"sch": [
 			{

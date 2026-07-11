@@ -18,8 +18,8 @@ export default defineConfig(({ mode }) => {
             outDir: resolve(__dirname, 'iframe'), // ← финальная сборка в корневой /dist
             emptyOutDir: true, // очищать dist перед сборкой
             sourcemap: false,
-            // minify: "terser",
-            minify: false,
+            minify: "terser",
+            // minify: false,
             terserOptions: {
                 format: {
                     comments: false, // ← УДАЛЯЕТ ВСЕ комментарии, включая лицензии

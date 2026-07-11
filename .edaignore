@@ -21,10 +21,7 @@
 debug.log
 /docs
 /examples
-/images
-/locales
 /vite.config.ts
-/README.md
 /eslint.config.mjs
 /CONTRIBUTING.md
 /build.mjs
