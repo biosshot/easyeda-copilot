@@ -6,6 +6,7 @@ import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 import { ExplainCircuit } from '@copilot/shared/types/circuit';
+import PQueue from 'p-queue';
 import {
     PcbDrcDifferentialPairType,
     type PcbDrcBundle,
@@ -30,10 +31,18 @@ const MCP_WS_URL = 'ws://127.0.0.1:8787';
 const MCP_SCAN_INTERVAL_MS = 5000;
 const MCP_CONNECT_TIMEOUT_MS = 2000;
 const MCP_HEARTBEAT_INTERVAL_MS = 10000;
-const MCP_HEARTBEAT_TIMEOUT_MS = 3000;
+const MCP_HEARTBEAT_MAX_MISSES = 3;
+const MCP_COMMAND_QUEUE_MAX_SIZE = 32;
+const MCP_DEADLINE_FIELD = '__easyedaCopilotDeadlineAt';
+const MCP_SCAN_TIMER_ID = 'easyeda-copilot-mcp-scan';
+const MCP_HEARTBEAT_TIMER_ID = 'easyeda-copilot-mcp-heartbeat';
+const MCP_CONNECT_TIMEOUT_TIMER_ID = 'easyeda-copilot-mcp-connect-timeout';
+
+const mcpCommandQueue = new PQueue({ concurrency: 1 });
 
 type McpClientState = {
     instanceId: string;
+    connectionEpoch: number;
     isRegistered: boolean;
     isConnecting: boolean;
     isScanEnabled: boolean;
@@ -43,6 +52,8 @@ type McpClientState = {
     connectTimeout?: ReturnType<typeof setTimeout>;
     heartbeatTimer?: ReturnType<typeof setInterval>;
     heartbeatTimeout?: ReturnType<typeof setTimeout>;
+    heartbeatAwaitingPong: boolean;
+    heartbeatMisses: number;
 };
 
 function makeMcpInstanceId() {
@@ -55,12 +66,20 @@ const state = ((eda as typeof eda & {
     __easyedaCopilotMcpState?: McpClientState;
 }).__easyedaCopilotMcpState ??= {
     instanceId: makeMcpInstanceId(),
+    connectionEpoch: 0,
     isRegistered: false,
     isConnecting: false,
     isScanEnabled: false,
     isUserPaused: false,
     isStartupInitialized: false,
+    heartbeatAwaitingPong: false,
+    heartbeatMisses: 0,
 });
+
+// Preserve compatibility with state created by an older extension bundle.
+state.connectionEpoch ??= 0;
+state.heartbeatAwaitingPong ??= false;
+state.heartbeatMisses ??= 0;
 
 function parseBody<T = Record<string, unknown>>(message: McpMessage): T {
     return message.body ? JSON.parse(message.body) as T : {} as T;
@@ -71,6 +90,46 @@ function send(event: string, body: Record<string, unknown>) {
         event,
         body: JSON.stringify(body),
     } satisfies McpMessage));
+}
+
+function setMcpIntervalTimer(id: string, timeout: number, callback: () => void) {
+    try {
+        if (eda.sys_Timer.setIntervalTimer(id, timeout, callback)) return undefined;
+    } catch {
+        // Fall back to the renderer timer when the EasyEDA system timer is unavailable.
+    }
+
+    return setInterval(callback, timeout);
+}
+
+function clearMcpIntervalTimer(id: string, fallbackTimer?: ReturnType<typeof setInterval>) {
+    try {
+        eda.sys_Timer.clearIntervalTimer(id);
+    } catch {
+        // The system timer may not exist in older EasyEDA builds.
+    }
+
+    if (fallbackTimer !== undefined) clearInterval(fallbackTimer);
+}
+
+function setMcpTimeoutTimer(id: string, timeout: number, callback: () => void) {
+    try {
+        if (eda.sys_Timer.setTimeoutTimer(id, timeout, callback)) return undefined;
+    } catch {
+        // Fall back to the renderer timer when the EasyEDA system timer is unavailable.
+    }
+
+    return setTimeout(callback, timeout);
+}
+
+function clearMcpTimeoutTimer(id: string, fallbackTimer?: ReturnType<typeof setTimeout>) {
+    try {
+        eda.sys_Timer.clearTimeoutTimer(id);
+    } catch {
+        // The system timer may not exist in older EasyEDA builds.
+    }
+
+    if (fallbackTimer !== undefined) clearTimeout(fallbackTimer);
 }
 
 function delay(ms: number) {
@@ -605,29 +664,40 @@ function clearHeartbeatTimeout() {
 }
 
 function stopHeartbeat() {
-    if (state.heartbeatTimer) {
-        clearInterval(state.heartbeatTimer);
-        state.heartbeatTimer = undefined;
-    }
+    clearMcpIntervalTimer(MCP_HEARTBEAT_TIMER_ID, state.heartbeatTimer);
+    state.heartbeatTimer = undefined;
 
     clearHeartbeatTimeout();
+    state.heartbeatAwaitingPong = false;
+    state.heartbeatMisses = 0;
 }
 
 function markMcpDisconnected(reason: string) {
     if (!state.isRegistered && !state.isConnecting) return;
 
+    state.connectionEpoch++;
     state.isRegistered = false;
     state.isConnecting = false;
+    mcpCommandQueue.clear();
     clearConnectTimeout();
     stopHeartbeat();
     closeMcpSocket(reason);
     eda.sys_Log.add(`MCP disconnected: ${reason}`, ESYS_LogType.WARNING);
 }
 
-function sendHeartbeatPing() {
-    if (!state.isRegistered) return;
+function sendHeartbeatPing(connectionEpoch: number) {
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+
+    if (state.heartbeatAwaitingPong) {
+        state.heartbeatMisses++;
+        if (state.heartbeatMisses >= MCP_HEARTBEAT_MAX_MISSES) {
+            markMcpDisconnected(`heartbeat missed ${state.heartbeatMisses} times`);
+            return;
+        }
+    }
 
     clearHeartbeatTimeout();
+    state.heartbeatAwaitingPong = true;
 
     try {
         send('ping', { ts: Date.now() });
@@ -635,16 +705,16 @@ function sendHeartbeatPing() {
         markMcpDisconnected(`heartbeat send failed: ${(error as Error).message}`);
         return;
     }
-
-    state.heartbeatTimeout = setTimeout(() => {
-        markMcpDisconnected('heartbeat timeout');
-    }, MCP_HEARTBEAT_TIMEOUT_MS);
 }
 
-function startHeartbeat() {
+function startHeartbeat(connectionEpoch: number) {
     stopHeartbeat();
-    sendHeartbeatPing();
-    state.heartbeatTimer = setInterval(sendHeartbeatPing, MCP_HEARTBEAT_INTERVAL_MS);
+    sendHeartbeatPing(connectionEpoch);
+    state.heartbeatTimer = setMcpIntervalTimer(
+        MCP_HEARTBEAT_TIMER_ID,
+        MCP_HEARTBEAT_INTERVAL_MS,
+        () => sendHeartbeatPing(connectionEpoch),
+    );
 }
 
 async function getProjectInfo() {
@@ -711,7 +781,8 @@ async function getProjectInfo() {
     };
 }
 
-async function sendEasyEdaHello() {
+async function sendEasyEdaHello(connectionEpoch: number) {
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
     let projectName = 'Untitled EasyEDA project';
 
     send('easyeda:hello', {
@@ -725,6 +796,8 @@ async function sendEasyEdaHello() {
         // The project may not be fully available immediately after EasyEDA startup.
         return;
     }
+
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
 
     send('easyeda:hello', {
         instanceId: state.instanceId,
@@ -766,7 +839,11 @@ async function openSchematic() {
     await new Promise(resolve => setTimeout(resolve, 400));
 }
 
-async function handleMessage(message: McpMessage) {
+async function handleMessage(message: McpMessage, connectionEpoch: number) {
+    if (connectionEpoch !== state.connectionEpoch) return;
+    state.heartbeatAwaitingPong = false;
+    state.heartbeatMisses = 0;
+
     if (message.event === 'connected') {
         eda.sys_Log.add('MCP WebSocket connected', ESYS_LogType.INFO);
         return;
@@ -781,7 +858,7 @@ async function handleMessage(message: McpMessage) {
     const id = body.id;
 
     const reply = (ok: boolean, result?: unknown, error?: unknown) => {
-        if (!id) return;
+        if (!id || connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
         send(`${message.event}:result`, {
             id,
             ok,
@@ -1171,9 +1248,42 @@ async function handleMessage(message: McpMessage) {
     }
 }
 
+function replyMcpError(message: McpMessage, error: string, connectionEpoch: number) {
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+    const body = parseBody<{ id?: string }>(message);
+    if (!body.id) return;
+
+    send(`${message.event}:result`, {
+        id: body.id,
+        ok: false,
+        error,
+    });
+}
+
+function replyMcpQueueFull(message: McpMessage, connectionEpoch: number) {
+    replyMcpError(
+        message,
+        `EasyEDA MCP command queue is full (${MCP_COMMAND_QUEUE_MAX_SIZE} waiting requests).`,
+        connectionEpoch,
+    );
+}
+
+async function handleQueuedMcpMessage(message: McpMessage, connectionEpoch: number) {
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+
+    const body = parseBody<Record<string, unknown>>(message);
+    const deadlineAt = body[MCP_DEADLINE_FIELD];
+    if (typeof deadlineAt === 'number' && Number.isFinite(deadlineAt) && Date.now() >= deadlineAt) {
+        eda.sys_Log.add(`MCP event expired in queue: ${message.event}`, ESYS_LogType.WARNING);
+        replyMcpError(message, `EasyEDA MCP event expired before execution: ${message.event}.`, connectionEpoch);
+        return;
+    }
+
+    await handleMessage(message, connectionEpoch);
+}
+
 function clearConnectTimeout() {
-    if (!state.connectTimeout) return;
-    clearTimeout(state.connectTimeout);
+    clearMcpTimeoutTimer(MCP_CONNECT_TIMEOUT_TIMER_ID, state.connectTimeout);
     state.connectTimeout = undefined;
 }
 
@@ -1191,10 +1301,15 @@ function tryConnectMcp(showErrors = false) {
     }
 
     state.isConnecting = true;
+    const connectionEpoch = ++state.connectionEpoch;
     closeMcpSocket('Reconnect by EasyEDA Copilot');
 
-    state.connectTimeout = setTimeout(() => {
+    clearConnectTimeout();
+    state.connectTimeout = setMcpTimeoutTimer(MCP_CONNECT_TIMEOUT_TIMER_ID, MCP_CONNECT_TIMEOUT_MS, () => {
+        if (connectionEpoch !== state.connectionEpoch) return;
+        state.connectionEpoch++;
         state.isConnecting = false;
+        mcpCommandQueue.clear();
         clearConnectTimeout();
         closeMcpSocket('MCP connect timeout');
 
@@ -1202,27 +1317,43 @@ function tryConnectMcp(showErrors = false) {
             eda.sys_Log.add('Fail connect MCP WebSocket', ESYS_LogType.ERROR);
             eda.sys_Message.showToastMessage('MCP server not found', ESYS_ToastMessageType.WARNING);
         }
-    }, MCP_CONNECT_TIMEOUT_MS);
+    });
 
     eda.sys_WebSocket.register(
         MCP_WS_ID,
         MCP_WS_URL,
         async (event) => {
             try {
+                if (connectionEpoch !== state.connectionEpoch) return;
                 const data = typeof event.data === 'string' ? event.data : String(event.data);
-                await handleMessage(JSON.parse(data) as McpMessage);
+                const message = JSON.parse(data) as McpMessage;
+
+                if (message.event === 'connected' || message.event === 'pong') {
+                    await handleMessage(message, connectionEpoch);
+                    return;
+                }
+
+                if (mcpCommandQueue.size >= MCP_COMMAND_QUEUE_MAX_SIZE) {
+                    replyMcpQueueFull(message, connectionEpoch);
+                    return;
+                }
+
+                void mcpCommandQueue.add(() => handleQueuedMcpMessage(message, connectionEpoch)).catch(error => {
+                    eda.sys_Log.add(`MCP queued command error: ${(error as Error).message}`, ESYS_LogType.ERROR);
+                });
             } catch (error) {
                 eda.sys_Log.add(`MCP message error: ${(error as Error).message}`, ESYS_LogType.ERROR);
             }
         },
         () => {
+            if (connectionEpoch !== state.connectionEpoch || !state.isScanEnabled) return;
             state.isRegistered = true;
             state.isConnecting = false;
             clearConnectTimeout();
-            sendEasyEdaHello().catch(error => {
+            sendEasyEdaHello(connectionEpoch).catch(error => {
                 eda.sys_Log.add(`MCP hello failed: ${(error as Error).message}`, ESYS_LogType.WARNING);
             });
-            startHeartbeat();
+            startHeartbeat(connectionEpoch);
             eda.sys_Log.add(`MCP WebSocket opened: ${MCP_WS_URL}`, ESYS_LogType.INFO);
             eda.sys_Message.showToastMessage('MCP connected', ESYS_ToastMessageType.SUCCESS);
         }
@@ -1238,14 +1369,25 @@ export function startMcpScan(showErrors = false, respectUserPause = false) {
     state.isUserPaused = false;
 
     if (state.isScanEnabled) {
+        startMcpScanTimer();
+        if (state.isRegistered) startHeartbeat(state.connectionEpoch);
         tryConnectMcp(showErrors);
         return;
     }
 
     state.isScanEnabled = true;
     tryConnectMcp(showErrors);
-    state.scanTimer = setInterval(() => tryConnectMcp(false), MCP_SCAN_INTERVAL_MS);
+    startMcpScanTimer();
     eda.sys_Log.add('MCP scan started', ESYS_LogType.INFO);
+}
+
+function startMcpScanTimer() {
+    clearMcpIntervalTimer(MCP_SCAN_TIMER_ID, state.scanTimer);
+    state.scanTimer = setMcpIntervalTimer(
+        MCP_SCAN_TIMER_ID,
+        MCP_SCAN_INTERVAL_MS,
+        () => tryConnectMcp(false),
+    );
 }
 
 export function startMcpScanOnStartup() {
@@ -1260,16 +1402,16 @@ export function startMcpScanOnStartup() {
 }
 
 export function stopMcpScan(showToast = true) {
+    state.connectionEpoch++;
     state.isScanEnabled = false;
     state.isConnecting = false;
     state.isUserPaused = true;
     clearConnectTimeout();
     stopHeartbeat();
+    mcpCommandQueue.clear();
 
-    if (state.scanTimer) {
-        clearInterval(state.scanTimer);
-        state.scanTimer = undefined;
-    }
+    clearMcpIntervalTimer(MCP_SCAN_TIMER_ID, state.scanTimer);
+    state.scanTimer = undefined;
 
     closeMcpSocket('MCP scan stopped by EasyEDA Copilot');
     state.isRegistered = false;

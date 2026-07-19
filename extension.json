@@ -3,7 +3,7 @@
 	"uuid": "64651de62a944308a56e3b42eb2cb248",
 	"displayName": "EasyEda Copilot",
 	"description": "AI-powered assistant for EasyEDA — generate schematics from natural language, browse LCSC components, design PCBs with custom DRC configurations, and get interactive circuit design help.",
-	"version": "1.1.4",
+	"version": "1.1.5",
 	"publisher": "biosshot",
 	"engines": {
 		"eda": "^3.2.149"

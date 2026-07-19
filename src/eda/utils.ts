@@ -130,7 +130,7 @@ export function getPrimitiveById(primitiveId: string | string[]) {
 }
 
 export async function yieldToEventLoop() {
-    await Promise.resolve();
+    await new Promise<void>(resolve => setTimeout(resolve, 0));
 }
 
 export const VERSION_EDASYEDA = eda.sys_Environment.getEditorCurrentVersion().split('.').map(Number);

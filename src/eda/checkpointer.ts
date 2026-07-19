@@ -48,7 +48,7 @@ async function saveCheckpoint(minor: boolean) {
             if (allCheckpoints.length >= 512) {
                 const sorted = allCheckpoints.sort((a, b) => a.timestamp! - b.timestamp!);
                 for (const item of sorted.slice(0, sorted.length - 99)) {
-                    db.checkpoints.remove({ _id: item._id });
+                    await db.checkpoints.remove({ _id: item._id });
                 }
             }
 

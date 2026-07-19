@@ -27,7 +27,7 @@ function localSkillDocText() {
 
 const server = new McpServer({
     name: 'easyeda-copilot',
-    version: '1.1.4',
+    version: '1.1.5',
 });
 
 server.registerResource(
@@ -79,7 +79,66 @@ async function main() {
     registerEasyEdaInstancesTools(server, bridge);
 
     const transport = new StdioServerTransport();
+
+    let transportEnded = false;
+    let transportEndStarted = false;
+    let forceShutdownStarted = false;
+    let transportClosePromise: Promise<void> | undefined;
+    let bridgeClosePromise: Promise<void> | undefined;
+
+    const closeTransport = () => {
+        if (transportClosePromise) return transportClosePromise;
+        if (transportEnded) return Promise.resolve();
+        transportEnded = true;
+        transportClosePromise = transport.close().catch(() => undefined);
+        return transportClosePromise;
+    };
+    const closeBridge = () => {
+        bridgeClosePromise ??= bridge.close();
+        return bridgeClosePromise;
+    };
+    const handleTransportEnd = async () => {
+        if (transportEndStarted || forceShutdownStarted) return;
+        transportEndStarted = true;
+
+        await closeTransport();
+        if (forceShutdownStarted) return;
+        if (bridge.enterBrokerOnlyMode()) return;
+        await closeBridge();
+    };
+    const forceShutdown = async () => {
+        if (forceShutdownStarted) return;
+        forceShutdownStarted = true;
+        await closeBridge();
+        await closeTransport();
+    };
+    const request = (action: () => Promise<void>) => {
+        action().catch(() => {
+            process.exitCode = 1;
+        });
+    };
+
+    let transportReady = false;
+    let transportEndRequested = false;
+    const requestTransportEnd = () => {
+        transportEndRequested = true;
+        if (transportReady) request(handleTransportEnd);
+    };
+
+    transport.onclose = () => {
+        transportEnded = true;
+        requestTransportEnd();
+    };
+    process.stdin.once('end', requestTransportEnd);
+    process.stdin.once('close', requestTransportEnd);
+    process.once('SIGINT', () => request(forceShutdown));
+    process.once('SIGTERM', () => request(forceShutdown));
+
     await server.connect(transport);
+    transportReady = true;
+    if (transportEndRequested || process.stdin.readableEnded || process.stdin.destroyed) {
+        request(handleTransportEnd);
+    }
 }
 
 main().catch(() => {
