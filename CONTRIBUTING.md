@@ -1,79 +1,69 @@
 # Contributing to easyeda-copilot
 
-Thanks for your interest in contributing!  
-Bug reports, ideas, and code contributions are all welcome.
+Thanks for your interest in the project! Bug reports, ideas, documentation updates, and code contributions are welcome.
 
-## Local Setup
+## Setup
 
-1. Clone the repository:
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
-````
-
-2. Install dependencies:
-
-```bash
 npm install
 ```
 
-3. Set the mode in `packages\shared\mode.ts`:
+Set the mode in `packages/shared/mode.ts`:
 
 ```ts
 export const __MODE__: string = 'PROD';
 ```
 
-> Note: `PROD` is currently required because the project uses a shared server. Local backend support is not available yet.
+`PROD` is currently required because the project uses a shared server.
 
-1. Start development (browser):
+## EasyEDA extension
+
+Start the development environment:
 
 ```bash
 npm run dev
 ```
 
-> Some features may be limited in browser mode.
-
-5. Build the extension:
+Build the extension:
 
 ```bash
 npm run build
 ```
 
-The build output will be available at:
+The extension package will be created in `build/dist`.
+
+## MCP server
+
+Check types and build the MCP server:
 
 ```bash
-build/dist/easyeda-copilot_v{version}.eext
+cd mcp
+npm run check
 ```
 
-Upload this file into EasyEDA Pro to use the extension.
+Build and open MCP Inspector:
 
-## Contributing
+```bash
+npm run inspect
+```
 
-1. Create a new branch
-2. Make your changes
-3. Ensure the project builds successfully
-4. Open a Pull Request with a clear description
+To test tools that communicate with EasyEDA, start EasyEDA Desktop and enable `External Interactions` for the EasyEDA Copilot extension.
+
+## Pull requests
+
+1. Create a branch.
+2. Make your changes.
+3. Run the relevant build or MCP check.
+4. Open a pull request and briefly describe the change.
+
+If possible, keep each pull request focused on one issue.
 
 ## Issues
 
-Use issues for:
+Feel free to open an issue for a bug, feature request, documentation improvement, or question.
 
-* Bug reports
-* Feature requests
-* Questions
+## License
 
-## Testing
-
-There are currently no automated tests.
-Please test your changes manually when possible.
-
-## Pull Requests
-
-Please include:
-
-* A clear description of the changes
-* Related issue (if applicable)
-
----
-
-Thanks for contributing ❤️
+Contributions are licensed under the MIT License.

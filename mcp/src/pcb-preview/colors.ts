@@ -115,6 +115,8 @@ export const LAYER_ORDER: PcbLayerName[] = [
     'CUSTOM_30',
 ];
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
 export const LAYER_COLORS: Record<PcbLayerName | 'highlight' | 'netLabel', string> = {
     TOP: '#ffab91',
     TOP_SILKSCREEN: '#ffffff',
