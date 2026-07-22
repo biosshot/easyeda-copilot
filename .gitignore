@@ -1,7 +1,6 @@
 /.vscode
 /dist
 /node_modules
-/package-lock.json
 /iframe
 /mcp/dist/
 /mcp/.test-data
