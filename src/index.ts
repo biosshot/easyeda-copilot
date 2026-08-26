@@ -24,6 +24,16 @@ import { checkpointer } from './eda/checkpointer';
 import { startMcpScanOnStartup, toggleMcpScan } from './mcp-client';
 import { checkPcbDrc } from './eda/drc';
 import { getLibraryUuidList } from './eda/place-component';
+import {
+	addSilkscreenImage,
+	addSilkscreenText,
+	deleteSilkscreenImages,
+	deleteSilkscreenText,
+	getSilkscreenImages,
+	getSilkscreenText,
+} from './eda/pcb-silkscreen';
+import { getPcbComponentGeometry } from './eda/pcb-geometry';
+import { addPcbKeepoutRegion, deletePcbKeepoutRegions } from './eda/pcb-keepout';
 
 eda.assembleCircuit = assembleCircuit;
 eda.assembleBoard = assembleBoard;
@@ -35,6 +45,15 @@ eda.searchComponentInSCH = searchComponentInSCH;
 eda.checkpointer = checkpointer;
 eda.checkPcbDrc = checkPcbDrc;
 eda.getLibraryUuidList = getLibraryUuidList;
+eda.addSilkscreenText = addSilkscreenText;
+eda.getSilkscreenText = getSilkscreenText;
+eda.deleteSilkscreenText = deleteSilkscreenText;
+eda.getPcbComponentGeometry = getPcbComponentGeometry;
+eda.addPcbKeepoutRegion = addPcbKeepoutRegion;
+eda.deletePcbKeepoutRegions = deletePcbKeepoutRegions;
+eda.addSilkscreenImage = addSilkscreenImage;
+eda.getSilkscreenImages = getSilkscreenImages;
+eda.deleteSilkscreenImages = deleteSilkscreenImages;
 
 startMcpScanOnStartup();
 

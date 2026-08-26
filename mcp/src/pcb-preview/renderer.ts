@@ -26,6 +26,54 @@ function pointsToOpenPath(points: Array<{ 0: number; 1: number }>): string {
     return `M ${points.map(p => `${p[0].toFixed(4)} ${svgY(p[1]).toFixed(4)}`).join(' L ')}`;
 }
 
+/**
+ * Шелкография поверх всего: это последнее, что наносится на реальную плату,
+ * и главное, ради чего смотрят превью после add_pcb_silkscreen_*.
+ */
+function renderSilkscreen(data: RawPcb, options: PreviewOptions): string {
+    const silkscreen = data.silkscreen;
+    if (!silkscreen) return '';
+
+    const selected = options.layers;
+    const visible = (layer: 'top' | 'bottom') =>
+        !selected || selected.includes('all') || selected.includes(layer === 'top' ? 'TOP' : 'BOTTOM');
+
+    const parts: string[] = [];
+
+    for (const image of silkscreen.images ?? []) {
+        if (!visible(image.layer)) continue;
+
+        const d = image.rings
+            .filter(ring => ring.length >= 3)
+            .map(ring => pointsToPath(ring))
+            .join(' ');
+
+        if (!d) continue;
+
+        // fill-rule evenodd: вложенные кольца это отверстия, а не вторая фигура.
+        const color = image.layer === 'top' ? LAYER_COLORS.TOP_SILKSCREEN : LAYER_COLORS.BOTTOM_SILKSCREEN;
+        parts.push(`<path d="${d}" fill="${color}" fill-rule="evenodd" fill-opacity="${image.layer === 'top' ? 0.95 : 0.55}" />`);
+    }
+
+    for (const text of silkscreen.texts ?? []) {
+        if (!visible(text.layer)) continue;
+
+        const y = svgY(text.y);
+        const transforms = [`rotate(${(-text.rotation).toFixed(2)} ${text.x.toFixed(4)} ${y.toFixed(4)})`];
+        if (text.mirror) transforms.push(`translate(${(2 * text.x).toFixed(4)} 0) scale(-1 1)`);
+
+        parts.push(
+            `<text x="${text.x.toFixed(4)}" y="${y.toFixed(4)}" font-size="${text.height.toFixed(3)}"` +
+            ` font-family="monospace" fill="${text.layer === 'top' ? LAYER_COLORS.TOP_SILKSCREEN : LAYER_COLORS.BOTTOM_SILKSCREEN}"` +
+            ` fill-opacity="${text.layer === 'top' ? 0.95 : 0.55}"` +
+            ` text-anchor="middle" dominant-baseline="middle"` +
+            ` transform="${transforms.join(' ')}">${escapeXml(text.text)}</text>`,
+        );
+    }
+
+    return parts.length ? `<g data-layer="SILKSCREEN">${parts.join('')}</g>` : '';
+}
+
 function isLayerSelected(layer: PcbLayerName, selected: string[]): boolean {
     if (!selected || selected.includes('all')) return true;
     return selected.includes(layer);
@@ -611,6 +659,8 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
             parts.push(`<g data-layer="${layer}">${layerGroup.join('')}</g>`);
         }
     }
+
+    parts.push(renderSilkscreen(data, options));
 
     if (boardPath) {
         parts.push(`<path d="${boardPath}" fill="none" stroke="${LAYER_COLORS.BOARD_OUTLINE}" stroke-width="0.254" />`);

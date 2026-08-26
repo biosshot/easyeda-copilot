@@ -65,7 +65,33 @@ export const RawPcbPolygonSchema = () => z.object({
     sources: z.array(z.array(z.union([z.number(), z.string()])))
 });
 
+/**
+ * Шелкография в модели платы. Раньше её здесь не было вовсе, поэтому
+ * preview_pcb рисовал плату без единой надписи и проверить нанесённый
+ * текст можно было только глазами в GUI.
+ */
+export const RawPcbSilkTextSchema = () => z.object({
+    text: z.string(),
+    x: z.number(),
+    y: z.number(),
+    height: z.number(),
+    rotation: z.number(),
+    layer: z.enum(['top', 'bottom']),
+    mirror: z.boolean(),
+});
+
+export const RawPcbSilkImageSchema = () => z.object({
+    layer: z.enum(['top', 'bottom']),
+    rings: z.array(z.array(z.object({ x: z.number(), y: z.number() }))),
+});
+
+export const RawPcbSilkscreenSchema = () => z.object({
+    texts: z.array(RawPcbSilkTextSchema()),
+    images: z.array(RawPcbSilkImageSchema()),
+});
+
 export const RawPcbSchema = () => z.object({
+    silkscreen: RawPcbSilkscreenSchema().optional(),
     board: RawPcbBoardSchema().optional(),
     components: z.array(RawPcbComponentSchema()),
     pads: z.array(RawPcbPadSchema()),
@@ -76,6 +102,8 @@ export const RawPcbSchema = () => z.object({
 });
 
 export type RawPcb = z.infer<ReturnType<typeof RawPcbSchema>>;
+export type RawPcbSilkText = z.infer<ReturnType<typeof RawPcbSilkTextSchema>>;
+export type RawPcbSilkImage = z.infer<ReturnType<typeof RawPcbSilkImageSchema>>;
 export type RawPcbPolygon = z.infer<ReturnType<typeof RawPcbPolygonSchema>>;
 export type RawPcbArc = z.infer<ReturnType<typeof RawPcbArcSchema>>;
 export type RawPcbTrack = z.infer<ReturnType<typeof RawPcbTrackSchema>>;

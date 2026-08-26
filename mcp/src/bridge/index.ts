@@ -763,6 +763,56 @@ class MeshBridge implements Bridge {
     }
 
     async requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000) {
+        try {
+            return await this.sendRequest(event, body, timeoutMs);
+        } catch (error) {
+            const reopened = await this.reopenRequiredDocument(event, error);
+            if (!reopened) throw error;
+
+            return await this.sendRequest(event, body, timeoutMs);
+        }
+    }
+
+    /**
+     * Активный документ меняется от любого клика в GUI — стоит открыть 3D или
+     * другую вкладку, и операции над платой начинают падать. Открываем нужный
+     * документ сами и повторяем вызов один раз.
+     *
+     * Открываем только когда кандидат ровно один: с несколькими платами в
+     * проекте угадывать нельзя, там ошибка полезнее самодеятельности.
+     */
+    private async reopenRequiredDocument(event: string, error: unknown) {
+        if (event === 'open-document' || event === 'get-current-project-info') return false;
+
+        const message = (error as Error)?.message ?? '';
+        const match = /Open (PCB|schematic page) doc to fix/i.exec(message);
+        if (!match) return false;
+
+        const wantPcb = match[1].toLowerCase() === 'pcb';
+
+        try {
+            const info = await this.sendRequest('get-current-project-info', {}, 30_000) as {
+                project_data?: Array<{
+                    pcb?: { uuid?: string };
+                    schematic?: { page?: Array<{ uuid?: string }> };
+                }>;
+            };
+
+            const boards = info?.project_data ?? [];
+            const candidates = wantPcb
+                ? boards.map(board => board.pcb?.uuid).filter(Boolean)
+                : boards.flatMap(board => (board.schematic?.page ?? []).map(page => page.uuid)).filter(Boolean);
+
+            if (candidates.length !== 1) return false;
+
+            await this.sendRequest('open-document', { documentUuid: candidates[0] }, 30_000);
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
+    private async sendRequest(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000) {
         await this.waitForRecoverableConnection();
 
         if (this.owner) {

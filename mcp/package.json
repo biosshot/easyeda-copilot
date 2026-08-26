@@ -1,6 +1,6 @@
 {
   "name": "easyeda-copilot-mcp",
-  "version": "1.1.5",
+  "version": "2.5.0",
   "description": "MCP server for EasyEDA Copilot",
   "type": "module",
   "license": "MIT",
@@ -22,8 +22,9 @@
     "build": "tsup",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test \"src/**/*.test.ts\"",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run typecheck && npm run build",
+    "check": "npm run typecheck && npm run test && npm run build",
     "prepack": "npm run build",
     "start": "node dist/index.js"
   },

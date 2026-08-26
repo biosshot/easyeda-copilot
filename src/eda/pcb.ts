@@ -468,7 +468,7 @@ async function readComponents() {
     return { rawComponents, pads };
 }
 
-async function readBoardPolygon() {
+export async function readBoardPolygon() {
     const polylines = await eda.pcb_PrimitivePolyline.getAll().catch(() => []);
 
     const polylinePolygons = polylines
@@ -753,13 +753,21 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
     return polygons;
 }
 
+/**
+ * Без этой проверки операции над платой при открытой схеме возвращают
+ * пустоту вместо ошибки, и выглядит это как «на плате ничего нет».
+ */
+export async function assertPcbDocument(operation: string) {
+    const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(() => undefined);
+    if (docType !== EDMT_EditorDocumentType.PCB) {
+        throw new Error(`Failed ${operation}. Open PCB doc to fix.`);
+    }
+}
+
 export async function getPcb(): Promise<ExplainPCB> {
     if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
 
-    const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(() => undefined);
-    if (docType !== EDMT_EditorDocumentType.PCB) {
-        throw new Error("Failed getPcb. Open PCB doc to fix.");
-    }
+    await assertPcbDocument('getPcb');
 
     const [boardPolygon, componentResult, segments, viaResult, rawPolygons] = await Promise.all([
         readBoardPolygon(),
@@ -992,6 +1000,40 @@ function rawSourcesFromComplex(
     return [convertSourceArray(complex as TPCB_PolygonSourceArray, coordConv)];
 }
 
+/** Шелкография для превью: без неё на картинке не видно ни одной надписи. */
+async function readSilkscreen(): Promise<RawPcb['silkscreen']> {
+    const sides: Array<{ layer: 'top' | 'bottom', id: TPCB_LayersOfImage }> = [
+        { layer: 'top', id: EPCB_LayerId.TOP_SILKSCREEN },
+        { layer: 'bottom', id: EPCB_LayerId.BOTTOM_SILKSCREEN },
+    ];
+
+    const texts: NonNullable<RawPcb['silkscreen']>['texts'] = [];
+    const images: NonNullable<RawPcb['silkscreen']>['images'] = [];
+
+    for (const side of sides) {
+        for (const primitive of await eda.pcb_PrimitiveString.getAll(side.id).catch(() => [])) {
+            texts.push({
+                text: primitive.getState_Text(),
+                x: milToMm(primitive.getState_X()),
+                y: milToMm(primitive.getState_Y()),
+                height: milToMm(primitive.getState_FontSize()),
+                rotation: primitive.getState_Rotation(),
+                layer: side.layer,
+                mirror: primitive.getState_Mirror(),
+            });
+        }
+
+        for (const primitive of await eda.pcb_PrimitiveImage.getAll(side.id).catch(() => [])) {
+            const rings = complexPolygonToRings(primitive.getState_ComplexPolygon())
+                .map(ring => ring.map(point => ({ x: milToMm(point.x), y: milToMm(point.y) })));
+
+            if (rings.length) images.push({ layer: side.layer, rings });
+        }
+    }
+
+    return { texts, images };
+}
+
 export async function getPcbRaw(): Promise<RawPcb> {
     if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
     const boardPolygon = await readBoardPolygon();
@@ -1007,7 +1049,7 @@ export async function getPcbRaw(): Promise<RawPcb> {
             layer: rawLayerName(c.getState_Layer()),
             bbox: await eda.pcb_Primitive.getPrimitivesBBox([c.getState_PrimitiveId()]).then(box => box ? ({
                 left: milToMm(box.minX),
-                right: milToMm(box.maxY),
+                right: milToMm(box.maxX),
                 top: milToMm(box.maxY),
                 bottom: milToMm(box.minY),
             }) : undefined)
@@ -1111,6 +1153,8 @@ export async function getPcbRaw(): Promise<RawPcb> {
         }
     }
 
+    const silkscreen = await readSilkscreen();
+
     return {
         board: boardPolygon?.length
             ? { polygon: boardPolygon }
@@ -1119,6 +1163,7 @@ export async function getPcbRaw(): Promise<RawPcb> {
         components,
         pads,
         polygons,
+        silkscreen,
         tracks,
         vias
     };
