@@ -72,3 +72,48 @@ Use `compactness: "high"` only when board area is genuinely constrained.
 - Normal components without block ownership or mixed layers in one block.
 - Manual coordinates to compensate for a bad electrical block structure.
 - Routing, copper, polygon, via, width, differential-pair, or length-matching rules in this DSL.
+
+## Diagnosing "outside board"
+
+This error usually means the edge margin is too tight, not that the wrong placement
+primitive was chosen. The tool's own hint suggesting `edgeMount` instead of fixed
+offsets points the wrong way.
+
+The limit on a component centre is:
+
+```
+|y|max = boardH/2 - edge - halfFootprintHeight
+```
+
+On a 36x25 board with `edge: 1.0` and a 2.5 mm tall header that gives
+`12.5 - 1.0 - 1.25 = 10.25`. At `y = 10.2` — 0.05 mm of slack — the solver reported
+`outside board` through *every* primitive tried: `fixed`, `edgeMount` and `edgePlace`.
+At `y = 9.0` it placed immediately. Compute the limit and leave about 1 mm of slack
+before changing the primitive.
+
+A component's real footprint size appears in the report as `block/module violations:
+actual WxH`. The preview image is more informative than the text warnings here: it
+shows at a glance whether the X and level are right and the part merely overhangs.
+
+## Primitive behaviour worth knowing
+
+- `fixed({x, y, rotate, layer})` gives an exact position but only with `board.rect()`.
+  With `board.auto()` the outline is computed from the non-fixed components, so fixed
+  parts end up outside it.
+- `edgePlace(edge, {align})` treats `align` as a soft hint that the solver overrides
+  with its own weights. Use explicit `x`/`y` when the position must be exact.
+- `edgeMount(edge, {overhang: 0})` still lets the body cross the edge line; it exists
+  for parts that are meant to overhang, such as USB connectors.
+- To put two parts on the same level, give them the same `y` in `fixed()`.
+- A `coreIsland` listing components from both a parent block and a satellite is
+  deferred: `Deferred parent-level island ... references child primitives outside
+  direct node components`. Keep every island member in one block.
+
+## Do not weaken a hint that looks unreachable
+
+Lowering `near()` from `"high"` to `"normal"` moved a load switch from 14 mm to 28 mm
+away from its connector — twice as far. The priority is not cosmetic: even when the
+hint cannot reach its stated distance, it still holds the component. Leave it strong.
+
+A warning like `block: actual 1.4x5.46mm, estimated 4.28x2.95mm` on a two-part block is
+usually just a 90-degree rotation artefact, not a problem.

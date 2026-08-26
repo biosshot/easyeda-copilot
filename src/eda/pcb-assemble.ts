@@ -792,7 +792,12 @@ async function drawDefaultGroundPours(board: BoardAssemble["board"]) {
 }
 
 async function removeOldDefaultGroundSutureVias() {
-    const oldVias = await eda.pcb_PrimitiveVia.getAll(DEFAULT_GND_NET, true).catch(() => []);
+    // Второй параметр getAll — это primitiveLock, а не «включая всё». С true
+    // запрашивались только заблокированные переходные, а сшивающие создаются
+    // незаблокированными: чистка не находила ничего, и каждая новая заливка
+    // укладывала свежий слой поверх старого. На плате из 390 переходных
+    // повторный вызов давал 493 вместо 103.
+    const oldVias = await eda.pcb_PrimitiveVia.getAll(DEFAULT_GND_NET).catch(() => []);
     const targets = oldVias.filter(via => via.getState_ViaType() === EPCB_PrimitiveViaType.SUTURE);
 
     if (targets.length) {

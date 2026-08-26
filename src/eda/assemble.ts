@@ -391,6 +391,108 @@ function getNetForUnusedPins(components: CircuitAssembly['components'], edges: C
     return netForUnusedPins;
 }
 
+/** Автоцепи, имена которым сгенерировал сервер: $1N59193 и подобные. */
+const AUTO_NET_RE = /^\$\d*N\d+$/;
+
+const pinKey = (designator: string, pin: string | number) => `${designator}_pin_${pin}`;
+
+/**
+ * Разводит по разным цепям одноимённые внутренние цепи разных экземпляров
+ * одного переиспользуемого блока.
+ *
+ * Вставленный дважды блок возвращается с одинаковыми именами внутренних
+ * автоцепей, EasyEDA сливает их по имени, и два независимых канала оказываются
+ * закорочены. Схема при этом выглядит правильной.
+ *
+ * Провода при этом разведены верно, поэтому экземпляры различимы по графу
+ * рёбер: выводы одной автоцепи разбиваются на связные группы, и все группы
+ * кроме первой получают уникальный суффикс. Проверено на плате с двумя
+ * релейными каналами: $1N59193 и $1N64497 распались ровно на две группы.
+ */
+function splitCollidingAutoNets(components: CircuitAssembly['components'], edges: CircuitAssembly['edges']) {
+    const adjacency = new Map<string, Set<string>>();
+
+    const link = (a: string, b: string) => {
+        if (!adjacency.has(a)) adjacency.set(a, new Set());
+        if (!adjacency.has(b)) adjacency.set(b, new Set());
+        adjacency.get(a)!.add(b);
+        adjacency.get(b)!.add(a);
+    };
+
+    for (const edge of edges ?? []) {
+        for (const section of edge.sections ?? []) {
+            if (section.incomingShape && section.outgoingShape) {
+                link(section.incomingShape, section.outgoingShape);
+            }
+        }
+    }
+
+    type Entry = { key: string, pin: { signal_name: string } };
+    const byNet = new Map<string, Entry[]>();
+
+    for (const component of components) {
+        for (const pin of component.pins ?? []) {
+            const net = pin.signal_name;
+            if (!net || !AUTO_NET_RE.test(net)) continue;
+
+            if (!byNet.has(net)) byNet.set(net, []);
+            byNet.get(net)!.push({ key: pinKey(component.designator, pin.pin_number), pin });
+        }
+    }
+
+    let renamed = 0;
+
+    for (const [net, entries] of byNet) {
+        if (entries.length < 2) continue;
+
+        const members = new Set(entries.map(entry => entry.key));
+        const seen = new Set<string>();
+        const groups: Entry[][] = [];
+
+        for (const entry of entries) {
+            if (seen.has(entry.key)) continue;
+
+            // Обход в ширину внутри этой же цепи.
+            const reached = new Set<string>();
+            const stack = [entry.key];
+
+            while (stack.length) {
+                const node = stack.pop()!;
+                if (reached.has(node)) continue;
+                reached.add(node);
+
+                for (const next of adjacency.get(node) ?? []) {
+                    if (members.has(next) && !reached.has(next)) stack.push(next);
+                }
+            }
+
+            reached.forEach(key => seen.add(key));
+            groups.push(entries.filter(candidate => reached.has(candidate.key)));
+        }
+
+        if (groups.length < 2) continue;
+
+        groups.slice(1).forEach((group, index) => {
+            const name = `${net}_${index + 2}`;
+            group.forEach(entry => { entry.pin.signal_name = name; });
+            renamed += group.length;
+
+            eda.sys_Log.add(
+                `Split colliding net ${net} -> ${name}: ${group.map(entry => entry.key).join(', ')}`,
+                ESYS_LogType.INFO,
+            );
+        });
+    }
+
+    if (renamed) {
+        const msg = `Separated ${renamed} pins whose reused blocks shared internal net names.`;
+        eda.sys_Log.add(msg, ESYS_LogType.INFO);
+        eda.sys_Message.showToastMessage(msg, ESYS_ToastMessageType.INFO);
+    }
+
+    return renamed;
+}
+
 async function assembleCircuitTask(circuit: CircuitAssembly) {
     const startTimeTotal = Date.now();
     const logTiming = (label: string, startTime: number) => {
@@ -441,6 +543,8 @@ async function assembleCircuitTask(circuit: CircuitAssembly) {
     });
 
     let { components, rm_components, edges, added_net } = circuit;
+
+    await runStep('Split colliding block nets', async () => splitCollidingAutoNets(components, edges));
 
     const componentsAllowReplace: ComponentToReplace[] = [];
 

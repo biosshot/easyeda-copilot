@@ -1,8 +1,19 @@
 import { assembleCircuit } from './eda/assemble';
 import { assembleBoard, clearCurrentPcbBoard, pourDefaultGroundAndSutureVias, type GroundSutureOptions } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
-import { checkPcbDrc } from './eda/drc';
-import { getPcb, getPcbRaw, inspectComponent, inspectNet } from './eda/pcb';
+import { checkPcbDrc, checkSchematicErc } from './eda/drc';
+import { getPcb, getPcbRaw, inspectComponent, inspectNet, readBoardPolygon as readCurrentBoardPolygon } from './eda/pcb';
+import { findPcbFreeSpace } from './eda/pcb-free-space';
+import {
+    addSilkscreenImage,
+    addSilkscreenText,
+    deleteSilkscreenImages,
+    deleteSilkscreenText,
+    getSilkscreenImages,
+    getSilkscreenText,
+} from './eda/pcb-silkscreen';
+import { getPcbComponentGeometry } from './eda/pcb-geometry';
+import { addPcbKeepoutRegion, deletePcbKeepoutRegions } from './eda/pcb-keepout';
 import { getSchematic } from './eda/schematic';
 import '@copilot/shared/types/eda';
 import { ExplainCircuit } from '@copilot/shared/types/circuit';
@@ -14,6 +25,12 @@ import {
     type PcbDrcDifferentialPairSubRule,
     type PcbDrcRuleObject,
 } from '@copilot/shared/types/pcb/drc';
+import type {
+    SilkscreenDeleteRequest,
+    SilkscreenImageRequest,
+    SilkscreenLayer,
+    SilkscreenTextRequest,
+} from '@copilot/shared/types/pcb/silkscreen';
 
 type DesiredDifferentialPair = {
     name: string;
@@ -136,7 +153,11 @@ function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const BEAUTIFY_AUXILIARY_COMPONENT_TYPES = new Set<ESCH_PrimitiveComponentType>([
+// Strings, not the enum type: EasyEDA exposes two API generations and
+// getState_ComponentType() returns a union of ESCH_PrimitiveComponentType and
+// its $1 twin. Both are string enums with identical values ("part", "netflag",
+// ...), so comparing as strings is correct for either generation.
+const BEAUTIFY_AUXILIARY_COMPONENT_TYPES = new Set<string>([
     ESCH_PrimitiveComponentType.NET_FLAG,
     ESCH_PrimitiveComponentType.NET_PORT,
     ESCH_PrimitiveComponentType.SHORT_CIRCUIT_FLAG,
@@ -152,12 +173,12 @@ async function getBeautifyComponentIds(expectedDesignators: string[]) {
 
     return components.filter(component => {
         const componentType = component.getState_ComponentType();
-        if (componentType === ESCH_PrimitiveComponentType.COMPONENT) {
+        if ((componentType as string) === ESCH_PrimitiveComponentType.COMPONENT) {
             const designator = component.getState_Designator()?.trim().replace(/\.\d+$/, '') ?? '';
             return expected.has(designator);
         }
 
-        return BEAUTIFY_AUXILIARY_COMPONENT_TYPES.has(componentType);
+        return BEAUTIFY_AUXILIARY_COMPONENT_TYPES.has(componentType as string);
     }).map(component => component.getState_PrimitiveId());
 }
 
@@ -166,10 +187,10 @@ async function waitForBeautifyComponents(expectedDesignators: string[], timeoutM
     let missing = [...expectedDesignators];
 
     do {
-        const components = await eda.sch_PrimitiveComponent.getAll(ESCH_PrimitiveComponentType.COMPONENT);
-        const actualDesignators = new Set(components.map(component => (
-            component.getState_Designator().trim().replace(/\.\d+$/, '')
-        )));
+        const components = await eda.sch_PrimitiveComponent.getAll();
+        const actualDesignators = new Set(components
+            .filter(component => (component.getState_ComponentType() as string) === ESCH_PrimitiveComponentType.COMPONENT)
+            .map(component => component.getState_Designator()?.trim().replace(/\.\d+$/, '') ?? ''));
         missing = expectedDesignators.filter(designator => !actualDesignators.has(designator));
         if (!missing.length) return;
         if (Date.now() >= deadline) break;
@@ -965,6 +986,88 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
                 count,
                 stack: await getPcbStackLayers(),
             });
+            return;
+        }
+
+        if (message.event === 'check-schematic-erc') {
+            const limit = Number.isFinite(body.limit) ? Number(body.limit) : 50;
+            reply(true, await checkSchematicErc(limit, body.showInEditor === true));
+            return;
+        }
+
+        if (message.event === 'find-pcb-free-space') {
+            reply(true, await findPcbFreeSpace(body as unknown as Parameters<typeof findPcbFreeSpace>[0]));
+            return;
+        }
+
+        if (message.event === 'pour-ground-and-suture') {
+            // Контур берём с самой платы: раньше эта операция была доступна
+            // только внутри импорта автотрассировки, где контур приходил снаружи.
+            const polygon = await readCurrentBoardPolygon();
+            if (!polygon || polygon.length < 3) throw new Error('Board outline is missing.');
+
+            await checkpointer.save(false);
+            const result = await pourDefaultGroundAndSutureVias({ polygon }, {
+                pourGround: body.pourGround !== false,
+                sutureGround: body.sutureGround !== false,
+                suture: readGroundSutureOptions(body.suture),
+            });
+
+            reply(true, result);
+            return;
+        }
+
+        if (message.event === 'add-pcb-silkscreen-image') {
+            await checkpointer.save(false);
+            reply(true, await addSilkscreenImage(body as unknown as SilkscreenImageRequest));
+            return;
+        }
+
+        if (message.event === 'get-pcb-silkscreen-images') {
+            reply(true, await getSilkscreenImages(body.layer as SilkscreenLayer | undefined));
+            return;
+        }
+
+        if (message.event === 'delete-pcb-silkscreen-images') {
+            await checkpointer.save(false);
+            reply(true, await deleteSilkscreenImages(body.primitive_ids as string[]));
+            return;
+        }
+
+        if (message.event === 'add-pcb-keepout-region') {
+            await checkpointer.save(false);
+            reply(true, await addPcbKeepoutRegion(body as unknown as Parameters<typeof addPcbKeepoutRegion>[0]));
+            return;
+        }
+
+        if (message.event === 'delete-pcb-keepout-regions') {
+            await checkpointer.save(false);
+            reply(true, await deletePcbKeepoutRegions(body.primitive_ids as string[]));
+            return;
+        }
+
+        if (message.event === 'get-pcb-component-geometry') {
+            reply(true, await getPcbComponentGeometry({
+                designators: body.designators as string[] | undefined,
+                include_pads: body.include_pads as boolean | undefined,
+            }));
+            return;
+        }
+
+        if (message.event === 'add-pcb-silkscreen-text') {
+            await checkpointer.save(false);
+            reply(true, await addSilkscreenText(body as unknown as SilkscreenTextRequest));
+            return;
+        }
+
+        if (message.event === 'get-pcb-silkscreen-text') {
+            reply(true, await getSilkscreenText(body.layer as SilkscreenLayer | undefined));
+            return;
+        }
+
+        if (message.event === 'delete-pcb-silkscreen-text') {
+            await checkpointer.save(false);
+            reply(true, await deleteSilkscreenText(body as unknown as SilkscreenDeleteRequest));
             return;
         }
 
