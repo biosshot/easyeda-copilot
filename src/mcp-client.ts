@@ -153,6 +153,53 @@ function delay(ms: number) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Strings, not the enum type: EasyEDA exposes two API generations and
+// getState_ComponentType() returns a union of ESCH_PrimitiveComponentType and
+// its $1 twin. Both are string enums with identical values ("part", "netflag",
+// ...), so comparing as strings is correct for either generation.
+const BEAUTIFY_AUXILIARY_COMPONENT_TYPES = new Set<string>([
+    ESCH_PrimitiveComponentType.NET_FLAG,
+    ESCH_PrimitiveComponentType.NET_PORT,
+    ESCH_PrimitiveComponentType.SHORT_CIRCUIT_FLAG,
+    ESCH_PrimitiveComponentType.NET_LABEL,
+    ESCH_PrimitiveComponentType.OFF_PAGE_CONNECTOR,
+    ESCH_PrimitiveComponentType.DIFFERENTIAL_PAIRS_FLAG,
+    ESCH_PrimitiveComponentType.CBB_SYMBOL,
+]);
+
+async function getBeautifyComponentIds(expectedDesignators: string[]) {
+    const expected = new Set(expectedDesignators);
+    const components = await eda.sch_PrimitiveComponent.getAll();
+
+    return components.filter(component => {
+        const componentType = component.getState_ComponentType();
+        if ((componentType as string) === ESCH_PrimitiveComponentType.COMPONENT) {
+            const designator = component.getState_Designator()?.trim().replace(/\.\d+$/, '') ?? '';
+            return expected.has(designator);
+        }
+
+        return BEAUTIFY_AUXILIARY_COMPONENT_TYPES.has(componentType as string);
+    }).map(component => component.getState_PrimitiveId());
+}
+
+async function waitForBeautifyComponents(expectedDesignators: string[], timeoutMs = 20_000) {
+    const deadline = Date.now() + timeoutMs;
+    let missing = [...expectedDesignators];
+
+    do {
+        const components = await eda.sch_PrimitiveComponent.getAll();
+        const actualDesignators = new Set(components
+            .filter(component => (component.getState_ComponentType() as string) === ESCH_PrimitiveComponentType.COMPONENT)
+            .map(component => component.getState_Designator()?.trim().replace(/\.\d+$/, '') ?? ''));
+        missing = expectedDesignators.filter(designator => !actualDesignators.has(designator));
+        if (!missing.length) return;
+        if (Date.now() >= deadline) break;
+        await delay(500);
+    } while (true);
+
+    throw new Error(`Beautify assembly omitted components after waiting for EasyEDA: ${missing.join(', ')}`);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
     return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
@@ -1303,6 +1350,66 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             await checkpointer.save(false);
             await assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0]);
             reply(true, { assembled: true });
+            return;
+        }
+
+        if (message.event === 'beautify-current-page') {
+            const circuit = body.circuit;
+            const checkpointId = typeof body.checkpointId === 'string' ? body.checkpointId : undefined;
+            const expectedDesignators = Array.isArray(body.expectedDesignators)
+                ? body.expectedDesignators.filter((value): value is string => typeof value === 'string')
+                : [];
+
+            if (!circuit) throw new Error('Missing circuit in beautify-current-page body');
+            if (!checkpointId) throw new Error('Missing checkpointId in beautify-current-page body');
+            if (!expectedDesignators.length) throw new Error('Missing expectedDesignators in beautify-current-page body');
+
+            const checkpoint = await checkpointer.read(checkpointId);
+            if (!checkpoint) throw new Error(`Checkpoint not found: ${checkpointId}`);
+
+            const currentPage = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+            if (checkpoint.pageId && checkpoint.pageId !== currentPage?.uuid) {
+                throw new Error('The current schematic page changed after the beautify checkpoint was created.');
+            }
+
+            let mutationStarted = false;
+            try {
+                mutationStarted = true;
+
+                const wireIds = await eda.sch_PrimitiveWire.getAllPrimitiveId().then(ids => [...ids]);
+                if (wireIds.length) {
+                    const deleted = await eda.sch_PrimitiveWire.delete(wireIds);
+                    if (!deleted) throw new Error('Failed to delete all schematic wires.');
+                }
+
+                const componentIds = await getBeautifyComponentIds(expectedDesignators);
+                if (componentIds.length) {
+                    const deleted = await eda.sch_PrimitiveComponent.delete(componentIds);
+                    if (!deleted) throw new Error('Failed to delete all schematic components.');
+                }
+
+                const [remainingWireIds, remainingComponentIds] = await Promise.all([
+                    eda.sch_PrimitiveWire.getAllPrimitiveId(),
+                    getBeautifyComponentIds(expectedDesignators),
+                ]);
+                if (remainingWireIds.length || remainingComponentIds.length) {
+                    throw new Error(`Failed to clear the schematic page completely: ${remainingWireIds.length} wires and ${remainingComponentIds.length} components remain.`);
+                }
+
+                await assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0]);
+                await waitForBeautifyComponents(expectedDesignators);
+
+                reply(true, { assembled: true, checkpointId });
+            } catch (error) {
+                if (mutationStarted) {
+                    const restored = await checkpointer.restore(checkpointId, true).catch(() => false);
+                    if (!restored) {
+                        const message = error instanceof Error ? error.message : String(error);
+                        throw new Error(`${message}; automatic checkpoint restore failed`);
+                    }
+                }
+                throw error;
+            }
             return;
         }
 

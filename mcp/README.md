@@ -5,6 +5,8 @@ MCP server for EasyEDA Copilot.
 
 It connects MCP clients such as Codex or Claude Code to EasyEDA Desktop through the EasyEDA Copilot extension. It supports schematic work, component search, PCB placement, assembly, routing, inspection, and DRC.
 
+MCP is the recommended and actively developed EasyEDA Copilot interface. The built-in Interface remains available as a legacy workflow with fewer capabilities and limited maintenance.
+
 ## Requirements
 
 - EasyEDA Desktop V3.2.149.
@@ -50,13 +52,13 @@ npm run build
 Codex:
 
 ```bash
-codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 Claude Code:
 
 ```bash
-claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 Generic MCP config:

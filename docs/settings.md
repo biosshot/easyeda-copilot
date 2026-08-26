@@ -2,6 +2,17 @@
 
 EasyEDA Copilot can work with multiple LLM providers. Configure providers, API keys, context behavior and agent-specific models in `Settings`.
 
+## Extension permissions
+
+After installing EasyEDA Copilot, open `Settings -> Extensions -> Extensions Manager`, select the extension, and open the `Config` tab. Enable both:
+
+- `Allow interactive with external` — required for MCP and other external integrations.
+- `Show at header menu` — displays the `Copilot` menu in the schematic and PCB editors.
+
+<p align="center">
+  <img src="media/params.png" alt="EasyEDA Copilot extension permissions in Extensions Manager">
+</p>
+
 ## Connecting providers
 
 The standard provider list includes:

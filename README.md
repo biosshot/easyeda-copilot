@@ -1,7 +1,10 @@
 English | [简体中文](README.zh-CN.md) | [Русский](README.ru.md)
 # EasyEDA Copilot
 
-AI-powered assistant for EasyEDA Pro and JLCEDA. Generate schematics from natural language, complete existing circuits, search LCSC components by requirements, run SPICE simulations, and reuse proven circuit blocks directly inside your EDA workflow.
+AI-powered assistant for EasyEDA Pro and JLCEDA. Connect an MCP-capable agent to create and modify schematics, search components, design and route PCBs, inspect results, and run DRC directly in EasyEDA.
+
+> [!IMPORTANT]
+> **MCP is the recommended and actively developed interface for EasyEDA Copilot.** It is more reliable for agent workflows and provides the complete feature set, including PCB tools, checkpoints, document management, inspection, and DRC. The built-in Interface remains available for users who prefer it, but it is now considered legacy and receives limited maintenance.
 
 <p align="center">
   <a href="https://github.com/biosshot/easyeda-copilot/releases/latest">
@@ -16,24 +19,25 @@ AI-powered assistant for EasyEDA Pro and JLCEDA. Generate schematics from natura
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png" alt="EasyEDA Copilot interface">
+  <img src="docs/media/banner.gif" alt="EasyEDA Copilot MCP workflow: control EasyEDA from an external AI agent">
 </p>
 
 ## What it does
 
 EasyEDA Copilot adds an AI design layer to EasyEDA Pro:
 
-- **Generate circuits from text**: describe the circuit you need and let the agent assemble a schematic proposal.
-- **Complete existing schematics**: attach selected circuit fragments and ask Copilot to add, replace or connect parts.
+- **Generate circuits from text**: describe the circuit you need and let your MCP agent assemble a schematic proposal.
+- **Complete existing schematics**: let the agent read the current page and add, replace, connect, or rearrange parts.
 - **Search LCSC components**: find parts from natural-language requirements and electrical characteristics.
 - **Use reusable blocks**: insert reviewed standard subcircuits such as regulators, interfaces and protection blocks.
 - **Explain and analyze circuits**: discuss schematic behavior, signal flow and design tradeoffs.
-- **Run SPICE simulations**: simulate supported circuits and inspect selected models before trusting the result.
-- **Design PCBs through MCP**: generate placement, assemble the board, route it, inspect results, and run DRC from an MCP client.
+- **Design PCBs**: generate placement, preview and assemble the board, route it, inspect results, and run DRC.
+- **Work safely**: save and restore checkpoints, recover from failed schematic beautification, and handle long-running PCB operations.
+- **Manage projects**: inspect the project tree, open and synchronize documents, and select a target when several EasyEDA instances are connected.
 
 More examples are available on [Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples).
 
-## Installation
+## Quick start with MCP
 
 Download the latest `.eext` package from [Releases](https://github.com/biosshot/easyeda-copilot/releases/latest).
 
@@ -42,33 +46,56 @@ In EasyEDA Pro:
 1. Open `Settings -> Extensions -> Extensions Manager`.
 2. Click `Import Extensions`.
 3. Select the downloaded `.eext` file.
-4. Enable `External Interactions`.
-5. Open a schematic and use `Copilot -> Interface`.
-   
-## MCP server
+4. Enable `External Interactions` as shown in [Extension permissions](docs/settings.md#extension-permissions).
 
-EasyEDA Copilot can connect to external MCP clients. The extension scans `ws://127.0.0.1:8787` every 5 seconds and connects when your MCP server is available. The `Copilot -> MCP` menu item pauses or resumes this scan.
+<p align="center">
+  <a href="docs/media/params.png">
+    <img src="docs/media/params.png" alt="Enable External Interactions for EasyEDA Copilot" width="560">
+  </a>
+</p>
+
+Add the MCP server to your agent:
 
 Codex:
 
 ```bash
-codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 Claude Code:
 
 ```bash
-claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-Recommended order:
+Then:
 
-1. Add the MCP server to your agent.
-2. Start Codex, Claude Code, or another MCP client with this MCP server enabled.
-3. Open a schematic in EasyEDA Pro.
-4. EasyEDA Copilot will connect automatically. Use `Copilot -> MCP` only to pause or resume scanning.
+1. Start Codex, Claude Code, or another MCP client with this server enabled.
+2. Open the target schematic or PCB document in EasyEDA Pro.
+3. Ask the agent to work with the open EasyEDA document.
 
-See [MCP package README](mcp/README.md)
+The extension scans `ws://127.0.0.1:8787` every 5 seconds and connects automatically when the MCP server is available. `Copilot -> MCP` does not open a separate interface; it only pauses or resumes this scan.
+
+See the [MCP package README](mcp/README.md) for generic JSON configuration, local builds, and the detailed PCB workflow.
+
+## MCP and the legacy built-in Interface
+
+| Capability | MCP | Built-in Interface |
+| --- | --- | --- |
+| Generate and modify schematics | Yes | Yes, legacy workflow |
+| Component search and reusable blocks | Yes | Yes |
+| Checkpoints and automatic recovery | Yes | Limited |
+| Project and document management | Yes | No |
+| PCB placement, preview, and assembly | Yes | No |
+| PCB routing, inspection, layers, and DRC | Yes | No |
+| Multiple connected EasyEDA instances | Yes | No |
+| Development priority | Primary | Limited maintenance |
+
+The built-in Interface represents a substantial part of the project's history and remains useful to people who prefer an integrated chat and SPICE UI. Open it with `Copilot -> Interface (Legacy)`. New users and bug reports should use the MCP workflow first because it exposes more capabilities and has stronger connection monitoring, command timeouts, serialization, and recovery behavior.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png" alt="EasyEDA Copilot legacy built-in interface">
+</p>
 
 ## PCB Workflow (MCP only)
 

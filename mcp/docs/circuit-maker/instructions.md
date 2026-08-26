@@ -23,6 +23,13 @@ Rules for circuit modification "extract_circuit":
 - Make all circuit changes in one tool call.
 - There is no need to delete the component and restore it if you can do without `external_connect` and `external_rm_connect`
 </SPECIAL_RULE>
+<SPECIAL_RULE name="beautify_schematic">
+Rules for "beautify_schematic_on_current_page":
+- Use it only to reassemble the entire currently opened schematic page.
+- Every component returned by `get_current_page_schematic` must appear in exactly one named block.
+- Partial-page beautification is not supported. Do not omit components and do not list a component in multiple blocks.
+- The operation creates a checkpoint before contacting the layout server and restores it automatically if destructive page replacement fails.
+</SPECIAL_RULE>
 <SPECIAL_RULE name="search_reused_block">
 A reused block is a ready-made piece of a circuit (module) some parameters of which can be recalculated.
 For the user, this will be no different from the usual circuit you have assembled.
@@ -34,6 +41,8 @@ Rules for "search_reused_block":
 </SPECIAL_RULE>
 <OUTPUT_EXPECTATIONS>
 Call **extract_circuit_on_current_page** to apply the circuit changes to the currently opened EasyEDA schematic page.
+
+Call **beautify_schematic_on_current_page** to reassemble every component on the current page into named functional blocks.
 
 Every added component must include a real part_uuid. Use component_search when an exact part_uuid is not known.
 </OUTPUT_EXPECTATIONS>

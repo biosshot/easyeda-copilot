@@ -1,6 +1,9 @@
 [English](README.md) | 简体中文 | [Русский](README.ru.md)
 # EasyEDA Copilot
-适用于 EasyEDA Pro 和 JLCEDA 的 AI 助手。支持通过自然语言生成原理图、完善现有电路、根据需求搜索 LCSC 元器件、运行 SPICE 仿真，并可在 EDA 工作流中直接复用经过验证的电路模块。
+适用于 EasyEDA Pro 和 JLCEDA 的 AI 助手。通过支持 MCP 的 AI 代理创建和修改原理图、搜索元器件、设计和布线 PCB、检查结果，并直接在 EasyEDA 中运行 DRC。
+
+> [!IMPORTANT]
+> **MCP 是 EasyEDA Copilot 推荐且持续积极开发的接口。** 它更适合可靠的代理工作流，并提供完整功能，包括 PCB 工具、检查点、文档管理、检查和 DRC。内置 Interface 仍然保留给喜欢该工作方式的用户，但现在被视为 legacy，仅提供有限维护。
 
 <p align="center">
 <a href="https://github.com/biosshot/easyeda-copilot/releases/latest">
@@ -15,55 +18,80 @@
 </p>
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png" alt="EasyEDA Copilot interface">
+<img src="docs/media/banner.gif" alt="EasyEDA Copilot MCP 工作流：通过外部 AI 代理控制 EasyEDA">
 </p>
 
 ## 核心功能
 EasyEDA Copilot 为 EasyEDA Pro 引入了全新的 AI 设计层：
-- **文本生成电路**：描述您需要的电路，让 AI 代理为您生成原理图方案。
-- **完善现有原理图**：附加选定的电路片段，让 Copilot 添加、替换或连接器件。
+- **文本生成电路**：描述您需要的电路，让 MCP 代理为您生成原理图方案。
+- **完善现有原理图**：让代理读取当前页面并添加、替换、连接或重新排列器件。
 - **搜索 LCSC 元器件**：通过自然语言描述需求和电气特性来查找元器件。
 - **使用可复用模块**：插入经过验证的标准子电路，如稳压器、接口和保护电路模块。
 - **解释与分析电路**：探讨原理图行为、信号流向以及设计权衡。
-- **运行 SPICE 仿真**：对支持的电路进行仿真，并在采信结果前检查所选用的模型。
-- **通过 MCP 设计 PCB**：生成元件布局、组装电路板、进行布线、检查结果，并通过 MCP 客户端运行 DRC（设计规则检查）。
+- **设计 PCB**：生成和预览布局、组装电路板、进行布线、检查结果并运行 DRC。
+- **安全地修改项目**：保存和恢复检查点，在原理图整理失败时自动恢复，并管理长时间运行的 PCB 操作。
+- **管理项目**：读取项目树、打开和同步文档，并在连接多个 EasyEDA 实例时选择目标。
 
 更多示例请访问 [Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples)。
 
-## 安装
+## 使用 MCP 快速开始
 从 [Releases](https://github.com/biosshot/easyeda-copilot/releases/latest) 下载最新的 `.eext` 安装包。
 
 在 EasyEDA Pro 中：
 1. 打开 `设置 -> 扩展 -> 扩展管理器` (`Settings -> Extensions -> Extensions Manager`)。
 2. 点击 `导入扩展` (`Import Extensions`)。
 3. 选择下载好的 `.eext` 文件。
-4. 允许 `外部交互` (`External Interactions`)。
-5. 打开原理图，使用 `Copilot -> 界面` (`Copilot -> Interface`)。
+4. 按照[扩展权限](docs/settings.md#extension-permissions)中的示例允许 `外部交互` (`External Interactions`)。
 
-## MCP 服务器
-EasyEDA Copilot 可以连接到外部 MCP 客户端。该扩展每 5 秒扫描一次 `ws://127.0.0.1:8787`，并在您的 MCP 服务器可用时进行连接。`Copilot -> MCP` 菜单项可暂停或恢复此扫描。
+<p align="center">
+  <a href="docs/media/params.png">
+    <img src="docs/media/params.png" alt="为 EasyEDA Copilot 启用 External Interactions" width="560">
+  </a>
+</p>
+
+将 MCP 服务器添加到您的代理：
 
 Codex:
 ```bash
-codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 Claude Code:
 
 ```bash
-claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-推荐操作步骤：
+然后：
 
-1. 将 MCP 服务器添加到您的代理中。
-2. 启动 Codex、Claude Code 或其他启用了此 MCP 服务器的 MCP 客户端。
-3. 在 EasyEDA Pro 中打开原理图。
-4. EasyEDA Copilot 将自动连接。仅在需要暂停或恢复扫描时使用 `Copilot -> MCP`。
+1. 启动启用了此服务器的 Codex、Claude Code 或其他 MCP 客户端。
+2. 在 EasyEDA Pro 中打开目标原理图或 PCB 文档。
+3. 让代理处理当前打开的 EasyEDA 文档。
 
-请参阅  [MCP 包 README](mcp/README.md)
+扩展每 5 秒扫描一次 `ws://127.0.0.1:8787`，并在 MCP 服务器可用时自动连接。`Copilot -> MCP` 不会打开单独的界面；它仅用于暂停或恢复扫描。
 
-## PCB 工作流（仅限 MCP
+通用 JSON 配置、本地构建和详细 PCB 工作流请参阅 [MCP 包 README](mcp/README.zh-CN.md)。
+
+## MCP 与内置 Interface（legacy）
+
+| 功能 | MCP | 内置 Interface |
+| --- | --- | --- |
+| 生成和修改原理图 | 是 | 是，legacy 工作流 |
+| 元器件搜索和可复用模块 | 是 | 是 |
+| 检查点和自动恢复 | 是 | 有限 |
+| 项目和文档管理 | 是 | 否 |
+| PCB 布局、预览和组装 | 是 | 否 |
+| PCB 布线、检查、层数和 DRC | 是 | 否 |
+| 多个已连接的 EasyEDA 实例 | 是 | 否 |
+| 开发优先级 | 主要 | 有限维护 |
+
+内置 Interface 凝聚了大量开发工作，并且仍适合喜欢集成聊天和 SPICE UI 的用户。可通过 `Copilot -> Interface (Legacy)` 打开它。建议新用户以及提交错误报告前优先使用 MCP，因为 MCP 提供更多功能，并具备更完善的连接监控、命令超时、串行执行和恢复机制。
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png" alt="EasyEDA Copilot legacy built-in interface">
+</p>
+
+## PCB 工作流（仅限 MCP）
 
 PCB 布局功能仅可通过 Codex 或 Claude Code 等外部 MCP 客户端使用。内置的 Copilot 聊天窗口不支持此功能。
 

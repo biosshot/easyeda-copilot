@@ -16,6 +16,10 @@ export const RawPcbComponentSchema = () => z.object({
 });
 
 export const RawPcbPadSchema = () => z.object({
+    /** Stable editor primitive id when the source format exposes one. */
+    id: z.string().optional(),
+    /** Owning component designator, e.g. U1. Optional for backwards compatibility. */
+    component: z.string().optional(),
     x: z.number(),
     y: z.number(),
     net: z.string(),

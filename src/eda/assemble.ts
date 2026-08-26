@@ -84,20 +84,21 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
             uuid: partUuid
         }, { x, y, rotate, subPartName: component.sub_part_name });
 
-        comp.setState_Designator(rmPartFromDesignator(designator));
+        comp = comp.setState_Designator(rmPartFromDesignator(designator));
     }
 
     eda.sys_Log.add(`Place component ${designator} ${partUuid} at ${x} ${y} rot: ${pos.rotate}`);
 
     if (mirror) {
-        comp.setState_Mirror(mirror);
+        comp = comp.setState_Mirror(mirror);
     }
 
     return comp;
 }
 
 async function placeComponents(components: CircuitAssembly['components'], offset: Offset = { x: 0, y: 0 }): Promise<PlacedComponents> {
-    const placedComponentsP = components.map(async (component) => {
+    const placementQueue = new PQueue({ concurrency: 5 });
+    const placedComponents = await placementQueue.addAll(components.map(component => async () => {
         const { part_uuid: partUuid, designator } = component;
         if (!partUuid) return undefined;
 
@@ -116,9 +117,7 @@ async function placeComponents(components: CircuitAssembly['components'], offset
             eda.sys_Message.showToastMessage(`Component error ${designator}: ${eMes}`, ESYS_ToastMessageType.ERROR);
             return undefined;
         }
-    });
-
-    const placedComponents = await Promise.all(placedComponentsP);
+    }));
 
     return Object.fromEntries(placedComponents.filter(Boolean).map((component) => [component?.designator, component]));
 }

@@ -15,6 +15,7 @@ concurrency:
 
 permissions:
   contents: write
+  id-token: write
 
 jobs:
   build:
@@ -29,6 +30,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
+          registry-url: https://registry.npmjs.org
 
       - name: Install dependencies
         run: npm ci
@@ -51,6 +53,23 @@ jobs:
           name: easyeda-copilot-${{ github.sha }}
           path: artifacts/*
           retention-days: 14
+
+      - name: Publish MCP package to npm
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          package_spec=$(node -p "const p = require('./mcp/package.json'); p.name + '@' + p.version")
+          npm view "$package_spec" version || npm publish --workspace=mcp --access public
+
+      - name: Install MCP Registry publisher
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
+
+      - name: Publish to Official MCP Registry
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: mcp
+        run: |
+          ../mcp-publisher login github-oidc
+          ../mcp-publisher publish
 
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')

@@ -6,7 +6,42 @@ import { postJson } from "../utils/server";
 import { SKILL_DOC_PATH, TEMP_DIR } from "../utils/dirs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { CircuitModStruct, ExplainCircuit, ExplainCircuitStruct } from "@copilot/shared/types/circuit";
+import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit, ExplainCircuitStruct } from "@copilot/shared/types/circuit";
+
+type SchematicBlocks = Record<string, string[]>;
+
+function baseDesignator(value: string) {
+    return value.trim().replace(/\.\d+$/, '');
+}
+
+function selectedBlocks(blocks: SchematicBlocks) {
+    const selected = new Map<string, string>();
+
+    for (const [rawBlockName, designators] of Object.entries(blocks)) {
+        const blockName = rawBlockName.trim();
+        if (!blockName) throw new Error('Block name must not be empty.');
+        if (!designators.length) throw new Error(`Block has no components: ${blockName}`);
+
+        for (const rawDesignator of designators) {
+            const designator = baseDesignator(rawDesignator);
+            if (!designator) throw new Error(`Empty component designator in block: ${blockName}`);
+            if (selected.has(designator)) {
+                throw new Error(`Component appears in multiple blocks: ${designator}`);
+            }
+            selected.set(designator, blockName);
+        }
+    }
+
+    if (!selected.size) throw new Error('Blocks must contain at least one component.');
+    return selected;
+}
+
+function serverAssembly(response: unknown) {
+    const record = typeof response === 'object' && response !== null
+        ? response as Record<string, unknown>
+        : undefined;
+    return (record?.circuit || response) as CircuitAssembly;
+}
 
 export function registerCircuitTools(server: McpServer, bridge: Bridge) {
     server.registerTool(
@@ -104,6 +139,96 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             return textResult({
                 message: 'Circuit sent to EasyEDA for assembly. Run check_schematic_erc to verify it.',
                 assembly: assemblyPath,
+            });
+        },
+    );
+
+    server.registerTool(
+        'beautify_schematic_on_current_page',
+        {
+            title: 'Beautify EasyEDA Schematic',
+            description: `Reassemble every component on the current EasyEDA schematic page into named functional blocks. The blocks must cover the whole page. A checkpoint is saved before the server request, and assembly failures restore it automatically. For circuit workflow docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+            inputSchema: z.object({
+                blocks: z.record(
+                    z.string().min(1).describe('Block name.'),
+                    z.array(z.string().min(1)).min(1).describe('Component designators in the block.'),
+                ).describe('All current-page components grouped by block name.'),
+            }),
+        },
+        async ({ blocks }) => {
+            const inputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
+            if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
+
+            const requested = selectedBlocks(blocks);
+            const components = new Map(inputCircuit.components.map(component => [
+                baseDesignator(component.designator),
+                component,
+            ]));
+            const unknown = [...requested.keys()].filter(designator => !components.has(designator));
+            const missing = [...components.keys()].filter(designator => !requested.has(designator));
+
+            if (unknown.length) throw new Error(`Components not found on the current page: ${unknown.join(', ')}`);
+            if (missing.length) throw new Error(`Blocks do not cover the whole current page. Missing: ${missing.join(', ')}`);
+
+            const missingPartUuid = [...components]
+                .filter(([, component]) => !component.part_uuid || /^0+$/.test(component.part_uuid))
+                .map(([designator]) => designator);
+            if (missingPartUuid.length) {
+                throw new Error(`Components have no part_uuid: ${missingPartUuid.join(', ')}`);
+            }
+
+            const checkpointResult = await bridge.requestEasyEda('checkpoint-save') as { checkpointId?: unknown };
+            const checkpointId = checkpointResult?.checkpointId;
+            if (typeof checkpointId !== 'string' || !checkpointId) {
+                throw new Error('Failed to save a checkpoint before beautify.');
+            }
+
+            const circuit: CircuitMod = {
+                add_components: [...requested].map(([designator, blockName]) => {
+                    const component = components.get(designator)!;
+                    return {
+                        designator,
+                        value: component.value,
+                        pins: component.pins,
+                        block_name: blockName,
+                        search_query: component.value,
+                        part_uuid: component.part_uuid!,
+                    };
+                }),
+                add_reused_blocks: [],
+                rm_components: null,
+                external_rm_connect: null,
+                external_connect: null,
+            };
+
+            const response = await postJson('/v1/mcp-tools/extract-circuit', {
+                circuit,
+                inputCircuit: { components: [] },
+            });
+            const assembly = serverAssembly(response);
+            if (!assembly || !Array.isArray(assembly.components)) {
+                throw new Error('Beautify server returned an invalid circuit assembly.');
+            }
+
+            const assembledDesignators = new Set(assembly.components.map(component => baseDesignator(component.designator)));
+            const absentFromAssembly = [...components.keys()].filter(designator => !assembledDesignators.has(designator));
+            if (absentFromAssembly.length) {
+                throw new Error(`Beautify server omitted components: ${absentFromAssembly.join(', ')}`);
+            }
+
+            assembly.rm_components = [];
+            assembly.replace_components = [];
+            assembly.rm_net = [];
+
+            await bridge.requestEasyEda('beautify-current-page', {
+                circuit: assembly,
+                checkpointId,
+                expectedDesignators: [...components.keys()],
+            }, 300000);
+
+            return textResult({
+                message: 'Current EasyEDA schematic page beautified.',
+                checkpointId,
             });
         },
     );

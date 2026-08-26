@@ -4,6 +4,8 @@ EasyEDA Copilot 的 MCP 服务器。
 
 它通过 EasyEDA Copilot 扩展将 Codex 或 Claude Code 等 MCP 客户端连接到 EasyEDA Desktop。支持原理图设计、元器件搜索、PCB 布局、组装、布线、检查以及 DRC。
 
+MCP 是 EasyEDA Copilot 推荐且持续积极开发的接口。内置 Interface 仍作为 legacy 工作流保留，但功能较少且仅提供有限维护。
+
 ## 系统要求
 - EasyEDA Desktop V3.2.149。
 - 已启用“外部交互”（`External Interactions`）的 EasyEDA Copilot 扩展。
@@ -44,13 +46,13 @@ npm run build
 Codex:
 
 ```bash
-codex mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 Claude Code:
 
 ```bash
-claude mcp add easyeda-copilot -- npx easyeda-copilot-mcp
+claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 通用 MCP 配置：
