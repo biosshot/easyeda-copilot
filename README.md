@@ -202,6 +202,46 @@ Detailed placement and routing references:
 - [PCB routing DSL](mcp/docs/pcb-routing/dsl.ts)
 - [Verification and recovery](mcp/docs/verification.md)
 
+<details>
+<summary><strong>PCB comparison gallery: EasyEDA Copilot and Quilter</strong></summary>
+
+Earlier side-by-side examples show the PCB results produced for the same RP2040, PICO Duck, and ESPower designs.
+
+#### RP2040 board
+
+<p align="center">
+  <a href="docs/media/pcb-examples/rp2040_copilot_top.png"><img src="docs/media/pcb-examples/rp2040_copilot_top.png" alt="RP2040 PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="docs/media/pcb-examples/rp2040_quiliter_top.png" alt="RP2040 PCB produced with Quilter, top layer" width="48%"></a>
+</p>
+<p align="center">
+  <a href="docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="docs/media/pcb-examples/rp2040_copilot_bot.png" alt="RP2040 PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="RP2040 PCB produced with Quilter, bottom layer" width="48%"></a>
+</p>
+
+#### PICO Duck compact board
+
+<p align="center">
+  <a href="docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="docs/media/pcb-examples/pico_duck_copilot_top.png" alt="PICO Duck PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="docs/media/pcb-examples/pico_duck_quilter_top.png" alt="PICO Duck PCB produced with Quilter, top layer" width="48%"></a>
+</p>
+<p align="center">
+  <a href="docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="PICO Duck PCB produced with Quilter, bottom layer" width="48%"></a>
+</p>
+
+#### ESPower board
+
+<p align="center">
+  <a href="docs/media/pcb-examples/espower_copilot_top.png"><img src="docs/media/pcb-examples/espower_copilot_top.png" alt="ESPower PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/espower_quiliter_top.png"><img src="docs/media/pcb-examples/espower_quiliter_top.png" alt="ESPower PCB produced with Quilter, top layer" width="48%"></a>
+</p>
+<p align="center">
+  <a href="docs/media/pcb-examples/espower_copilot_bot.png"><img src="docs/media/pcb-examples/espower_copilot_bot.png" alt="ESPower PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="docs/media/pcb-examples/espower_quiliter_bot.png"><img src="docs/media/pcb-examples/espower_quiliter_bot.png" alt="ESPower PCB produced with Quilter, bottom layer" width="48%"></a>
+</p>
+
+</details>
+
 ## Compatibility
 
 | EasyEDA Pro version | Status   |
@@ -233,8 +273,53 @@ New workflows and bug reports should use MCP unless the issue is specific to the
 <details>
 <summary>Show the legacy built-in interface</summary>
 
+The original interface provides an integrated chat workflow for schematic generation, circuit completion, component selection, reusable blocks, and SPICE simulation. These demonstrations use the legacy interface; MCP remains the recommended integration for new agent workflows.
+
 <p align="center">
   <img src="docs/media/main.png" alt="EasyEDA Copilot legacy built-in interface">
+</p>
+
+#### Circuit generation and reusable blocks
+
+Generate a structured schematic from a natural-language description and assemble reviewed reusable subcircuits directly in EasyEDA.
+
+<p align="center">
+  <img src="docs/media/use-reused.gif" alt="Generating an EasyEDA schematic with reusable circuit blocks">
+</p>
+
+#### Circuit completion
+
+Read an existing schematic fragment, add the missing components, and complete its electrical connections.
+
+<p align="center">
+  <img src="docs/media/circuit-compl-ex1.gif" alt="Completing an existing EasyEDA schematic, example one" width="48%">
+  <img src="docs/media/circuit-compl-ex2.gif" alt="Completing an existing EasyEDA schematic, example two" width="48%">
+</p>
+
+#### Component selection
+
+Search the LCSC catalog from engineering requirements and compare candidate parts without leaving the design workflow.
+
+<p align="center">
+  <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="Component selection from an engineering request" width="32%"></a>
+  <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="LCSC component search results in EasyEDA Copilot" width="32%"></a>
+  <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="Selecting a component candidate in EasyEDA Copilot" width="32%"></a>
+</p>
+
+#### Exporting reusable blocks
+
+Save an existing schematic fragment as a reusable circuit block for later generation workflows.
+
+<p align="center">
+  <img src="docs/media/export-reused.gif" alt="Exporting an EasyEDA schematic fragment as a reusable block">
+</p>
+
+#### SPICE simulation
+
+Run a SPICE simulation from the built-in interface and inspect the selected component models together with the resulting plots.
+
+<p align="center">
+  <img src="docs/media/spice.gif" alt="Running a SPICE simulation in the EasyEDA Copilot built-in interface">
 </p>
 
 </details>
