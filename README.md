@@ -62,6 +62,8 @@ The workflow demonstrates multi-page schematic generation, functional placement,
 
 <!-- Upload media/readme/esp32c3-demo.mp4 through the GitHub README editor. Wrap the generated URL in a details block titled "Watch the 69-second demonstration". -->
 
+https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+
 ### MIMXRT1011 controller
 
 A dense four-layer microcontroller design demonstrating placement and routing around a high-pin-count MCU, multiple interfaces, decoupling groups, board-edge connectors, mounting holes, and mechanical access constraints.
@@ -71,6 +73,10 @@ A dense four-layer microcontroller design demonstrating placement and routing ar
 </p>
 
 <!-- Upload media/readme/mimxrt1011-demo.mp4 through the GitHub README editor. Wrap the generated URL in a details block titled "Watch the full demonstration". -->
+
+
+https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
+
 
 ### Schematic beautification
 
@@ -82,6 +88,10 @@ EasyEDA Copilot reads an existing schematic, identifies functional groups, saves
 </p>
 
 <!-- Upload media/readme/schematic-beautify-demo.mp4 through the GitHub README editor and place the generated user-attachments URL here on its own line. -->
+
+
+https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
+
 
 More editable examples are available on [OSHWLab](https://oshwlab.com/biosshot/edacopilotexamples).
 
