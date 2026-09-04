@@ -44,6 +44,7 @@ The RF ports are positioned on opposite board edges, the amplifier chain is kept
 </p>
 
 <!-- Upload media/readme/bga2869-2ghz-demo.mp4 through the GitHub README editor and place the generated user-attachments URL here on its own line. -->
+https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
 
 ## More demonstrations
 
