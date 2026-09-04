@@ -1,8 +1,6 @@
 English | [简体中文](README.zh-CN.md) | [Русский](README.ru.md)
 
-<img src="images/logo.png" alt="EasyEDA Copilot logo" width="80" align="right">
-
-# EasyEDA Copilot
+# <img src="images/logo.png" alt="" width="42"> EasyEDA Copilot
 
 MCP-based engineering automation for native EasyEDA Pro and JLCEDA documents.
 
@@ -39,11 +37,6 @@ A complete RF design workflow inside EasyEDA Pro: schematic organization, pin-le
 
 The RF ports are positioned on opposite board edges, the amplifier chain is kept ordered, and the bias network is placed close to the MMIC. The resulting components, tracks, vias, and copper zones remain editable as native EasyEDA objects.
 
-<p align="center">
-  <img src="docs/media/demos/bga2869-2ghz.png" alt="BGA2869 2 GHz RF amplifier PCB designed with EasyEDA Copilot" width="704">
-</p>
-
-<!-- Upload media/readme/bga2869-2ghz-demo.mp4 through the GitHub README editor and place the generated user-attachments URL here on its own line. -->
 https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
 
 ## More demonstrations
@@ -56,42 +49,34 @@ A complete ESP32-C3 controller with power conversion, USB, CAN, RS-485, protecte
 
 The workflow demonstrates multi-page schematic generation, functional placement, board-edge and antenna constraints, power and signal routing, copper planes, via stitching, inspection, and DRC-driven repair.
 
-<p align="center">
-  <img src="docs/media/demos/esp32c3-controller.png" alt="ESP32-C3 controller PCB designed with EasyEDA Copilot">
-</p>
-
-<!-- Upload media/readme/esp32c3-demo.mp4 through the GitHub README editor. Wrap the generated URL in a details block titled "Watch the 69-second demonstration". -->
+<details>
+<summary><strong>Watch the ESP32-C3 workflow (69 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+
+</details>
 
 ### MIMXRT1011 controller
 
 A dense four-layer microcontroller design demonstrating placement and routing around a high-pin-count MCU, multiple interfaces, decoupling groups, board-edge connectors, mounting holes, and mechanical access constraints.
 
-<p align="center">
-  <img src="docs/media/demos/mimxrt1011-controller.png" alt="MIMXRT1011 controller placement generated with EasyEDA Copilot" width="640">
-</p>
-
-<!-- Upload media/readme/mimxrt1011-demo.mp4 through the GitHub README editor. Wrap the generated URL in a details block titled "Watch the full demonstration". -->
-
+<details>
+<summary><strong>Watch the MIMXRT1011 workflow (128 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
 
+</details>
 
 ### Schematic beautification
 
 EasyEDA Copilot reads an existing schematic, identifies functional groups, saves a document checkpoint, and reassembles the page into named blocks while retaining its electrical connectivity and component identities.
 
-<p align="center">
-  <img src="docs/media/demos/schematic-before.png" alt="EasyEDA schematic before automatic organization" width="48%">
-  <img src="docs/media/demos/schematic-after.png" alt="EasyEDA schematic after checkpoint-backed automatic organization" width="48%">
-</p>
-
-<!-- Upload media/readme/schematic-beautify-demo.mp4 through the GitHub README editor and place the generated user-attachments URL here on its own line. -->
-
+<details>
+<summary><strong>Watch schematic beautification (13 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
 
+</details>
 
 More editable examples are available on [OSHWLab](https://oshwlab.com/biosshot/edacopilotexamples).
 
