@@ -1,47 +1,103 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | Русский
-# EasyEDA Copilot
-Ассистент для EasyEDA Pro и JLCEDA на базе ИИ. Подключает MCP-агента к EasyEDA для создания и изменения схем, поиска компонентов, проектирования и трассировки PCB, инспекции результатов и запуска DRC.
 
-> [!IMPORTANT]
-> **MCP — рекомендуемый и активно развиваемый интерфейс EasyEDA Copilot.** Он надёжнее для агентных сценариев и предоставляет полный набор возможностей, включая работу с PCB, checkpoints, документами, инспекцией и DRC. Встроенный Interface остаётся доступным для тех, кому нравится этот способ работы, но теперь считается legacy и получает ограниченную поддержку.
+# <img src="images/logo.png" alt="" width="42"> EasyEDA Copilot
+
+Инженерная автоматизация на базе MCP для нативных документов EasyEDA Pro и JLCEDA.
+
+EasyEDA Copilot подключает ИИ-агентов с поддержкой MCP к реальным данным схем и печатных плат. Он поддерживает генерацию и реорганизацию схем, подбор компонентов, размещение PCB с учётом ограничений, транзакционную трассировку с контрольными точками, структурированный анализ проекта, восстановление и нативную проверку DRC в EasyEDA.
 
 <p align="center">
+  <a href="https://github.com/biosshot/easyeda-copilot/actions/workflows/build.yml">
+    <img src="https://github.com/biosshot/easyeda-copilot/actions/workflows/build.yml/badge.svg" alt="Статус сборки">
+  </a>
   <a href="https://github.com/biosshot/easyeda-copilot/releases/latest">
-    <img src="https://img.shields.io/github/v/release/biosshot/easyeda-copilot?label=release" alt="Latest release">
+    <img src="https://img.shields.io/github/v/release/biosshot/easyeda-copilot?label=release" alt="Последний релиз">
   </a>
   <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-MIT-blue" alt="License">
+    <img src="https://img.shields.io/badge/license-MIT-blue" alt="Лицензия">
   </a>
   <a href="https://discord.gg/AXCGjTDYkq">
     <img src="https://img.shields.io/badge/Discord-7289DA?logo=discord&logoColor=white" alt="Discord">
   </a>
+  <a href="https://web.tribute.tg/d/PTf">
+    <img src="https://img.shields.io/badge/Support%20development-Tribute-24A1DE" alt="Поддержать разработку EasyEDA Copilot">
+  </a>
 </p>
 
 <p align="center">
-  <img src="docs/media/banner.gif" alt="Работа EasyEDA Copilot через MCP: управление EasyEDA из внешнего AI-агента">
+  <img src="docs/media/banner.gif" alt="EasyEDA Copilot создаёт и собирает схему LDO по текстовому техническому заданию">
+</p>
+<p align="center">
+  <sub>Создание и сборка схемы LDO по текстовому техническому заданию.</sub>
 </p>
 
-## Возможности Copilot
-EasyEDA Copilot добавляет новый уровень AI-проектирования в EasyEDA Pro:
-- **Генерация схем по текстовому описанию**: опишите нужную схему и позвольте MCP-агенту собрать предложенный вариант.
-- **Доработка существующих схем**: агент читает открытую страницу и может добавлять, заменять, соединять и перегруппировывать компоненты.
-- **Поиск компонентов в LCSC**: находит элементы из текстового запроса по нужным характеристикам и требованиям.
-- **Применение переиспользуемых блоков**: включает проверенные типовые подсхемы, такие как стабилизаторы, интерфейсы и блоки защиты.
-- **Объяснение и анализ схем**: объясняет поведение схем, прохождение сигнала и компромиссы при проектировании.
-- **Проектирование печатных плат**: формирует и показывает размещение, собирает плату, выполняет трассировку, проверяет результат и запускает DRC.
-- **Безопасное изменение проекта**: сохраняет и восстанавливает checkpoints, откатывает неудачную перегруппировку схемы и контролирует длительные PCB-операции.
-- **Управление проектом**: читает дерево проекта, открывает и синхронизирует документы, выбирает целевое окно при нескольких подключённых экземплярах EasyEDA.
+## Главная демонстрация: ВЧ-усилитель BGA2869 на 2 ГГц
 
-Больше примеров доступно на [Oshwlab](https://oshwlab.com/biosshot/edacopilotexamples).
+Полный цикл разработки ВЧ-устройства в EasyEDA Pro: организация схемы, ограничения сигнального тракта на уровне выводов, компактное размещение компонентов, трассировка PCB, полигоны земли и сшивающие переходные отверстия.
 
-## Быстрый старт с MCP
-Загрузите `.eext` последней сборки из [Releases](https://github.com/biosshot/easyeda-copilot/releases/latest).
+ВЧ-порты расположены на противоположных краях платы, каскад усилителя сохраняет заданный порядок, а цепь смещения размещена рядом с MMIC. Полученные компоненты, дорожки, переходные отверстия и медные зоны остаются редактируемыми нативными объектами EasyEDA.
+
+https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
+
+## Другие демонстрации
+
+Эти примеры показывают более крупные платы контроллеров и работу с уже существующими документами. Каждый результат остаётся обычным редактируемым проектом EasyEDA, а не экспортированным изображением или макетом.
+
+### Контроллер ESP32-C3
+
+Полноценный контроллер на ESP32-C3 с преобразованием питания, USB, CAN, RS-485, защищёнными полевыми входами и выходами, внешними разъёмами и ограничениями размещения антенны.
+
+В этом цикле показаны генерация многостраничной схемы, функциональное размещение, ограничения по краям платы и зоне антенны, трассировка питания и сигналов, медные полигоны, сшивающие переходные отверстия, анализ и исправления по результатам DRC.
+
+<details open>
+<summary><strong>Смотреть цикл ESP32-C3 (69 секунд)</strong></summary>
+
+https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+
+</details>
+
+### Контроллер MIMXRT1011
+
+Плотная четырёхслойная плата микроконтроллера, демонстрирующая размещение и трассировку вокруг MCU с большим числом выводов, нескольких интерфейсов, групп развязывающих конденсаторов, краевых разъёмов, монтажных отверстий и ограничений механического доступа.
+
+<details open>
+<summary><strong>Смотреть цикл MIMXRT1011 (128 секунд)</strong></summary>
+
+https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
+
+</details>
+
+### Приведение схемы в порядок
+
+EasyEDA Copilot считывает существующую схему, определяет функциональные группы, сохраняет контрольную точку документа и перестраивает страницу в именованные блоки, сохраняя электрические соединения и идентификаторы компонентов.
+
+<details open>
+<summary><strong>Смотреть реорганизацию схемы (13 секунд)</strong></summary>
+
+https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
+
+</details>
+
+Другие редактируемые примеры доступны на [OSHWLab](https://oshwlab.com/biosshot/edacopilotexamples).
+
+## Быстрый старт
+
+### Требования
+
+- EasyEDA Pro Desktop;
+- Node.js 20 или новее;
+- MCP-клиент, например Codex или Claude Code.
+
+### 1. Установите расширение EasyEDA
+
+Скачайте последний пакет `.eext` на странице [GitHub Releases](https://github.com/biosshot/easyeda-copilot/releases/latest).
 
 В EasyEDA Pro:
+
 1. Откройте `Settings -> Extensions -> Extensions Manager`.
-2. Нажмите `Import Extensions`.
-3. Выберите скачанный `.eext` файл.
-4. Разрешите `External Interactions`, как показано в разделе [Разрешения расширения](docs/settings.md#extension-permissions).
+2. Выберите `Import Extensions`.
+3. Укажите скачанный файл `.eext`.
+4. Включите `External Interactions`.
 
 <p align="center">
   <a href="docs/media/params.png">
@@ -49,9 +105,10 @@ EasyEDA Copilot добавляет новый уровень AI-проектир
   </a>
 </p>
 
-Добавьте MCP-сервер к агенту:
+### 2. Добавьте MCP-сервер
 
 Codex:
+
 ```bash
 codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
@@ -62,136 +119,266 @@ Claude Code:
 claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-Затем:
+Общая конфигурация MCP и локальная сборка описаны в [документации пакета MCP](mcp/README.ru.md).
 
-1. Запустите Codex, Claude Code или другой MCP-клиент с включённым сервером.
-2. Откройте целевую схему или документ PCB в EasyEDA Pro.
-3. Попросите агента работать с открытым документом EasyEDA.
+### 3. Откройте проект
 
-Расширение сканирует `ws://127.0.0.1:8787` каждые 5 секунд и подключается автоматически, когда MCP-сервер доступен. `Copilot -> MCP` не открывает отдельный интерфейс — этот пункт только приостанавливает или возобновляет сканирование.
+1. Запустите MCP-клиент с включённым EasyEDA Copilot.
+2. Откройте в EasyEDA Pro целевую схему или документ PCB.
+3. Попросите агента проанализировать открытый проект EasyEDA и начать работу над ним.
 
-Общая JSON-конфигурация, локальная сборка и подробный PCB workflow описаны в [README пакета MCP](mcp/README.ru.md).
+Расширение автоматически обнаруживает локальный мост MCP. Команда `Copilot -> MCP` приостанавливает или возобновляет соединение.
 
-## MCP и встроенный Interface (legacy)
+## Возможности
 
-| Возможность | MCP | Встроенный Interface |
-| --- | --- | --- |
-| Генерация и изменение схем | Да | Да, legacy workflow |
-| Поиск компонентов и reusable blocks | Да | Да |
-| Checkpoints и автоматическое восстановление | Да | Ограниченно |
-| Управление проектом и документами | Да | Нет |
-| Размещение, preview и сборка PCB | Да | Нет |
-| Трассировка, инспекция, слои и DRC | Да | Нет |
-| Несколько подключённых экземпляров EasyEDA | Да | Нет |
-| Приоритет разработки | Основной | Ограниченная поддержка |
+| Область             | Возможности                                                                                                                                                                                                                              |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Схемы               | Анализ текущей страницы, создание и завершение цепей, реорганизация существующих схем в функциональные блоки и аннотация обозначений на нескольких страницах                                                                             |
+| Компоненты          | Поиск компонентов EasyEDA по MPN производителя или UUID детали и поиск проверенных повторно используемых схемных блоков                                                                                                                  |
+| Размещение PCB      | Создание геометрии платы и размещение с учётом функциональных блоков, модулей, близости выводов, заданного порядка сигнальных трактов, краевого размещения, запретных зон, монтажных отверстий, тепловых площадок и сохраняемых объектов |
+| Трассировка PCB     | Определение классов цепей, сигнальных и силовых цепей, медных полигонов, дифференциальных пар, согласованных групп, fanout, требований по импедансу, выборочной перетрассировки и сшивающих переходных отверстий                         |
+| Анализ              | Рендеринг PCB с учётом слоёв, подсветка цепей и компонентов, анализ длины трассировки, ширины дорожек, слоёв, переходных отверстий, площадок, полигонов, соседних компонентов и неразведённых соединений                                 |
+| Проверка            | Чтение текущих правил DRC, запуск нативного DRC EasyEDA, анализ нарушений и выбор между сохранением, исправлением или откатом применённого результата                                                                                    |
+| Управление проектом | Анализ дерева проекта, создание и открытие проектов или документов, синхронизация редакторов и выбор между несколькими подключёнными экземплярами EasyEDA                                                                                |
+| Длительные операции | Наблюдение, продолжение, повторное применение подготовленного результата или отмена длительных операций размещения и трассировки PCB                                                                                                     |
 
-Во встроенный Interface вложено много сил, и он остаётся полезным для пользователей, которым нравится интегрированный чат и UI для SPICE. Он доступен через `Copilot -> Interface (Legacy)`. Новым пользователям и при воспроизведении ошибок рекомендуется начинать с MCP: в нём больше возможностей, а соединение, очереди команд, тайм-ауты и восстановление обрабатываются надёжнее.
+## Контрольные точки, транзакции и восстановление
+
+EasyEDA Copilot использует полные контрольные точки документов и явные границы применения изменений, чтобы защищать уже выполненную инженерную работу. Изменения предварительно просматриваются, применяются к нативным документам EasyEDA, проверяются, а затем сохраняются, исправляются или откатываются.
+
+| Рабочий процесс                    | Защита и восстановление                                                                                                                                       |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Сборка схемы по исходному описанию | Сохраняет полную контрольную точку документа до изменения и автоматически восстанавливает её при ошибке сборки                                                |
+| Реорганизация схемы                | Сохраняет контрольную точку до замены страницы и автоматически восстанавливает её при ошибке                                                                  |
+| Многостраничная аннотация          | Сохраняет контрольную точку каждой затронутой страницы и откатывает изменённые страницы при сбое транзакции аннотации                                         |
+| Размещение PCB                     | Создаёт механическое и итоговое превью, сохраняет существующую работу на плате и создаёт контрольную точку перед сборкой                                      |
+| Трассировка PCB                    | Применяет правила DRC, выбранную замену меди, новые дорожки, переходные отверстия, зоны, синхронизацию и нативный DRC в одной транзакции с контрольной точкой |
+| Ошибка применения трассировки      | Автоматически восстанавливает контрольную точку до трассировки                                                                                                |
+| Ручное восстановление              | Позволяет явно просматривать, сохранять и восстанавливать контрольные точки текущего документа EasyEDA                                                        |
+
+Контрольные точки содержат полный исходный документ EasyEDA, а не только список действий агента. Существующие дорожки, переходные отверстия и медные зоны по умолчанию сохраняются и учитываются как фиксированные препятствия трассировки. Медь заменяется только тогда, когда программа трассировки явно выбирает соответствующие цепи и типы объектов через `clearRouting(...)`.
+
+Успешно применённый частичный результат трассировки остаётся доступным для анализа и точечного исправления. Исключение при применении восстанавливает контрольную точку, созданную до трассировки. Восстановление защищает документ от неудачных изменений; электрическая проверка и анализ технологичности остаются частью обычного инженерного процесса.
+
+## Работа со схемами
+
+Интеграция схем работает со структурированными данными компонентов, выводов, цепей и страниц EasyEDA.
+
+1. Проанализировать текущий проект и страницу схемы.
+2. Найти точные компоненты или выбрать проверенные повторно используемые схемные блоки.
+3. Сохранить контрольную точку документа.
+4. Создать цепь, завершить существующий фрагмент, заменить выбранные компоненты или реорганизовать страницу в именованные функциональные блоки.
+5. Применить результат к нативному документу EasyEDA.
+6. Сохранить и проверить результат, затем оставить, изменить или восстановить его.
+
+Реорганизация схемы охватывает всю текущую страницу и сохраняет идентификаторы компонентов при пересборке. Многостраничная аннотация поддерживает два режима: `preserve` исправляет только повторяющиеся или ненумерованные обозначения, а `resequence` заново вычисляет конечные номера в порядке страниц и расположения. Части составных компонентов переименовываются вместе.
+
+Повторно используемые блоки предоставляют проверенные стандартные подсхемы со стабильной топологией, порты и номиналы пассивных компонентов которых можно адаптировать. Подробнее — в [документации повторно используемых блоков](docs/reusable-blocks.md).
+
+## Работа с PCB
+
+Размещение, трассировка, анализ и DRC печатной платы доступны через интерфейс MCP.
+
+1. Синхронизировать схему со связанным документом PCB.
+2. Проанализировать текущий контур платы, посадочные места, размещение, слои меди и правила DRC.
+3. Описать механические, функциональные и электрические требования в DSL размещения.
+4. Проверить механическое и итоговое превью размещения.
+5. Собрать утверждённое размещение в открытом документе PCB EasyEDA.
+6. Определить стек слоёв, правила трассировки, классы цепей, полигоны, специальные цепи, fanout и сшивающие переходные отверстия в DSL трассировки.
+7. Применить программу трассировки одной транзакцией с контрольной точкой.
+8. Проверить критические цепи, оставшиеся соединения, медь и результаты нативного DRC.
+9. Сохранить результат, применить точечное исправление или восстановить предыдущую контрольную точку.
+
+Существующее размещение можно сохранить с помощью `preserve(...)`. Сборка размещения сохраняет существующую медь и не относящиеся к операции объекты платы. Существующая трассировка сохраняется, пока DSL трассировки явно не вызовет `clearRouting(...)` для выбранной области.
+
+Длительные операции размещения и трассировки возвращают идентификатор операции. MCP-клиент может дождаться завершения, отменить работу или повторно применить уже подготовленный результат без повторного запуска операции.
+
+Подробные справочники по размещению и трассировке:
+
+- [Инструкции по размещению PCB](mcp/docs/pcb-layout/instructions.md)
+- [DSL размещения PCB](mcp/docs/pcb-layout/dsl.ts)
+- [Механическая проверка](mcp/docs/pcb-layout/mechanical-validation.md)
+- [Инструкции по трассировке PCB](mcp/docs/pcb-routing/instructions.md)
+- [DSL трассировки PCB](mcp/docs/pcb-routing/dsl.ts)
+- [Проверка и восстановление](mcp/docs/verification.md)
+
+<details>
+<summary><strong>Сравнение PCB: EasyEDA Copilot и Quilter</strong></summary>
+
+В этих более ранних попарных примерах показаны результаты PCB, полученные для одинаковых проектов RP2040, PICO Duck и ESPower.
+
+#### Плата RP2040
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/main.png" alt="Встроенный legacy-интерфейс EasyEDA Copilot">
-</p>
-
-## Работа с PCB (только через MCP)
-
-Размещение компонентов на печатной плате доступно только через внешний MCP-клиент, такой как Codex или Claude Code. Эта функция недоступна во встроенном чате Copilot.
-
-MCP формирует размещение: контур платы, механические ограничения, компоненты, монтажные отверстия, контактные площадки и позиционные обозначения. Оцените механический предварительный просмотр, утвердите окончательное размещение, а затем импортируйте его в EasyEDA. После сборки MCP может выполнить DSL `eda-copilot-router` через управляемый Hybrid backend, проверить объекты печатной платы и запустить DRC EasyEDA на открытом документе рабочего стола.
-
-Сборка печатных плат, предварительный просмотр и поддержка трассировки через клиент проверяются с помощью **EasyEDA Desktop V3.2.149**.
-
-### Плата RP2040: Copilot и Quilter
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_copilot_top.png" alt="RP2040 Copilot, top layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_quiliter_top.png" alt="RP2040 Quilter, top layer" width="48%">
+  <a href="docs/media/pcb-examples/rp2040_copilot_top.png"><img src="docs/media/pcb-examples/rp2040_copilot_top.png" alt="Верхний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="docs/media/pcb-examples/rp2040_quiliter_top.png" alt="Верхний слой PCB RP2040, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_copilot_bot.png" alt="RP2040 Copilot, bottom layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="RP2040 Quilter, bottom layer" width="48%">
+  <a href="docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="docs/media/pcb-examples/rp2040_copilot_bot.png" alt="Нижний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="Нижний слой PCB RP2040, созданной с Quilter" width="48%"></a>
 </p>
 
-### Компактная плата PICO Duck: Copilot и Quilter
+#### Компактная плата PICO Duck
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_copilot_top.png" alt="PICO Duck Copilot, top layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quilter_top.png" alt="PICO Duck Quilter, top layer" width="48%">
+  <a href="docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="docs/media/pcb-examples/pico_duck_copilot_top.png" alt="Верхний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="docs/media/pcb-examples/pico_duck_quilter_top.png" alt="Верхний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck Copilot, bottom layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="PICO Duck Quilter, bottom layer" width="48%">
+  <a href="docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="Нижний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="Нижний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
 </p>
 
-### Плата ESPower: Copilot и Quilter
+#### Плата ESPower
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_copilot_top.png" alt="ESPower Copilot, top layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_quiliter_top.png" alt="ESPower Quilter, top layer" width="48%">
+  <a href="docs/media/pcb-examples/espower_copilot_top.png"><img src="docs/media/pcb-examples/espower_copilot_top.png" alt="Верхний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/espower_quiliter_top.png"><img src="docs/media/pcb-examples/espower_quiliter_top.png" alt="Верхний слой PCB ESPower, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_copilot_bot.png" alt="ESPower Copilot, bottom layer" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/pcb-examples/espower_quiliter_bot.png" alt="ESPower Quilter, bottom layer" width="48%">
+  <a href="docs/media/pcb-examples/espower_copilot_bot.png"><img src="docs/media/pcb-examples/espower_copilot_bot.png" alt="Нижний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="docs/media/pcb-examples/espower_quiliter_bot.png"><img src="docs/media/pcb-examples/espower_quiliter_bot.png" alt="Нижний слой PCB ESPower, созданной с Quilter" width="48%"></a>
 </p>
+
+</details>
 
 ## Совместимость
 
-| Версии EasyEDA Pro  | Статус    |
-| ------------------- | --------- |
-| Desktop V3.2.149    | Проверено |
-| Desktop V2.2.45     | Проверено |
-| Desktop V2.2.47     | Проверено |
+| Версия EasyEDA Pro | Статус    |
+| ------------------ | --------- |
+| Desktop V3.2.149   | Проверено |
+| Desktop V2.2.47    | Проверено |
+| Desktop V2.2.45    | Проверено |
 
-## Особенности
+Сборка PCB, интеграция трассировки, анализ и нативный DRC проверяются прежде всего в EasyEDA Pro Desktop V3.2.149.
 
-### Генерация схем
+## MCP и устаревший встроенный интерфейс
 
-Формирует схему на основе текстового описания. Copilot может планировать схему, искать компоненты, создавать структурированный результат и предоставлять действие `Assemble circuit`, когда генерируемая схема готова.
+MCP — основной и активно развиваемый интерфейс EasyEDA Copilot. Исходный встроенный интерфейс остаётся доступным для интегрированного чата и работы со SPICE.
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/use-reused.gif" alt="Generate a circuit with reusable blocks">
-</p>
+| Возможность                                       | MCP      | Встроенный интерфейс   |
+| ------------------------------------------------- | -------- | ---------------------- |
+| Генерация и изменение схем                        | Да       | Да, устаревший процесс |
+| Подбор компонентов и повторно используемые блоки  | Да       | Да                     |
+| Контрольные точки и автоматическое восстановление | Да       | Ограниченно            |
+| Управление проектами и документами                | Да       | Нет                    |
+| Размещение, превью и сборка PCB                   | Да       | Нет                    |
+| Трассировка, анализ, слои и DRC PCB               | Да       | Нет                    |
+| Несколько подключённых экземпляров EasyEDA        | Да       | Нет                    |
+| Встроенный чат и интерфейс SPICE                  | Нет      | Да                     |
+| Приоритет разработки                              | Основной | Ограниченная поддержка |
 
-### Доработка схемы
+Для новых рабочих процессов и сообщений об ошибках следует использовать MCP, если проблема не относится непосредственно к устаревшему интерфейсу.
 
-Используйте Copilot для работы с уже существующим фрагментом схемы. Позвольте ему исправить пропущенный блок, добавить компоненты, соединить сигналы или запросите предложения по доработке схемы на основе выбранного контекста.
+<details>
+<summary>Показать устаревший встроенный интерфейс</summary>
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/circuit-compl-ex1.gif" alt="Circuit completion example 1" width="48%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/circuit-compl-ex2.gif" alt="Circuit completion example 2" width="48%">
-</p>
-
-### Выбор компонентов
-
-Поиск в LCSC по смыслу запроса вместо ручной настройки фильтров каталога. Примеры:
-
-- `find 5V relay`
-- `Find DC-DC chip 5V and 10A current`
-- `find capacitor 22uF Murata SMD 1210`
+Исходный интерфейс предоставляет встроенный чат для генерации схем, завершения цепей, подбора компонентов, повторно используемых блоков и SPICE-моделирования. В этих демонстрациях используется устаревший интерфейс; для новых процессов с ИИ-агентами рекомендуется MCP.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex1.png" alt="Find 5V relay" width="31%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex2.png" alt="Find DC-DC chip 5V and 10A current" width="31%">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/comp-search-ex3.png" alt="Find capacitor 22uF Murata SMD 1210" width="31%">
+  <img src="docs/media/main.png" alt="Устаревший встроенный интерфейс EasyEDA Copilot">
 </p>
 
-### Переиспользуемые блоки
+#### Генерация цепей и повторно используемые блоки
 
-Переиспользуемые блоки — это проверенные фрагменты схем, которые агент может адаптировать и вставлять в генерируемые схемы. Они полезны для стандартных подсхем, в которых топология остается неизменной, а меняются только выводы или номиналы пассивных элементов.
-
-Читайте [Документацию по переиспользуемым блокам](docs/reusable-blocks.md).
-
-### SPICE-симуляция
-
-Copilot может выполнять SPICE-симуляцию и автоматически выбирать модели из библиотеки моделей компонентов.
-
-Всегда проверяйте SPICE-модели, используемые для заменяемых компонентов. Выбранные модели отображаются под графиком после завершения моделирования.
+Создание структурированной схемы по описанию на естественном языке и сборка проверенных повторно используемых подсхем непосредственно в EasyEDA.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/refs/heads/main/docs/media/spice.gif" alt="SPICE simulation">
+  <img src="docs/media/use-reused.gif" alt="Генерация схемы EasyEDA с повторно используемыми блоками">
 </p>
+
+#### Завершение цепей
+
+Чтение существующего фрагмента схемы, добавление недостающих компонентов и завершение электрических соединений.
+
+<p align="center">
+  <img src="docs/media/circuit-compl-ex1.gif" alt="Завершение существующей схемы EasyEDA, пример один" width="48%">
+  <img src="docs/media/circuit-compl-ex2.gif" alt="Завершение существующей схемы EasyEDA, пример два" width="48%">
+</p>
+
+#### Подбор компонентов
+
+Поиск в каталоге LCSC по инженерным требованиям и сравнение подходящих деталей без выхода из процесса разработки.
+
+<p align="center">
+  <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="Подбор компонента по инженерному запросу" width="32%"></a>
+  <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="Результаты поиска компонентов LCSC в EasyEDA Copilot" width="32%"></a>
+  <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="Выбор подходящего компонента в EasyEDA Copilot" width="32%"></a>
+</p>
+
+#### Экспорт повторно используемых блоков
+
+Сохранение существующего фрагмента схемы как повторно используемого блока для последующих процессов генерации.
+
+<p align="center">
+  <img src="docs/media/export-reused.gif" alt="Экспорт фрагмента схемы EasyEDA как повторно используемого блока">
+</p>
+
+#### SPICE-моделирование
+
+Запуск SPICE-моделирования из встроенного интерфейса и анализ выбранных моделей компонентов вместе с полученными графиками.
+
+<p align="center">
+  <img src="docs/media/spice.gif" alt="Запуск SPICE-моделирования во встроенном интерфейсе EasyEDA Copilot">
+</p>
+
+</details>
+
+## Архитектура и обработка данных
+
+```text
+Codex / Claude Code / другой MCP-клиент
+                    |
+                    | stdio
+                    v
+          easyeda-copilot-mcp
+                    |
+                    | WebSocket на 127.0.0.1:8787
+                    v
+        Расширение EasyEDA Copilot
+                    |
+                    v
+       Открытый документ EasyEDA
+```
+
+Расширение EasyEDA, мост MCP, логика применения документов, система контрольных точек, инструменты анализа и пакет трассировки PCB имеют открытый исходный код. Мост MCP обменивается данными с расширением EasyEDA локально через `127.0.0.1`.
+
+Сейчас размещённые на сервере службы EasyEDA Copilot используются для поиска компонентов и повторно используемых блоков, а также для генерации планов схем и размещения PCB. Полученные планы применяются, сохраняются в контрольных точках, анализируются и проверяются DRC через расширение EasyEDA. Трассировка PCB основана на пакете с открытым исходным кодом [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 
 ## Документация
 
-- [Настройки](docs/settings.md)
-- [Прикрепление схем к AI-агенту](docs/attaching-circuits.md)
-- [Сборка схемы от AI-агента](docs/assembling-circuits.md)
-- [Переиспользуемые блоки](docs/reusable-blocks.md)
+- [Пакет MCP и настройка клиентов](mcp/README.ru.md)
+- [Полный рабочий процесс MCP](mcp/docs/workflow.md)
+- [Работа со схемами](mcp/docs/schematic/workflow.md)
+- [Изменение схемных цепей](mcp/docs/schematic/circuit-mod.md)
+- [Управление проектами и страницами](mcp/docs/schematic/project-and-pages.md)
+- [Настройки и разрешения](docs/settings.md)
+- [Передача цепей ИИ-агенту](docs/attaching-circuits.md)
+- [Сборка цепей из ИИ-агента](docs/assembling-circuits.md)
+- [Повторно используемые блоки](docs/reusable-blocks.md)
+
+## Разработка
+
+Сборка расширения и пакета MCP из исходного кода:
+
+```bash
+git clone https://github.com/biosshot/easyeda-copilot.git
+cd easyeda-copilot
+npm install
+npm run build
+npm run check --workspace=mcp
+```
+
+Отдельный пакет трассировки PCB разрабатывается в репозитории [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
+
+## Поддержать проект
+
+Если EasyEDA Copilot экономит ваше инженерное время, вы можете [поддержать дальнейшую разработку через Tribute](https://web.tribute.tg/d/PTf). Поддержка помогает развивать расширение, интеграцию MCP, инструменты трассировки, документацию и новые рабочие процессы проектирования.
+
+## Сообщество
+
+Вопросы, сообщения об ошибках, примеры проектов и вклад в разработку приветствуются в [GitHub Issues](https://github.com/biosshot/easyeda-copilot/issues) и [Discord](https://discord.gg/AXCGjTDYkq).
+
+## Лицензия
+
+EasyEDA Copilot распространяется по [лицензии MIT](LICENSE).

@@ -49,7 +49,7 @@ A complete ESP32-C3 controller with power conversion, USB, CAN, RS-485, protecte
 
 The workflow demonstrates multi-page schematic generation, functional placement, board-edge and antenna constraints, power and signal routing, copper planes, via stitching, inspection, and DRC-driven repair.
 
-<details>
+<details open>
 <summary><strong>Watch the ESP32-C3 workflow (69 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
@@ -60,7 +60,7 @@ https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
 
 A dense four-layer microcontroller design demonstrating placement and routing around a high-pin-count MCU, multiple interfaces, decoupling groups, board-edge connectors, mounting holes, and mechanical access constraints.
 
-<details>
+<details open>
 <summary><strong>Watch the MIMXRT1011 workflow (128 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
@@ -71,7 +71,7 @@ https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
 
 EasyEDA Copilot reads an existing schematic, identifies functional groups, saves a document checkpoint, and reassembles the page into named blocks while retaining its electrical connectivity and component identities.
 
-<details>
+<details open>
 <summary><strong>Watch schematic beautification (13 seconds)</strong></summary>
 
 https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
