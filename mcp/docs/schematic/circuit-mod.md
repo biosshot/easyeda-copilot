@@ -23,7 +23,8 @@ Group components by a completed function and local signal path, not by component
 
 - Replace a component by removing it and adding the replacement with the same base designator.
 - Use identical `signal_name` values for pins on the same net.
-- Leave a signal empty only when the pin should remain unconnected; use `NC` for an intentional no-connect.
+- For an intentionally unconnected pin, leave `signal_name` empty (`""`).
+- Using `NC` as a signal name or net label is forbidden. Never use it as a no-connect marker or placeholder.
 - Do not add unrelated protection, filtering, or future signals unless requested or required by the selected proven block.
 - Combine known related changes, but do not force unrelated or risky work into one call merely to reduce tool count.
 - Read the returned `sheetSpace`. When it warns that less than `10%` remains, continue substantial new work on the appropriate functional page instead of packing more independent circuitry onto the current page.
