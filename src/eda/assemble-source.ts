@@ -118,12 +118,26 @@ const getComponentLayoutPosition = (component: AssemblyComponent) => ({
     y: component.pos.y + (component.pos.center?.y ?? component.pos.height / 2),
 });
 
+const getNetFlagKind = (component: AssemblyComponent) =>
+    component.part_uuid === 'GND' || component.part_uuid === GND_PORT_COMPONENT.uuid
+        ? 'Ground'
+        : component.part_uuid === 'VCC' || component.part_uuid === VCC_PORT_COMPONENT.uuid
+            ? 'Power'
+            : undefined;
+
+const usesNativeNetPort = (component: AssemblyComponent) =>
+    component.part_uuid === NET_PORT_COMPONENT.uuid &&
+    !eda.sys_Environment.isOnlineMode();
+
+// After done(), BI needs +90 degrees to match the library port's pin orientation.
+const getComponentRotation = (component: AssemblyComponent) =>
+    normalizeRotation((component.pos.rotate ?? 0) + (usesNativeNetPort(component) ? 90 : 0));
+
 const getSpecialSignalName = (component: AssemblyComponent) =>
-    component.pins[0]?.signal_name || (component.part_uuid === 'GND' ? 'GND' : 'VCC');
+    component.pins[0]?.signal_name || (getNetFlagKind(component) === 'Ground' ? 'GND' : 'VCC');
 
 const isNamedNetSymbol = (component: AssemblyComponent) =>
-    component.part_uuid === 'GND' ||
-    component.part_uuid === 'VCC' ||
+    getNetFlagKind(component) !== undefined ||
     component.value === 'unknown_shortsym' ||
     component.designator.includes('|');
 
@@ -197,24 +211,19 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
     const partUuid = component.part_uuid;
     if (!partUuid) throw new Error(`Missing part_uuid for ${component.designator}`);
 
-    const rotation = component.pos.rotate;
+    const rotation = getComponentRotation(component);
     const mirror = component.pos.mirror ?? false;
+    const netFlagKind = getNetFlagKind(component);
     let primitive: PrimitiveComponent | undefined;
 
-    if (partUuid === 'GND') {
-        primitive = await placeComponent(GND_PORT_COMPONENT, {
-            x: plan.apiX,
-            y: plan.apiY,
-            rotate: rotation,
-            mirror,
-        });
-    } else if (partUuid === 'VCC') {
-        primitive = await placeComponent(VCC_PORT_COMPONENT, {
-            x: plan.apiX,
-            y: plan.apiY,
-            rotate: rotation,
-            mirror,
-        });
+    if (netFlagKind) {
+        primitive = await eda.sch_PrimitiveComponent.createNetFlag(
+            netFlagKind, getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
+        );
+    } else if (usesNativeNetPort(component)) {
+        primitive = await eda.sch_PrimitiveComponent.createNetPort(
+            'BI', getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
+        );
     } else if (component.value === 'unknown_shortsym') {
         primitive = await placeComponent({ libraryUuid: 'lcsc', uuid: partUuid }, {
             x: plan.apiX,
@@ -239,6 +248,8 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
         });
         primitive = primitive.setState_Designator(rmPartFromDesignator(component.designator));
     }
+
+    if (!primitive) throw new Error(`Component creation failed for ${component.designator}: ${partUuid}`);
 
     if (isNamedNetSymbol(component)) {
         const signalName = getSpecialSignalName(component);
@@ -521,7 +532,7 @@ function cloneComponentsIntoSource(
             const dy = to2((plan.apiY - template.originApiY) * yFactor);
             const targetX = to2(sourceSeedX + dx);
             const targetY = to2(sourceSeedY + dy);
-            const targetRotation = plan.input.pos.rotate ?? 0;
+            const targetRotation = getComponentRotation(plan.input);
             const targetMirror = plan.input.pos.mirror ?? false;
             const component = cloneSourceRecord(template.component);
 

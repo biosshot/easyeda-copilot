@@ -1,7 +1,7 @@
 import { placeComponent } from "./place-component";
 import { getShortSymPos, isPointOnSegment, rmWireFromComponentPin } from "./rm-compoment-with-connections";
 import { findPin, hasDirectWire } from "./search";
-import { AddedNet, GND_PORT_COMPONENT, NET_PORT_COMPONENT, PlacedComponents, RmNet, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
+import { AddedNet, PlacedComponents, RmNet, shortSymbolsMap } from "./types";
 import { normWireY, normalizeWireLine, to2, VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
 
