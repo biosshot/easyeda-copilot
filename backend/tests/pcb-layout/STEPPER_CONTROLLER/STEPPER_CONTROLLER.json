@@ -1,0 +1,2789 @@
+{
+    "components": [
+        {
+            "designator": "U4",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "3V3",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "5",
+                    "name": "IO2",
+                    "signal_name": "IO2"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "IO3",
+                    "signal_name": "IO3"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "8",
+                    "name": "EN",
+                    "signal_name": "EN"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "10",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "11",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "12",
+                    "name": "IO0",
+                    "signal_name": "DIR"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "IO1",
+                    "signal_name": "STEP"
+                },
+                {
+                    "pin_number": "14",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "15",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "16",
+                    "name": "IO10",
+                    "signal_name": "I2C_SDA"
+                },
+                {
+                    "pin_number": "17",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "18",
+                    "name": "IO4",
+                    "signal_name": "STEP_EN"
+                },
+                {
+                    "pin_number": "19",
+                    "name": "IO5",
+                    "signal_name": "DIAG"
+                },
+                {
+                    "pin_number": "20",
+                    "name": "IO6",
+                    "signal_name": "TX"
+                },
+                {
+                    "pin_number": "21",
+                    "name": "IO7",
+                    "signal_name": "RX"
+                },
+                {
+                    "pin_number": "22",
+                    "name": "IO8",
+                    "signal_name": "I2C_SCL"
+                },
+                {
+                    "pin_number": "23",
+                    "name": "IO9",
+                    "signal_name": "BOOT"
+                },
+                {
+                    "pin_number": "24",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "25",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "26",
+                    "name": "IO18",
+                    "signal_name": "ESP_D-"
+                },
+                {
+                    "pin_number": "27",
+                    "name": "IO19",
+                    "signal_name": "ESP_D+"
+                },
+                {
+                    "pin_number": "28",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "29",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "30",
+                    "name": "RXD0",
+                    "signal_name": "RXD0"
+                },
+                {
+                    "pin_number": "31",
+                    "name": "TXD0",
+                    "signal_name": "TXD0"
+                },
+                {
+                    "pin_number": "32",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "33",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "34",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "35",
+                    "name": "NC",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "36",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "37",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "38",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "39",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "40",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "41",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "42",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "43",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "44",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "45",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "46",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "47",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "48",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "49",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "50",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "51",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "52",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "53",
+                    "name": "GND",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "ESP32-C3-MINI-1-N4",
+            "pos": {
+                "x": 880,
+                "y": 1751,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "d4d0cae18e1f46faae68dfd6a57781fa",
+            "footprint_name": "WIFIM-SMD_ESP32-C3-MINI-1",
+            "footprint_uuid": "31cced0df4804d06825bbf2429264e42"
+        },
+        {
+            "designator": "D2",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB_DN"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "LESD5D5.0CT1G",
+            "pos": {
+                "x": 260.00000000000006,
+                "y": 1431,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "9c1983d941594df3b9060e3be2ee42e8",
+            "footprint_name": "SOD-523_L1.2-W0.8-LS1.6-BI",
+            "footprint_uuid": "cae40dc7daa24f39a1bdbbfc4543be70"
+        },
+        {
+            "designator": "D1",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB_DP"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "LESD5D5.0CT1G",
+            "pos": {
+                "x": 260.00000000000006,
+                "y": 1456,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "9c1983d941594df3b9060e3be2ee42e8",
+            "footprint_name": "SOD-523_L1.2-W0.8-LS1.6-BI",
+            "footprint_uuid": "cae40dc7daa24f39a1bdbbfc4543be70"
+        },
+        {
+            "designator": "R10",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "CC2"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "5.1kΩ",
+            "pos": {
+                "x": 70,
+                "y": 1176,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "3614094eae9e47dbbbde1f877b2c30ef",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R8",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "CC1"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "5.1kΩ",
+            "pos": {
+                "x": 30,
+                "y": 1176,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "3614094eae9e47dbbbde1f877b2c30ef",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "USB1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "VBUS",
+                    "signal_name": "VBUS"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "SBU2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "CC1",
+                    "signal_name": "USB1_CC1"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "DN2",
+                    "signal_name": "USB_DN"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "DP1",
+                    "signal_name": "USB_DP"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "DN1",
+                    "signal_name": "USB_DN"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "DP2",
+                    "signal_name": "USB_DP"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "SBU1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "10",
+                    "name": "CC2",
+                    "signal_name": "USB1_CC2"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "VBUS",
+                    "signal_name": "VBUS"
+                },
+                {
+                    "pin_number": "12",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "SHELL",
+                    "signal_name": "$1N39569"
+                },
+                {
+                    "pin_number": "14",
+                    "name": "SHELL",
+                    "signal_name": ""
+                }
+            ],
+            "value": "TYPE-C 16PIN 2MD(073)",
+            "pos": {
+                "x": 85,
+                "y": 1586,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "d54101cc7b974bbba68a8a53af055c80",
+            "footprint_name": "USB-C-SMD_TYPE-C-16PIN-2MD-073",
+            "footprint_uuid": "b87c3e98138b4aee93e8c6cb0ddbc943"
+        },
+        {
+            "designator": "C2",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "VBUS"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "1uF",
+            "pos": {
+                "x": 265,
+                "y": 1606,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "af2e25dc8e174a11bab66129be592f4d",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "R9",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N39569"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "1MΩ",
+            "pos": {
+                "x": 45,
+                "y": 1496,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "72d71792aca642bfa6283f6c1d1961c3",
+            "footprint_name": "R0402",
+            "footprint_uuid": "10eaaa40c0654296a614c7657ed9700a"
+        },
+        {
+            "designator": "R20",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "BOOT"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 1240,
+                "y": 1911,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R25",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "EN"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 1495,
+                "y": 1911,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "C13",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "EN"
+                }
+            ],
+            "value": "10uF",
+            "pos": {
+                "x": 1395,
+                "y": 1891,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "9f83e90cf78c4f3396a8045b3e521dd5",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "SW2",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "B",
+                    "signal_name": "BOOT"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "A",
+                    "signal_name": "BOOT"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "D",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "C",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "TS-1187A-B-A-B",
+            "pos": {
+                "x": 1195,
+                "y": 1901,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "38630614a58f4650bd5eefe9a5f79d9a",
+            "footprint_name": "SW-SMD_4P-L5.1-W5.1-P3.70-LS6.5-TL_H1.5",
+            "footprint_uuid": "6a65e5a38bd14843ae6a24fb09ff2999"
+        },
+        {
+            "designator": "C1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "100nF",
+            "pos": {
+                "x": 580,
+                "y": 1231,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "4724975b6c2a4e8dbf5d2a441323882f",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "R7",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N32"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 760,
+                "y": 1266,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "U1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "VDD5V",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "VDD3V3",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "OUT",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "PGO",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "6",
+                    "name": "SDA",
+                    "signal_name": "I2C_SDA"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "SCL",
+                    "signal_name": "I2C_SCL"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "DIR",
+                    "signal_name": "$1N32"
+                }
+            ],
+            "value": "AS5600-ASOM",
+            "pos": {
+                "x": 700,
+                "y": 1221,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "73a67a028ab5445ca1cc7ee2f72cf3b2",
+            "footprint_name": "SOIC-8_L5.0-W4.0-P1.27-LS6.0-BL",
+            "footprint_uuid": "bb0c5c545cdf4cb2b3b230001ed01107"
+        },
+        {
+            "designator": "C32",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "100uF",
+            "pos": {
+                "x": 605,
+                "y": 1881,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "52d8479ccd664cf7b6a8557b54ef5bb9",
+            "footprint_name": "CASE-B_3528",
+            "footprint_uuid": "b5bdd61ed25d41e7b8e5d8023eab4cc9"
+        },
+        {
+            "designator": "D40",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "DESD3V3E1BL-7B",
+            "pos": {
+                "x": 580,
+                "y": 1881,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "eb3e123136e04d408952da454cdca6c5",
+            "footprint_name": "X1-DFN1006-2_L1.0-W0.6-P0.65-BI",
+            "footprint_uuid": "d2653810a12d443d9671374374d7c5d0"
+        },
+        {
+            "designator": "C21",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "10uF",
+            "pos": {
+                "x": 685,
+                "y": 1881,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "9f83e90cf78c4f3396a8045b3e521dd5",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "C24",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "100nF",
+            "pos": {
+                "x": 645,
+                "y": 1881,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "4724975b6c2a4e8dbf5d2a441323882f",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "R6",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "I2C_SDA"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "4.7kΩ",
+            "pos": {
+                "x": 620,
+                "y": 1756,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "542db4fb88de4c59bd539781e5a30727",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "R1",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "I2C_SCL"
+                }
+            ],
+            "value": "4.7kΩ",
+            "pos": {
+                "x": 660,
+                "y": 1756,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "542db4fb88de4c59bd539781e5a30727",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "LED4",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "K",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "$1N41"
+                }
+            ],
+            "value": "KT-0603R",
+            "pos": {
+                "x": 170,
+                "y": 1826,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "015cbd77079d4b0ea5c81b79fefdcea3",
+            "footprint_name": "LED-SMD_L1.6-W0.8-R-RD",
+            "footprint_uuid": "9e2b237d1de64be19780cc75598a5878"
+        },
+        {
+            "designator": "R4",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N44"
+                }
+            ],
+            "value": "1kΩ",
+            "pos": {
+                "x": 270,
+                "y": 1871,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "17aa4e57569d4d22adc28d945ba5559d",
+            "footprint_name": "R0402",
+            "footprint_uuid": "10eaaa40c0654296a614c7657ed9700a"
+        },
+        {
+            "designator": "LED1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "K",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "$1N44"
+                }
+            ],
+            "value": "KT-0603R",
+            "pos": {
+                "x": 270,
+                "y": 1826,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "015cbd77079d4b0ea5c81b79fefdcea3",
+            "footprint_name": "LED-SMD_L1.6-W0.8-R-RD",
+            "footprint_uuid": "9e2b237d1de64be19780cc75598a5878"
+        },
+        {
+            "designator": "D17",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "DIR"
+                }
+            ],
+            "value": "DESD3V3E1BL-7B",
+            "pos": {
+                "x": 1015,
+                "y": 1120.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "eb3e123136e04d408952da454cdca6c5",
+            "footprint_name": "X1-DFN1006-2_L1.0-W0.6-P0.65-BI",
+            "footprint_uuid": "d2653810a12d443d9671374374d7c5d0"
+        },
+        {
+            "designator": "D16",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "STEP"
+                }
+            ],
+            "value": "DESD3V3E1BL-7B",
+            "pos": {
+                "x": 945,
+                "y": 1140.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "eb3e123136e04d408952da454cdca6c5",
+            "footprint_name": "X1-DFN1006-2_L1.0-W0.6-P0.65-BI",
+            "footprint_uuid": "d2653810a12d443d9671374374d7c5d0"
+        },
+        {
+            "designator": "D12",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "A2"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1555,
+                "y": 1160.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D11",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "A1"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1520,
+                "y": 1160.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D10",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "B1"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1485,
+                "y": 1160.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D9",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "B2"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1445,
+                "y": 1160.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D8",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "A2"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1555,
+                "y": 1260.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D7",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "A1"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1520,
+                "y": 1260.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D6",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "B1"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1485,
+                "y": 1260.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "D5",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "B2"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "C",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "SM4007PL",
+            "pos": {
+                "x": 1445,
+                "y": 1260.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "3afa71ce06d0454ba3d1cb19482ce1ba",
+            "footprint_name": "SOD-123F_L2.8-W1.8-LS3.7-RD",
+            "footprint_uuid": "50acec6ab03145ab9cdb30a88c4338f7"
+        },
+        {
+            "designator": "U7",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "B2"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "B1"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "3",
+                    "signal_name": "A1"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "4",
+                    "signal_name": "A2"
+                }
+            ],
+            "value": "NO",
+            "pos": {
+                "x": 1404.9999999999998,
+                "y": 1236.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "XH2.54-4P",
+            "footprint_uuid": "f2005b8c2a5640fb8ca2ec71b861ddec"
+        },
+        {
+            "designator": "R27",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "TX"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "RX"
+                }
+            ],
+            "value": "1kΩ",
+            "pos": {
+                "x": 950,
+                "y": 1206,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "17aa4e57569d4d22adc28d945ba5559d",
+            "footprint_name": "R0402",
+            "footprint_uuid": "c395e0e5a57e4c07aa55751250c6522b"
+        },
+        {
+            "designator": "C26",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "1uF",
+            "pos": {
+                "x": 1200,
+                "y": 1146,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "af2e25dc8e174a11bab66129be592f4d",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "DD1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "EN",
+                    "signal_name": "STEP_EN"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "MS1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "3",
+                    "name": "MS2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "TX",
+                    "signal_name": "$1N39310"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "RX",
+                    "signal_name": "$1N39359"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "CLK",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "7",
+                    "name": "STEP",
+                    "signal_name": "STEP"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "DIR",
+                    "signal_name": "DIR"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "VMOT",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "10",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "B2",
+                    "signal_name": "B2"
+                },
+                {
+                    "pin_number": "12",
+                    "name": "B1",
+                    "signal_name": "B1"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "A1",
+                    "signal_name": "A1"
+                },
+                {
+                    "pin_number": "14",
+                    "name": "A2",
+                    "signal_name": "A2"
+                },
+                {
+                    "pin_number": "15",
+                    "name": "+5v",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "16",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "17",
+                    "name": "INDEX",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "18",
+                    "name": "DIAG",
+                    "signal_name": "DIAG"
+                }
+            ],
+            "value": "TMC2209-v3.1",
+            "pos": {
+                "x": 1090,
+                "y": 1206,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "TMC2209-V3.1",
+            "footprint_uuid": "786ede4f7f3d42dc95cb6295cd0403cf"
+        },
+        {
+            "designator": "J1",
+            "pins": [
+                {
+                    "pin_number": "3",
+                    "name": "3",
+                    "signal_name": "DIAG"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "HDR-M-2.54_1x3",
+            "pos": {
+                "x": 1430,
+                "y": 1726,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "63f0e75359b14d20ba2c7bf631bb35ee",
+            "footprint_name": "HDR-TH_3P-P2.54-V-M-1",
+            "footprint_uuid": "44c9b126c64c43bdb2b760d35b6ada47"
+        },
+        {
+            "designator": "R28",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N9649"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 180,
+                "y": 1151,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "C8",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "BOOT"
+                }
+            ],
+            "value": "100nF",
+            "pos": {
+                "x": 1140,
+                "y": 1891,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "4724975b6c2a4e8dbf5d2a441323882f",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "LED3",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "K",
+                    "signal_name": "STEP"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "$1N90"
+                }
+            ],
+            "value": "KT-0603R",
+            "pos": {
+                "x": 1094.9999999999998,
+                "y": 1346.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "015cbd77079d4b0ea5c81b79fefdcea3",
+            "footprint_name": "LED-SMD_L1.6-W0.8-R-RD",
+            "footprint_uuid": "9e2b237d1de64be19780cc75598a5878"
+        },
+        {
+            "designator": "R16",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N90"
+                }
+            ],
+            "value": "1kΩ",
+            "pos": {
+                "x": 1049.9999999999998,
+                "y": 1346.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "17aa4e57569d4d22adc28d945ba5559d",
+            "footprint_name": "R0402",
+            "footprint_uuid": "c395e0e5a57e4c07aa55751250c6522b"
+        },
+        {
+            "designator": "R18",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N96"
+                }
+            ],
+            "value": "1kΩ",
+            "pos": {
+                "x": 1049.9999999999998,
+                "y": 1386.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "17aa4e57569d4d22adc28d945ba5559d",
+            "footprint_name": "R0402",
+            "footprint_uuid": "c395e0e5a57e4c07aa55751250c6522b"
+        },
+        {
+            "designator": "LED6",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "K",
+                    "signal_name": "DIAG"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "$1N96"
+                }
+            ],
+            "value": "KT-0603R",
+            "pos": {
+                "x": 1094.9999999999998,
+                "y": 1386.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "015cbd77079d4b0ea5c81b79fefdcea3",
+            "footprint_name": "LED-SMD_L1.6-W0.8-R-RD",
+            "footprint_uuid": "9e2b237d1de64be19780cc75598a5878"
+        },
+        {
+            "designator": "SW1",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "EN"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "TS-1088-AR02016",
+            "pos": {
+                "x": 1450,
+                "y": 1901,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "53ec5e112a3f4d35b9b8aafef6c706d7",
+            "footprint_name": "SW-SMD_L3.9-W3.0-P4.45",
+            "footprint_uuid": "032b892bc2de4a2d828a26d73c590a78"
+        },
+        {
+            "designator": "U9",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "VDD",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "CFG2",
+                    "signal_name": "$1N12032"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "CFG3",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "DP",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "5",
+                    "name": "DM",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "6",
+                    "name": "CC2",
+                    "signal_name": "CC2"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "CC1",
+                    "signal_name": "CC1"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "VBUS",
+                    "signal_name": "$1N9649"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "CFG1",
+                    "signal_name": "$1N42068"
+                },
+                {
+                    "pin_number": "10",
+                    "name": "PG",
+                    "signal_name": "$1N9804"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "GND",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "CH224K",
+            "pos": {
+                "x": 285,
+                "y": 1176,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "243ddd025be544fc869b340ca0b5a677",
+            "footprint_name": "ESSOP-10_L4.9-W3.9-P1.0-LS6.0-TL-EP",
+            "footprint_uuid": "683f3994379441d9b8c73397bbe0b820"
+        },
+        {
+            "designator": "LED2",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "K",
+                    "signal_name": "$1N9804"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "A",
+                    "signal_name": "$1N9805"
+                }
+            ],
+            "value": "KT-0603R",
+            "pos": {
+                "x": 435,
+                "y": 1196,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "015cbd77079d4b0ea5c81b79fefdcea3",
+            "footprint_name": "LED-SMD_L1.6-W0.8-R-RD",
+            "footprint_uuid": "9e2b237d1de64be19780cc75598a5878"
+        },
+        {
+            "designator": "R12",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N9804"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 400,
+                "y": 1236,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R26",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N9805"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "1kΩ",
+            "pos": {
+                "x": 435,
+                "y": 1236,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "17aa4e57569d4d22adc28d945ba5559d",
+            "footprint_name": "R0402",
+            "footprint_uuid": "c395e0e5a57e4c07aa55751250c6522b"
+        },
+        {
+            "designator": "R13",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N12032"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 195,
+                "y": 1206,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R29",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "20V"
+                }
+            ],
+            "value": "5.1kΩ",
+            "pos": {
+                "x": 350,
+                "y": 1266,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "3614094eae9e47dbbbde1f877b2c30ef",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "C33",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "1uF",
+            "pos": {
+                "x": 355,
+                "y": 1216,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "af2e25dc8e174a11bab66129be592f4d",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "R30",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "ESP_D+"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "USB_DP"
+                }
+            ],
+            "value": "22Ω",
+            "pos": {
+                "x": 270,
+                "y": 1396,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "3bf6f236add6445fbdc63ff29bb51d0e",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "R31",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "ESP_D-"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "USB_DN"
+                }
+            ],
+            "value": "22Ω",
+            "pos": {
+                "x": 270,
+                "y": 1376,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "3bf6f236add6445fbdc63ff29bb51d0e",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "C34",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "100uF/35V-6.3X7.7SMD",
+            "pos": {
+                "x": 1180,
+                "y": 1285.9999999999998,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "4e1f5477aa9041b5b24d1ed16eef0206",
+            "footprint_name": "CAP-SMD_BD6.3-L6.6-W6.6-FD",
+            "footprint_uuid": "264aa605555b44568fa68cfecfe84011"
+        },
+        {
+            "designator": "U10",
+            "pins": [
+                {
+                    "pin_number": "6",
+                    "name": "BOOT",
+                    "signal_name": "$1N15219"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "EN",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "FB",
+                    "signal_name": "$1N15680"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "VIN",
+                    "signal_name": "$1N31277"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "SW",
+                    "signal_name": "$1N15272"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "GND",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "TPS54202DDCT",
+            "pos": {
+                "x": 395,
+                "y": 971,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "0eee285cbe5d4afd8fd5929cb74129aa",
+            "footprint_name": "SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BR",
+            "footprint_uuid": "0df7e3ec8eb1440d88f6bea656a5e86d"
+        },
+        {
+            "designator": "C35",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N31277"
+                }
+            ],
+            "value": "10uF",
+            "pos": {
+                "x": 370,
+                "y": 896,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "6ad30b6ecf374db7b68cda55c2ebd80b",
+            "footprint_name": "C0805",
+            "footprint_uuid": "12b11142b59c49f7b9dec8910fb91687"
+        },
+        {
+            "designator": "C36",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N31277"
+                }
+            ],
+            "value": "10uF",
+            "pos": {
+                "x": 405,
+                "y": 896,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "6ad30b6ecf374db7b68cda55c2ebd80b",
+            "footprint_name": "C0805",
+            "footprint_uuid": "12b11142b59c49f7b9dec8910fb91687"
+        },
+        {
+            "designator": "C37",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N15219"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15272"
+                }
+            ],
+            "value": "100nF",
+            "pos": {
+                "x": 395,
+                "y": 1016,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "4724975b6c2a4e8dbf5d2a441323882f",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "U11",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15272"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N15676"
+                }
+            ],
+            "value": "10uH",
+            "pos": {
+                "x": 305,
+                "y": 971,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "bce0794c845048ba9df96c9b6ea85bef",
+            "footprint_name": "IND-SMD_L4.0-W4.0_LVF4040XX",
+            "footprint_uuid": "c6b68658b6ba4ddd9e72abe53697ca0d"
+        },
+        {
+            "designator": "R32",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15680"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "22kΩ",
+            "pos": {
+                "x": 240,
+                "y": 896,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "2b4222cc312549c69f08ca8d58423a8a",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "R33",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15676"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N15680"
+                }
+            ],
+            "value": "100kΩ",
+            "pos": {
+                "x": 240,
+                "y": 951,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "a8fe6fdf29924f6c9dcbfa5a84a02fec",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "C39",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N15680"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15676"
+                }
+            ],
+            "value": "47pF",
+            "pos": {
+                "x": 280,
+                "y": 946,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "e16699fd29054c5496fd95fa134ab2bd",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "C40",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N31277"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "100nF",
+            "pos": {
+                "x": 335,
+                "y": 896,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "4724975b6c2a4e8dbf5d2a441323882f",
+            "footprint_name": "C0402",
+            "footprint_uuid": "40315c1714b34ed5acb8547c2ae18d8a"
+        },
+        {
+            "designator": "R34",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15676"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "3V3"
+                }
+            ],
+            "value": "0Ω",
+            "pos": {
+                "x": 140,
+                "y": 971,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "0036981203134fceadc070778727ed53",
+            "footprint_name": "R0805",
+            "footprint_uuid": "d6adc3aad2d9409a9a9dddc47655bd8e"
+        },
+        {
+            "designator": "R36",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N41"
+                }
+            ],
+            "value": "10kΩ",
+            "pos": {
+                "x": 170,
+                "y": 1871,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "ffb8c4ed7d7244bc918e37313d4ca373",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "CN1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "3V3"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "3",
+                    "signal_name": "I2C_SDA"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "4",
+                    "signal_name": "I2C_SCL"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "5",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "6",
+                    "name": "6",
+                    "signal_name": ""
+                }
+            ],
+            "value": "SM04B-SRSS-TB(LF)(SN)",
+            "pos": {
+                "x": 1575,
+                "y": 1721,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "eedd7219118d438da4ae449da8ca0ffa",
+            "footprint_name": "CONN-SMD_4P-P1.00_SM04B-SRSS-TB-LF-SN",
+            "footprint_uuid": "3469089d24a147c88ac6c8ffc1365593"
+        },
+        {
+            "designator": "SCREW1",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": ""
+                }
+            ],
+            "value": "",
+            "pos": {
+                "x": 700,
+                "y": 866,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "插件",
+            "footprint_uuid": "2df0199fc37a4927968d8e4eb434a05e"
+        },
+        {
+            "designator": "SCREW2",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": ""
+                }
+            ],
+            "value": "",
+            "pos": {
+                "x": 750,
+                "y": 866,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "插件",
+            "footprint_uuid": "2df0199fc37a4927968d8e4eb434a05e"
+        },
+        {
+            "designator": "SCREW3",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": ""
+                }
+            ],
+            "value": "",
+            "pos": {
+                "x": 800,
+                "y": 866,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "插件",
+            "footprint_uuid": "2df0199fc37a4927968d8e4eb434a05e"
+        },
+        {
+            "designator": "SCREW4",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": ""
+                }
+            ],
+            "value": "",
+            "pos": {
+                "x": 850,
+                "y": 866,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": null,
+            "footprint_name": "插件",
+            "footprint_uuid": "2df0199fc37a4927968d8e4eb434a05e"
+        },
+        {
+            "designator": "U12",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "CATHODE",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "GATEPD",
+                    "signal_name": "$1N21578"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "GATE",
+                    "signal_name": "$1N21578"
+                },
+                {
+                    "pin_number": "4",
+                    "name": "ANODE",
+                    "signal_name": "VBUS"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "VCAPH",
+                    "signal_name": "$1N21853"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "VCAPL",
+                    "signal_name": "$1N21858"
+                }
+            ],
+            "value": "MX74610T",
+            "pos": {
+                "x": 440.00000000000006,
+                "y": 1571,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "00dc4c7668f64b2aaab2eb2f23000bcc",
+            "footprint_name": "SOT-23-6_L2.9-W1.6-P0.95-LS2.8-BL-1",
+            "footprint_uuid": "05cfb94daf6f452e8ae84375a0f4c5ea"
+        },
+        {
+            "designator": "Q2",
+            "pins": [
+                {
+                    "pin_number": "3",
+                    "name": "D",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "G",
+                    "signal_name": "$1N21578"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "S",
+                    "signal_name": "VBUS"
+                }
+            ],
+            "value": "AO3400A",
+            "pos": {
+                "x": 515,
+                "y": 1526,
+                "rotate": 270,
+                "mirror": false
+            },
+            "part_uuid": "1c95a10b7c4a4095b426799cbca7b1b2",
+            "footprint_name": "SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR",
+            "footprint_uuid": "b44d5488310743c5b672f696c04326a1"
+        },
+        {
+            "designator": "C41",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N21853"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N21858"
+                }
+            ],
+            "value": "1uF",
+            "pos": {
+                "x": 355,
+                "y": 1551,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "af2e25dc8e174a11bab66129be592f4d",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "C42",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15676"
+                }
+            ],
+            "value": "22uF",
+            "pos": {
+                "x": 165,
+                "y": 941,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "b9a0ddbe6f9a4bc4988e166e0381cb70",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "C43",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "$1N15676"
+                }
+            ],
+            "value": "22uF",
+            "pos": {
+                "x": 200,
+                "y": 941,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "b9a0ddbe6f9a4bc4988e166e0381cb70",
+            "footprint_name": "C0603",
+            "footprint_uuid": "9aa3e62e9ec341158b72945157803e7f"
+        },
+        {
+            "designator": "R37",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N31277"
+                }
+            ],
+            "value": "0Ω",
+            "pos": {
+                "x": 475,
+                "y": 916,
+                "rotate": 0,
+                "mirror": false
+            },
+            "part_uuid": "0036981203134fceadc070778727ed53",
+            "footprint_name": "R0805",
+            "footprint_uuid": "d6adc3aad2d9409a9a9dddc47655bd8e"
+        },
+        {
+            "designator": "USB2",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "VBUS",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "SBU2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "CC1",
+                    "signal_name": "CC1"
+                },
+                {
+                    "pin_number": "5",
+                    "name": "DN2",
+                    "signal_name": "IO3"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "DP1",
+                    "signal_name": "IO2"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "DN1",
+                    "signal_name": "IO3"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "DP2",
+                    "signal_name": "IO2"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "SBU1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "10",
+                    "name": "CC2",
+                    "signal_name": "CC2"
+                },
+                {
+                    "pin_number": "11",
+                    "name": "VBUS",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "12",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "SHELL",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "14",
+                    "name": "SHELL",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "TYPE-C 16PIN 2MD(073)",
+            "pos": {
+                "x": 1189.9999999999998,
+                "y": 1586.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "d54101cc7b974bbba68a8a53af055c80",
+            "footprint_name": "USB-C-SMD_TYPE-C-16PIN-2MD-073",
+            "footprint_uuid": "b87c3e98138b4aee93e8c6cb0ddbc943"
+        },
+        {
+            "designator": "USB3",
+            "pins": [
+                {
+                    "pin_number": "1",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "2",
+                    "name": "VBUS",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "3",
+                    "name": "SBU2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "4",
+                    "name": "CC1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "5",
+                    "name": "DN2",
+                    "signal_name": "TXD0"
+                },
+                {
+                    "pin_number": "6",
+                    "name": "DP1",
+                    "signal_name": "RXD0"
+                },
+                {
+                    "pin_number": "7",
+                    "name": "DN1",
+                    "signal_name": "TXD0"
+                },
+                {
+                    "pin_number": "8",
+                    "name": "DP2",
+                    "signal_name": "RXD0"
+                },
+                {
+                    "pin_number": "9",
+                    "name": "SBU1",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "10",
+                    "name": "CC2",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "11",
+                    "name": "VBUS",
+                    "signal_name": "20V"
+                },
+                {
+                    "pin_number": "12",
+                    "name": "GND",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "13",
+                    "name": "SHELL",
+                    "signal_name": ""
+                },
+                {
+                    "pin_number": "14",
+                    "name": "SHELL",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "TYPE-C 16PIN 2MD(073)",
+            "pos": {
+                "x": 1354.9999999999998,
+                "y": 1587.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "d54101cc7b974bbba68a8a53af055c80",
+            "footprint_name": "USB-C-SMD_TYPE-C-16PIN-2MD-073",
+            "footprint_uuid": "b87c3e98138b4aee93e8c6cb0ddbc943"
+        },
+        {
+            "designator": "R38",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB1_CC2"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "5.1kΩ",
+            "pos": {
+                "x": 80,
+                "y": 1466,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "3614094eae9e47dbbbde1f877b2c30ef",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R39",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "USB1_CC1"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "GND"
+                }
+            ],
+            "value": "5.1kΩ",
+            "pos": {
+                "x": 120,
+                "y": 1466,
+                "rotate": 90,
+                "mirror": false
+            },
+            "part_uuid": "3614094eae9e47dbbbde1f877b2c30ef",
+            "footprint_name": "R0402",
+            "footprint_uuid": "26ef6e452114464baae58f1dede1f32c"
+        },
+        {
+            "designator": "R40",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "TX"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N39310"
+                }
+            ],
+            "value": "0Ω",
+            "pos": {
+                "x": 998.9999999999999,
+                "y": 1221.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "93d1aa49a81e42fb8301549fdbb721ca",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "R41",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "RX"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N39359"
+                }
+            ],
+            "value": "0Ω",
+            "pos": {
+                "x": 997.9999999999999,
+                "y": 1201.0000000000002,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "93d1aa49a81e42fb8301549fdbb721ca",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        },
+        {
+            "designator": "R42",
+            "pins": [
+                {
+                    "pin_number": "2",
+                    "name": "2",
+                    "signal_name": "GND"
+                },
+                {
+                    "pin_number": "1",
+                    "name": "1",
+                    "signal_name": "$1N42068"
+                }
+            ],
+            "value": "0Ω",
+            "pos": {
+                "x": 162.99999999999997,
+                "y": 1216,
+                "rotate": 180,
+                "mirror": false
+            },
+            "part_uuid": "93d1aa49a81e42fb8301549fdbb721ca",
+            "footprint_name": "R0402",
+            "footprint_uuid": "6e6bbbcd238344329584aa6d147063fa"
+        }
+    ]
+}

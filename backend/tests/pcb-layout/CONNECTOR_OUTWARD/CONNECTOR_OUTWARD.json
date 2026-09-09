@@ -1,0 +1,24 @@
+{
+  "components": [
+    { "designator": "J1",  "value": "KH-TYPE-C-16P",               "pins": [], "part_uuid": "12c866dd4dae4e21a1911e60ce74adeb" },
+    { "designator": "J2",  "value": "AF180QT1.0",                  "pins": [], "part_uuid": "04c3466fa26248ab880f1184ecd30637" },
+    { "designator": "J3",  "value": "R-RJ45S08P-B000",            "pins": [], "part_uuid": "0e92afbe42b640f4a07030086f715969" },
+    { "designator": "J4",  "value": "B2B-PH-K-S(LF)(SN)",         "pins": [], "part_uuid": "30e4e60376dc4414ba151b7f1f4fbd96" },
+    { "designator": "J5",  "value": "KF128-2.54-2P",              "pins": [], "part_uuid": "39c20497390c421d8c8d48d567545f0e" },
+    { "designator": "J6",  "value": "AFC07-S18ECA-00",            "pins": [], "part_uuid": "7bcbd951f5f04bf7a17b9f8174162e93" },
+    { "designator": "J7",  "value": "TYPEC-304-BCP16",            "pins": [], "part_uuid": "7caf31291c634144888cc5bf4ce103e7" },
+    { "designator": "J8",  "value": "Micro USB Type-B Receptacle", "pins": [], "part_uuid": "5b937dc05e6c4f549edfea32f26c4c62" },
+    { "designator": "J9",  "value": "SMA-KWE",                    "pins": [], "part_uuid": "feb7c304b26d4716b0b8ae8066a29970" },
+    { "designator": "J10", "value": "U.FL-R-SMT(10)",             "pins": [], "part_uuid": "75fde42e32bd4ba2a729c14fde9aa431" },
+    { "designator": "J11", "value": "FPC-05F-40PH20",             "pins": [], "part_uuid": "e8c441fb5a2048e69e98c7581911dfbb" },
+    { "designator": "J12", "value": "DC-005H-D020",               "pins": [], "part_uuid": "28157addf93a46109f8df6f950e5166a" },
+    { "designator": "J13", "value": "NC3MBH",                     "pins": [], "part_uuid": "28e28b6e0c694850bfd71a4df5c66216" },
+    { "designator": "J14", "value": "CON-SMA-EDGE-S",             "pins": [], "part_uuid": "b6d28c2b7ad2434582916b9d894651d5" },
+    { "designator": "J15", "value": "2.5mm_TRS",                  "pins": [], "part_uuid": "77d7ecfca7744a3287cdf8fd7c90e290" },
+    { "designator": "J16", "value": "10118193-0001LF",            "pins": [], "part_uuid": "1356cd7a0070493d97070d3d91f817c5" },
+    { "designator": "J17", "value": "B2B-PH-SM4-TB(LF)(SN)",      "pins": [], "part_uuid": "81214969fb224686b54499e2b4f4ad3f" },
+    { "designator": "J18", "value": "BM04B-GHS-TBT",              "pins": [], "part_uuid": "abeb986a2f10458b921fedd09652bff8" },
+    { "designator": "J19", "value": "DB128V-5.08-6P-GN-S",        "pins": [], "part_uuid": "0076ad75799d4c598a93d8c357ac64df" },
+    { "designator": "J20", "value": "1x8_2.54HDR",                "pins": [], "part_uuid": "b9bc583f10d24db38d407c96fc0858f5" }
+  ]
+}

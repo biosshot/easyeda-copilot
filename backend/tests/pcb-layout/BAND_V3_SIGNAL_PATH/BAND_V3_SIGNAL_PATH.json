@@ -1,0 +1,92 @@
+{
+  "components": [
+    {
+      "designator": "J1",
+      "pins": [
+        { "pin_number": "1", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "2", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "3", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "4", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "5", "name": "IN", "signal_name": "RF_IN" }
+      ],
+      "value": "6GHz",
+      "part_uuid": "ed0ea9dc1b9e4f50ac3b0fe1181da4c4",
+      "footprint_name": "ANT-TH_KH-SMA-K513-G"
+    },
+    {
+      "designator": "J2",
+      "pins": [
+        { "pin_number": "1", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "2", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "3", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "4", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "5", "name": "IN", "signal_name": "RF_OUT" }
+      ],
+      "value": "6GHz",
+      "part_uuid": "ed0ea9dc1b9e4f50ac3b0fe1181da4c4",
+      "footprint_name": "ANT-TH_KH-SMA-K513-G"
+    },
+    {
+      "designator": "C1",
+      "pins": [
+        { "pin_number": "1", "name": "1", "signal_name": "RF_IN" },
+        { "pin_number": "2", "name": "2", "signal_name": "RF_IN_AC" }
+      ],
+      "value": "100nF",
+      "part_uuid": "a299e4f29fd2469688f76621c3d59c4d",
+      "footprint_name": "C0603"
+    },
+    {
+      "designator": "C2",
+      "pins": [
+        { "pin_number": "1", "name": "1", "signal_name": "RF_OUT_DC" },
+        { "pin_number": "2", "name": "2", "signal_name": "RF_OUT" }
+      ],
+      "value": "100nF",
+      "part_uuid": "a299e4f29fd2469688f76621c3d59c4d",
+      "footprint_name": "C0603"
+    },
+    {
+      "designator": "C3",
+      "pins": [
+        { "pin_number": "1", "name": "1", "signal_name": "VCC_IN" },
+        { "pin_number": "2", "name": "2", "signal_name": "GND" }
+      ],
+      "value": "100nF",
+      "part_uuid": "a299e4f29fd2469688f76621c3d59c4d",
+      "footprint_name": "C0603"
+    },
+    {
+      "designator": "U1",
+      "pins": [
+        { "pin_number": "1", "name": "RFIN", "signal_name": "RF_IN_AC" },
+        { "pin_number": "2", "name": "GND", "signal_name": "GND" },
+        { "pin_number": "3", "name": "RF-OUTandDC-IN", "signal_name": "RF_OUT_DC" },
+        { "pin_number": "4", "name": "GND", "signal_name": "GND" }
+      ],
+      "value": "MAR-8ASM+",
+      "part_uuid": "3ed9f1344dfe438096a79e58bb09afe7",
+      "footprint_name": "SEMI-SMD_MAR-8ASM"
+    },
+    {
+      "designator": "J3",
+      "pins": [
+        { "pin_number": "1", "name": "1", "signal_name": "VCC_IN" },
+        { "pin_number": "2", "name": "2", "signal_name": "GND" }
+      ],
+      "value": "KF350-3.5-2P",
+      "part_uuid": "bccdb43f6d7441a596e3e499d83bc6ba",
+      "footprint_name": "CONN-TH_P3.50_KF350-3.5-2P"
+    },
+    {
+      "designator": "R1",
+      "pins": [
+        { "pin_number": "2", "name": "2", "signal_name": "RF_OUT_DC" },
+        { "pin_number": "1", "name": "1", "signal_name": "VCC_IN" }
+      ],
+      "value": "220Ω",
+      "part_uuid": "8df3b005e2c84e13b1460bb194e5b25a",
+      "footprint_name": "R0603"
+    }
+  ]
+}

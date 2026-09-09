@@ -49,6 +49,8 @@
     "typecheck": "tsc --noEmit",
     "native:build": "node scripts/build-native.mjs",
     "test": "node scripts/test.mjs",
+    "test:pcb": "node scripts/test.mjs pcb-",
+    "test:pcb-layout": "node scripts/test-pcb-layout.mjs",
     "check": "npm run typecheck && npm run build && npm test",
     "test:package": "node scripts/check-package.mjs",
     "prepack": "npm run build"
