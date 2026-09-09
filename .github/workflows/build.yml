@@ -39,7 +39,19 @@ jobs:
         run: npm run build
 
       - name: Check and build MCP
-        run: npm run check --workspace=mcp
+        # Backend stays local in this branch; this workflow does not publish it.
+        run: |
+          rustup default stable
+          npm run native:build --workspace=eda-copilot-backend
+          npm run build --workspace=eda-copilot-backend
+          npm run check --workspace=mcp
+
+      - name: Check installed MCP backend dependency before a release
+        if: startsWith(github.ref, 'refs/tags/v')
+        working-directory: mcp
+        run: |
+          backend_spec=$(node -p "const p = require('./package.json'); 'eda-copilot-backend@' + p.dependencies['eda-copilot-backend']")
+          npm view "$backend_spec" version
 
       - name: Pack MCP
         run: |

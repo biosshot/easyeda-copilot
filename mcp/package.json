@@ -26,7 +26,7 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run typecheck && npm run build && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs",
+    "check": "npm run typecheck && npm run build && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs",
     "prepack": "npm run build",
     "start": "node dist/index.js"
   },
@@ -36,10 +36,11 @@
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",
     "ws": "^8.20.1",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "eda-copilot-backend": "0.1.0"
   },
   "devDependencies": {
-    "@copilot/shared": "file:../packages/shared",
+    "@copilot/shared": "1.0.0",
     "@types/node": "^25.9.1",
     "@types/sharp": "^0.31.1",
     "@types/ws": "^8.18.1",
@@ -48,6 +49,6 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19"
   }
 }

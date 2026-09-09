@@ -1,0 +1,1 @@
+export type DeepReadonly<T> = T extends string | number | boolean | undefined | null | symbol ? T : T extends Array<infer U> ? ReadonlyArray<DeepReadonly<U>> : T extends object ? { readonly [P in keyof T]: DeepReadonly<T[P]> } : T;

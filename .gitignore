@@ -4,3 +4,9 @@
 /iframe
 /mcp/dist/
 /mcp/.test-data
+/backend/dist/
+/backend/node_modules/
+/backend/native/pcb-board-packer/target/
+/backend/native/pcb-board-packer/*.node
+/backend/.test-output/
+/backend/.artifacts/

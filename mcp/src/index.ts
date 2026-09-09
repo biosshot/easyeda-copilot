@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { disposeBackend } from 'eda-copilot-backend/pcb';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
@@ -108,6 +109,7 @@ async function main() {
         transportEndStarted = true;
 
         await closeTransport();
+        await disposeBackend();
         if (forceShutdownStarted) return;
         if (bridge.enterBrokerOnlyMode()) return;
         await closeBridge();
@@ -115,6 +117,7 @@ async function main() {
     const forceShutdown = async () => {
         if (forceShutdownStarted) return;
         forceShutdownStarted = true;
+        await disposeBackend();
         await closeBridge();
         await closeTransport();
     };

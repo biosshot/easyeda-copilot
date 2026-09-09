@@ -10,7 +10,7 @@ cd easyeda-copilot
 npm install
 ```
 
-Set the mode in `packages/shared/mode.ts`:
+Set the mode in `shared/mode.ts`:
 
 ```ts
 export const __MODE__: string = 'PROD';

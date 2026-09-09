@@ -2,7 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
-import { postJson } from "../utils/server";
+import { componentSearch, searchReusedBlock } from "eda-copilot-backend/components";
+import { extractCircuit } from "eda-copilot-backend/schematic";
 import { SKILL_DOC_PATH, TEMP_DIR } from "../utils/dirs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -78,7 +79,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 return textResult('Fill one: part_uuid or MPN');
             }
 
-            const result = await postJson('/v1/mcp-tools/component-search', { part_uuid, MPN });
+            const result = await componentSearch({ part_uuid, MPN });
             return textResult(result);
         },
     );
@@ -95,7 +96,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }),
         },
         async ({ query, page, limit }) => {
-            const result = await postJson('/v1/mcp-tools/search-reused-block', { query, page, limit });
+            const result = await searchReusedBlock({ query, page, limit });
             return textResult(result);
         },
     );
@@ -120,8 +121,8 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 });
             }
 
-            const resolvedInputCircuit = await bridge.requestEasyEda('get-schematic');
-            const result = await postJson('/v1/mcp-tools/extract-circuit', { circuit, inputCircuit: resolvedInputCircuit });
+            const resolvedInputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
+            const result = await extractCircuit({ circuit, inputCircuit: resolvedInputCircuit });
             const assembled = await bridge.requestEasyEda('assemble-circuit', result as Record<string, unknown>, 300000);
             const sheetSpace = sheetSpaceNotice(assembled);
             return textResult({
@@ -191,7 +192,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 external_connect: null,
             };
 
-            const response = await postJson('/v1/mcp-tools/extract-circuit', {
+            const response = await extractCircuit({
                 circuit,
                 inputCircuit: { components: [] },
             });
