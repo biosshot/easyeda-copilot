@@ -1,11 +1,13 @@
 ---
 name: easyeda-copilot-mcp
-description: Create, modify, place, route, or review EasyEDA schematics and PCBs with EasyEDA Copilot MCP tools. Supports independent schematic, placement, mechanics, routing, and verification tasks.
+description: Create, modify, place, route, or review EasyEDA schematics and PCBs with EasyEDA Copilot MCP tools. Execute JavaScript for focused API edits and operations not covered by the standard tools.
 ---
 
 # EasyEDA Copilot MCP
 
 Complete only the stage requested by the user. A schematic task does not authorize PCB work; placement does not authorize routing.
+
+For overall schematic organization, PCB placement and routing, start with Copilot's dedicated tools and verify their result. Improve that result with scoped refinement; use `execute_js` for a specific correction or a missing API operation. Use a different approach when the user explicitly requests it. Access to JavaScript does not expand the authorized task.
 
 ## Start
 
@@ -23,6 +25,7 @@ Complete only the stage requested by the user. A schematic task does not authori
 | Change connectors, outline, holes, controls, displays, or antennas | placement docs plus `pcb-layout/mechanical-validation.md` | LLM and user approve mechanics |
 | Apply layer count, rules, zones, copper, or routing | `pcb-routing/instructions.md`, `pcb-routing/dsl.ts` | requested PCB operation is checked |
 | Inspect or verify without mutation | `verification.md` | requested evidence is reported |
+| Execute JavaScript or make a focused API edit | `execution/instructions.md`, then the needed API reference | returned data or artifacts and the affected objects are checked |
 
 ## Required behavior
 
@@ -36,6 +39,10 @@ Complete only the stage requested by the user. A schematic task does not authori
 - Existing PCB copper and objects are preserved by placement assembly. Existing routing is preserved by the router unless `clearRouting(...)` explicitly selects copper to replace.
 - For stack-dependent routing intent, use verified physical data, declare and report a reasonable provisional stack, or ask for the missing data. Do not silently omit the semantic constraint.
 - After verification, decide whether to keep, repair, or restore the agent-applied result. Prefer a focused repair for a local error; restore a clearly invalid or broadly regressed result that cannot be repaired safely. Do not restore for a warning alone, and report the decision.
+- Before `execute_js`, read `execution/instructions.md`. Identify the exact document and affected objects, retain the checkpoint ID returned for the edit, then verify both the intended change and preservation of relevant surrounding objects. Read-only executions also create checkpoints: never assume the latest checkpoint is the baseline to restore.
+- A checkpoint covers the current document source, not the entire project or external state. A layout/refinement request does not authorize deleting projects, libraries or pages, clearing the whole design, or replacing unrelated content. Restore only a matching, explicit checkpoint after execution has finished and when doing so will not discard intervening user work; see `verification.md`.
+- `execute_js` waits up to 60 seconds and does not cancel JavaScript on timeout. Do not retry a mutation or restore while its execution outcome is unknown.
+- Tool responses larger than 16 KiB are saved to local artifacts, including errors and structured data. Read the relevant fields or file sections with local tools; do not dump the whole artifact back into context. Binary `execute_js` results are always files. See `execution/instructions.md` for formats and examples.
 
 ## Finish
 

@@ -1,0 +1,59 @@
+# ESYS\_ImportProjectImportOption enum
+
+Import project import option
+
+## Signature
+
+```typescript
+enum ESYS_ImportProjectImportOption
+```
+
+## Enumeration Members
+
+<table><thead><tr><th>
+
+Member
+
+</th><th>
+
+Value
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+EXTRACT\_LIBRARIES
+
+</td><td>
+
+`'ExtractLibraries'`
+
+</td><td>
+
+</td></tr>
+<tr><td>
+
+IMPORT\_DOCUMENT
+
+</td><td>
+
+`'ImportDocument'`
+
+</td><td>
+
+</td></tr>
+<tr><td>
+
+IMPORT\_DOCUMENT\_EXTRACT\_LIBRARIES
+
+</td><td>
+
+`'ImportDocumentExtractLibraries'`
+
+</td><td>
+
+</td></tr>
+</tbody></table>

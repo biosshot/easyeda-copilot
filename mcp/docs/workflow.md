@@ -10,7 +10,7 @@ SCOPE -> SELECT INSTANCE -> OPEN DOCUMENT -> INSPECT -> MUTATE -> WAIT -> VERIFY
 - Prefer coherent batched mutations, but split work when an intermediate check reduces risk.
 - Call `sync_current_document` only when the editor state is stale; it saves, closes, and reopens the document.
 - Use `cancel_operation` only when pending work is obsolete.
-- After verification, choose `keep`, a focused repair, or checkpoint restore. Restore an agent-applied result when it clearly violates the request, causes a broad regression, or cannot be repaired safely. Do not restore for a warning alone; report the decision.
+- After verification, choose `keep`, a focused repair, or checkpoint restore under the recovery conditions in `verification.md`. Restore an agent-applied result when it clearly violates the request or causes a broad regression and restoration preserves intervening user work. Do not restore for a warning alone; report the decision.
 
 ## Full project
 
@@ -25,7 +25,7 @@ Use this composition only when the user requests a complete schematic-to-PCB wor
 7. Open the target PCB. Inspect complete connectivity once and derive a provisional placement-and-routing plan: logical signal paths, power flow, thermal needs, layer/via strategy, escape directions, and routing corridors. Then select the placement preservation mode.
 8. If mechanics are affected, run the mechanical preview and obtain user approval.
 9. Run full placement, verify it remains realistically routable under that plan, obtain final placement approval, and assemble the approved `layoutId`.
-10. Run targeted live-PCB checks and confirm that critical signal, power, return, escape, and thermal paths remain feasible.
+10. Run targeted live-PCB checks and confirm that critical signal, power, return, escape, and thermal paths remain feasible. Correct local findings with scoped refinement, preserving the accepted placement elsewhere. For a correction without a suitable dedicated tool, follow `execution/instructions.md` and use focused JavaScript; a local finding does not justify clearing or regenerating the whole design.
 11. Apply requested layer count, DRC rules, copper, and routing as one complete router DSL transaction by default. If placement is the routing bottleneck, return to placement when the requested scope allows it; do not hide the problem with repeated routing attempts.
 12. Review router diagnostics and native DRC, then stop at the requested boundary.
 
