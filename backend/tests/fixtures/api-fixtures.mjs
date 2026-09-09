@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 
 export const PART_UUID = '11111111111111111111111111111111';
 export const SYMBOL_UUID = '22222222222222222222222222222222';
+export const FOOTPRINT_UUID = '33333333333333333333333333333333';
+const footprintData = [
+  ['DOCTYPE', 'FOOTPRINT'], ['ATTR', 0, 0, 'Name', 'R_0603'],
+  ...[-27.56, 27.56].map((x, index) => ['PAD', 'pad' + index, 0, '', 1, String(index + 1), x, 0, 0, null, ['RECT', 23.62, 31.5, 0], [], 0, 0, 0, 1, 0, null, null, null, null, 0]),
+].map(line => JSON.stringify(line)).join('\n');
 export const symbolData = [
   ['DOCTYPE', 'SYMBOL', '1.1'], ['HEAD', { symbolType: 2, originX: 0, originY: 0 }],
   ['PART', 'RESISTOR.1', { BBOX: [-10, -5, 10, 5] }],
@@ -55,10 +60,13 @@ export function installEasyEdaFixture() {
       }] } });
     }
     if (url.pathname === `/api/devices/${PART_UUID}`) {
-      return Response.json({ success: true, result: { symbol: { uuid: SYMBOL_UUID }, product_code: 'C111', uuid: PART_UUID } });
+      return Response.json({ success: true, result: { symbol: { uuid: SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C111', uuid: PART_UUID } });
     }
     if (url.pathname === `/api/v2/components/${SYMBOL_UUID}`) {
       return Response.json({ success: true, result: { dataStr: symbolData } });
+    }
+    if (url.pathname === `/api/v2/components/${FOOTPRINT_UUID}`) {
+      return Response.json({ success: true, result: { uuid: FOOTPRINT_UUID, title: 'R_0603', dataStr: footprintData } });
     }
     throw new Error(`Unexpected fixture request: ${url.pathname}`);
   };
