@@ -6,6 +6,7 @@ import {
     type RoutingCopperApplication,
 } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
+import { executeJavaScript } from './eda/execute-js';
 import { checkPcbDrc } from './eda/drc';
 import {
     getPcb,
@@ -1357,6 +1358,12 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
     try {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
+
+        if (message.event === 'execute-js') {
+            if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
+            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false)));
+            return;
+        }
 
         if (message.event === 'get-schematic') {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);

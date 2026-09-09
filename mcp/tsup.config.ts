@@ -19,6 +19,7 @@ export default defineConfig({
         'src/routing/easyeda-drc-adapter.ts',
         'src/tools/projects.ts',
         'src/tools/docs.ts',
+        'src/tools/execute-js.ts',
     ],
     format: ['esm'],
     clean: true,

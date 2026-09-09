@@ -42,7 +42,7 @@ For overall schematic organization, PCB placement and routing, start with Copilo
 - Before `execute_js`, read `execution/instructions.md`. Identify the exact document and affected objects, retain the checkpoint ID returned for the edit, then verify both the intended change and preservation of relevant surrounding objects. Read-only executions also create checkpoints: never assume the latest checkpoint is the baseline to restore.
 - A checkpoint covers the current document source, not the entire project or external state. A layout/refinement request does not authorize deleting projects, libraries or pages, clearing the whole design, or replacing unrelated content. Restore only a matching, explicit checkpoint after execution has finished and when doing so will not discard intervening user work; see `verification.md`.
 - `execute_js` waits up to 60 seconds and does not cancel JavaScript on timeout. Do not retry a mutation or restore while its execution outcome is unknown.
-- Tool responses larger than 16 KiB are saved to local artifacts, including errors and structured data. Read the relevant fields or file sections with local tools; do not dump the whole artifact back into context. Binary `execute_js` results are always files. See `execution/instructions.md` for formats and examples.
+- `execute_js` returns small JSON inline; responses larger than 16 KiB, including execution errors, are saved to local artifacts. Binary results are always files. Read the relevant fields or file sections with local tools; do not dump the whole artifact back into context. See `execution/instructions.md` for formats and examples.
 
 ## Finish
 
