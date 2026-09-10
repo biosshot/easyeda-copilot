@@ -1646,8 +1646,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
                 ? Math.floor(body.drc_limit)
                 : 24;
 
-            const pcb = await getPcb();
-            const result = await inspectNet(pcb, netName, drcLimit);
+            const result = await inspectNet(netName, drcLimit);
             reply(true, result);
             return;
         }

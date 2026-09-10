@@ -62,18 +62,14 @@ export const SimplifiedDrcCategorySchema = () => z.object({
 export const ExplainPcbWireSchema = (opts?: ExplainPcbOptions) => z.object({
     net: z.string(),
     layer: z.array(opts?.forLLM ? z.string() : PcbLayerNameSchema()),
-    connected_pads: z.array(ExplainPcbPadRefSchema()),
     length: z.number(),
-    direct_distance: z.number().optional(),
-    detour_ratio: z.number().optional(),
     vias: z.number(),
     width: z.object({
         min: z.number(),
         max: z.number(),
-    }).strict(),
+    }).strict().nullable(),
     segments: z.number(),
-    bbox: ExplainPcbBoxSchema(),
-    drc_violations: z.array(SimplifiedDrcViolationSchema()).optional(),
+    bbox: ExplainPcbBoxSchema().optional(),
 }).strict();
 
 export const ExplainPcbViaSchema = () => z.object({
@@ -87,16 +83,11 @@ export const ExplainPcbViaSchema = () => z.object({
 export const ExplainPcbPolygonSchema = (opts?: ExplainPcbOptions) => z.object({
     net: z.string(),
     layer: opts?.forLLM ? z.string() : PcbLayerNameSchema(),
+    geometry: z.literal('source_outline'),
     // points: z.array(PcbPointSchema()).min(3),
     cutouts: z.array(z.array(PcbPointSchema()).min(3)).optional(),
     area: z.number(),
     bbox: ExplainPcbBoxSchema(),
-    connects: z.array(ExplainPcbPadRefSchema()),
-    minWidth: z.number().optional(),
-    narrowNecks: z.array(z.object({
-        at: PcbPointSchema(),
-        width: z.number(),
-    }).strict()).optional(),
 }).strict();
 
 export const ExplainPcbLayer = (opts?: ExplainPcbOptions) => z.object({
@@ -108,9 +99,29 @@ export const ExplainPcbSchema = (opts?: ExplainPcbOptions) => z.object({
     layers: z.array(ExplainPcbLayer(opts)).optional(),
     board: ExplainPcbBoardSchema().optional(),
     components: z.array(ExplainPcbComponentSchema(opts)),
+    standalone_pads: z.array(z.object({
+        ref: z.string(),
+        net: z.string().optional(),
+        layer: opts?.forLLM ? z.string() : PcbLayerNameSchema(),
+        x: z.number(),
+        y: z.number(),
+    }).strict()).optional(),
     wires: z.array(ExplainPcbWireSchema(opts)).optional(),
     vias: z.array(ExplainPcbViaSchema()).optional(),
     polygons: z.array(ExplainPcbPolygonSchema(opts)).optional(),
+}).strict();
+
+export const InspectPcbNetSchema = () => ExplainPcbWireSchema().extend({
+    document_uuid: z.string(),
+    found: z.boolean(),
+    units: z.literal('mm'),
+    pads: z.array(ExplainPcbPadRefSchema()),
+    polygons: z.array(ExplainPcbPolygonSchema()),
+    drc: z.object({
+        violation_count: z.number(),
+        truncated: z.boolean(),
+        violations: z.array(SimplifiedDrcViolationSchema()),
+    }).strict(),
 }).strict();
 
 export type ExplainPcbBox = z.infer<ReturnType<typeof ExplainPcbBoxSchema>>;
@@ -122,5 +133,6 @@ export type SimplifiedDrcViolation = z.infer<ReturnType<typeof SimplifiedDrcViol
 export type ExplainPcbVia = z.infer<ReturnType<typeof ExplainPcbViaSchema>>;
 export type ExplainPcbPolygon = z.infer<ReturnType<typeof ExplainPcbPolygonSchema>>;
 export type ExplainPCB = z.infer<ReturnType<typeof ExplainPcbSchema>>;
+export type InspectPcbNet = z.infer<ReturnType<typeof InspectPcbNetSchema>>;
 export type SimplifiedDrcCategory = z.infer<ReturnType<typeof SimplifiedDrcCategorySchema>>;
 export type SimplifiedDrcResult = SimplifiedDrcCategory[];

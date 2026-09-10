@@ -34,6 +34,7 @@ let stderr = '';
 transport.stderr?.on('data', bytes => { stderr += bytes; });
 const requests = [];
 let currentSchematic = { components: [] };
+const pcbSummary = { net: 'TEST', layer: ['TOP'], length: 25.4, vias: 0, width: { min: 0.127, max: 0.254 }, segments: 1 };
 const pcbSchematic = { components: schematicInput.circuit.add_components.map((component, index) =>
   index === 0 ? { ...component, footprint_uuid: FOOTPRINT_UUID } : component) };
 let heldSnapshot;
@@ -43,6 +44,9 @@ async function editorRequest(event, body) {
   if (event === 'get-schematic') return currentSchematic;
   if (event === 'get-multi-page-schematic') { await heldSnapshot; return pcbSchematic; }
   if (event === 'get-pcb-existing-placement') return undefined;
+  if (event === 'get-pcb') return { components: [], wires: [pcbSummary] };
+  if (event === 'inspect-net') return { ...pcbSummary, net: body.net, document_uuid: 'pcb-fixture', found: true,
+    units: 'mm', pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, truncated: false, violations: [] } };
   if (event === 'checkpoint-save') return { checkpointId: 'before-beautify' };
   if (event === 'assemble-circuit') return { sheetSpace: { freePercent: 8 } };
   if (['beautify-current-page', 'assemble-board'].includes(event)) return {};
@@ -58,7 +62,7 @@ let editor;
 try {
   await client.connect(transport);
   const { tools } = await client.listTools();
-  for (const name of ['component_search', 'search_reused_block', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
+  for (const name of ['component_search', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
     assert.ok(tools.some(tool => tool.name === name), 'Missing MCP tool: ' + name);
   }
   editor = new WebSocket('ws://127.0.0.1:' + port);
@@ -85,7 +89,13 @@ try {
     });
   });
   await ready;
-  assert.deepEqual(await call('search_reused_block', { query: 'power' }), []);
+  assert.deepEqual((await call('get_current_pcb', {})).wires, [pcbSummary], 'Small PCB summary should be inline');
+  const inspected = await call('inspect_net', { net: 'TEST', drc_limit: 7 });
+  assert.equal(inspected.length, 25.4);
+  assert.deepEqual(inspected.drc, { violation_count: 0, truncated: false, violations: [] });
+  assert.equal('connected_pads' in inspected, false);
+  assert.equal(requests.find(request => request.event === 'inspect-net').body.drc_limit, 7);
+  assert.ok(!tools.some(tool => tool.name === 'search_reused_block'), 'Reusable block search is intentionally disabled');
   assert.ok((await call('component_search', { MPN: 'TEST-1K' })).components.length);
   assert.equal((await call('component_search', { part_uuid: PART_UUID })).bestComponent.part_uuid, PART_UUID);
   const extracted = await call('extract_circuit_on_current_page', schematicInput.circuit);

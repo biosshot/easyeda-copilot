@@ -1,4 +1,4 @@
-import type { SimplifiedDrcCategory, SimplifiedDrcViolation } from '@copilot/shared/types/pcb/explain';
+import type { InspectPcbNet, SimplifiedDrcCategory, SimplifiedDrcViolation } from '@copilot/shared/types/pcb/explain';
 
 function formatDrcMessage(str: string | undefined, param: Record<string, string> | undefined) {
     if (!str || !param) return str ?? '';
@@ -21,7 +21,8 @@ function simplifyItem(item: Record<string, unknown>): SimplifiedDrcViolation {
 
 export async function checkPcbDrc(limit: number): Promise<SimplifiedDrcCategory[]> {
     const drcResult = await eda.pcb_Drc.check(true, false, true);
-    const violations = Array.isArray(drcResult) ? drcResult : [];
+    if (!Array.isArray(drcResult)) throw new Error('Native PCB DRC did not return detailed results');
+    const violations = drcResult;
 
     return violations.map(category => {
         const rawCategory = category as Record<string, unknown>;
@@ -39,4 +40,28 @@ export async function checkPcbDrc(limit: number): Promise<SimplifiedDrcCategory[
             })).filter(group => group.list.length > 0),
         };
     }).filter(category => category.list.length > 0);
+}
+
+/** Return native findings for this net, filtering before limiting details. */
+export async function checkPcbNetDrc(net: string, limit: number): Promise<InspectPcbNet['drc']> {
+    const result = await eda.pcb_Drc.check(true, false, true);
+    if (!Array.isArray(result)) throw new Error('Native PCB DRC did not return detailed results');
+    const token = `(${net})`;
+    const mentionsNet = (suffix?: string) => suffix === token || suffix?.startsWith(token + ':') || suffix?.startsWith(token + ' ');
+    const violations: SimplifiedDrcViolation[] = [];
+    for (const category of result) {
+        for (const group of category.list ?? []) {
+            for (const item of group.list ?? []) {
+                const violation = simplifyItem(item);
+                if (group.name !== net && !mentionsNet(violation.obj1) && !mentionsNet(violation.obj2)) continue;
+                violations.push(violation);
+            }
+        }
+    }
+    const count = Number.isFinite(limit) ? Math.max(1, Math.min(200, Math.floor(limit))) : 24;
+    return {
+        violation_count: violations.length,
+        truncated: violations.length > count,
+        violations: violations.slice(0, count),
+    };
 }

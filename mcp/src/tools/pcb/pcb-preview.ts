@@ -78,10 +78,10 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'inspect_net',
         {
             title: 'Inspect PCB Net',
-            description: 'Analyze a specific net on the currently opened PCB document: length, width, vias, layers, connected/unconnected pads, polygons, and DRC violations. Open the target PCB document first.',
+            description: 'Inspect a net on the open PCB. Returns one net summary: net, document_uuid, found, units (mm), pads (net membership), layer, length (sum of line and arc lengths), vias (count), width (min/max, or null without tracks), segments (line and arc count), optional bbox of tracks/vias, polygons (source outlines), and drc (violation_count, truncated, violations). MULTI denotes through vias. Read connection failures in native drc.violations; no connections are inferred from geometry. Includes unrouted and via-only nets. Open the target PCB document first.',
             inputSchema: z.object({
                 net: z.string().min(1).describe('Net name to inspect.'),
-                drc_limit: z.number().min(1).max(200).default(24).describe('Maximum DRC violations per group to fetch for this net.'),
+                drc_limit: z.number().int().min(1).max(200).default(24).describe('Maximum returned native DRC details for this net, after net filtering. violation_count uses the full matching result.'),
             }),
         },
         async ({ net, drc_limit }) => {
@@ -110,14 +110,14 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'get_current_pcb',
         {
             title: 'Get EasyEDA PCB',
-            description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first.\n' +
+            description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first. wires contains copper statistics grouped by net; pads lists net membership. Use native DRC for connectivity and preview_pcb for filled copper.\n' +
                 `Format: ${JSON.stringify(ExplainPcbSchema({ forLLM: true }).toJSONSchema())}`,
             inputSchema: z.object({}),
         },
         async () => {
             const result = await bridge.requestEasyEda('get-pcb') as ExplainPCB;
 
-            if (result.components.length > 30 || result.vias?.length || 0 > 50 || result.polygons?.length || 0 > 20 || result.wires?.length || 0 > 50) {
+            if (result.components.length > 30 || (result.vias?.length ?? 0) > 50 || (result.polygons?.length ?? 0) > 20 || (result.wires?.length ?? 0) > 50) {
                 await mkdir(TEMP_DIR, { recursive: true });
 
                 const savePath = join(TEMP_DIR, `pcb-${crypto.randomUUID().slice(0, 6)}.json`);
