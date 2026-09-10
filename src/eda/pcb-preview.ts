@@ -37,11 +37,15 @@ async function zoomBounds(zoom: PreviewPcbInput['zoom'], call: NativeCall): Prom
         if (box.unit === 'rel') {
             const board = await boardBounds(call);
             const width = board.maxX - board.minX, height = board.maxY - board.minY;
-            return { minX: board.minX + box.x * width, minY: board.minY + box.y * height,
-                maxX: board.minX + (box.x + box.width) * width, maxY: board.minY + (box.y + box.height) * height };
+            return {
+                minX: board.minX + box.x * width, minY: board.minY + box.y * height,
+                maxX: board.minX + (box.x + box.width) * width, maxY: board.minY + (box.y + box.height) * height
+            };
         }
-        return { minX: mmToMil(box.x), minY: mmToMil(box.y),
-            maxX: mmToMil(box.x + box.width), maxY: mmToMil(box.y + box.height) };
+        return {
+            minX: mmToMil(box.x), minY: mmToMil(box.y),
+            maxX: mmToMil(box.x + box.width), maxY: mmToMil(box.y + box.height)
+        };
     }
     const primitives = zoom.mode === 'net'
         ? await call(() => eda.pcb_Net.getAllPrimitivesByNet(zoom.net))

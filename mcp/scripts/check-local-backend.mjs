@@ -58,8 +58,8 @@ async function editorRequest(event, body) {
     if (previewMode === 'timeout') await new Promise(resolve => { releasePreview = resolve; });
     return { renderer: 'native', base64: previewMode === 'invalid' ? 'invalid' : nativePng.toString('base64'), mime_type: 'image/png', notes: previewNotes };
   }
-  if (event === 'inspect-net') return { ...pcbSummary, net: body.net, document_uuid: 'pcb-fixture', found: true,
-    units: 'mm', pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, truncated: false, violations: [] } };
+  if (event === 'inspect-net') return { ...pcbSummary, net: body.net, found: true,
+    pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, truncated: false, violations: [] } };
   if (event === 'checkpoint-save') return { checkpointId: 'before-beautify' };
   if (event === 'assemble-circuit') return { sheetSpace: { freePercent: 8 } };
   if (['beautify-current-page', 'assemble-board'].includes(event)) return {};

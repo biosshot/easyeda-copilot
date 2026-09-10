@@ -29,6 +29,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 | Wait, cancel, or recover a long operation | `operations.md` | terminal result and current document state are checked |
 | Inspect or verify without mutation | `verification.md` | requested evidence is reported |
 | Execute JavaScript or make a focused API edit | `execution/instructions.md`, then the needed API reference | returned data or artifacts and the affected objects are checked |
+| Inspect or edit document File Source | `execution/instructions.md`, `execution/file-source.md` | intended records and the affected stage are verified; standard workflows remain the starting point |
 
 ## Required behavior
 

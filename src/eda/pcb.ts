@@ -488,7 +488,6 @@ function buildPolygons(rawPolygons: RawPolygon[]) {
             polygons.push({
                 net: polygon.net,
                 layer: polygon.layer,
-                geometry: "source_outline",
                 cutouts: island.cutouts.length
                     ? island.cutouts.map(ring => ring.map(point => toExplainPoint(point)))
                     : undefined,
@@ -557,8 +556,8 @@ export async function inspectNet(netName: string, drcLimit: number): Promise<Ins
     const current = await eda.dmt_SelectControl.getCurrentDocumentInfo();
     if (current?.uuid !== document.uuid) throw new Error('Active PCB changed during inspection; open the target PCB and retry');
     return {
-        net: netName, document_uuid: document.uuid, found: Boolean(pads.length || copper || polygons.length || drc.violation_count),
-        units: 'mm', pads, layer: copper?.layer ?? [], length: copper?.length ?? 0, vias: copper?.vias ?? 0,
+        net: netName, found: Boolean(pads.length || copper || polygons.length || drc.violation_count),
+        pads, layer: copper?.layer ?? [], length: copper?.length ?? 0, vias: copper?.vias ?? 0,
         width: copper?.width ?? null, segments: copper?.segments ?? 0, bbox: copper?.bbox, polygons, drc,
     };
 }

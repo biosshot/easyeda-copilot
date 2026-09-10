@@ -95,7 +95,7 @@ await test('net totals use mm once and retain all native copper', async () => {
   assert.deepEqual(r.width, { min: 0.254, max: 0.254 });
   assert.deepEqual(r.bbox, { left: -0.127, right: 25.527, top: 0.127, bottom: -0.127 });
   assert.equal(r.drc.violations[0].obj1, '(TEST): J3_1');
-  for (const removed of ['connected_pads', 'unconnected_pads', 'connectivity', 'direct_distance', 'detour_ratio']) {
+  for (const removed of ['units', 'document_uuid', 'connected_pads', 'unconnected_pads', 'connectivity', 'direct_distance', 'detour_ratio']) {
     assert.equal(removed in r, false);
   }
 });
@@ -155,7 +155,7 @@ await test('source pour outlines do not suppress tracks or claim pad connections
   const r = await inspect();
   assert.equal(r.length, 25.4);
   assert.equal(r.polygons.length, 2);
-  assert.equal(r.polygons[0].geometry, 'source_outline');
+  assert.equal('geometry' in r.polygons[0], false);
   assert.equal(r.polygons[0].connects, undefined);
   assert.equal(r.polygons[0].pads_in_outline, undefined);
 });

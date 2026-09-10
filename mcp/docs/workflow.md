@@ -12,6 +12,8 @@ SCOPE -> SELECT INSTANCE -> OPEN DOCUMENT -> INSPECT -> MUTATE -> WAIT -> VERIFY
 - Use `cancel_operation` only when pending work is obsolete.
 - After the stage's verification, choose `keep`, a focused repair, or checkpoint restore under [recovery](recovery.md). Report the decision.
 
+The standard Copilot tools and DSL remain the starting point. [File Source editing](execution/file-source.md) through `execute_js` is also available for a scoped change; it is an alternative, not a required stage or a prohibited method. It uses the same document identification, checkpoint and stage-verification workflow.
+
 ## Full project
 
 Use this composition only when the user requests a complete schematic-to-PCB workflow:

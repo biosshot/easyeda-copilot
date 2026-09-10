@@ -83,7 +83,6 @@ export const ExplainPcbViaSchema = () => z.object({
 export const ExplainPcbPolygonSchema = (opts?: ExplainPcbOptions) => z.object({
     net: z.string(),
     layer: opts?.forLLM ? z.string() : PcbLayerNameSchema(),
-    geometry: z.literal('source_outline'),
     // points: z.array(PcbPointSchema()).min(3),
     cutouts: z.array(z.array(PcbPointSchema()).min(3)).optional(),
     area: z.number(),
@@ -112,9 +111,7 @@ export const ExplainPcbSchema = (opts?: ExplainPcbOptions) => z.object({
 }).strict();
 
 export const InspectPcbNetSchema = () => ExplainPcbWireSchema().extend({
-    document_uuid: z.string(),
     found: z.boolean(),
-    units: z.literal('mm'),
     pads: z.array(ExplainPcbPadRefSchema()),
     polygons: z.array(ExplainPcbPolygonSchema()),
     drc: z.object({

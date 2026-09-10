@@ -89,7 +89,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'inspect_net',
         {
             title: 'Inspect PCB Net',
-            description: 'Inspect a net on the open PCB. Returns one net summary: net, document_uuid, found, units (mm), pads (net membership), layer, length (sum of line and arc lengths), vias (count), width (min/max, or null without tracks), segments (line and arc count), optional bbox of tracks/vias, polygons (source outlines), and drc (violation_count, truncated, violations). MULTI denotes through vias. Read connection failures in native drc.violations; no connections are inferred from geometry. Includes unrouted and via-only nets. Open the target PCB document first.',
+            description: 'Inspect a net on the open PCB. Returns one net summary: net, found, pads (net membership), layer, length (sum of line and arc lengths), vias (count), width (min/max, or null without tracks), segments (line and arc count), optional bbox of tracks/vias, polygons (source outlines), and drc (violation_count, truncated, violations). MULTI denotes through vias. Read connection failures in native drc.violations; no connections are inferred from geometry. Includes unrouted and via-only nets. Open the target PCB document first.',
             inputSchema: z.object({
                 net: z.string().min(1).describe('Net name to inspect.'),
                 drc_limit: z.number().int().min(1).max(200).default(24).describe('Maximum returned native DRC details for this net, after net filtering. violation_count uses the full matching result.'),
