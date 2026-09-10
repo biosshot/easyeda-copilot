@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "build": "tsup",
+    "router:info": "node scripts/router-info.mjs",
     "test:routing-adapter": "npm run build && node scripts/check-routing-adapter.mjs",
     "test:operations": "npm run build && node scripts/check-operation-manager.mjs",
     "test:projects": "npm run build && node scripts/check-project-tools.mjs",

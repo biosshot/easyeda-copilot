@@ -11,6 +11,7 @@ import { PcbDrcBundleSchema, type PcbDrcBundle } from '@copilot/shared/types/pcb
 import type { Bridge } from '../bridge';
 import { operationManager, type OperationContext } from '../operations/manager';
 import { TEMP_DIR } from '../utils/dirs';
+import { readRoutingProgress } from './routing-progress';
 import {
     importEasyEdaAutorouteJson,
     routingResultToEasyEdaApplication,
@@ -72,6 +73,7 @@ async function executeRoutingOperation(
     context: OperationContext,
 ) {
     const artifactsDirectory = join(TEMP_DIR, 'copilot-router', context.id.replace(':', '-'));
+    context.setProgressReader(() => readRoutingProgress(join(artifactsDirectory, 'krt')));
     await mkdir(artifactsDirectory, { recursive: true });
 
     context.setStage('reading_dsl');

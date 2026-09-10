@@ -14,7 +14,7 @@ export function registerOperationTools(server: McpServer) {
         'wait_operation',
         {
             title: 'Wait Operation',
-            description: 'Wait for any running PCB layout or PCB router DSL operation.',
+            description: 'Wait for any running PCB layout or PCB router DSL operation. Running router responses include up to 10 recent log lines and their update time when available.',
             inputSchema: z.object({
                 operation_id: operationId,
                 wait_ms: z.number().int().min(1_000).max(55_000).default(30_000)

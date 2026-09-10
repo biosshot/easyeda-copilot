@@ -43,7 +43,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
             title: 'Preview PCB',
             description: 'Render a PNG preview of the currently opened PCB document. Supports layer selection, net/component highlighting, and zoom to a net, component, or bounding box. Open the target PCB document first.',
             inputSchema: z.object({
-                layers: z.array(PcbLayerNameSchema().or(z.literal('all'))).default(['all']).describe('Layers to render, e.g. ["top"], ["bottom"], ["top","bottom"], or ["all"].'),
+                layers: z.array(PcbLayerNameSchema().or(z.literal('all'))).default(['all']).describe('Layers to render, e.g. ["TOP"], ["BOTTOM"], ["TOP","BOTTOM"], or ["all"]. Use uppercase layer names; only "all" is lowercase.'),
                 highlight_net: z.string().optional().describe('Optional net name to highlight.'),
                 highlight_component: z.string().optional().describe('Optional component designator to highlight.'),
                 highlight_net_colors: z.record(z.string(), z.string()).optional().describe('Optional per-net highlight colors, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}.'),

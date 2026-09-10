@@ -16,7 +16,7 @@ Set the mode in `shared/mode.ts`:
 export const __MODE__: string = 'PROD';
 ```
 
-`PROD` is currently required because the project uses a shared server.
+`PROD` selects the hosted services for the legacy built-in interface. MCP uses the local `eda-copilot-backend` and `eda-copilot-router` packages; it does not require the legacy Copilot server or its API keys.
 
 ## EasyEDA extension
 
@@ -36,20 +36,23 @@ The extension package will be created in `build/dist`.
 
 ## MCP server
 
-Check types and build the MCP server:
+Build the local backend first, then check types, build MCP and run its integration checks. The native build requires Rust when a matching binary has not already been built:
 
 ```bash
-cd mcp
-npm run check
+npm run native:build --workspace=eda-copilot-backend
+npm run build --workspace=eda-copilot-backend
+npm run check --workspace=mcp
 ```
 
 Build and open MCP Inspector:
 
 ```bash
-npm run inspect
+npm run inspect --workspace=mcp
 ```
 
 To test tools that communicate with EasyEDA, start EasyEDA Desktop and enable `External Interactions` for the EasyEDA Copilot extension.
+
+For an unpublished router checkout, follow [local router integration](docs/local-router.md). Use [the documentation map](docs/README.md) to distinguish current MCP instructions from legacy UI guides. The LLM routing reference and the router package reference are maintained separately; review relevant API changes when updating the dependency.
 
 ## Pull requests
 

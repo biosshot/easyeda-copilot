@@ -21,7 +21,7 @@ try {
 
 Use `eda-copilot-backend/components`, `/schematic`, `/pcb` or `/types` for individual entry points. The public declarations describe the existing circuit and PCB contracts. Placement does not route copper; EasyEDA MCP continues to use `eda-copilot-router` for routing and DRC.
 
-Search and UUID-based symbol/footprint resolution use the public EasyEDA APIs. No Copilot server, LLM key, LangChain or database is required. PCB accepts supplied footprints for other CAD integrations and offline execution. `searchReusedBlock` returns `[]`; `extractCircuit` rejects nonempty `add_reused_blocks` before doing work.
+Search and UUID-based symbol/footprint resolution use the public EasyEDA APIs. No Copilot server, LLM key, LangChain or database is required. PCB accepts supplied footprints for other CAD integrations and offline execution.
 
 Runtime requires Node >=20.19. PCB placement also requires the native binary matching the host. Source builds support Windows, Linux with glibc and macOS on x64/arm64; the platform CI builds and checks its host binary. The local development run on this branch verifies Windows x64; CI must verify the other hosts before their support is released. A packaged build must contain the binaries for the platforms it claims to support. No Rust toolchain is needed to use a package containing the matching binary.
 

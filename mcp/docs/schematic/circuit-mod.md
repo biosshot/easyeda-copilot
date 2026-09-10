@@ -28,7 +28,3 @@ Group components by a completed function and local signal path, not by component
 - Do not add unrelated protection, filtering, or future signals unless requested or required by the selected proven block.
 - Combine known related changes, but do not force unrelated or risky work into one call merely to reduce tool count.
 - Read the returned `sheetSpace`. When it warns that less than `10%` remains, continue substantial new work on the appropriate functional page instead of packing more independent circuitry onto the current page.
-
-## Reused blocks
-
-Search by function, inspect returned parameters and ports, and use the exact block UUID. Map every exposed port to an intentional signal name. A close but unsuitable reused block is not preferred over a correct explicit circuit.

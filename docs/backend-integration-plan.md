@@ -17,10 +17,9 @@
 | `extractCircuit` | Изменение и beautify схемы | Проверка UUID, поиск замен, удаление/добавление внешних связей, размещение и `CircuitAssembly` |
 | `getPcbComponentSizes` | `get_pcb_component_sizes` | Разрешение footprints, размеры и отчёт |
 | `makePcbLayout` | `make_pcb_layout` | DSL, existing placement, footprints, Rust solver, preview, диагностика, workers, прогресс и отмена |
-| `searchReusedBlock` | `search_reused_block` | Заглушка `[]`; непустой `add_reused_blocks` отвергается до запросов и размещения |
 | `disposeBackend` | Завершение MCP | Освобождение PCB worker pool |
 
-Перенесены только зависимости этих путей. LangGraph заменён последовательными вызовами async-функций. Для MCP сохраняется требование реальных UUID: серверный LLM-поиск, embeddings, базы, reusable-block resolver и агентная инфраструктура не включены. Тела алгоритмов размещения сохранены с адаптацией импортов и типов.
+Перенесены только зависимости этих путей. LangGraph заменён последовательными вызовами async-функций. Для MCP сохраняется требование реальных UUID: серверный LLM-поиск, embeddings, базы и агентная инфраструктура не включены. Тела алгоритмов размещения сохранены с адаптацией импортов и типов.
 
 Checkpoint, документы, применение сборки и проверка свободного места на листе остаются в MCP/расширении. Существующий OperationManager управляет локальной PCB-операцией; удалённый operation ID и HTTP polling удалены. Трассировка и DRC продолжают использовать прежний router.
 

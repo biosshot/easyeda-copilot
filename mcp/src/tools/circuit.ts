@@ -84,22 +84,22 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         },
     );
 
-    server.registerTool(
-        'search_reused_block',
-        {
-            title: 'Search Reused Block',
-            description: `Search pre-assembled reusable circuit blocks. For circuit workflow docs, read: ${SKILL_DOC_PATH}`,
-            inputSchema: z.object({
-                query: z.string().describe('Query example: "3.3V power regulator"'),
-                page: z.number().min(1).default(1).describe('Current results page.'),
-                limit: z.number().min(1).max(25).default(10).describe('Number of results per page.'),
-            }),
-        },
-        async ({ query, page, limit }) => {
-            const result = await searchReusedBlock({ query, page, limit });
-            return textResult(result);
-        },
-    );
+    // server.registerTool(
+    //     'search_reused_block',
+    //     {
+    //         title: 'Search Reused Block',
+    //         description: `Search pre-assembled reusable circuit blocks. For circuit workflow docs, read: ${SKILL_DOC_PATH}`,
+    //         inputSchema: z.object({
+    //             query: z.string().describe('Query example: "3.3V power regulator"'),
+    //             page: z.number().min(1).default(1).describe('Current results page.'),
+    //             limit: z.number().min(1).max(25).default(10).describe('Number of results per page.'),
+    //         }),
+    //     },
+    //     async ({ query, page, limit }) => {
+    //         const result = await searchReusedBlock({ query, page, limit });
+    //         return textResult(result);
+    //     },
+    // );
 
 
     server.registerTool(

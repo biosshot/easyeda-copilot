@@ -110,10 +110,6 @@ Creates new circuits and modifies existing ones.
 
 Recommended capabilities: tools, JSON.
 
-Additional option:
-
-- **Add reused block to agent tools (Beta)**: allows the agent to use reusable standard blocks when generating circuits.
-
 ### Completions
 
 Collects and processes completion options during autocomplete.

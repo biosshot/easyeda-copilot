@@ -134,7 +134,7 @@ claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 | 领域     | 功能                                                                                                                     |
 | -------- | ------------------------------------------------------------------------------------------------------------------------ |
 | 原理图   | 检查当前页面、创建和补全电路、将现有原理图重组为功能模块，并跨多个页面标注位号                                           |
-| 元器件   | 通过制造商 MPN 或元件 UUID 解析 EasyEDA 元器件，并搜索经过审核的可复用电路模块                                           |
+| 元器件   | 通过制造商 MPN 或元件 UUID 解析 EasyEDA 元器件                                           |
 | PCB 布局 | 根据功能模块、模组、引脚邻近关系、有序信号路径、板边位置、禁布区、安装孔、散热焊盘和保留对象，生成板框并进行约束驱动布局 |
 | PCB 布线 | 定义网络类、信号与电源网络、覆铜平面、差分对、等长组、扇出、阻抗意图、选择性重新布线和过孔缝合                           |
 | 设计检查 | 渲染可区分层的 PCB 预览，突出显示网络和元器件，并检查已布线长度、线宽、层、过孔、焊盘、多边形、附近元器件和未布连接      |
@@ -165,15 +165,13 @@ EasyEDA Copilot 使用完整文档检查点和明确的应用边界来保护已�
 原理图集成基于结构化的 EasyEDA 元器件、引脚、网络和页面数据工作。
 
 1. 检查当前项目和原理图页面。
-2. 解析准确的元器件，或选择经过审核的可复用电路模块。
+2. 解析准确的元器件。
 3. 保存文档检查点。
 4. 创建电路、补全现有片段、替换所选元器件，或将页面重组为具名功能模块。
 5. 将结果应用到 EasyEDA 原生文档。
 6. 保存并检查结果，然后选择保留、修改或恢复。
 
 原理图整理会处理当前完整页面，并在重组过程中保留元器件标识。多页标注支持两种模式：`preserve` 只修复重复或未编号的位号；`resequence` 则按照页面和位置顺序重新计算末尾编号。多单元器件的各单元会一起重命名。
-
-可复用模块提供经过审核的标准子电路，其拓扑保持稳定，同时允许调整端口和无源器件参数。详情请参阅 [可复用模块文档](docs/reusable-blocks.md)。
 
 ## PCB 工作流
 
@@ -259,7 +257,7 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 | 功能                      | MCP      | 内置界面       |
 | ------------------------- | -------- | -------------- |
 | 生成和修改原理图          | 是       | 是，旧版工作流 |
-| 元器件解析和可复用模块    | 是       | 是             |
+| 元器件解析    | 是       | 是             |
 | 检查点和自动恢复          | 是       | 有限支持       |
 | 项目和文档管理            | 是       | 否             |
 | PCB 布局、预览和组装      | 是       | 否             |
@@ -273,18 +271,10 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 <details>
 <summary>显示旧版内置界面</summary>
 
-原有界面提供集成聊天工作流，可用于原理图生成、电路补全、元器件选择、可复用模块和 SPICE 仿真。以下演示使用旧版界面；对于新的智能体工作流，MCP 仍是推荐的集成方式。
+原有界面提供集成聊天工作流，可用于原理图生成、电路补全、元器件选择和 SPICE 仿真。以下演示使用旧版界面；对于新的智能体工作流，MCP 仍是推荐的集成方式。
 
 <p align="center">
   <img src="docs/media/main.png" alt="EasyEDA Copilot 旧版内置界面">
-</p>
-
-#### 电路生成与可复用模块
-
-根据自然语言描述生成结构化原理图，并在 EasyEDA 中直接组装经过审核的可复用子电路。
-
-<p align="center">
-  <img src="docs/media/use-reused.gif" alt="使用可复用电路模块生成 EasyEDA 原理图">
 </p>
 
 #### 电路补全
@@ -304,14 +294,6 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
   <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="根据工程要求选择元器件" width="32%"></a>
   <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="EasyEDA Copilot 中的 LCSC 元器件搜索结果" width="32%"></a>
   <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="在 EasyEDA Copilot 中选择候选元器件" width="32%"></a>
-</p>
-
-#### 导出可复用模块
-
-将现有原理图片段保存为可复用电路模块，以供后续生成工作流使用。
-
-<p align="center">
-  <img src="docs/media/export-reused.gif" alt="将 EasyEDA 原理图片段导出为可复用模块">
 </p>
 
 #### SPICE 仿真
@@ -343,7 +325,7 @@ Codex / Claude Code / 其他 MCP 客户端
 
 EasyEDA 扩展、MCP 桥接服务、文档应用逻辑、检查点系统、设计检查工具以及 PCB 布线软件包均为开源。MCP 桥接服务通过 `127.0.0.1` 与 EasyEDA 扩展进行本地通信。
 
-目前，EasyEDA Copilot 托管服务用于元器件和可复用模块检索，以及生成原理图与 PCB 布局方案。生成的方案通过 EasyEDA 扩展进行应用、检查点保存、检查和 DRC 验证。PCB 布线基于开源的 [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 软件包。
+MCP 后端通过 EasyEDA 公共 API 解析元器件，并在本地生成原理图和 PCB 布局方案。生成的方案通过 EasyEDA 扩展进行应用、检查点保存、检查和 DRC 验证。旧版内置聊天使用独立的服务配置。PCB 布线基于开源的 [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 软件包。
 
 ## 文档
 
@@ -355,7 +337,6 @@ EasyEDA 扩展、MCP 桥接服务、文档应用逻辑、检查点系统、设�
 - [设置与权限](docs/settings.md)
 - [将电路附加到 AI 智能体](docs/attaching-circuits.md)
 - [从 AI 智能体组装电路](docs/assembling-circuits.md)
-- [可复用模块](docs/reusable-blocks.md)
 
 ## 开发
 
