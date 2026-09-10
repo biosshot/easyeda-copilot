@@ -21,7 +21,7 @@ const bundled = await build({ entryPoints: [root + 'src/eda/pcb-preview.ts'], bu
 const png = await sharp({ create: { width: 3, height: 2, channels: 4, background: '#4f86c6' } }).png().toBuffer();
 const version = [3, 2, 149];
 const layerIds = { TOP: 1, BOTTOM: 2, TOP_SILKSCREEN: 3, BOARD_OUTLINE: 11, MULTI: 12, INNER_1: 15 };
-Object.assign(layerIds, Object.fromEntries(Object.entries(layerIds).map(([key, value]) => [value, key])));
+// Model an EasyEDA runtime enum with only name-to-ID entries.
 let state, count = 0;
 const reset = () => {
     version[0] = 3;
@@ -65,6 +65,7 @@ const eda = {
         },
         getCurrentRenderedAreaImage: async tab => {
             state.calls.push(['image', tab]);
+            state.capturedActiveLayer = state.current;
             if (state.hangImage) await new Promise(resolve => { state.releaseImage = resolve; });
             state.capturedLayers = state.layers.filter(layer => layer.layerStatus === 1).map(layer => layer.id);
             if (state.switchDocument) state.document = 'other-pcb';
@@ -105,14 +106,36 @@ await test('future major versions also use the official renderer', async () => {
 });
 await test('bottom layer includes through copper and board outline', async () => {
     await previewPcb(input({ layers: ['BOTTOM'] }));
+    assert.equal(state.capturedActiveLayer, 2);
     assert.deepEqual(state.capturedLayers, [2, 11, 12]); restored();
 });
-await test('unavailable native layer control rejects filtered previews before changing the editor', async () => {
+await test('missing current-layer value does not block native capture', async () => {
     state.missingLayer = true;
-    await assert.rejects(previewPcb(input({ layers: ['BOTTOM'] })), /Native layer-specific preview is unavailable/);
-    assert.equal(state.calls.some(call => ['layers', 'select', 'zoom', 'image'].includes(call[0])), false);
-    restored();
-    assert.equal((await previewPcb(input())).renderer, 'native', 'An all-layer native image remains available');
+    const result = await previewPcb(input({ layers: ['TOP'] }));
+    assert.equal(result.renderer, 'native');
+    assert.equal(state.capturedActiveLayer, 1);
+    assert.deepEqual(state.capturedLayers, [1, 11, 12]);
+    assert.equal(state.current, 1);
+    assert.deepEqual(state.selected, ['previous-selection']);
+    assert.deepEqual(state.layers.map(layer => layer.layerStatus), [1, 1, 2, 1, 1, 0]);
+    assert.match(result.notes.join(' '), /requested layer remains active/);
+});
+for (const getter of [undefined, async () => { throw new Error('Unsupported getter'); }]) {
+    await test('absent or unsupported current-layer getter permits native capture', async () => {
+        const original = eda.pcb_Layer.getCurrentLayer;
+        eda.pcb_Layer.getCurrentLayer = getter;
+        try { assert.equal((await previewPcb(input({ layers: ['TOP'] }))).renderer, 'native'); }
+        finally { eda.pcb_Layer.getCurrentLayer = original; }
+    });
+}
+await test('failed layer selection rejects capture and restores state', async () => {
+    const original = eda.pcb_Layer.selectLayer;
+    eda.pcb_Layer.selectLayer = async id => id === 1 ? false : original(id);
+    try {
+        await assert.rejects(previewPcb(input({ layers: ['TOP'] })), /Could not select/);
+        assert.equal(state.calls.some(call => call[0] === 'image'), false);
+        restored();
+    } finally { eda.pcb_Layer.selectLayer = original; }
 });
 await test('absolute bbox preserves mm coordinates and padding', async () => {
     await previewPcb(input({ zoom: { mode: 'bbox', bbox: { x: 1, y: -2, width: 3, height: 4, unit: 'mm' } }, padding_mm: 0 }));

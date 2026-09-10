@@ -1,10 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { PcbLayerNameSchema } from "@copilot/shared/types/pcb/shared";
-import type { PreviewPcbReply } from "@copilot/shared/types/pcb/preview";
 import type { RawPcb } from "@copilot/shared/types/pcb/raw";
 import { savePcbPreview } from "../../pcb-preview";
-import sharp from 'sharp';
 import { Bridge } from "../../bridge";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
@@ -43,13 +41,13 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'preview_pcb',
         {
             title: 'Preview PCB',
-            description: 'Render a PNG preview of the currently opened PCB document. Requires EasyEDA 3+. Tries the official canvas image API for up to 10 seconds, then falls back to the legacy renderer on error or timeout. Native previews use selection colors, ignoring custom color values, and leave the editor zoomed to the requested area. Returns image_path and notes describing any limitations or fallback. Open the target PCB document first.',
+            description: 'Render a PNG preview of the currently opened PCB document from PCB primitives using the Copilot renderer. Requires EasyEDA 3+. Supports layer filtering and custom highlight colors. Returns image_path and notes. This preview does not verify actual filled copper. Open the target PCB document first.',
             inputSchema: z.object({
                 layers: z.array(PcbLayerNameSchema().or(z.literal('all'))).default(['all']).describe('Layers to render, e.g. ["TOP"], ["BOTTOM"], ["TOP","BOTTOM"], or ["all"]. Use uppercase layer names; only "all" is lowercase.'),
                 highlight_net: z.string().optional().describe('Optional net name to highlight.'),
                 highlight_component: z.string().optional().describe('Optional component designator to highlight.'),
-                highlight_net_colors: z.record(z.string(), z.string()).optional().describe('Optional net-to-color map, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}. Native preview uses the keys with selection colors; the legacy fallback supports individual color values.'),
-                highlight_component_colors: z.record(z.string(), z.string()).optional().describe('Optional designator-to-color map, e.g. {"U1":"#ff0000"}. Native preview uses the keys with selection colors; the legacy fallback supports individual color values.'),
+                highlight_net_colors: z.record(z.string(), z.string()).optional().describe('Optional net-to-color map, e.g. {"BAT+":"#ff0000","GND":"#00ff00"}.'),
+                highlight_component_colors: z.record(z.string(), z.string()).optional().describe('Optional designator-to-color map, e.g. {"U1":"#ff0000"}.'),
                 zoom: ZoomTargetSchema.default({ mode: 'full' }).describe('Zoom target: full board, a net, a component, or a bbox.'),
                 padding_mm: z.number().min(0).max(100).default(2).describe('Padding around the rendered area in millimeters.'),
             }),
@@ -57,15 +55,8 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         async (input) => {
             await mkdir(TEMP_DIR, { recursive: true });
             const fileName = join(TEMP_DIR, 'pcbprev-' + crypto.randomUUID().slice(0, 6));
-            let nativeError: unknown;
-            try {
-                const preview = await bridge.requestEasyEda('preview-pcb', input, 10_000) as PreviewPcbReply;
-                const pngPath = fileName + '.png';
-                await sharp(Buffer.from(preview.base64, 'base64')).png().toFile(pngPath);
-                return textResult({ image_path: pngPath, notes: preview.notes });
-            } catch (error) {
-                nativeError = error;
-            }
+            // Native layer switching depends on window focus. Keep rendering locally
+            // until EasyEDA can reliably capture requested layers in the background.
             const data = await bridge.requestEasyEda('get-pcb-raw') as RawPcb;
             const { pngPath } = await savePcbPreview(data, {
                 layers: input.layers,
@@ -79,8 +70,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
                 widthPx: 1024,
             }, fileName);
             return textResult({ image_path: pngPath, notes: [
-                `Native PCB preview failed; used the legacy renderer. Reason: ${nativeError instanceof Error ? nativeError.message : String(nativeError)}`,
-                'Legacy preview is reconstructed from PCB primitives; it does not verify the actual filled copper. Custom highlight colors are supported.',
+                'Copilot preview is reconstructed from PCB primitives; it does not verify the actual filled copper. Custom highlight colors are supported.',
             ] });
         },
     );
@@ -121,7 +111,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'get_current_pcb',
         {
             title: 'Get EasyEDA PCB',
-            description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first. wires contains copper statistics grouped by net; pads lists net membership. Use native DRC for connectivity and preview_pcb for filled copper.\n' +
+            description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first. wires contains copper statistics grouped by net; pads lists net membership. Use native DRC for connectivity; preview_pcb does not verify actual filled copper.\n' +
                 `Format: ${JSON.stringify(ExplainPcbSchema({ forLLM: true }).toJSONSchema())}`,
             inputSchema: z.object({}),
         },

@@ -68,17 +68,18 @@ export async function previewPcb(input: PreviewPcbInput, deadlineAt = Date.now()
     };
     const [bounds, layers, selected, currentLayer] = await Promise.all([
         zoomBounds(input.zoom, call), call(() => eda.pcb_Layer.getAllLayers()),
-        call(() => eda.pcb_SelectControl.getAllSelectedPrimitives_PrimitiveId()), call(() => eda.pcb_Layer.getCurrentLayer()),
+        call(() => eda.pcb_SelectControl.getAllSelectedPrimitives_PrimitiveId()),
+        // Optional restoration metadata: older clients can switch layers without this getter.
+        call(() => eda.pcb_Layer.getCurrentLayer?.()).catch(() => undefined),
     ]);
     const available = layers.filter(layer => layer.layerStatus !== EPCB_LayerStatus.NOT_USED);
     const all = input.layers.includes('all');
-    // Some 3.x builds expose layer methods but cannot report the active layer.
-    // Do not claim a layer-specific image when native layer control is unavailable.
-    if (!all && !currentLayer) throw new Error('Native layer-specific preview is unavailable: EasyEDA did not report the active PCB layer.');
     const requested = new Set(input.layers);
     requested.add('BOARD_OUTLINE');
     if (input.layers.some(layer => layer === 'TOP' || layer === 'BOTTOM' || layer.startsWith('INNER_'))) requested.add('MULTI');
-    const visible = available.filter(layer => all || requested.has(EPCB_LayerId[layer.id] as typeof input.layers[number]));
+    // EasyEDA supplies the enum at runtime; do not require TS reverse mappings.
+    const requestedIds = new Set([...requested].filter(name => name !== 'all').map(name => EPCB_LayerId[name]));
+    const visible = available.filter(layer => all || requestedIds.has(layer.id));
     const ids = (items: IPCB_LayerItem[]) => items.map(layer => layer.id as TPCB_LayersInTheSelectable);
     const nets = [...new Set([...(input.highlight_net ? [input.highlight_net] : []), ...Object.keys(input.highlight_net_colors ?? {})])];
     const components = [...new Set([...(input.highlight_component ? [input.highlight_component] : []), ...Object.keys(input.highlight_component_colors ?? {})])];
@@ -90,8 +91,11 @@ export async function previewPcb(input: PreviewPcbInput, deadlineAt = Date.now()
     try {
         if (!await call(() => eda.pcb_Layer.setLayerVisible(ids(visible), true))) throw new Error('Could not set PCB preview layers.');
         await assertDocument();
-        const active = !all ? visible.find(layer => EPCB_LayerId[layer.id] === input.layers[0]) : undefined;
-        if (active) await call(() => eda.pcb_Layer.selectLayer(active.id as TPCB_LayersInTheSelectable));
+        const firstLayer = input.layers[0];
+        const active = !all && firstLayer !== 'all' ? visible.find(layer => layer.id === EPCB_LayerId[firstLayer]) : undefined;
+        if (active && !await call(() => eda.pcb_Layer.selectLayer(active.id as TPCB_LayersInTheSelectable))) {
+            throw new Error('Could not select the requested PCB preview layer.');
+        }
         await assertDocument();
         await call(() => eda.pcb_SelectControl.clearSelected());
         if (nets.length || components.length) {
@@ -104,6 +108,8 @@ export async function previewPcb(input: PreviewPcbInput, deadlineAt = Date.now()
         if (!await call(() => eda.dmt_EditorControl.zoomToRegion(minX, maxX, maxY, minY, document.tabId))) {
             throw new Error('Could not zoom the PCB preview.');
         }
+
+        await (new Promise(resolve => setTimeout(resolve, 400)));
         await assertDocument();
         const image = await call(() => eda.dmt_EditorControl.getCurrentRenderedAreaImage(document.tabId));
         if (!image?.size) throw new Error('EasyEDA did not return a PCB preview image.');
@@ -113,6 +119,8 @@ export async function previewPcb(input: PreviewPcbInput, deadlineAt = Date.now()
             notes: [
                 'EasyEDA 3+ uses native selection colors. highlight_net_colors and highlight_component_colors cannot set individual colors; their keys are used as selection targets.',
                 'The editor remains zoomed to the requested area; layer visibility and selection are restored.',
+                ...(!currentLayer && active ? ['EasyEDA did not report the previous active layer; the requested layer remains active.'] : []),
+                ...(!all ? ['Requested layer visibility was applied through EasyEDA. Some client versions capture additional layers; native image layer filtering is not independently verified.'] : []),
             ],
         };
     } finally {
