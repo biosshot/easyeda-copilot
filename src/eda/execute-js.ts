@@ -13,7 +13,7 @@ function isArrayBuffer(value: unknown): value is ArrayBuffer {
 }
 
 // Encode in bounded chunks without spread/apply argument limits or browser-only helpers.
-function base64(bytes: Uint8Array): string {
+export function base64(bytes: Uint8Array): string {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
     const chunks: string[] = [];
     let chunk = '';

@@ -8,6 +8,8 @@ import {
 import { checkpointer } from './eda/checkpointer';
 import { executeJavaScript } from './eda/execute-js';
 import { checkPcbDrc } from './eda/drc';
+import { previewPcb } from './eda/pcb-preview';
+import type { PreviewPcbInput } from '@copilot/shared/types/pcb/preview';
 import {
     getPcb,
     getPcbExistingPlacement,
@@ -1413,6 +1415,12 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
         if (message.event === 'get-pcb-raw') {
             reply(true, await getPcbRaw());
+            return;
+        }
+
+        if (message.event === 'preview-pcb') {
+            const deadline = typeof body[MCP_DEADLINE_FIELD] === 'number' ? body[MCP_DEADLINE_FIELD] as number : undefined;
+            reply(true, await previewPcb(body as unknown as PreviewPcbInput, deadline));
             return;
         }
 

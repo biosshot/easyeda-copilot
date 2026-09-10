@@ -8,6 +8,7 @@ import { join, resolve } from 'node:path';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { WebSocket } from 'ws';
+import sharp from 'sharp';
 
 // Optional paths let the same protocol test exercise an isolated npm installation.
 const entry = process.argv[2] ?? fileURLToPath(new URL('../dist/index.js', import.meta.url));
@@ -35,6 +36,12 @@ transport.stderr?.on('data', bytes => { stderr += bytes; });
 const requests = [];
 let currentSchematic = { components: [] };
 const pcbSummary = { net: 'TEST', layer: ['TOP'], length: 25.4, vias: 0, width: { min: 0.127, max: 0.254 }, segments: 1 };
+const nativePng = await sharp({ create: { width: 3, height: 2, channels: 4, background: '#4f86c6' } }).png().toBuffer();
+const previewNotes = ['Native selection colors; individual highlight_net_colors and highlight_component_colors are unavailable.'];
+const rawPcb = { board: { polygon: [{ x: 0, y: 0 }, { x: 20, y: 0 }, { x: 20, y: 10 }, { x: 0, y: 10 }] },
+  components: [], pads: [], arcs: [], vias: [], polygons: [],
+  tracks: [{ x1: 2, y1: 2, x2: 8, y2: 4, width: 0.25, layer: 'TOP', net: 'TEST' }] };
+let previewMode = 'native', releasePreview;
 const pcbSchematic = { components: schematicInput.circuit.add_components.map((component, index) =>
   index === 0 ? { ...component, footprint_uuid: FOOTPRINT_UUID } : component) };
 let heldSnapshot;
@@ -45,6 +52,12 @@ async function editorRequest(event, body) {
   if (event === 'get-multi-page-schematic') { await heldSnapshot; return pcbSchematic; }
   if (event === 'get-pcb-existing-placement') return undefined;
   if (event === 'get-pcb') return { components: [], wires: [pcbSummary] };
+  if (event === 'get-pcb-raw') return rawPcb;
+  if (event === 'preview-pcb') {
+    if (previewMode === 'error') throw new Error('Native canvas unavailable');
+    if (previewMode === 'timeout') await new Promise(resolve => { releasePreview = resolve; });
+    return { renderer: 'native', base64: previewMode === 'invalid' ? 'invalid' : nativePng.toString('base64'), mime_type: 'image/png', notes: previewNotes };
+  }
   if (event === 'inspect-net') return { ...pcbSummary, net: body.net, document_uuid: 'pcb-fixture', found: true,
     units: 'mm', pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, truncated: false, violations: [] } };
   if (event === 'checkpoint-save') return { checkpointId: 'before-beautify' };
@@ -95,6 +108,33 @@ try {
   assert.deepEqual(inspected.drc, { violation_count: 0, truncated: false, violations: [] });
   assert.equal('connected_pads' in inspected, false);
   assert.equal(requests.find(request => request.event === 'inspect-net').body.drc_limit, 7);
+  const previewInput = { layers: ['TOP'], highlight_net: 'TEST', highlight_component: 'U1',
+    highlight_net_colors: { TEST: '#ff0088' }, highlight_component_colors: { U1: '#ff0000' },
+    zoom: { mode: 'bbox', bbox: { x: 0, y: 0, width: 20, height: 10, unit: 'mm' } }, padding_mm: 1 };
+  const beforePreview = Date.now();
+  const preview = await call('preview_pcb', previewInput);
+  assert.deepEqual(await readFile(preview.image_path), nativePng, 'Native PNG must be preserved');
+  assert.deepEqual(preview.notes, previewNotes);
+  const { id: previewRequestId, __easyedaCopilotDeadlineAt: previewDeadline, ...forwarded } = requests.find(request => request.event === 'preview-pcb').body;
+  assert.deepEqual(forwarded, previewInput, 'Preserve the existing preview interface');
+  assert.ok(previewDeadline >= beforePreview + 10_000 && previewDeadline < beforePreview + 11_000);
+  assert.equal(requests.some(request => request.event === 'get-pcb-raw'), false, 'Native success must not fetch raw PCB');
+  for (const mode of ['error', 'invalid', 'timeout']) {
+    previewMode = mode;
+    const started = Date.now();
+    const fallback = await call('preview_pcb', previewInput);
+    assert.match(fallback.notes.join(' '), /legacy renderer/);
+    assert.match(fallback.notes.join(' '), mode === 'error' ? /Native canvas unavailable/ : mode === 'timeout' ? /Timeout waiting EasyEDA event/ : /unsupported image format/);
+    assert.deepEqual([...await readFile(fallback.image_path)].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
+    assert.match(await readFile(fallback.image_path.replace(/\.png$/, '.svg'), 'utf8'), /#ff0088/, 'Fallback retains custom colors');
+    if (mode === 'timeout') assert.ok(Date.now() - started < 15_000, 'Fallback must not wait for the old 60-second timeout');
+  }
+  releasePreview();
+  previewMode = 'native';
+  const defaultPreview = await call('preview_pcb', {});
+  assert.deepEqual(await readFile(defaultPreview.image_path), nativePng, 'Late response must not break subsequent requests');
+  const lastPreview = requests.filter(request => request.event === 'preview-pcb').at(-1).body;
+  assert.deepEqual(lastPreview.layers, ['all']); assert.deepEqual(lastPreview.zoom, { mode: 'full' }); assert.equal(lastPreview.padding_mm, 2);
   assert.ok(!tools.some(tool => tool.name === 'search_reused_block'), 'Reusable block search is intentionally disabled');
   assert.ok((await call('component_search', { MPN: 'TEST-1K' })).components.length);
   assert.equal((await call('component_search', { part_uuid: PART_UUID })).bestComponent.part_uuid, PART_UUID);
@@ -157,6 +197,7 @@ try {
   if (stderr) console.error(stderr);
   throw error;
 } finally {
+  releasePreview?.();
   releaseSnapshot?.();
   if (editor && editor.readyState !== WebSocket.CLOSED) {
     const closed = once(editor, 'close');

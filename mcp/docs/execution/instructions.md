@@ -111,7 +111,7 @@ return {
 
 This is inspection only. Use the returned IDs and native poses to prepare a specific edit; do not use an unfiltered `getAll()` result as a mutation target set.
 
-To return a native rendered canvas image when the standard preview is insufficient:
+`preview_pcb` first tries the native canvas image API for PCB documents and reports a legacy fallback in `notes` on error or timeout. To capture another document type or use different native viewport controls through JavaScript:
 
 ```js
 await eda.dmt_EditorControl.zoomToAllPrimitives();
