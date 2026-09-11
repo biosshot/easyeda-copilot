@@ -70,7 +70,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
                 widthPx: 1024,
             }, fileName);
             return textResult({ image_path: pngPath, notes: [
-                'Copilot preview is reconstructed from PCB primitives; it does not verify the actual filled copper. Custom highlight colors are supported.',
+                'Copilot preview includes native poured-fill geometry when readable. It does not rebuild pours or certify fill freshness/completeness. Custom highlight colors are supported.',
             ] });
         },
     );
@@ -111,7 +111,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'get_current_pcb',
         {
             title: 'Get EasyEDA PCB',
-            description: 'Get the current EasyEDA PCB through the connected MCP interface. Open a PCB document first. wires contains copper statistics grouped by net; pads lists net membership. Use native DRC for connectivity; preview_pcb does not verify actual filled copper.\n' +
+            description: 'Read a PCB overview from native primitives through the connected MCP interface; not an atomic revision snapshot. Open a PCB document first. Coordinates are mm in the native PCB frame, not the normalized routing frame. For edits, resolve exact primitive IDs and reread their native poses. wires contains copper statistics grouped by net; pads lists net membership; polygons are source outlines, not rebuilt fill geometry. Use native DRC for connectivity.\n' +
                 `Format: ${JSON.stringify(ExplainPcbSchema({ forLLM: true }).toJSONSchema())}`,
             inputSchema: z.object({}),
         },

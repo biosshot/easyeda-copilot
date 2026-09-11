@@ -49,12 +49,21 @@ export const SimplifiedDrcViolationSchema = () => z.object({
     obj1: z.string().optional(),
     obj2: z.string().optional(),
     message: z.string(),
+    primitive_ids: z.array(z.string()).optional(),
+    rule_name: z.string().optional(),
+    layer: z.string().optional(),
+    // Native verbose DRC has its own coordinate scale; do not label it mm.
+    native: z.record(z.string(), z.unknown()).optional(),
 }).strict();
 
 export const SimplifiedDrcCategorySchema = () => z.object({
     name: z.string(),
+    violation_count: z.number().int().nonnegative().optional(),
+    truncated: z.boolean().optional(),
     list: z.array(z.object({
         name: z.string(),
+        violation_count: z.number().int().nonnegative().optional(),
+        truncated: z.boolean().optional(),
         list: z.array(SimplifiedDrcViolationSchema()),
     }).strict()),
 }).strict();

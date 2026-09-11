@@ -16,6 +16,17 @@ function simplifyItem(item: Record<string, unknown>): SimplifiedDrcViolation {
         obj1: obj1?.suffix,
         obj2: obj2?.suffix,
         message: formatDrcMessage(explanation?.str as string | undefined, param),
+        primitive_ids: Array.isArray(item.objs) ? item.objs.filter((id): id is string => typeof id === 'string') : undefined,
+        rule_name: typeof item.ruleName === 'string' ? item.ruleName : undefined,
+        layer: typeof item.layer === 'string' ? item.layer : undefined,
+        // Preserve native object descriptors, parameters and errData for repair.
+        // In particular, errData coordinates are NOT native PCB mil or normalized mm.
+        native: {
+            obj1: item.obj1, obj2: item.obj2,
+            explanation: item.explanation, pos: item.pos,
+            globalIndex: item.globalIndex, errorObjType: item.errorObjType,
+            ruleTypeName: item.ruleTypeName,
+        },
     };
 }
 
@@ -34,8 +45,12 @@ export async function checkPcbDrc(limit: number): Promise<SimplifiedDrcCategory[
 
         return {
             name: rawCategory.name as string,
+            violation_count: nonEmptyGroups.reduce((sum, group) => sum + group.list.length, 0),
+            truncated: nonEmptyGroups.some(group => group.list.length > perGroup),
             list: nonEmptyGroups.map(group => ({
                 name: group.name,
+                violation_count: group.list.length,
+                truncated: group.list.length > perGroup,
                 list: group.list.slice(0, perGroup).map(simplifyItem),
             })).filter(group => group.list.length > 0),
         };

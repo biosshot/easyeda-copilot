@@ -112,7 +112,7 @@ return {
 
 This is inspection only. Use the returned IDs and native poses to prepare a specific edit; do not use an unfiltered `getAll()` result as a mutation target set.
 
-`preview_pcb` first tries the native canvas image API for PCB documents and reports a legacy fallback in `notes` on error or timeout. To capture another document type or use different native viewport controls through JavaScript:
+`preview_pcb` uses the Copilot renderer directly, including native poured-fill geometry when readable; it does not rebuild fills or certify their freshness. It does not attempt native layer switching. For a current-viewport native capture through JavaScript (without a guarantee about visible layers):
 
 ```js
 await eda.dmt_EditorControl.zoomToAllPrimitives();
@@ -120,6 +120,8 @@ const image = await eda.dmt_EditorControl.getCurrentRenderedAreaImage();
 if (!image) throw new Error("The active canvas did not return an image.");
 return image;
 ```
+
+For a ready-to-run PCB refill and native DRC example, see [pcb-refill-and-drc.md](pcb-refill-and-drc.md). Use synchronization only for diagnosed stale state; there is no documented connectivity-refresh guarantee in this recipe.
 
 ## Results and local artifacts
 

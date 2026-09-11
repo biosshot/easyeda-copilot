@@ -14,7 +14,7 @@ const utils = ts.createSourceFile('utils.ts', await readFile(root + 'src/eda/uti
 const helpers = utils.statements.filter(node => ['round', 'milToMm', 'mmToMil', 'safeString'].includes(node.name?.text))
   .map(node => node.getText(utils)).join('\n');
 const bundled = await build({
-  stdin: { contents: 'export * from "./src/eda/pcb"; export * from "./shared/types/pcb/explain";', resolveDir: root },
+  stdin: { contents: 'export * from "./src/eda/pcb"; export * from "./src/eda/drc"; export * from "./shared/types/pcb/explain";', resolveDir: root },
   bundle: true, write: false, platform: 'node', format: 'cjs',
   plugins: [{ name: 'native-reader-fixture', setup(builder) {
     builder.onLoad({ filter: /[\\/]src[\\/]eda[\\/]utils\.ts$/ }, () => ({
@@ -213,5 +213,25 @@ await test('native read and DRC failures are propagated', async () => {
 await test('changing the active document rejects mixed-board evidence', async () => {
   board.switchDocument = true;
   await assert.rejects(inspect(), /Active PCB changed/);
+});
+await test('native repair IDs and diagnostics survive net and whole-board summaries', async () => {
+  const finding = { ...item('Clearance Error', '(TEST): e17', '(OTHER): U1_1'),
+    objs: ['track-uuid', 'pad-uuid'], ruleName: 'spacing', layer: 'Top Layer',
+    pos: { x: -6.88996, y: 9.005115 },
+    explanation: { str: 'Distance {distance}', param: { distance: '0.111mm' },
+      errData: { obj1: 'track-uuid', obj2: 'pad-uuid', minDistance: 0.438569 } } };
+  board.drc = [group('Clearance', [finding, finding, finding], 'Clearance Error')];
+  const net = await inspect('TEST', 1);
+  assert.equal(net.drc.violation_count, 3);
+  assert.equal(net.drc.truncated, true);
+  const v = net.drc.violations[0];
+  assert.deepEqual(v.primitive_ids, finding.objs);
+  assert.equal(v.rule_name, 'spacing'); assert.equal(v.layer, 'Top Layer');
+  assert.deepEqual(v.native.pos, finding.pos);
+  assert.deepEqual(v.native.explanation, finding.explanation);
+  const all = plain((await module.exports.checkPcbDrc(1)).map(c => module.exports.SimplifiedDrcCategorySchema().parse(c)));
+  assert.equal(all[0].violation_count, 3); assert.equal(all[0].truncated, true);
+  assert.equal(all[0].list[0].violation_count, 3); assert.equal(all[0].list[0].truncated, true);
+  assert.deepEqual(all[0].list[0].list[0], v);
 });
 console.log('PCB inspection checks passed (' + checks + ').');

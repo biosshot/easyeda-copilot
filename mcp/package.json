@@ -27,11 +27,12 @@
     "test:projects": "npm run build && node scripts/check-project-tools.mjs",
     "test:execute-js": "npm run build && node scripts/check-execute-js.mjs",
     "test:pcb-inspection": "node scripts/check-pcb-inspection.mjs",
+    "test:pcb-refill-example": "node scripts/check-pcb-refill-example.mjs",
     "test:pcb-preview": "node scripts/check-pcb-preview.mjs",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run typecheck && npm run build && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-preview.mjs",
+    "check": "npm run typecheck && npm run build && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
     "prepack": "npm run build",
     "start": "node dist/index.js"
   },
