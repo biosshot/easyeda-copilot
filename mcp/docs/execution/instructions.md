@@ -112,6 +112,8 @@ return {
 
 This is inspection only. Use the returned IDs and native poses to prepare a specific edit; do not use an unfiltered `getAll()` result as a mutation target set.
 
+For specific DRC objects, copy [examples/inspect-pcb-primitives.js](examples/inspect-pcb-primitives.js), set the target UUID and `primitive_ids`, then execute it by absolute `file_path`. It returns common native fields, per-field read errors and unresolved IDs without editing objects. Component pads may need resolution through their owning component's `getAllPins()` if the generic lookup cannot resolve a footprint-local ID. For complex polygon/pad shapes, consult the specific primitive API rather than treating this compact example as a full serializer.
+
 `preview_pcb` uses the Copilot renderer directly, including native poured-fill geometry when readable; it does not rebuild fills or certify their freshness. It does not attempt native layer switching. For a current-viewport native capture through JavaScript (without a guarantee about visible layers):
 
 ```js
@@ -120,6 +122,10 @@ const image = await eda.dmt_EditorControl.getCurrentRenderedAreaImage();
 if (!image) throw new Error("The active canvas did not return an image.");
 return image;
 ```
+
+To preserve the current viewport instead of zooming, use [examples/capture-current-preview.js](examples/capture-current-preview.js). It returns the native image Blob; `execute_js` saves it automatically and returns `artifacts[].path` on the MCP host. Copy that artifact with local file tools if a durable filename is needed. The script does not switch layers, alter selection, zoom, or rebuild pours. It captures whatever the editor currently renders; capture failure must be reported, not treated as an empty board.
+
+For passing locally generated JSON or Source into a script, see [local-input-files.md](local-input-files.md). `file_path` loads JavaScript, not arbitrary data; the editor has no implied access to the MCP host filesystem.
 
 For a ready-to-run PCB refill and native DRC example, see [pcb-refill-and-drc.md](pcb-refill-and-drc.md). Use synchronization only for diagnosed stale state; there is no documented connectivity-refresh guarantee in this recipe.
 
