@@ -237,3 +237,18 @@ The routing apply step uses one EasyEDA checkpoint recovery boundary and restore
 The compact router response currently does not expose the automatic checkpoint ID. When manual restoration may be needed, save and retain an explicit checkpoint before the transaction; do not guess its baseline from the latest checkpoint afterward.
 
 Ground-reference background: [TI, High-Speed Layout Guidelines (SCAA082A)](https://www.ti.com/lit/pdf/SCAA082A) explains why gaps in a reference plane disrupt signal return paths. The narrow-track passage strategy above is a workflow choice; it does not replace evaluating the final reference copper.
+
+
+## Layers reserved for planes
+
+On boards with up to four copper layers, Hybrid runs EasyEDA WASM first and KRT afterward for unfinished connections and special constraints. Above four copper layers, KRT runs first. The threshold counts physical copper layers, including layers reserved for planes.
+
+Set `disableRouting: true` on a copper entry in `stack.layers` to forbid new tracks on that layer for every net. For example, a copper entry in a complete four-layer stack can be:
+
+```js
+{ kind: "copper", name: "INNER_1", thicknessOz: 1, disableRouting: true }
+```
+
+Keep the other copper and dielectric entries in their physical order with the actual board parameters. Do not copy a guessed stack merely to disable a layer. Omitted `disableRouting` means false. Declare the policy in each routing program that needs it; it is not a persistent EasyEDA editor setting.
+
+The layer remains available for planes, impedance reference calculations and through-via spans. Existing tracks are not cleared by this declaration. Per-net `allowedLayers` can narrow the enabled set but cannot re-enable a disabled layer; an empty intersection for a routed net is rejected before routing. WASM and KRT receive the filtered routing layers, including fallback and repair passes. Returned copper is checked for new tracks on disabled layers. This does not prohibit via barrels or via annular rings on a plane layer.

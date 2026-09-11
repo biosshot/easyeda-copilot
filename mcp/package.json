@@ -19,6 +19,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "prebuild": "npm --prefix ../backend run build",
     "build": "tsup",
     "router:info": "node scripts/router-info.mjs",
     "test:routing-adapter": "npm run build && node scripts/check-routing-adapter.mjs",
@@ -41,7 +42,7 @@
     "sharp": "^0.35.0",
     "ws": "^8.20.1",
     "zod": "^4.4.3",
-    "eda-copilot-backend": "0.1.0"
+    "eda-copilot-backend": "file:../backend"
   },
   "devDependencies": {
     "@copilot/shared": "1.0.0",

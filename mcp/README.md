@@ -44,10 +44,13 @@ Typical workflow: synchronize schematic changes, stop while the user confirms th
 
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot
-cd easyeda-copilot/mcp
-npm install
-npm run build
+cd easyeda-copilot
+npm ci
+npm run native:build --workspace=eda-copilot-backend
+npm run build --workspace=easyeda-copilot-mcp
 ```
+
+The checkout uses `eda-copilot-backend` from `file:../backend`; no published backend package is needed. Keep the full repository, including `backend`, and install from its root. The MCP build automatically builds the backend. PCB placement requires the native build above, with Rust/Cargo and the platform C/C++ build tools installed. Run this checkout using the node configuration below; npx runs the separately published MCP package.
 
 ## MCP Config With npx
 

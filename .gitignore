@@ -10,3 +10,5 @@
 /backend/native/pcb-board-packer/*.node
 /backend/.test-output/
 /backend/.artifacts/
+
+/mcp/node_modules/

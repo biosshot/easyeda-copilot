@@ -37,10 +37,13 @@ MCP 集成可以实现：
 ## 构建
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot
-cd easyeda-copilot/mcp
-npm install
-npm run build
+cd easyeda-copilot
+npm ci
+npm run native:build --workspace=eda-copilot-backend
+npm run build --workspace=easyeda-copilot-mcp
 ```
+
+源码通过 `file:../backend` 使用本地 `eda-copilot-backend`，不需要发布 backend npm 包。请克隆完整仓库（包括 `backend`）并在仓库根目录安装依赖。构建 MCP 时会自动构建 backend。PCB 布局需要执行上述原生构建，并安装 Rust/Cargo 及平台 C/C++ 构建工具。请使用下方 node 配置运行本地副本；npx 运行的是另行发布的 MCP 包。
 
 ## 使用 npx 配置 MCP
 

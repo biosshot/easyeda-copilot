@@ -220,13 +220,14 @@ declare function fanout(target: FanoutTarget, options?: FanoutOptions): void;
  */
 declare function disableFanout(...targets: FanoutTarget[]): void;
 
+/** Copper disableRouting defaults to false. true forbids new tracks globally, not planes or through-via spans; intersected with per-net allowedLayers. Repeat in each routing program that needs this policy. */
 declare function stack(options: {
   boardThicknessMm?: number;
   fallbackCopperThicknessOz?: number;
   viaPlatingThicknessUm?: number;
   maxTrackWidthMm?: number;
   layers?: Array<
-    | { kind: "copper"; name: PhysicalLayer; thicknessOz?: number; thicknessMm?: number }
+    | { kind: "copper"; name: PhysicalLayer; thicknessOz?: number; thicknessMm?: number; disableRouting?: boolean }
     | { kind: "dielectric"; name?: string; thicknessMm?: number; relativePermittivity?: number; lossTangent?: number; material?: string }
   >;
   solderMask?: {

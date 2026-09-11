@@ -37,10 +37,13 @@ MCP — рекомендуемый и активно развиваемый ин
 ## Сборка
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot
-cd easyeda-copilot/mcp
-npm install
-npm run build
+cd easyeda-copilot
+npm ci
+npm run native:build --workspace=eda-copilot-backend
+npm run build --workspace=easyeda-copilot-mcp
 ```
+
+В исходниках `eda-copilot-backend` подключён через `file:../backend`: опубликованный backend не нужен. Скачивайте репозиторий целиком, включая `backend`, и устанавливайте зависимости из корня. Сборка MCP автоматически собирает backend. Для размещения PCB нужна указанная выше нативная сборка; установите Rust/Cargo и средства сборки C/C++ для своей платформы. Запускайте эту копию через конфигурацию node ниже: npx запускает отдельно опубликованный MCP-пакет.
 
 ## Конфигурация MCP с использованием npx
 
