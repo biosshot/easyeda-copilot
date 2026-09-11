@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "eda-copilot-router": "0.3.0",
+    "eda-copilot-router": "file:../../copilot-router",
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",
     "ws": "^8.20.1",

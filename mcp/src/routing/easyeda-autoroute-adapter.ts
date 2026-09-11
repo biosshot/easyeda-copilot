@@ -598,7 +598,18 @@ export function importEasyEdaAutorouteJson(
             return [];
         }
         netNames.add(net);
-        return [{ id: text(track.id), net, layer, widthMm, points }];
+        // Native pad links describe a connected copper group, not just the
+        // endpoints of this polyline. Invalidate them when its net is cleared.
+        const clearingNet = Object.values(options.clearRouting ?? {}).some(scope =>
+            scope === 'all' || scope?.includes(net));
+        const linkedIds = (Array.isArray(track.pads) ? track.pads : []).flatMap(ref => {
+            if (!Array.isArray(ref) || ref.length !== 2) return [];
+            const id = `${String(ref[0])}:${String(ref[1])}`;
+            return pads.some(pad => pad.id === id && pad.net === net) ? [id] : [];
+        });
+        return [{ id: text(track.id), net, layer, widthMm, points,
+            ...(!clearingNet && linkedIds.length ? { connectedPadIds: [...new Set(linkedIds)] } : {}),
+        }];
     });
     const top = layers.find(layer => layer.side === 'top')?.name;
     const bottom = layers.find(layer => layer.side === 'bottom')?.name;

@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { buildPlacementGraph } from '../src/pcb-layout/pcb-auto-place/placement-graph.ts';
+import { createPlacementReport } from '../src/pcb-layout/pcb-auto-place/placement-report.ts';
+import { applyEdgePlacePlacement } from '../src/pcb-layout/placement-rules.ts';
 import { solveBlockPrimitives } from '../src/pcb-layout/pcb-auto-place-v2/block-solver-engine.ts';
 import { solvePlacementIslands } from '../src/pcb-layout/pcb-auto-place-v2/island-solver.ts';
 import { solvePlacementTreeBottomUp } from '../src/pcb-layout/pcb-auto-place-v2/tree-solver.ts';
@@ -8,6 +10,41 @@ import type { PlacementPrimitive } from '../src/pcb-layout/pcb-auto-place-v2/pri
 import type { PcbComponent, Placement, PlacementInput } from '../src/types/pcb/layout-model.ts';
 
 test.describe('pcb-auto-place-v2 island solver', () => {
+    for (const exactPlacement of [false, true]) {
+        test(`keeps satellites near their own edge connectors (${exactPlacement ? 'fixed' : 'movable'})`, () => {
+            const input = edgeSatelliteInput(exactPlacement);
+            const result = solvePlacementTreeBottomUp(input, buildPlacementGraph(input));
+            assert.equal(result.diagnostics.filter((item) => item.message.includes('Dissolved edge-place')).length, 3);
+            for (let index = 1; index <= 3; index += 1) {
+                const parent = result.root.placements.find((item) => item.designator === `SW${index}`)!;
+                const satellite = result.root.placements.find((item) => item.designator === `R${index}`)!;
+                assert.ok(distance(parent, satellite) <= 8, `R${index} drifted ${distance(parent, satellite)}mm from SW${index}`);
+                assert.equal(parent.x, (index - 2) * 27);
+                assert.equal(parent.y, 25);
+                assert.equal(parent.rotate, 0);
+            }
+            const report = createPlacementReport(input, result.root.placements);
+            assert.deepEqual(report.overlaps, []);
+            assert.deepEqual(report.outsideBoard, []);
+            assert.deepEqual(report.unplaced, []);
+        });
+    }
+
+    test('preserves an explicit satellite pin anchor when dissolving an edge family', () => {
+        const input = edgeSatelliteInput(true);
+        const satelliteBlock = input.blocks.find((item) => item.name === 'RC1')!;
+        satelliteBlock.anchor = { type: 'pin', designator: 'SW3', pin_number: '1' };
+        satelliteBlock.maxAnchorGap = 8;
+        satelliteBlock.hardAnchor = true;
+        const result = solvePlacementTreeBottomUp(input, buildPlacementGraph(input));
+        const target = result.root.placements.find((item) => item.designator === 'SW3')!;
+        const satellite = result.root.placements.find((item) => item.designator === 'R1')!;
+        assert.ok(distance(target, satellite) <= 8, `explicit anchor gap: ${distance(target, satellite)}mm`);
+        const report = createPlacementReport(input, result.root.placements);
+        assert.deepEqual(report.overlaps, []);
+        assert.deepEqual(report.outsideBoard, []);
+    });
+
     test('packs capCluster into a compact row with same-net pads aligned', () => {
         const input = baseInput([
             cap('C1'),
@@ -630,6 +667,34 @@ test.describe('pcb-auto-place-v2 island solver', () => {
         assert.ok(Math.hypot(r5Vector.x - c8Vector.x, r5Vector.y - c8Vector.y) <= 0.01, 'expected R5/C8 shared-net vectors to be parallel');
     });
 });
+
+function edgeSatelliteInput(exactPlacement: boolean): PlacementInput {
+    const input = baseInput([]);
+    input.board.outline = { type: 'rect', width: 90, height: 64 };
+    input.board.clearances.component = 0.35;
+    for (let index = 1; index <= 3; index += 1) {
+        const parent = component(`SW${index}`, [{ pin_number: '1', name: '1', signal_name: 'ENC_A' }], {
+            name: 'ENCODER', width: 10, height: 10,
+            pads: [{ pin_number: '1', name: '1', x: 0, y: 0, width: 0.5, height: 0.5 }],
+        });
+        parent.block_name = `ENC${index}`;
+        parent.pcb.role = 'connector';
+        parent.pcb.allowedRotations = [0];
+        parent.pcb.edgePlace = { edges: ['bottom'], inset: 2, face: 'any', x: (index - 2) * 27 };
+        const satellite = component(`R${index}`, [{ pin_number: '1', name: '1', signal_name: 'ENC_A' }], {
+            name: 'R', width: 2, height: 2,
+            pads: [{ pin_number: '1', name: '1', x: 0, y: 0, width: 0.5, height: 0.5 }],
+        });
+        satellite.block_name = `RC${index}`;
+        satellite.pcb.allowedRotations = [0];
+        input.components.push(exactPlacement ? applyEdgePlacePlacement(parent, undefined, input.board) : parent, satellite);
+        input.blocks.push(
+            { ...block(parent.block_name, [parent.designator]), role: 'connector' },
+            { ...block(satellite.block_name, [satellite.designator]), placement: 'satellite', attachTo: parent.block_name },
+        );
+    }
+    return input;
+}
 
 function baseInput(components: PcbComponent[]): PlacementInput {
     return {

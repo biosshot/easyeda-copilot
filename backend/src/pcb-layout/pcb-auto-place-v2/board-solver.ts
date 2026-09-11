@@ -5,9 +5,11 @@ import type {
     PcbComponent,
     PlacementGraph,
     PlacementInput,
+    PlacementRelation,
     PlacementTreeNode,
 } from '#types/pcb/layout-model.ts';
 import { componentBox } from '../pcb-auto-place/geometry.ts';
+import { priorityWeight } from '../pcb-auto-place/hints.ts';
 import type { ClearanceResolver } from '../pcb-auto-place/clearance-resolver.ts';
 import { solveBoardPackedPrimitives } from './board-packer-engine.ts';
 import type { PlacementPrimitive, PrimitiveSolveDiagnostic } from './primitives.ts';
@@ -31,10 +33,13 @@ export function solveBoardPrimitives(params: BoardSolveParams) {
     return solveBoardPackedPrimitives({
         node: params.node,
         primitives: boardPrimitives.primitives.map(boardPackingPrimitive),
-        relations: params.graph.relations.filter((relation) => (
-            relation.scope === params.node.id
-            || boardPrimitives.dissolvedScopes.has(relation.scope)
-        )),
+        relations: [
+            ...params.graph.relations.filter((relation) => (
+                relation.scope === params.node.id
+                || boardPrimitives.dissolvedScopes.has(relation.scope)
+            )),
+            ...dissolvedSatelliteRelations(params, boardPrimitives.dissolvedScopes),
+        ],
         options: {
             grid: params.grid,
             clearance: params.clearance,
@@ -48,6 +53,28 @@ export function solveBoardPrimitives(params: BoardSolveParams) {
             compactness: params.compactness,
             searchWidth: 32,
         },
+    });
+}
+
+function dissolvedSatelliteRelations(params: BoardSolveParams, dissolvedScopes: Set<string>): PlacementRelation[] {
+    return params.input.blocks.flatMap((block): PlacementRelation[] => {
+        if (!block.attachTo || block.anchor || !dissolvedScopes.has(`tree:block:${block.attachTo}`)) return [];
+        const parent = params.input.blocks.find((candidate) => candidate.name === block.attachTo);
+        if (!parent) return [];
+        // edgePlace must position the connector body, so its family is dissolved.
+        // attached_to only builds the tree; restore proximity using component endpoints
+        // because the dissolved parent block no longer exists in the board packer.
+        return parent.component_designators.map((designator) => ({
+            id: `satellite:${block.name}:parent:${designator}`,
+            kind: 'hint',
+            from: `block:${block.name}`,
+            to: `component:${designator}`,
+            relation: 'near',
+            priority: 'high',
+            weight: priorityWeight('high') * 2 / parent.component_designators.length,
+            scope: params.node.id,
+            effect: 'move_from',
+        }));
     });
 }
 
