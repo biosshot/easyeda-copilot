@@ -13,6 +13,8 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { executeJs, ExecuteJsInputSchema, registerExecuteJsTools } from '../dist/tools/execute-js.js';
 const MAX_INLINE_RESPONSE_BYTES = 16 * 1024;
+const MAX_CODE_BYTES = 64 * 1024 * 1024;
+const MAX_INPUT_BYTES = 512 * 1024 * 1024;
 
 const mcpRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const root = resolve(mcpRoot, '..');
@@ -36,7 +38,7 @@ const bridge = {
     async requestEasyEda(event, body, timeout) {
         dispatches.push({ event, code: body.code, timeout });
         // Exercise the real executor and the JSON bridge boundary, not just a result fixture.
-        return JSON.parse(JSON.stringify(await runtime(body.code, api)));
+        return JSON.parse(JSON.stringify(await executeJavaScript(body.code, api, save, JSON.parse(JSON.stringify(body.inputs ?? {})))));
     },
 };
 
@@ -66,12 +68,13 @@ test('invalid files and oversized UTF-8 code never dispatch', async () => {
     const empty = join(temp, 'empty.js');
     const huge = join(temp, 'huge.js');
     await writeFile(empty, '   \n');
-    await writeFile(huge, 'x'.repeat(1024 * 1024 + 1));
+    await writeFile(huge, '');
+    await fs.truncate(huge, MAX_CODE_BYTES + 1);
     const before = dispatches.length;
     for (const input of [
         { file_path: 'relative.js' }, { file_path: join(temp, 'missing.js') }, { file_path: temp },
         { file_path: empty }, { file_path: huge }, { code: ' \n' },
-        { code: '界'.repeat(400_000) },
+        { code: '界'.repeat(Math.floor(MAX_CODE_BYTES / 3) + 1) },
     ]) {
         const result = await executeJs(bridge, input);
         bounded(result);
@@ -169,13 +172,45 @@ test('binary data from another JavaScript realm is preserved', async () => {
     assert.deepEqual([...Buffer.from(result.result.base64, 'base64')], [11, 22]);
 });
 
-test('a file exactly at the UTF-8 input limit executes', async () => {
+test('a file exactly at the 64 MiB code limit executes', async () => {
     const path = join(temp, 'limit.js');
-    const code = '/*' + 'x'.repeat(1024 * 1024 - 15) + '*/return 1;';
-    assert.equal(Buffer.byteLength(code), 1024 * 1024 - 2);
-    // Pad trailing whitespace to exactly 1 MiB without changing the JavaScript program.
+    const code = '/*' + 'x'.repeat(MAX_CODE_BYTES - 15) + '*/return 1;';
+    assert.equal(Buffer.byteLength(code), MAX_CODE_BYTES - 2);
+    // Pad trailing whitespace to exactly 64 MiB.
     await writeFile(path, code + '  ');
     assert.equal(payload(await executeJs(bridge, { file_path: path })).result, 1);
+});
+
+test('named UTF-8 inputs remain data across transport, including BOM and code-like text', async () => {
+    const path = join(temp, 'source data.txt');
+    const value = '\uFEFFПривет\r\n` ${eda.edits++} \\" \\u0000';
+    await writeFile(path, value);
+    const before = api.edits;
+    const result = await executeJs(bridge, { code: 'return inputs.source;', input_files: { source: { path, encoding: 'utf8' } } });
+    assert.equal(payload(result).result, value);
+    assert.equal(api.edits, before);
+    const script = join(temp, 'with-input.js');
+    await writeFile(script, 'return inputs.source.length;');
+    assert.equal(payload(await executeJs(bridge, { file_path: script, input_files: { source: { path } } })).result, value.length);
+});
+
+test('bad input files and aggregate size are rejected before dispatch', async () => {
+    const huge = join(temp, 'huge-input.txt');
+    const extra = join(temp, 'extra-input.txt');
+    const invalid = join(temp, 'invalid-utf8.txt');
+    await writeFile(huge, ''); await fs.truncate(huge, MAX_INPUT_BYTES);
+    await writeFile(extra, 'x'); await writeFile(invalid, Buffer.from([0xff]));
+    const before = dispatches.length;
+    for (const input_files of [
+        { a: { path: 'relative.txt' } }, { a: { path: temp } },
+        { a: { path: join(temp, 'missing.txt') } }, { a: { path: invalid } },
+        { a: { path: huge }, b: { path: extra } },
+        { a: { path: extra, encoding: 'base64' } },
+    ]) {
+        const result = await executeJs(bridge, { code: 'return 1;', input_files });
+        assert.equal(result.isError, true); assert.equal(payload(result).checkpoint, null);
+    }
+    assert.equal(dispatches.length, before);
 });
 
 test('native screenshot call becomes a file, without model-visible bytes', async () => {

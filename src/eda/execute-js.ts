@@ -46,6 +46,7 @@ export async function executeJavaScript(
     code: string,
     api: unknown,
     createCheckpoint: () => Promise<string | null>,
+    inputs: Record<string, string> = {},
 ): Promise<ExecuteJsWireResult> {
     let checkpoint: string | null = null;
     let phase: NonNullable<ExecuteJsWireResult['error']>['phase'] = 'checkpoint';
@@ -56,7 +57,7 @@ export async function executeJavaScript(
         phase = 'execute';
         const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
         // Compilation itself reports syntax errors; no separate parser or preflight execution.
-        const result: unknown = await new AsyncFunction('eda', code)(api);
+        const result: unknown = await new AsyncFunction('eda', 'inputs', code)(api, inputs);
 
         phase = 'serialize';
         if (isBlob(result)) {

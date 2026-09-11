@@ -65,7 +65,9 @@ Supply exactly one of `code` or `file_path`:
 { "file_path": "D:/project/scripts/fix-board.js" }
 ```
 
-These are alternative calls. `file_path` must be an absolute path on the **MCP host**. The server reads UTF-8 JavaScript and sends the text to EasyEDA; it is not a path inside the editor. Empty code is rejected and the code limit is 1 MiB.
+These are alternative calls. `file_path` must be an absolute path on the **MCP host**. The server reads UTF-8 JavaScript and sends the text to EasyEDA; it is not a path inside the editor. Empty code is rejected and the code limit is 64 MiB (UTF-8 bytes).
+
+Either form also accepts `input_files: { source: { path: "D:/project/source.txt", encoding: "utf8" } }`. Files are read on the MCP host and passed as named strings in `inputs`, separately from executable code. Encoding defaults to UTF-8; combined file size is limited to 512 MiB. Invalid files, invalid UTF-8 and size failures are rejected before dispatch/checkpoint. See [local-input-files.md](local-input-files.md).
 
 The code is an asynchronous function body with access to `eda`. Use `return` for its result, ordinary JavaScript comments and `await`. There is no TypeScript transpilation or guaranteed Node.js `fs`/`require` environment. `console.log` is not the return channel. Do not leave background promises, timers or subscriptions running after the function returns.
 
@@ -125,7 +127,7 @@ return image;
 
 To preserve the current viewport instead of zooming, use [examples/capture-current-preview.js](examples/capture-current-preview.js). It returns the native image Blob; `execute_js` saves it automatically and returns `artifacts[].path` on the MCP host. Copy that artifact with local file tools if a durable filename is needed. The script does not switch layers, alter selection, zoom, or rebuild pours. It captures whatever the editor currently renders; capture failure must be reported, not treated as an empty board.
 
-For passing locally generated JSON or Source into a script, see [local-input-files.md](local-input-files.md). `file_path` loads JavaScript, not arbitrary data; the editor has no implied access to the MCP host filesystem.
+For passing locally generated JSON or Source into a script, use `input_files`; see [local-input-files.md](local-input-files.md). `file_path` loads JavaScript, not arbitrary data; the editor has no implied access to the MCP host filesystem.
 
 For a ready-to-run PCB refill and native DRC example, see [pcb-refill-and-drc.md](pcb-refill-and-drc.md). Use synchronization only for diagnosed stale state; there is no documented connectivity-refresh guarantee in this recipe.
 

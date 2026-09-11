@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import { isAbsolute, join } from 'node:path';
 import * as z from 'zod/v4';
 import {
-    EXECUTE_JS_MAX_CODE_BYTES, EXECUTE_JS_TIMEOUT_MS, type ExecuteJsWireResult,
+    EXECUTE_JS_MAX_CODE_BYTES, EXECUTE_JS_MAX_INPUT_BYTES, EXECUTE_JS_TIMEOUT_MS, type ExecuteJsWireResult,
 } from '@copilot/shared/types/execute-js';
 import type { Bridge } from '../bridge';
 import { DOCS_DIR, TEMP_DIR } from '../utils/dirs';
@@ -16,6 +16,10 @@ export const ExecuteJsInputSchema = z.object({
         .describe('JavaScript async-function body. Use return for the result; await all changes.'),
     file_path: z.string().min(1).max(4096).optional()
         .describe('Absolute path to a UTF-8 JavaScript file on the MCP host. Alternative to code.'),
+    input_files: z.record(z.string().min(1).max(128), z.object({
+        path: z.string().min(1).max(4096),
+        encoding: z.literal('utf8').optional(),
+    })).optional().describe('Named UTF-8 files on the MCP host, available as inputs[name]. Absolute paths; combined maximum 512 MiB. Data is passed separately from code.'),
 }).refine(value => (value.code !== undefined) !== (value.file_path !== undefined), {
     message: 'Provide exactly one of code or file_path.',
 });
@@ -66,11 +70,32 @@ export async function executeJs(
     try {
         ExecuteJsInputSchema.parse(input);
         if (input.file_path !== undefined && !isAbsolute(input.file_path)) throw new Error('file_path must be absolute on the MCP host.');
+        if (input.file_path) {
+            const stat = await fs.stat(input.file_path);
+            if (!stat.isFile() || stat.size > EXECUTE_JS_MAX_CODE_BYTES) throw new Error('Script must be a file of at most 64 MiB.');
+        }
         const code = input.code ?? await fs.readFile(input.file_path!, 'utf8');
         if (!code.trim()) throw new Error('JavaScript code is empty.');
-        if (Buffer.byteLength(code) > EXECUTE_JS_MAX_CODE_BYTES) throw new Error('JavaScript exceeds 1 MiB.');
+        if (Buffer.byteLength(code) > EXECUTE_JS_MAX_CODE_BYTES) throw new Error('JavaScript exceeds 64 MiB.');
+        const entries = Object.entries(input.input_files ?? {});
+        let total = 0;
+        for (const [, file] of entries) {
+            if (!isAbsolute(file.path)) throw new Error('input_files paths must be absolute on the MCP host.');
+            const stat = await fs.stat(file.path);
+            if (!stat.isFile()) throw new Error('input_files must reference regular files.');
+            total += stat.size;
+            if (total > EXECUTE_JS_MAX_INPUT_BYTES) throw new Error('Input files exceed 512 MiB combined.');
+        }
+        const inputs: Record<string, string> = Object.create(null);
+        total = 0;
+        for (const [name, file] of entries) {
+            const bytes = await fs.readFile(file.path);
+            total += bytes.byteLength;
+            if (total > EXECUTE_JS_MAX_INPUT_BYTES) throw new Error('Input files exceed 512 MiB combined.');
+            inputs[name] = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+        }
         phase = 'transport';
-        const reply = await bridge.requestEasyEda('execute-js', { code }, EXECUTE_JS_TIMEOUT_MS) as ExecuteJsWireResult;
+        const reply = await bridge.requestEasyEda('execute-js', { code, inputs }, EXECUTE_JS_TIMEOUT_MS) as ExecuteJsWireResult;
         checkpoint = reply.checkpoint;
         phase = 'response';
         if (reply.error) {
@@ -98,6 +123,7 @@ export function registerExecuteJsTools(server: McpServer, bridge: Bridge) {
     server.registerTool('execute_js', {
         title: 'Execute JavaScript in EasyEDA',
         description: 'Execute JavaScript in the selected EasyEDA window using code OR an absolute file_path. '
+            + 'Code limit: 64 MiB. Optional input_files supplies named UTF-8 strings as inputs[name], up to 512 MiB combined. '
             + 'Automatically checkpoints the current document before execution. Waits up to 60 seconds; timeout does NOT cancel code. '
             + 'Returns {checkpoint,result,artifacts}; binary and oversized results are saved as local files. '
             + `Read ${DOCS_DIR}/execution/instructions.md for the contract and API reference.`,

@@ -29,7 +29,7 @@ if ((await eda.dmt_SelectControl.getCurrentDocumentInfo())?.uuid !== expectedUui
 return new Blob([source], { type: "text/plain;charset=utf-8" });
 ```
 
-The returned `artifacts[].path` is a local text file on the MCP host. Inspect it with local tools instead of sending the whole source into model context. `execute_js({file_path: ...})` expects a **JavaScript script**, not this source file. Supply source text to `setDocumentSource` from that script; the [local data recipe](local-input-files.md) shows how to embed a locally edited file without pasting it into model context. See the [execution contract](instructions.md#results-and-local-artifacts) for checkpoints, artifacts and size limits.
+The returned `artifacts[].path` is a local text file on the MCP host. Inspect it with local tools instead of sending the whole source into model context. `execute_js({file_path: ...})` expects a **JavaScript script**, not this source file. Supply source text to `setDocumentSource` from that script; the [local data recipe](local-input-files.md) shows how to pass a locally edited file through `input_files` without pasting it into model context. See the [execution contract](instructions.md#results-and-local-artifacts) for checkpoints, artifacts and size limits.
 
 ## Record envelope
 

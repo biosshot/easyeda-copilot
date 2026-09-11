@@ -1363,7 +1363,10 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
         if (message.event === 'execute-js') {
             if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
-            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false)));
+            const inputs = body.inputs ?? {};
+            if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
+                || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
+            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false), inputs as Record<string, string>));
             return;
         }
 
