@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile, rename, rm, stat, open } from 'node:fs/promises';
-import { createReadStream, createWriteStream } from 'node:fs';
+import { createReadStream, createWriteStream, realpathSync } from 'node:fs';
+import { get } from 'node:https';
 import { tmpdir } from 'node:os';
 import { dirname, resolve, join, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -11,6 +12,9 @@ import { pipeline } from 'node:stream/promises';
 import { spawn } from 'node:child_process';
 
 export const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+export function isMain(url) {
+  return Boolean(process.argv[1]) && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(url));
+}
 export function args(argv = process.argv.slice(2)) {
   const out = { _: [] };
   for (let i = 0; i < argv.length; i++) {
@@ -52,10 +56,26 @@ export async function download(url, target, expectedHash) {
   if (!String(url).startsWith('https://')) throw new Error('Downloads require HTTPS');
   const hash = createHash('sha256');
   let bytes = 0;
-  const response = await fetch(url, { signal: AbortSignal.timeout(180_000) });
-  if (!response.ok) throw new Error(`Download failed: HTTP ${response.status} ${url}`);
-  if (!response.url.startsWith('https://')) throw new Error('Downloads require HTTPS');
-  await pipeline(Readable.fromWeb(response.body), async function* (source) {
+  const signal = AbortSignal.timeout(180_000);
+  const request = (address, redirects = 0) => new Promise((accept, reject) => {
+    if (new URL(address).protocol !== 'https:') return reject(new Error('Downloads require HTTPS'));
+    get(address, { signal }, response => {
+      response.on('error', reject);
+      if ([301, 302, 303, 307, 308].includes(response.statusCode)) {
+        response.resume();
+        if (!response.headers.location || redirects >= 5) return reject(new Error('Invalid or excessive download redirects'));
+        try { accept(request(new URL(response.headers.location, address), redirects + 1)); }
+        catch (error) { reject(error); }
+      } else if (response.statusCode !== 200) {
+        response.resume();
+        reject(new Error(`Download failed: HTTP ${response.statusCode} ${address}`));
+      } else accept(response);
+    }).on('error', reject);
+  });
+  // Use Node's HTTPS stream directly: some Node 24 fetch/Undici versions crash
+  // while consuming the redirected SourceForge archive response.
+  const response = await request(url);
+  await pipeline(response, async function* (source) {
     for await (const chunk of source) {
       bytes += chunk.length;
       if (bytes > 1024 ** 3) throw new Error('Download exceeds 1 GiB');

@@ -1,6 +1,5 @@
-import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
-import { args, library, readModel, output, fail } from './common.mjs';
+import { isMain, args, library, readModel, output, fail } from './common.mjs';
 
 const normalize = s => s.toLowerCase().replace(/[^a-z0-9]/g, '');
 function distance(a, b) {
@@ -43,7 +42,7 @@ export async function search(options) {
   }
   return { status: 'ok', query, libraryVersion: index.version, totalMatches: found.length, results };
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMain(import.meta.url)) {
   const options = args();
   if (options.help) output({ usage: 'node search.mjs <MPN or description> [--limit 3] [--include-review] [--library directory] [--manifest file] [--cache directory] [--text-limit 30000] [--prepare] [--no-install]' });
   else search(options).then(output).catch(fail);

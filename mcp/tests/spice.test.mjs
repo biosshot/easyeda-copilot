@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, readFile, mkdir, stat, readdir } from 'node:fs/promises';
+import { mkdtemp, writeFile, readFile, mkdir, stat, readdir, cp, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
@@ -70,6 +70,17 @@ test('plot rejects absent data and escapes labels', () => {
 test('process timeout is reported', async () => {
   const r = await run(process.execPath, ['-e', 'setInterval(()=>{},1000)'], { timeout: 50 });
   assert.equal(r.timedOut, true);
+});
+test('standalone CLI entrypoints work through directory symlinks', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'spice linked CLI '));
+  const original = join(root, 'original'), linked = join(root, 'linked');
+  await cp(fileURLToPath(new URL('../docs/spice/', import.meta.url)), original, { recursive: true });
+  await symlink(original, linked, process.platform === 'win32' ? 'junction' : 'dir');
+  for (const name of ['search', 'copy-model', 'simulate', 'plot']) {
+    const result = await run(process.execPath, [join(linked, 'scripts', `${name}.mjs`), '--help']);
+    assert.equal(result.code, 0, result.stderr);
+    assert.ok(JSON.parse(result.stdout).usage, `${name} did not enter its CLI`);
+  }
 });
 test('an invalid explicit ngspice path cannot silently select another runtime', async () => {
   const root = await mkdtemp(join(tmpdir(), 'spice missing runtime '));

@@ -1,8 +1,7 @@
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { dirname, join, resolve } from 'node:path';
 import { createRequire } from 'node:module';
-import { pathToFileURL } from 'node:url';
-import { args, cacheRoot, exists, locked, run, json, output, fail } from './common.mjs';
+import { isMain, args, cacheRoot, exists, locked, run, json, output, fail } from './common.mjs';
 
 export async function sharpRuntime(options = {}) {
   try { return createRequire(import.meta.url)('sharp'); } catch { /* standalone skill */ }
@@ -71,7 +70,7 @@ export async function plot(config, options = {}) {
   await sharp(Buffer.from(svgPlot(config))).png().toFile(config.output);
   return resolve(config.output);
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMain(import.meta.url)) {
   const o = args();
   if (o.help) output({ usage: 'node plot.mjs <plot-config.json> [--cache directory] [--no-install]; config: {output,title,x,series:[{name,values}],xLabel,yLabel,logX}' });
   else json(o._[0]).then(config => plot(config, o)).then(path => output({ status: 'ok', png: path })).catch(fail);

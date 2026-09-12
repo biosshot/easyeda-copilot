@@ -1,8 +1,7 @@
 import { mkdir, writeFile, readFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
-import { args, library, readModel, output, fail } from './common.mjs';
+import { isMain, args, library, readModel, output, fail } from './common.mjs';
 
 export async function copyModel(options) {
   if (options._.length !== 1 || !options.out) throw new Error('Supply one exact modelId from search and --out <models directory>');
@@ -28,7 +27,7 @@ export async function copyModel(options) {
     libraryVersion: index.version, path, include: `.include "${path.replaceAll('\\', '/')}"`, reused,
     sha256: createHash('sha256').update(text).digest('hex') };
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMain(import.meta.url)) {
   const options = args();
   if (options.help) output({ usage: 'node copy-model.mjs <modelId> --out <directory> [--library directory] [--manifest file] [--cache directory] [--no-install]' });
   else copyModel(options).then(output).catch(fail);

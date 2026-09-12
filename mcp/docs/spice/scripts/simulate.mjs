@@ -1,8 +1,7 @@
 import { mkdir, readFile, writeFile, readdir } from 'node:fs/promises';
 import { resolve, join, dirname, basename } from 'node:path';
-import { pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
-import { args, output, fail, run } from './common.mjs';
+import { isMain, args, output, fail, run } from './common.mjs';
 import { ngspice } from './ngspice.mjs';
 import { readRaw, csv } from './raw.mjs';
 import { plot } from './plot.mjs';
@@ -120,7 +119,7 @@ export async function simulate(o) {
   await writeFile(join(out, 'result.json'), JSON.stringify(result, null, 2));
   return result;
 }
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+if (isMain(import.meta.url)) {
   const o = args();
   if (o.help) output({ usage: 'node simulate.mjs circuit.cir [--out NEW-directory] [--timeout seconds] [--ngspice absolute-path] [--cache directory] [--no-install] [--no-plot]' });
   else simulate(o).then(r => { output(r); if (r.status === 'error') process.exitCode = 1; }).catch(fail);
