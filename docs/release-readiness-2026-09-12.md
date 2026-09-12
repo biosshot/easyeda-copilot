@@ -26,10 +26,10 @@ CI EasyEDA Copilot проверяет интеграцию и установку
 
 | Платформа | Backend | Полная новая интеграция MCP |
 | --- | --- | --- |
-| Windows x64 | CI Node 20/24; установка опубликованного пакета проверена локально | Локальные проверки пройдены; результат CI фиксируется ниже |
-| Linux x64, glibc >=2.35 | CI Ubuntu 22.04, Node 20/24 | Проверяется CI Ubuntu 22.04 |
-| macOS x64 | CI macOS 15 Intel, Node 20/24 | Проверяется CI macOS 15 Intel |
-| macOS arm64 | CI macOS 15, Node 20/24 | Проверяется CI macOS 15 arm64 |
+| Windows x64 | CI Node 20/24; установка опубликованного пакета проверена локально | CI Node 20/24 пройден |
+| Linux x64, glibc >=2.35 | CI Ubuntu 22.04, Node 20/24 | CI Ubuntu 22.04, Node 20/24 пройден |
+| macOS x64 | CI macOS 15 Intel, Node 20/24 | CI macOS 15 Intel, Node 20/24 пройден |
+| macOS arm64 | CI macOS 15, Node 20/24 | CI macOS 15 arm64, Node 20/24 пройден |
 
 Backend: [все восемь jobs успешны](https://github.com/biosshot/eda-copilot-backend/actions/runs/34680936780), включая Rust-сборку, 161 тест и установку архива вне исходников. Опубликованный универсальный архив содержит четыре `.node`-библиотеки. Rust/Cargo и C/C++ toolchain конечному пользователю на этих платформах не нужны.
 
@@ -38,6 +38,8 @@ Backend: [все восемь jobs успешны](https://github.com/biosshot/e
 Windows ARM64, Linux ARM64 и Alpine/musl не поддерживаются полной цепочкой. Старые версии Windows/macOS не подтверждены этой CI-матрицей. Router при первом использовании может скачивать KRT, переносимый Python и Python-зависимости; необходим доступ к GitHub/PyPI. Отдельный CI router проверяет KRT на Linux и WASM fallback на Windows/Linux/macOS, но не доказывает KRT на каждой платформе без установленного Python.
 
 Протокольные проверки MCP используют имитацию EasyEDA. Они проверяют установку, API, workers, прогресс и отмену, но не заменяют ручной smoke-test в настоящем EasyEDA Desktop и проверку внешних каталогов компонентов. Перед публичным релизом расширения нужен такой smoke-test.
+
+Новая интеграция MCP: [8 из 8 jobs успешны](https://github.com/biosshot/easyeda-copilot/actions/runs/34682938703) на коммите `0957a7b`. Последующие изменения касаются только документации. Проверены опубликованные backend/router, установка MCP-архива вне исходников и протокольные сценарии; релизный job пропущен, поскольку запуск не по тегу. Повторный [CI backend](https://github.com/biosshot/eda-copilot-backend/actions/runs/34682913186) после обновления README также прошёл 8 из 8.
 
 ## Оценка
 
