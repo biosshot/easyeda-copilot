@@ -11,7 +11,7 @@
     "compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
     "eslint": "eslint ./web ./src",
     "build": "node build.mjs && npm run compile && ts-node ./build/packaged.ts",
-    "test": "tsx --test tests/*.test.ts"
+    "test": "node build/test.mjs"
   },
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
