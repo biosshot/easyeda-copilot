@@ -2,21 +2,19 @@ import type {
     ExplainPCB,
     ExplainPcbBox,
     ExplainPcbComponent,
-    ExplainPcbPadRef,
+    InspectPcbNet,
     ExplainPcbPolygon,
     ExplainPcbVia,
     ExplainPcbWire,
-    SimplifiedDrcViolation,
 } from "@copilot/shared/types/pcb/explain";
 import { RawPcb, RawPcbArc, RawPcbComponent, RawPcbPad, RawPcbPolygon, RawPcbTrack } from "@copilot/shared/types/pcb/raw";
-import { checkPcbDrc } from "./drc";
+import { checkPcbNetDrc } from "./drc";
 import { PcbLayerName } from "@copilot/shared/types/pcb/shared";
 import { milToMm, mmToMil, round, safeString, VERSION_EDASYEDA } from "./utils";
 import { easyEdaPointToPlacement, easyEdaRotationToPlacement } from "./pcb-existing-placement";
 
 const MIL_TO_MM = 25.4 / 1000;
 const SNAP_TOLERANCE_MIL = mmToMil(0.05);
-const DIRECT_DISTANCE_MIN_MM = 0.1;
 
 type RawPoint = {
     x: number;
@@ -30,61 +28,31 @@ type RawBox = {
     maxY: number;
 };
 
-type RawComponent = Omit<ExplainPcbComponent, "x" | "y" | "pads"> & {
-    x: number;
-    y: number;
-    pads: ExplainPcbComponent["pads"];
-};
-
-type InternalPad = {
-    designator: string,
-    pad_number: string,
-    net?: string;
-    x: number;
-    y: number;
-    radius: number;
-    hasGeometry: boolean;
-};
-
-type TrackSegment = {
+// Measurements only: no spatial connectivity or pad-contact inference.
+type CopperMeasure = {
     net: string;
     layer: PcbLayerName;
-    start: RawPoint;
-    end: RawPoint;
-    width: number;
-};
-
-type GraphEdge = TrackSegment & {
-    a: string;
-    b: string;
-};
-
-type ViaNode = {
-    key: string;
-    net: string;
-    x: number;
-    y: number;
-    radius: number;
-};
-
-type WireIsland = {
-    nodeKeys: Set<string>;
-    edges: GraphEdge[];
-    viaKeys: Set<string>;
+    kind: 'track' | 'via';
+    length: number;
+    width?: number;
+    bounds: RawBox;
 };
 
 type RawPolygon = {
     net: string;
-    layer: "TOP" | "BOTTOM";
+    layer: PcbLayerName;
     rings: RawPoint[][];
 };
 
-const toExplainPad = (pad: { designator: string, pad_number: string }) => `${pad.designator}.${pad.pad_number}`
 
 function layerToSide(layer: EPCB_LayerId) {
     if (layer === EPCB_LayerId.TOP) return "TOP";
     if (layer === EPCB_LayerId.BOTTOM) return "BOTTOM";
     return undefined;
+}
+
+function isCopperLayer(layer: PcbLayerName) {
+    return layer === "TOP" || layer === "BOTTOM" || layer.startsWith("INNER_");
 }
 
 function toExplainPoint(point: RawPoint) {
@@ -96,10 +64,10 @@ function toExplainPoint(point: RawPoint) {
 
 function toExplainBox(box: RawBox): ExplainPcbBox {
     return {
-        left: round(milToMm(box.minX), 10),
-        right: round(milToMm(box.maxX), 10),
-        top: round(milToMm(box.maxY), 10),
-        bottom: round(milToMm(box.minY), 10),
+        left: milToMm(box.minX),
+        right: milToMm(box.maxX),
+        top: milToMm(box.maxY),
+        bottom: milToMm(box.minY),
     };
 }
 
@@ -119,11 +87,6 @@ function includePoint(box: RawBox, point: RawPoint, radius = 0) {
     box.maxY = Math.max(box.maxY, point.y + radius);
 }
 
-function isValidBox(box: RawBox) {
-    return Number.isFinite(box.minX) && Number.isFinite(box.minY)
-        && Number.isFinite(box.maxX) && Number.isFinite(box.maxY);
-}
-
 function boxFromPoints(points: RawPoint[], radius = 0) {
     const box = emptyBox();
     for (const point of points) includePoint(box, point, radius);
@@ -136,19 +99,6 @@ function samePoint(a: RawPoint, b: RawPoint, tolerance = SNAP_TOLERANCE_MIL) {
 
 function distance(a: RawPoint, b: RawPoint) {
     return Math.hypot(a.x - b.x, a.y - b.y);
-}
-
-function distancePointToSegment(point: RawPoint, start: RawPoint, end: RawPoint) {
-    const dx = end.x - start.x;
-    const dy = end.y - start.y;
-    const len2 = dx * dx + dy * dy;
-    if (len2 === 0) return distance(point, start);
-
-    const t = Math.max(0, Math.min(1, ((point.x - start.x) * dx + (point.y - start.y) * dy) / len2));
-    return distance(point, {
-        x: start.x + t * dx,
-        y: start.y + t * dy,
-    });
 }
 
 function trimClosingPoint(points: RawPoint[]) {
@@ -289,47 +239,6 @@ function pointInPolygon(point: RawPoint, polygon: RawPoint[]) {
     return inside;
 }
 
-function padTouchesPolygon(pad: InternalPad, rings: RawPoint[][]) {
-    const [outer, ...cutouts] = rings;
-    if (!outer) return false;
-
-    if (pointInPolygon(pad, outer) && !cutouts.some(cutout => pointInPolygon(pad, cutout))) {
-        return true;
-    }
-
-    const tolerance = SNAP_TOLERANCE_MIL + pad.radius;
-    return rings.some(ring => {
-        return ring.some((start, index) => {
-            const end = ring[(index + 1) % ring.length];
-            return distancePointToSegment(pad, start, end) <= tolerance;
-        });
-    });
-}
-
-function nodeKey(point: RawPoint) {
-    return `${Math.round(point.x / SNAP_TOLERANCE_MIL)},${Math.round(point.y / SNAP_TOLERANCE_MIL)}`;
-}
-
-function maxIslandNodeDistance(island: WireIsland) {
-    const pointByKey = new Map<string, RawPoint>();
-
-    for (const edge of island.edges) {
-        pointByKey.set(edge.a, edge.start);
-        pointByKey.set(edge.b, edge.end);
-    }
-
-    const points = [...pointByKey.values()];
-    let maxDistance = 0;
-
-    for (let i = 0; i < points.length; i++) {
-        for (let j = i + 1; j < points.length; j++) {
-            maxDistance = Math.max(maxDistance, distance(points[i], points[j]));
-        }
-    }
-
-    return maxDistance;
-}
-
 function getComponentValue(component: IPCB_PrimitiveComponent) {
     const otherProperty = component.getState_OtherProperty();
     const value = safeString(otherProperty?.Value)
@@ -339,134 +248,46 @@ function getComponentValue(component: IPCB_PrimitiveComponent) {
     return value;
 }
 
-function padShapeRadius(shape: TPCB_PrimitivePadShape | undefined) {
-    if (!shape) return SNAP_TOLERANCE_MIL;
-
-    const shapeType = shape[0];
-    if (shapeType === EPCB_PrimitivePadShapeType.POLYLINE_COMPLEX_POLYGON) {
-        const rings = complexPolygonToRings(shape[1]);
-        const box = boxFromPoints(rings.flat());
-        if (!isValidBox(box)) return SNAP_TOLERANCE_MIL;
-
-        return Math.max(box.maxX - box.minX, box.maxY - box.minY) / 2;
-    }
-
-    if (shapeType === EPCB_PrimitivePadShapeType.REGULAR_POLYGON) {
-        return Math.max(shape[1] / 2, SNAP_TOLERANCE_MIL);
-    }
-
-    return Math.max(shape[1] / 2, shape[2] / 2, SNAP_TOLERANCE_MIL);
-}
-
-async function getPadsByPrimitiveIds(primitiveIds: string[]) {
-    const pads = new Map<string, IPCB_PrimitivePad>();
-    if (!primitiveIds.length) return pads;
-
-    const primitives = await eda.pcb_Primitive.getPrimitivesByPrimitiveId(primitiveIds).catch(() => []);
-    for (const primitive of primitives) {
-        const candidate = primitive as IPCB_Primitive & Partial<IPCB_PrimitivePad>;
-        if (typeof candidate.getState_PrimitiveId !== "function"
-            || typeof candidate.getState_PadNumber !== "function"
-            || typeof candidate.getState_X !== "function"
-            || typeof candidate.getState_Y !== "function") {
-            continue;
-        }
-
-        pads.set(candidate.getState_PrimitiveId(), candidate as IPCB_PrimitivePad);
-    }
-
-    return pads;
-}
-
-async function getComponentPads(component: IPCB_PrimitiveComponent) {
-    const statePads = component.getState_Pads() ?? [];
-    const statePadIds = statePads
-        .map(pad => safeString(pad.primitiveId))
-        .filter((primitiveId): primitiveId is string => Boolean(primitiveId));
-    const pinsByPrimitiveId = await getPadsByPrimitiveIds(statePadIds);
-    const allPins = await component.getAllPins().catch(() => []);
-    const pinsByNumber = new Map<string, IPCB_PrimitivePad>();
-
-    for (const pin of allPins ?? []) {
-        const padNumber = safeString(pin.getState_PadNumber());
-        if (padNumber && !pinsByNumber.has(padNumber)) {
-            pinsByNumber.set(padNumber, pin);
-        }
-    }
-
-    const byNumber = new Map<string, {
-        pad_number: string;
-        signal_name?: string;
-        raw?: IPCB_PrimitivePad;
-    }>();
-
-    for (const pad of statePads) {
-        const padNumber = safeString(pad.padNumber);
-        if (!padNumber) continue;
-
-        const primitiveId = safeString(pad.primitiveId);
-        byNumber.set(padNumber, {
-            pad_number: padNumber,
-            signal_name: safeString(pad.net),
-            raw: primitiveId ? pinsByPrimitiveId.get(primitiveId) ?? pinsByNumber.get(padNumber) : pinsByNumber.get(padNumber),
-        });
-    }
-
-    for (const pin of allPins ?? []) {
-        const padNumber = safeString(pin.getState_PadNumber());
-        if (!padNumber || byNumber.has(padNumber)) continue;
-
-        byNumber.set(padNumber, {
-            pad_number: padNumber,
-            signal_name: safeString(pin.getState_Net()),
-            raw: pin,
-        });
-    }
-
-    return [...byNumber.values()];
-}
-
 async function readComponents() {
-    const rawComponents: RawComponent[] = [];
-    const pads: InternalPad[] = [];
-    const primitives = await eda.pcb_PrimitiveComponent.getAll().catch(() => []);
-
-    for (const primitive of primitives) {
-        const designator = safeString(primitive.getState_Designator());
-        if (!designator) continue;
-
-        const componentPads = await getComponentPads(primitive);
-        const rawComponent: RawComponent = {
-            designator,
-            // part_uuid: safeString(primitive.getState_Component()?.uuid),
-            value: getComponentValue(primitive),
-            footprint: safeString(primitive.getState_Footprint()?.name),
-            x: round(milToMm(primitive.getState_X()), 10),
-            y: round(milToMm(primitive.getState_Y()), 10),
-            // rotate: (primitive.getState_Rotation()),
-            layer: layerToSide(primitive.getState_Layer()) ?? "TOP",
-            pads: componentPads.filter(p => !!p.signal_name?.trim()).map(pad => ({
-                pad: pad.pad_number,
-                net: pad.signal_name,
-            })),
-        };
-
-        rawComponents.push(rawComponent);
-
-        for (const pad of componentPads) {
-            pads.push({
-                designator,
-                pad_number: pad.pad_number,
-                net: pad.signal_name,
-                x: pad.raw?.getState_X() ?? primitive.getState_X(),
-                y: pad.raw?.getState_Y() ?? primitive.getState_Y(),
-                radius: pad.raw ? padShapeRadius(pad.raw.getState_Pad()) : SNAP_TOLERANCE_MIL,
-                hasGeometry: Boolean(pad.raw),
-            });
+    const rawComponents: ExplainPcbComponent[] = [];
+    const ownedIds = new Set<string>();
+    for (const component of await eda.pcb_PrimitiveComponent.getAll()) {
+        const statePads = component.getState_Pads() ?? [];
+        const pads = statePads.map(pad => ({ pad: safeString(pad.padNumber), net: safeString(pad.net) }));
+        // State pad IDs can be footprint-local; getAllPins supplies actual board IDs.
+        // Read ownership and missing membership metadata, never pad shapes or contacts.
+        for (const pin of await component.getAllPins()) {
+            ownedIds.add(pin.getState_PrimitiveId());
+            if (!statePads.length || statePads.some(pad => !pad.primitiveId)) {
+                pads.push({ pad: safeString(pin.getState_PadNumber()), net: safeString(pin.getState_Net()) });
+            }
         }
+        const designator = safeString(component.getState_Designator());
+        if (!designator) continue;
+        const membership = new Map<string, { pad: string; net: string }>();
+        for (const pad of pads) {
+            if (pad.pad && pad.net) membership.set(JSON.stringify([pad.pad, pad.net]), { pad: pad.pad, net: pad.net });
+        }
+        rawComponents.push({
+            designator,
+            value: getComponentValue(component),
+            footprint: safeString(component.getState_Footprint()?.name),
+            x: round(milToMm(component.getState_X()), 10),
+            y: round(milToMm(component.getState_Y()), 10),
+            layer: layerToSide(component.getState_Layer()) ?? 'TOP',
+            pads: [...membership.values()],
+        });
     }
-
-    return { rawComponents, pads };
+    const standalonePads: NonNullable<ExplainPCB['standalone_pads']> = [];
+    for (const pad of await eda.pcb_PrimitivePad.getAll()) {
+        const id = pad.getState_PrimitiveId();
+        if (ownedIds.has(id)) continue;
+        const layer = rawLayerName(pad.getState_Layer());
+        if (!isCopperLayer(layer) && layer !== 'MULTI') continue;
+        standalonePads.push({ ref: 'pad:' + id, net: safeString(pad.getState_Net()), layer,
+            x: milToMm(pad.getState_X()), y: milToMm(pad.getState_Y()) });
+    }
+    return { rawComponents, standalonePads };
 }
 
 async function readBoardPolygon() {
@@ -527,199 +348,90 @@ export async function getPcbExistingPlacement() {
 }
 
 async function readTrackSegments() {
-    const lines = await eda.pcb_PrimitiveLine.getAll().catch(() => []);
-    const segments: TrackSegment[] = [];
-
-    for (const line of lines) {
+    const measures: CopperMeasure[] = [];
+    for (const line of await eda.pcb_PrimitiveLine.getAll()) {
         const net = safeString(line.getState_Net());
         const layer = rawLayerName(line.getState_Layer());
-        if (!net || !layer) continue;
-
-        segments.push({
-            net,
-            layer,
-            start: { x: milToMm(line.getState_StartX()), y: milToMm(line.getState_StartY()) },
-            end: { x: milToMm(line.getState_EndX()), y: milToMm(line.getState_EndY()) },
-            width: milToMm(line.getState_LineWidth()),
-        });
+        if (!net || !isCopperLayer(layer)) continue;
+        const start = { x: line.getState_StartX(), y: line.getState_StartY() };
+        const end = { x: line.getState_EndX(), y: line.getState_EndY() };
+        const width = line.getState_LineWidth();
+        measures.push({ net, layer, kind: 'track', length: distance(start, end), width,
+            bounds: boxFromPoints([start, end], width / 2) });
     }
-
-    return segments;
+    for (const arc of await eda.pcb_PrimitiveArc.getAll()) {
+        const net = safeString(arc.getState_Net());
+        const layer = rawLayerName(arc.getState_Layer());
+        if (!net || !isCopperLayer(layer)) continue;
+        const start = { x: arc.getState_StartX(), y: arc.getState_StartY() };
+        const end = { x: arc.getState_EndX(), y: arc.getState_EndY() };
+        const angle = arc.getState_ArcAngle() * Math.PI / 180;
+        const width = arc.getState_LineWidth();
+        const chord = distance(start, end);
+        const points = [start, end];
+        let length = chord;
+        if (Math.abs(angle) > 1e-9) {
+            if (!chord || Math.abs(angle) >= 2 * Math.PI) throw new Error('Cannot measure a PCB arc with invalid endpoints or angle');
+            const radius = chord / (2 * Math.sin(Math.abs(angle) / 2));
+            const h = radius * Math.cos(Math.abs(angle) / 2) * Math.sign(angle);
+            const cx = (start.x + end.x) / 2 - (end.y - start.y) / chord * h;
+            const cy = (start.y + end.y) / 2 + (end.x - start.x) / chord * h;
+            const startAngle = Math.atan2(start.y - cy, start.x - cx);
+            const normalize = (a: number) => ((a % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+            // Only extrema are needed for bounds; do not tessellate or trace connections.
+            for (let i = 0; i < 4; i++) {
+                const a = i * Math.PI / 2;
+                if (normalize((a - startAngle) * Math.sign(angle)) <= Math.abs(angle) + 1e-9) {
+                    points.push({ x: cx + radius * Math.cos(a), y: cy + radius * Math.sin(a) });
+                }
+            }
+            length = radius * Math.abs(angle);
+        }
+        measures.push({ net, layer, kind: 'track', length, width, bounds: boxFromPoints(points, width / 2) });
+    }
+    return measures;
 }
 
 async function readVias() {
-    const primitiveVias = await eda.pcb_PrimitiveVia.getAll().catch(() => []);
     const vias: ExplainPcbVia[] = [];
-    const viaNodes: ViaNode[] = [];
-
-    for (const via of primitiveVias) {
+    const measures: CopperMeasure[] = [];
+    for (const via of await eda.pcb_PrimitiveVia.getAll()) {
         const net = safeString(via.getState_Net());
-        const diameter = milToMm(via.getState_Diameter());
-        const drill = milToMm(via.getState_HoleDiameter());
-        const x = milToMm(via.getState_X());
-        const y = milToMm(via.getState_Y());
-
-        vias.push({
-            net,
-            x,
-            y,
-            diameter,
-            drill,
-        });
-
-        if (net) {
-            viaNodes.push({
-                key: nodeKey({ x, y }),
-                net,
-                x,
-                y,
-                radius: diameter / 2,
-            });
-        }
+        const point = { x: via.getState_X(), y: via.getState_Y() };
+        const diameter = via.getState_Diameter();
+        vias.push({ net, x: milToMm(point.x), y: milToMm(point.y), diameter: milToMm(diameter), drill: milToMm(via.getState_HoleDiameter()) });
+        if (net) measures.push({ net, layer: 'MULTI', kind: 'via', length: 0, bounds: boxFromPoints([point], diameter / 2) });
     }
-
-    return { vias, viaNodes };
+    return { vias, measures };
 }
 
-function findConnectedIslands(segments: TrackSegment[], viaNodes: ViaNode[]) {
-    const graph = new Map<string, Set<string>>();
-    const edges: GraphEdge[] = [];
-
-    const ensureNode = (key: string) => {
-        if (!graph.has(key)) graph.set(key, new Set());
-    };
-
-    for (const segment of segments) {
-        const a = nodeKey(segment.start);
-        const b = nodeKey(segment.end);
-        ensureNode(a);
-        ensureNode(b);
-        graph.get(a)!.add(b);
-        graph.get(b)!.add(a);
-        edges.push({ ...segment, a, b });
-    }
-
-    for (const via of viaNodes) {
-        ensureNode(via.key);
-    }
-
-    const visited = new Set<string>();
-    const islands: WireIsland[] = [];
-
-    for (const node of graph.keys()) {
-        if (visited.has(node)) continue;
-
-        const nodeKeys = new Set<string>();
-        const queue = [node];
-        visited.add(node);
-
-        while (queue.length) {
-            const current = queue.shift()!;
-            nodeKeys.add(current);
-            for (const next of graph.get(current) ?? []) {
-                if (visited.has(next)) continue;
-                visited.add(next);
-                queue.push(next);
-            }
+function summarizeCopper(measures: CopperMeasure[]): ExplainPcbWire[] {
+    const byNet = new Map<string, {
+        layers: Set<PcbLayerName>; length: number; minWidth: number; maxWidth: number;
+        segments: number; vias: number; bounds: RawBox;
+    }>();
+    for (const measure of measures) {
+        const summary = byNet.get(measure.net) ?? {
+            layers: new Set<PcbLayerName>(), length: 0, minWidth: Infinity, maxWidth: -Infinity,
+            segments: 0, vias: 0, bounds: emptyBox(),
+        };
+        summary.layers.add(measure.layer);
+        summary.length += measure.length;
+        if (measure.kind === 'via') summary.vias++;
+        else {
+            summary.segments++;
+            summary.minWidth = Math.min(summary.minWidth, measure.width!);
+            summary.maxWidth = Math.max(summary.maxWidth, measure.width!);
         }
-
-        const islandEdges = edges.filter(edge => nodeKeys.has(edge.a) || nodeKeys.has(edge.b));
-        if (!islandEdges.length) continue;
-
-        islands.push({
-            nodeKeys,
-            edges: islandEdges,
-            viaKeys: new Set(viaNodes.filter(via => nodeKeys.has(via.key)).map(via => via.key)),
-        });
+        includePoint(summary.bounds, { x: measure.bounds.minX, y: measure.bounds.minY });
+        includePoint(summary.bounds, { x: measure.bounds.maxX, y: measure.bounds.maxY });
+        byNet.set(measure.net, summary);
     }
-
-    return islands;
-}
-
-function padTouchesIsland(pad: InternalPad, island: WireIsland) {
-    if (island.nodeKeys.has(nodeKey(pad))) return true;
-
-    return island.edges.some(edge => {
-        const tolerance = SNAP_TOLERANCE_MIL + edge.width / 2 + pad.radius;
-        return distancePointToSegment(pad, edge.start, edge.end) <= tolerance;
-    });
-}
-
-function createWireFromIsland(net: string, island: WireIsland, pads: InternalPad[], viaNodes: ViaNode[]): ExplainPcbWire | undefined {
-    if (!island.edges.length) return undefined;
-
-    const layers = new Set(island.edges.map(edge => edge.layer));
-    const vias = viaNodes.filter(via => via.net === net && island.viaKeys.has(via.key));
-    const geometryEndpoints = pads
-        .filter(pad => pad.net === net && padTouchesIsland(pad, island))
-        .map(({ designator, pad_number }) => ({ designator, pad_number }));
-    const netEndpoints = pads
-        .filter(pad => pad.net === net)
-        .map(({ designator, pad_number }) => ({ designator, pad_number }));
-    const connected_pads = [...geometryEndpoints, ...netEndpoints].map(toExplainPad);
-
-    const length = island.edges.reduce((total, edge) => total + distance(edge.start, edge.end), 0);
-    const widths = island.edges.map(edge => edge.width);
-    const box = emptyBox();
-
-    for (const edge of island.edges) {
-        includePoint(box, edge.start, edge.width / 2);
-        includePoint(box, edge.end, edge.width / 2);
-    }
-    for (const via of vias) includePoint(box, via, via.radius);
-
-    const wire: ExplainPcbWire = {
-        net,
-        layer: [...layers],
-        connected_pads,
-        length: round(length, 100),
-        vias: vias.length,
-        width: {
-            min: Math.min(...widths),
-            max: Math.max(...widths),
-        },
-        segments: island.edges.length,
-        bbox: toExplainBox(box),
-    };
-
-    if (connected_pads.length === 2) {
-        const directDistance = maxIslandNodeDistance(island) * MIL_TO_MM;
-        if (directDistance >= DIRECT_DISTANCE_MIN_MM) {
-            wire.direct_distance = round(directDistance);
-            wire.detour_ratio = round((length * MIL_TO_MM) / directDistance);
-        }
-    }
-
-    return wire;
-}
-
-function buildWires(segments: TrackSegment[], viaNodes: ViaNode[], pads: InternalPad[]) {
-    const byNet = new Map<string, TrackSegment[]>();
-    const viasByNet = new Map<string, ViaNode[]>();
-
-    for (const segment of segments) {
-        const list = byNet.get(segment.net) ?? [];
-        list.push(segment);
-        byNet.set(segment.net, list);
-    }
-
-    for (const via of viaNodes) {
-        const list = viasByNet.get(via.net) ?? [];
-        list.push(via);
-        viasByNet.set(via.net, list);
-    }
-
-    const wires: ExplainPcbWire[] = [];
-    for (const [net, netSegments] of byNet) {
-        const netVias = viasByNet.get(net) ?? [];
-        const islands = findConnectedIslands(netSegments, netVias);
-        for (const island of islands) {
-            const wire = createWireFromIsland(net, island, pads, netVias);
-            if (wire) wires.push(wire);
-        }
-    }
-
-    return wires;
+    return [...byNet].map(([net, summary]) => ({
+        net, layer: [...summary.layers], length: milToMm(summary.length), vias: summary.vias,
+        width: summary.segments ? { min: milToMm(summary.minWidth), max: milToMm(summary.maxWidth) } : null,
+        segments: summary.segments, bbox: toExplainBox(summary.bounds),
+    }));
 }
 
 async function readRawPolygons() {
@@ -731,19 +443,19 @@ async function readRawPolygons() {
         source: TPCB_PolygonSourceArray | Array<TPCB_PolygonSourceArray>,
     ) => {
         const safe = safeString(net);
-        const side = layerToSide(layer);
-        if (!safe || !side) return;
+        const side = rawLayerName(layer);
+        if (!safe || !isCopperLayer(side)) return;
 
         const rings = complexPolygonToRings(source);
         if (rings[0]) polygons.push({ net: safe, layer: side, rings });
     };
 
-    const pours = await eda.pcb_PrimitivePour.getAll().catch(() => []);
+    const pours = await eda.pcb_PrimitivePour.getAll();
     for (const pour of pours) {
         addPolygon(pour.getState_Net(), pour.getState_Layer(), pour.getState_ComplexPolygon().getSource());
     }
 
-    const fills = await eda.pcb_PrimitiveFill.getAll().catch(() => []);
+    const fills = await eda.pcb_PrimitiveFill.getAll();
     for (const fill of fills) {
         addPolygon(fill.getState_Net(), fill.getState_Layer(), fill.getState_ComplexPolygon().getSource());
     }
@@ -751,7 +463,7 @@ async function readRawPolygons() {
     return polygons;
 }
 
-function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
+function buildPolygons(rawPolygons: RawPolygon[]) {
     const polygons: ExplainPcbPolygon[] = [];
 
     for (const polygon of rawPolygons) {
@@ -770,27 +482,17 @@ function buildPolygons(rawPolygons: RawPolygon[], pads: InternalPad[]) {
         }
 
         for (const island of islands) {
-            const rings = [island.outer, ...island.cutouts];
             const outerArea = polygonArea(island.outer);
             const cutoutArea = island.cutouts.reduce((total, ring) => total + polygonArea(ring), 0);
-            const geometryConnects = pads
-                .filter(pad => pad.net === polygon.net && padTouchesPolygon(pad, rings))
-                .map(({ designator, pad_number }) => ({ designator, pad_number }));
-
-            const connects = geometryConnects.length
-                ? geometryConnects
-                : pads.filter(pad => pad.net === polygon.net)
 
             polygons.push({
                 net: polygon.net,
                 layer: polygon.layer,
-                // points: island.outer.map(point => toExplainPoint(point, context)),
                 cutouts: island.cutouts.length
                     ? island.cutouts.map(ring => ring.map(point => toExplainPoint(point)))
                     : undefined,
-                area: round((outerArea - cutoutArea) * MIL_TO_MM * MIL_TO_MM, 1),
+                area: round((outerArea - cutoutArea) * MIL_TO_MM * MIL_TO_MM),
                 bbox: toExplainBox(boxFromPoints(island.outer)),
-                connects: [...new Set(connects.map(({ designator, pad_number }) => toExplainPad({ designator, pad_number })))],
             });
         }
     }
@@ -814,10 +516,8 @@ export async function getPcb(): Promise<ExplainPCB> {
         readRawPolygons(),
     ]);
 
-    const wires = buildWires(segments, viaResult.viaNodes, componentResult.pads);
-    const polygons = buildPolygons(rawPolygons, componentResult.pads);
-
-    const fullPolygonConnected = polygons.flatMap(p => p.connects);
+    const wires = summarizeCopper([...segments, ...viaResult.measures]);
+    const polygons = buildPolygons(rawPolygons);
 
     const allLayers = await eda.pcb_Layer.getAllLayers().catch(e => []);
     const layers = allLayers
@@ -833,88 +533,33 @@ export async function getPcb(): Promise<ExplainPCB> {
             ? { polygon: boardPolygon }
             : undefined,
         components: componentResult.rawComponents,
+        standalone_pads: componentResult.standalonePads.length ? componentResult.standalonePads : undefined,
         vias: viaResult.vias,
-        wires: wires.length ?
-            wires.map(wire => ({ ...wire, connected_pads: wire.connected_pads.filter(c => !fullPolygonConnected.includes(c)) })).filter(wire => wire.connected_pads.length)
-            : undefined,
+        wires: wires.length ? wires : undefined,
         polygons: polygons.length ? polygons : undefined,
     };
 }
 
-function padRefKey(ref: ExplainPcbPadRef) {
-    return ref;
-}
-
-export async function inspectNet(pcb: ExplainPCB, netName: string, drcLimit: number): Promise<ExplainPcbWire[]> {
+export async function inspectNet(netName: string, drcLimit: number): Promise<InspectPcbNet> {
     if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
-
-    const wires = pcb.wires?.filter(wire => wire.net === netName) ?? [];
-    if (!wires.length) return [];
-
-    const drcResult = await checkPcbDrc(drcLimit);
-    const netInSuffix = `(${netName})`;
-    const netViolations = drcResult.flatMap(category =>
-        category.list.flatMap(group => group.list.filter(violation => {
-            return violation.obj1?.includes(netInSuffix) || violation.obj2?.includes(netInSuffix);
-        }))
-    );
-
-    const padToWireIndices = new Map<string, number[]>();
-    wires.forEach((wire, index) => {
-        for (const pad of wire.connected_pads) {
-            const key = padRefKey(pad);
-            const list = padToWireIndices.get(key) ?? [];
-            list.push(index);
-            padToWireIndices.set(key, list);
-        }
-    });
-
-    function parsePadRefFromSuffix(suffix: string | undefined): ExplainPcbPadRef | undefined {
-        if (!suffix) return undefined;
-        const lastDash = suffix.lastIndexOf('-');
-        if (lastDash <= 0 || lastDash === suffix.length - 1) return undefined;
-        const designator = suffix.slice(0, lastDash);
-        const padNumber = suffix.slice(lastDash + 1);
-        if (!designator || !padNumber) return undefined;
-        return toExplainPad({ designator, pad_number: padNumber });
-    }
-
-    const result: ExplainPcbWire[] = wires.map(wire => ({ ...wire, drc_violations: [] }));
-    const unmatched: SimplifiedDrcViolation[] = [];
-
-    for (const violation of netViolations) {
-        const refs = [
-            parsePadRefFromSuffix(violation.obj1),
-            parsePadRefFromSuffix(violation.obj2),
-        ].filter((ref): ref is ExplainPcbPadRef => Boolean(ref));
-        const targetIndices = new Set<number>();
-        for (const ref of refs) {
-            for (const index of padToWireIndices.get(padRefKey(ref)) ?? []) {
-                targetIndices.add(index);
-            }
-        }
-        if (targetIndices.size) {
-            for (const index of targetIndices) {
-                result[index].drc_violations!.push(violation);
-            }
-        } else {
-            unmatched.push(violation);
-        }
-    }
-
-    if (unmatched.length) {
-        for (const wire of result) {
-            wire.drc_violations!.push(...unmatched);
-        }
-    }
-
-    for (const wire of result) {
-        if (!wire.drc_violations?.length) {
-            delete (wire as Partial<ExplainPcbWire>).drc_violations;
-        }
-    }
-
-    return result;
+    const document = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+    if (!document?.uuid || document.documentType !== EDMT_EditorDocumentType.PCB) throw new Error('Open the target PCB document first');
+    const pcb = await getPcb();
+    const pads = [...new Set([
+        ...pcb.components.flatMap(component => component.pads
+            .filter(pad => pad.net === netName).map(pad => component.designator + '.' + pad.pad)),
+        ...(pcb.standalone_pads ?? []).filter(pad => pad.net === netName).map(pad => pad.ref),
+    ])];
+    const copper = pcb.wires?.find(wire => wire.net === netName);
+    const polygons = pcb.polygons?.filter(polygon => polygon.net === netName) ?? [];
+    const drc = await checkPcbNetDrc(netName, drcLimit);
+    const current = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+    if (current?.uuid !== document.uuid) throw new Error('Active PCB changed during inspection; open the target PCB and retry');
+    return {
+        net: netName, found: Boolean(pads.length || copper || polygons.length || drc.violation_count),
+        pads, layer: copper?.layer ?? [], length: copper?.length ?? 0, vias: copper?.vias ?? 0,
+        width: copper?.width ?? null, segments: copper?.segments ?? 0, bbox: copper?.bbox, polygons, drc,
+    };
 }
 
 export async function inspectComponent(pcb: ExplainPCB, designator: string, radius: number): Promise<ExplainPcbComponent> {

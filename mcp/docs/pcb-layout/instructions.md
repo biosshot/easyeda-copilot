@@ -30,7 +30,7 @@ Placement and routing are one coupled physical problem. Do not write placement D
 1. Inspect the complete connectivity once. Reuse complete schematic context when available; otherwise use one `get_current_pcb` snapshot after import. If only pin function is ambiguous, read the relevant schematic page. Do not call `inspect_net` for every net.
 2. Trace logical paths through series resistors, AC-coupling capacitors, ferrite beads, common-mode chokes, zero-ohm links, and matching networks. A net-name boundary at a series component does not end the logical signal. Continue only through its series channel; do not treat a shunt capacitor or ESD branch as path continuation.
 3. Review every component and connected net. Classify mechanics, critical signal paths, power paths and current loops, thermal candidates, and ordinary connectivity. Ordinary nets need no DSL constraint, but they still count as reviewed.
-4. Choose a provisional routing strategy before density: intended copper-layer roles, reference/return planes, supported via technology, dense-package escape directions, and which layers may pass under components. This is planning only; placement does not authorize changing stackup or routing.
+4. Choose a provisional routing strategy before density: intended copper-layer roles, reference/return planes, supported via technology, dense-package escape directions, and which layers may pass under components. A useful starting order is critical circuits (power, differential pairs, controlled impedance, matched lengths, resonators/clocks and other sensitive paths), auxiliary GND connections, ordinary circuits and final pours. Adapt it to the board's topology, layers and existing copper. This is planning only; placement does not authorize changing stackup or routing.
 5. Reserve continuous capacity for each important flow: both legs and every series segment of a differential pair, RF/clock paths, high-current copper, switch/decoupling loops, return paths, connector escapes, via fields, and thermal spreading. Keep critical loops short without packing them so tightly that their required copper cannot fit.
 6. Then choose board size, density, component sides, rotations, blocks, and constraints. High density and `compactness: "high"` are valid for a topology and layer/via strategy that can support them; low density alone does not guarantee routability.
 
@@ -42,16 +42,27 @@ Use the topology analysis selectively. One critical ordered chain may justify `s
 
 1. Define the board, holes, blocks, components, and only preflight-justified constraints in one complete placement DSL file.
 2. If mechanics changed, read `mechanical-validation.md` and run a focused mechanical preview with `solver({ preview: true, placeOnlyComponents: [...] })`.
-3. Call `make_pcb_layout({ file })`. If it returns `status: "running"`, call `wait_operation({ operation_id })` until terminal.
-4. Inspect `previewSvgPath` and solver diagnostics. Confirm that critical logical paths remain ordered, dense packages have escape directions, and planned signal, power, via, and thermal areas are not blocked. If a `post_place_opportunity` suggests `refineGroup`, add it only when that exact swap or rotation is allowed. A preview result is never assembled.
-5. Reject a placement with no plausible route for an important path. Fix hard errors and one obvious in-scope visual problem; do not chase zero warnings.
-6. Show the preview and ask for user approval.
-7. Remove preview filters when full placement is requested, run the complete DSL, wait when needed, and inspect the final preview.
-8. Ask for final placement approval.
-9. Keep the target PCB open and call `assemble_pcb_layout_on_current_pcbdoc({ layoutId })` only with the completed final `layoutId`.
-10. Run targeted live-PCB checks and stop unless routing was explicitly requested.
+3. Call `make_pcb_layout({ file })`. If it returns `status: "running"`, follow [operations.md](../operations.md) and wait until terminal.
+4. If this is a mechanical preview, inspect it with `mechanical-validation.md`, correct obvious in-scope defects, and obtain mechanical approval. Then remove the preview filters and run the complete DSL. A mechanical preview is never assembled.
+5. Evaluate the completed full placement using [placement verification](verification.md). Read diagnostics and view `previewImagePath` or render `previewSvgPath`. Correct concrete defects using the iteration loop below.
+6. Show the final preview and obtain placement approval unless the user already explicitly authorized applying this placement without another review. Reuse an approval for the same unchanged final result; mechanical approval alone does not approve unreviewed full placement.
+7. Keep the target PCB open and call `assemble_pcb_layout_on_current_pcbdoc({ layoutId })` with that completed final `layoutId`.
+8. Verify the live placement with the same [stage checks](verification.md) and make necessary focused corrections as described below. Stop at the placement boundary unless routing was requested.
 
 Assembly preserves existing copper and board objects. It replaces the existing outline only when the placement result contains a new valid outline. The solver receives existing outline and schematic-component positions, but not every copper or mechanical primitive; check an incrementally changed routed board after assembly.
+
+## Iterative local corrections
+
+Fix clear defects within the requested placement task without asking the user to micromanage each move. Examples: bring a decoupling capacitor to the correct supply pad, rotate a passive to shorten its connection, or rearrange a local block to reopen a ground passage. Preserve unrelated placement and approved mechanics.
+
+1. Identify the defect from diagnostics, connected pads and an inspected preview. Record affected designators, current poses, relevant neighbors and the expected improvement: a shorter current loop, better pin access, fewer overlaps or an open routing passage.
+2. Refine the complete DSL with the correct preservation scope, or use a suitable `refineGroup`. Use [execute_js](../execution/instructions.md) for a known component move, rotation or local block arrangement when the DSL cannot express it, attempts have stalled, or the direct edit is clearly simpler. Read the exact native API and current object IDs/poses first.
+3. Apply one coherent batch, then reread affected poses and view the result. Compare the original finding and preservation boundary. On a routed board, run current native DRC because moving components can leave existing copper behind.
+4. Continue while each pass provides measurable improvement without creating a more serious defect. Ten targeted passes can be justified; there is no fixed attempt count. Stop when requirements are met or no justified improvement remains, and respect any user time budget. If the same failure repeats or parts oscillate between poses, change the approach or revisit the local layout plan.
+
+A need to move whole functional sections, resize the board, change the stack or disturb approved mechanics calls for revising the plan. Identify the exact blocker and revise within the authorized scope; obtain a changed mechanical requirement when needed. If a blocking defect remains, do not call placement complete. Warnings matter when they reveal a real functional or requested visual improvement; clearing every warning is not the objective.
+
+Do not reassemble an older `layoutId` after live corrections: it can overwrite them. Treat the verified live PCB as the current result and retain its checkpoint/pose record. Follow [recovery](../recovery.md) when a correction regresses the board.
 
 ## Placement structure
 
@@ -112,4 +123,4 @@ Use `board.auto(...)` unless dimensions are mechanically fixed. For an ordinary 
 
 ## Result handling
 
-Warnings are review evidence, not an optimization backlog. Fix a warning when it violates a user requirement, mechanics, or a dominant electrical path. Never assemble before approval. After assembly, keep, repair, or restore based on verification; restore a clearly invalid result that cannot be repaired safely, not a warning alone.
+Apply only a reviewed final placement within the user's authorization. Use [placement verification](verification.md) to evaluate the actual board, make justified local corrections and report the areas checked, improvements and unresolved findings. Follow [recovery](../recovery.md) when the result cannot be kept or repaired safely.

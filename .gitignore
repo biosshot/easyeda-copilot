@@ -4,3 +4,7 @@
 /iframe
 /mcp/dist/
 /mcp/.test-data
+
+/mcp/node_modules/
+/mcp/.artifacts/
+/.artifacts/

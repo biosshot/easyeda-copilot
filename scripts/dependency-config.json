@@ -1,0 +1,10 @@
+{
+  "eda-copilot-backend": {
+    "version": "0.1.0",
+    "local": "../../eda-copilot-backend"
+  },
+  "eda-copilot-router": {
+    "version": "0.3.1",
+    "local": "../../copilot-router"
+  }
+}

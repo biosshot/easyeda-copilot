@@ -97,7 +97,7 @@ declare function polygon(net: string): PolygonBuilder;
 
 declare function plane(options: {
   net: string;
-  /** Layers to pour. Default OUTER (TOP and BOTTOM). For ordinary two-layer GND, write OUTER explicitly; use one layer only for a verified reason. */
+  /** Layers to pour. Runtime default OUTER (TOP and BOTTOM); explicitly choose the layers appropriate to this board's ground/reference plan. */
   layers?: LayerSelector;
   region?: RegionSelector;
   zone?: ZoneOptions;
@@ -105,6 +105,7 @@ declare function plane(options: {
     gridMm?: number;
     maxVisibleViaDistanceMm?: number;
     via?: "drc-min" | Pick<ViaOptions, "diameterMm" | "drillMm">;
+    /** Allow pad-centered stitching vias. Default false; requires explicit opt-in. */
     viaInPad?: boolean;
   };
 }): void;
@@ -135,6 +136,7 @@ declare function powerNet(net: string, options?: RuleOptions & NetRoutingPrefere
   tapWidthMm?: number | "drc-min";
 }): void;
 
+/** Coupled differential pair: keep both legs adjacent; set spacing/skew intent as required. */
 declare function diffPair(id: string, options: RuleOptions & {
   positive: string;
   negative: string;
@@ -146,6 +148,7 @@ declare function diffPair(id: string, options: RuleOptions & {
 /** Delete one differential-pair relation. */
 declare function deleteDiffPair(id: string): void;
 
+/** Match lengths of independent nets; does not enforce adjacency. Use diffPair for a differential pair. */
 declare function matchedGroup(id: string, options: {
   nets: string[];
   toleranceMm?: number;
@@ -217,13 +220,14 @@ declare function fanout(target: FanoutTarget, options?: FanoutOptions): void;
  */
 declare function disableFanout(...targets: FanoutTarget[]): void;
 
+/** Copper disableRouting defaults to false. true forbids new tracks globally, not planes or through-via spans; intersected with per-net allowedLayers. Repeat in each routing program that needs this policy. */
 declare function stack(options: {
   boardThicknessMm?: number;
   fallbackCopperThicknessOz?: number;
   viaPlatingThicknessUm?: number;
   maxTrackWidthMm?: number;
   layers?: Array<
-    | { kind: "copper"; name: PhysicalLayer; thicknessOz?: number; thicknessMm?: number }
+    | { kind: "copper"; name: PhysicalLayer; thicknessOz?: number; thicknessMm?: number; disableRouting?: boolean }
     | { kind: "dielectric"; name?: string; thicknessMm?: number; relativePermittivity?: number; lossTangent?: number; material?: string }
   >;
   solderMask?: {

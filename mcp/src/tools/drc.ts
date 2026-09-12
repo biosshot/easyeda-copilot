@@ -23,7 +23,7 @@ export function registerDrcTools(server: McpServer, bridge: Bridge) {
         'check_pcb_drc',
         {
             title: 'Check PCB DRC',
-            description: 'Run EasyEDA PCB DRC check on the currently opened PCB document. Returns simplified DRC violations grouped by category. The limit is split evenly across rule groups within each category to avoid huge responses. Open the target PCB document first.',
+            description: 'Run native EasyEDA PCB DRC on the open PCB. Returns grouped violations with full counts, truncation flags, object labels, primitive_ids, rule_name, layer and native diagnostic details when supplied by EasyEDA. Native diagnostic coordinates are not normalized mm: resolve primitive_ids through the PCB API before editing. Does not rebuild pours. The detail budget is shared across groups per category, with at least one item per nonempty group. Open the target PCB document first.',
             inputSchema: z.object({
                 limit: z.number().min(1).max(200).default(24).describe('Maximum number of violations to return per category, split across rule groups.'),
             }),

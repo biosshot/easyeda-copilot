@@ -679,3 +679,12 @@ assert.equal(
 );
 
 process.stdout.write('EasyEDA routing adapter: ok\n');
+
+const linkedFixture = structuredClone(fixture);
+linkedFixture.tracks[0].pads = [['U1','p0'],['U1','p1'],['missing','p0']];
+const linked = adapter.importEasyEdaAutorouteJson(linkedFixture);
+assert.deepEqual(linked.board.copper.fixed.tracks[0].connectedPadIds, ['U1:p0','U1:p1']);
+const clearedLinks = adapter.importEasyEdaAutorouteJson(linkedFixture, {clearRouting:{vias:['SIG']}});
+assert.equal(clearedLinks.board.copper.fixed.tracks[0].connectedPadIds, undefined,
+    'Clearing vias invalidates native connectivity evidence on retained tracks');
+console.log('Native pad links preserve physical pad identity and expire on copper cleanup: ok');

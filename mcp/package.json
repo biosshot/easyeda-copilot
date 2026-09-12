@@ -19,27 +19,35 @@
     "LICENSE"
   ],
   "scripts": {
+    "prebuild": "node ../scripts/build-local-dependencies.mjs",
     "build": "tsup",
+    "router:info": "node scripts/router-info.mjs",
     "test:routing-adapter": "npm run build && node scripts/check-routing-adapter.mjs",
     "test:operations": "npm run build && node scripts/check-operation-manager.mjs",
     "test:projects": "npm run build && node scripts/check-project-tools.mjs",
+    "test:execute-js": "npm run build && node scripts/check-execute-js.mjs",
+    "test:pcb-inspection": "node scripts/check-pcb-inspection.mjs",
+    "test:pcb-refill-example": "node scripts/check-pcb-refill-example.mjs",
+    "test:pcb-preview": "node scripts/check-pcb-preview.mjs",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run typecheck && npm run build && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs",
-    "prepack": "npm run build",
-    "start": "node dist/index.js"
+    "check": "npm run build && npm run typecheck && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
+    "prepack": "node ../scripts/check-release.mjs && npm run build",
+    "start": "node dist/index.js",
+    "test:package": "node scripts/check-package.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "eda-copilot-router": "0.3.0",
+    "eda-copilot-backend": "0.1.0",
+    "eda-copilot-router": "0.3.1",
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",
     "ws": "^8.20.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@copilot/shared": "file:../packages/shared",
+    "@copilot/shared": "1.0.0",
     "@types/node": "^25.9.1",
     "@types/sharp": "^0.31.1",
     "@types/ws": "^8.18.1",
@@ -48,6 +56,6 @@
     "typescript": "^5.9.3"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.19"
   }
 }

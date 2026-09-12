@@ -10,6 +10,7 @@ export type OperationContext = Readonly<{
     signal: AbortSignal;
     setStage(stage: string): void;
     setProgress(progress: unknown): void;
+    setProgressReader(reader: () => Promise<unknown>): void;
     onCancel(handler: CancelHandler): void;
     setApplyHandler(handler: ApplyHandler): void;
     applyResult(): Promise<unknown>;
@@ -22,6 +23,7 @@ type ManagedOperation = {
     status: OperationStatus;
     stage: string;
     progress?: unknown;
+    readProgress?: () => Promise<unknown>;
     controller: AbortController;
     cancelHandler?: CancelHandler;
     applyHandler?: ApplyHandler;
@@ -94,6 +96,9 @@ export class OperationManager {
             setProgress: progress => {
                 if (operation.status === 'running') operation.progress = progress;
             },
+            setProgressReader: reader => {
+                if (operation.status === 'running') operation.readProgress = reader;
+            },
             onCancel: handler => {
                 operation.cancelHandler = handler;
                 if (controller.signal.aborted) void Promise.resolve(handler()).catch(console.error);
@@ -145,6 +150,12 @@ export class OperationManager {
             }
         }
 
+        let progress = operation.progress;
+        if (operation.status === 'running' && operation.readProgress) {
+            // A missing or temporarily unreadable log must not fail the operation.
+            progress = await operation.readProgress().catch(() => progress);
+        }
+
         if (operation.status === 'completed') {
             return operation.result ?? {
                 status: 'completed' as const,
@@ -161,7 +172,7 @@ export class OperationManager {
             operation_id: operation.id,
             kind: operation.kind,
             stage: operation.stage,
-            ...(operation.progress === undefined ? {} : { progress: operation.progress }),
+            ...(progress === undefined ? {} : { progress }),
         };
     }
 

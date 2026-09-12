@@ -1,0 +1,845 @@
+# PCB\_PrimitivePour class
+
+PCB &amp; footprint / copper border primitive class
+
+## Signature
+
+```typescript
+class PCB_PrimitivePour implements IPCB_PrimitiveAPI
+```
+**Implements:** [IPCB\_PrimitiveAPI](../interfaces/IPCB_PrimitiveAPI.md)
+
+## Methods
+
+<table><thead><tr><th>
+
+Method
+
+</th><th>
+
+Modifiers
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+[create(net, layer, complexPolygon, pourFillMethod, preserveSilos, pourName, pourPriority, lineWidth, primitiveLock)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Create Copper border
+
+</td></tr>
+<tr><td>
+
+[delete(primitiveIds)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Delete Copper border
+
+</td></tr>
+<tr><td>
+
+[get(primitiveIds)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Get Copper border
+
+</td></tr>
+<tr><td>
+
+[get(primitiveIds)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Get Copper border
+
+</td></tr>
+<tr><td>
+
+[getAll(net, layer, primitiveLock)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Get all Copper border primitive
+
+</td></tr>
+<tr><td>
+
+[getAllPrimitiveId(net, layer, primitiveLock)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Get all Copper border primitive IDs
+
+</td></tr>
+<tr><td>
+
+[modify(primitiveId, property)](./PCB_PrimitivePour.md)
+
+</td><td>
+
+</td><td>
+
+**_(BETA)_** Modify Copper border
+
+</td></tr>
+</tbody></table>
+
+---
+
+## 方法详情
+
+### create
+
+# PCB\_PrimitivePour.create() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Create Copper border
+
+## Signature
+
+```typescript
+function create(
+	net: string,
+	layer: TPCB_LayersOfCopper,
+	complexPolygon: IPCB_Polygon,
+	pourFillMethod?: EPCB_PrimitivePourFillMethod,
+	preserveSilos?: boolean,
+	pourName?: string,
+	pourPriority?: number,
+	lineWidth?: number,
+	primitiveLock?: boolean,
+): Promise<IPCB_PrimitivePour | undefined>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+net
+
+</td><td>
+
+string
+
+</td><td>
+
+Net name
+
+</td></tr>
+<tr><td>
+
+layer
+
+</td><td>
+
+[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)
+
+</td><td>
+
+Layer
+
+</td></tr>
+<tr><td>
+
+complexPolygon
+
+</td><td>
+
+[IPCB\_Polygon](./IPCB_Polygon.md)
+
+</td><td>
+
+Complex polygon object
+
+</td></tr>
+<tr><td>
+
+pourFillMethod
+
+</td><td>
+
+[EPCB\_PrimitivePourFillMethod](../enums/EPCB_PrimitivePourFillMethod.md)
+
+</td><td>
+
+_(Optional)_ Copper fill method
+
+</td></tr>
+<tr><td>
+
+preserveSilos
+
+</td><td>
+
+boolean
+
+</td><td>
+
+_(Optional)_ Whether to keep islands
+
+</td></tr>
+<tr><td>
+
+pourName
+
+</td><td>
+
+string
+
+</td><td>
+
+_(Optional)_ Copper name
+
+</td></tr>
+<tr><td>
+
+pourPriority
+
+</td><td>
+
+number
+
+</td><td>
+
+_(Optional)_ Copper priority
+
+</td></tr>
+<tr><td>
+
+lineWidth
+
+</td><td>
+
+number
+
+</td><td>
+
+_(Optional)_ Line width
+
+</td></tr>
+<tr><td>
+
+primitiveLock
+
+</td><td>
+
+boolean
+
+</td><td>
+
+_(Optional)_ Whether it is locked
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md) \| undefined&gt;
+
+Copper border primitive object
+
+## Example
+
+```javascript
+// 1. 生成随机起点坐标，避免与画布上已有的覆铜边框重合
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+
+// 2. 用 pcb_MathPolygon.createPolygon 构造覆铜轮廓：500×300 的矩形区域
+const polygon = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+
+// 3. 在顶层铜层创建覆铜边框：挂 GND 网络、实心填充、不保留孤岛、优先级 5、线宽 10mil、不锁定
+// 注意：net 不能传空字符串（会报参数不正确），需传已有网络名
+const pour = await eda.pcb_PrimitivePour.create('GND', 1, polygon, 'solid', false, '嘉立创示例_覆铜', 5, 10, false);
+
+// 4. 创建类保留现场，不删除图元
+console.log('primitiveId:', pour.getState_PrimitiveId());
+console.log('primitiveType:', pour.getState_PrimitiveType());
+console.log('pourName:', pour.getState_PourName());
+console.log('pourFillMethod:', pour.getState_PourFillMethod());
+console.log('pourPriority:', pour.getState_PourPriority());
+console.log('layer:', pour.getState_Layer());
+```
+
+### delete
+
+# PCB\_PrimitivePour.delete() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Delete Copper border
+
+## Signature
+
+```typescript
+function delete(primitiveIds: string | IPCB_PrimitivePour | Array<string> | Array<IPCB_PrimitivePour>): Promise<boolean>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+primitiveIds
+
+</td><td>
+
+string \| [IPCB\_PrimitivePour](./IPCB_PrimitivePour.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md)<!-- -->&gt;
+
+</td><td>
+
+Copper border primitive ID or Copper border primitive object
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;boolean&gt;
+
+Delete Whether the operation is successful
+
+## Example
+
+```javascript
+// 1. 创建两条待删除的测试覆铜边框（随机坐标避免重合）
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+const polygon1 = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+const polygon2 = eda.pcb_MathPolygon.createPolygon(['R', x, y + 500, 500, 300, 0, 0]);
+const pour1 = await eda.pcb_PrimitivePour.create('GND', 1, polygon1, 'solid', false, '嘉立创示例_覆铜1', 5, 10, false);
+const pour2 = await eda.pcb_PrimitivePour.create('GND', 1, polygon2, 'solid', false, '嘉立创示例_覆铜2', 5, 10, false);
+
+// 2. 记录删除前的覆铜边框数量
+const beforeCount = (await eda.pcb_PrimitivePour.getAll()).length;
+
+// 3. 以 ID 数组形式批量删除两条覆铜边框
+const deleted = await eda.pcb_PrimitivePour.delete([pour1.getState_PrimitiveId(), pour2.getState_PrimitiveId()]);
+
+// 4. 删除类保留现场（图元已删除，不恢复）
+const afterCount = (await eda.pcb_PrimitivePour.getAll()).length;
+
+console.log('deleted:', deleted);
+console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
+```
+
+### get
+
+# PCB\_PrimitivePour.get() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Get Copper border
+
+## Signature
+
+```typescript
+function get(primitiveIds: string): Promise<IPCB_PrimitivePour | undefined>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+primitiveIds
+
+</td><td>
+
+string
+
+</td><td>
+
+Copper border primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md) \| undefined&gt;
+
+Copper border primitive object, `undefined` indicates that the retrieval failed
+
+## Example
+
+```javascript
+// 1. 创建两条测试覆铜边框（随机坐标避免重合）
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+const polygon1 = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+const polygon2 = eda.pcb_MathPolygon.createPolygon(['R', x, y + 500, 500, 300, 0, 0]);
+const pour1 = await eda.pcb_PrimitivePour.create('GND', 1, polygon1, 'solid', false, '嘉立创示例_覆铜1', 5, 10, false);
+const pour2 = await eda.pcb_PrimitivePour.create('GND', 1, polygon2, '90grid', false, '嘉立创示例_覆铜2', 6, 10, false);
+
+// 2. 传单个 ID 字符串，返回单个覆铜边框对象
+const single = await eda.pcb_PrimitivePour.get(pour1.getState_PrimitiveId());
+
+// 3. 传 ID 数组，返回覆铜边框对象数组
+const arr = await eda.pcb_PrimitivePour.get([pour1.getState_PrimitiveId(), pour2.getState_PrimitiveId()]);
+
+// 4. 清理测试图元（查询类需要清理）
+await eda.pcb_PrimitivePour.delete([pour1.getState_PrimitiveId(), pour2.getState_PrimitiveId()]);
+
+console.log('single pourName:', single.getState_PourName());
+console.log('array length:', arr.length);
+console.log('pour2 fillMethod:', arr[1].getState_PourFillMethod());
+```
+
+### get_1
+
+# PCB\_PrimitivePour.get() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Get Copper border
+
+## Signature
+
+```typescript
+function get(primitiveIds: Array<string>): Promise<Array<IPCB_PrimitivePour>>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+primitiveIds
+
+</td><td>
+
+Array&lt;string&gt;
+
+</td><td>
+
+Copper border primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;Array&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md)<!-- -->&gt;&gt;
+
+Copper border primitive object; an empty array indicates that the retrieval failed
+
+## Remarks
+
+If multiple primitive IDs are passed in, a primitive ID that is not matched will not affect the return of other primitives; that is, fewer primitive objects than the number of primitive IDs passed in may be returned.
+
+### getall
+
+# PCB\_PrimitivePour.getAll() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Get all Copper border primitive
+
+## Signature
+
+```typescript
+function getAll(
+	net?: string,
+	layer?: TPCB_LayersOfCopper,
+	primitiveLock?: boolean,
+): Promise<Array<IPCB_PrimitivePour>>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+net
+
+</td><td>
+
+string
+
+</td><td>
+
+_(Optional)_ Net name
+
+</td></tr>
+<tr><td>
+
+layer
+
+</td><td>
+
+[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)
+
+</td><td>
+
+_(Optional)_ Layer
+
+</td></tr>
+<tr><td>
+
+primitiveLock
+
+</td><td>
+
+boolean
+
+</td><td>
+
+_(Optional)_ Whether it is locked
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;Array&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md)<!-- -->&gt;&gt;
+
+Array of Copper border primitive objects
+
+## Example
+
+```javascript
+// 1. 创建一条顶层测试覆铜边框作为过滤目标（随机坐标避免重合）
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+const polygon = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+const pour = await eda.pcb_PrimitivePour.create('GND', 1, polygon, 'solid', false, '嘉立创示例_覆铜', 5, 10, false);
+const pourId = pour.getState_PrimitiveId();
+
+// 2. 不带参数：获取 PCB 上全部覆铜边框
+const all = await eda.pcb_PrimitivePour.getAll();
+
+// 3. 按网络和层过滤：只取 GND 网络顶层（1）的覆铜边框
+const gndTop = await eda.pcb_PrimitivePour.getAll('GND', 1);
+
+// 4. 清理测试图元（查询类需要清理）
+await eda.pcb_PrimitivePour.delete([pourId]);
+
+console.log('total pours:', all.length);
+console.log('GND top layer pours:', gndTop.length);
+console.log('marker pour found in GND top layer:', gndTop.some(p => p.getState_PrimitiveId() === pourId));
+```
+
+### getallprimitiveid
+
+# PCB\_PrimitivePour.getAllPrimitiveId() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Get all Copper border primitive IDs
+
+## Signature
+
+```typescript
+function getAllPrimitiveId(
+	net?: string,
+	layer?: TPCB_LayersOfCopper,
+	primitiveLock?: boolean,
+): Promise<Array<string>>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+net
+
+</td><td>
+
+string
+
+</td><td>
+
+_(Optional)_ Net name
+
+</td></tr>
+<tr><td>
+
+layer
+
+</td><td>
+
+[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)
+
+</td><td>
+
+_(Optional)_ Layer
+
+</td></tr>
+<tr><td>
+
+primitiveLock
+
+</td><td>
+
+boolean
+
+</td><td>
+
+_(Optional)_ Whether it is locked
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;Array&lt;string&gt;&gt;
+
+Array of Copper border primitive IDs
+
+## Example
+
+```javascript
+// 1. 创建一条顶层测试覆铜边框作为查找目标（随机坐标避免重合）
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+const polygon = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+const pour = await eda.pcb_PrimitivePour.create('GND', 1, polygon, 'solid', false, '嘉立创示例_覆铜', 5, 10, false);
+const pourId = pour.getState_PrimitiveId();
+
+// 2. 获取全部覆铜边框的图元 ID
+const allIds = await eda.pcb_PrimitivePour.getAllPrimitiveId();
+
+// 3. 按网络和层过滤：只取 GND 网络顶层（1）覆铜边框的图元 ID
+const gndTopIds = await eda.pcb_PrimitivePour.getAllPrimitiveId('GND', 1);
+
+// 4. 清理测试图元（查询类需要清理）
+await eda.pcb_PrimitivePour.delete([pourId]);
+
+console.log('total pour ids:', allIds.length);
+console.log('GND top layer pour ids:', gndTopIds.length);
+console.log('marker id in GND top layer list:', gndTopIds.includes(pourId));
+```
+
+### modify
+
+# PCB\_PrimitivePour.modify() method
+
+> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
+
+Modify Copper border
+
+## Signature
+
+```typescript
+function modify(
+	primitiveId: string | IPCB_PrimitivePour,
+	property: {
+		net?: undefined | string;
+		layer?:
+			| undefined
+			| EPCB_LayerId.TOP
+			| EPCB_LayerId.BOTTOM
+			| EPCB_LayerId.INNER_1
+			| EPCB_LayerId.INNER_2
+			| EPCB_LayerId.INNER_3
+			| EPCB_LayerId.INNER_4
+			| EPCB_LayerId.INNER_5
+			| EPCB_LayerId.INNER_6
+			| EPCB_LayerId.INNER_7
+			| EPCB_LayerId.INNER_8
+			| EPCB_LayerId.INNER_9
+			| EPCB_LayerId.INNER_10
+			| EPCB_LayerId.INNER_11
+			| EPCB_LayerId.INNER_12
+			| EPCB_LayerId.INNER_13
+			| EPCB_LayerId.INNER_14
+			| EPCB_LayerId.INNER_15
+			| EPCB_LayerId.INNER_16
+			| EPCB_LayerId.INNER_17
+			| EPCB_LayerId.INNER_18
+			| EPCB_LayerId.INNER_19
+			| EPCB_LayerId.INNER_20
+			| EPCB_LayerId.INNER_21
+			| EPCB_LayerId.INNER_22
+			| EPCB_LayerId.INNER_23
+			| EPCB_LayerId.INNER_24
+			| EPCB_LayerId.INNER_25
+			| EPCB_LayerId.INNER_26
+			| EPCB_LayerId.INNER_27
+			| EPCB_LayerId.INNER_28
+			| EPCB_LayerId.INNER_29
+			| EPCB_LayerId.INNER_30;
+		complexPolygon?: undefined | IPCB_Polygon;
+		pourFillMethod?:
+			| undefined
+			| EPCB_PrimitivePourFillMethod.GRID45
+			| EPCB_PrimitivePourFillMethod.GRID
+			| EPCB_PrimitivePourFillMethod.SOLID;
+		preserveSilos?: undefined | false | true;
+		pourName?: undefined | string;
+		pourPriority?: undefined | number;
+		lineWidth?: undefined | number;
+		primitiveLock?: undefined | false | true;
+	},
+): Promise<IPCB_PrimitivePour | undefined>;
+```
+
+## Parameters
+
+<table><thead><tr><th>
+
+Parameter
+
+</th><th>
+
+Type
+
+</th><th>
+
+Description
+
+</th></tr></thead>
+<tbody><tr><td>
+
+primitiveId
+
+</td><td>
+
+string \| [IPCB\_PrimitivePour](./IPCB_PrimitivePour.md)
+
+</td><td>
+
+Primitive ID
+
+</td></tr>
+<tr><td>
+
+property
+
+</td><td>
+
+{ net?: undefined \| string; layer?: undefined \| [EPCB\_LayerId.TOP](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.BOTTOM](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_1](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_2](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_3](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_4](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_5](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_6](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_7](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_8](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_9](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_10](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_11](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_12](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_13](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_14](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_15](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_16](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_17](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_18](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_19](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_20](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_21](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_22](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_23](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_24](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_25](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_26](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_27](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_28](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_29](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.INNER\_30](../enums/EPCB_LayerId.md)<!-- -->; complexPolygon?: undefined \| [IPCB\_Polygon](./IPCB_Polygon.md)<!-- -->; pourFillMethod?: undefined \| [EPCB\_PrimitivePourFillMethod.GRID45](../enums/EPCB_PrimitivePourFillMethod.md) \| [EPCB\_PrimitivePourFillMethod.GRID](../enums/EPCB_PrimitivePourFillMethod.md) \| [EPCB\_PrimitivePourFillMethod.SOLID](../enums/EPCB_PrimitivePourFillMethod.md)<!-- -->; preserveSilos?: undefined \| false \| true; pourName?: undefined \| string; pourPriority?: undefined \| number; lineWidth?: undefined \| number; primitiveLock?: undefined \| false \| true }
+
+</td><td>
+
+Modify Parameter
+
+</td></tr>
+</tbody></table>
+
+## Returns
+
+Promise&lt;[IPCB\_PrimitivePour](./IPCB_PrimitivePour.md) \| undefined&gt;
+
+Copper border primitive object, `undefined` indicates that the modification failed
+
+## Example
+
+```javascript
+// 1. 创建待修改的测试覆铜边框（随机坐标避免与画布已有覆铜重合）
+const x = 2000 + Math.floor(Math.random() * 100000);
+const y = 2000 + Math.floor(Math.random() * 100000);
+const polygon = eda.pcb_MathPolygon.createPolygon(['R', x, y, 500, 300, 0, 0]);
+const pour = await eda.pcb_PrimitivePour.create('GND', 1, polygon, 'solid', false, '嘉立创示例_覆铜', 5, 10, false);
+const pourId = pour.getState_PrimitiveId();
+
+// 2. 读取修改前的层与优先级
+const beforeLayer = pour.getState_Layer();
+const beforePriority = pour.getState_PourPriority();
+
+// 3. 批量修改：层从顶层（1）换到底层（2），优先级 5 → 6
+await eda.pcb_PrimitivePour.modify(pourId, { layer: 2, pourPriority: 6 });
+
+// 4. modify 返回后需要重新 get() 才能读到画布上的最新值
+const refreshed = await eda.pcb_PrimitivePour.get(pourId);
+
+// 5. 修改类保留现场，供观察修改结果
+console.log('primitiveId:', pourId);
+console.log('layer:', beforeLayer, '→', refreshed.getState_Layer());
+console.log('pourPriority:', beforePriority, '→', refreshed.getState_PourPriority());
+```

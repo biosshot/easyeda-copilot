@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { disposeBackend } from 'eda-copilot-backend/pcb';
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio';
@@ -12,6 +13,7 @@ import { registerDrcTools } from './tools/drc';
 import { registerEasyEdaInstancesTools } from './tools/easyeda-instances';
 import { registerOperationTools } from './tools/operations';
 import { registerProjectTools } from './tools/projects';
+import { registerExecuteJsTools } from './tools/execute-js';
 import { DOCS_DIR, SKILL_DOC_PATH } from './utils/dirs';
 
 const MCP_WS_PORT = Number(process.env.EASYEDA_COPILOT_MCP_WS_PORT || 8787);
@@ -83,6 +85,7 @@ async function main() {
     registerEasyEdaInstancesTools(server, bridge);
     registerOperationTools(server);
     registerProjectTools(server, bridge);
+    registerExecuteJsTools(server, bridge);
 
     const transport = new StdioServerTransport();
 
@@ -108,6 +111,7 @@ async function main() {
         transportEndStarted = true;
 
         await closeTransport();
+        await disposeBackend();
         if (forceShutdownStarted) return;
         if (bridge.enterBrokerOnlyMode()) return;
         await closeBridge();
@@ -115,6 +119,7 @@ async function main() {
     const forceShutdown = async () => {
         if (forceShutdownStarted) return;
         forceShutdownStarted = true;
+        await disposeBackend();
         await closeBridge();
         await closeTransport();
     };

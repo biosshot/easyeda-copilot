@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
+import { EXECUTE_JS_MAX_WIRE_BYTES } from '@copilot/shared/types/execute-js';
 
 type WsMessage = {
     event: string;
@@ -493,7 +494,7 @@ class ProxyBridge {
     ) { }
 
     async connect() {
-        const socket = new WebSocket(this.url);
+        const socket = new WebSocket(this.url, { maxPayload: EXECUTE_JS_MAX_WIRE_BYTES });
 
         await new Promise<void>((resolve, reject) => {
             const timer = setTimeout(() => {
@@ -850,6 +851,7 @@ class MeshBridge implements Bridge {
         this.proxy = undefined;
 
         const server = new WebSocketServer({
+            maxPayload: EXECUTE_JS_MAX_WIRE_BYTES,
             host: this.host,
             port: this.port,
         });

@@ -6,7 +6,10 @@ import {
     type RoutingCopperApplication,
 } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
+import { executeJavaScript } from './eda/execute-js';
 import { checkPcbDrc } from './eda/drc';
+import { previewPcb } from './eda/pcb-preview';
+import type { PreviewPcbInput } from '@copilot/shared/types/pcb/preview';
 import {
     getPcb,
     getPcbExistingPlacement,
@@ -1358,6 +1361,15 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
     try {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
 
+        if (message.event === 'execute-js') {
+            if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
+            const inputs = body.inputs ?? {};
+            if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
+                || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
+            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false), inputs as Record<string, string>));
+            return;
+        }
+
         if (message.event === 'get-schematic') {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true });
@@ -1406,6 +1418,12 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
         if (message.event === 'get-pcb-raw') {
             reply(true, await getPcbRaw());
+            return;
+        }
+
+        if (message.event === 'preview-pcb') {
+            const deadline = typeof body[MCP_DEADLINE_FIELD] === 'number' ? body[MCP_DEADLINE_FIELD] as number : undefined;
+            reply(true, await previewPcb(body as unknown as PreviewPcbInput, deadline));
             return;
         }
 
@@ -1639,8 +1657,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
                 ? Math.floor(body.drc_limit)
                 : 24;
 
-            const pcb = await getPcb();
-            const result = await inspectNet(pcb, netName, drcLimit);
+            const result = await inspectNet(netName, drcLimit);
             reply(true, result);
             return;
         }

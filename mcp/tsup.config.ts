@@ -19,12 +19,13 @@ export default defineConfig({
         'src/routing/easyeda-drc-adapter.ts',
         'src/tools/projects.ts',
         'src/tools/docs.ts',
+        'src/tools/execute-js.ts',
     ],
     format: ['esm'],
     clean: true,
     dts: false,
     sourcemap: false,
-    // Keep eda-copilot-router external so its package-relative backend assets remain
+    // Keep eda-copilot-router and eda-copilot-backend external so their assets remain
     // discoverable after easyeda-copilot-mcp is installed from npm.
     noExternal: ['@modelcontextprotocol/sdk', '@copilot/shared'],
     esbuildPlugins: [

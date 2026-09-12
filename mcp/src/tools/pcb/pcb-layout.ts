@@ -2,7 +2,8 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { Bridge } from "../../bridge";
 import { textResult } from "../../utils/tool-result";
-import { asyncProgressText, cancelAsyncTask, postJson, startAsyncTask, waitForAsyncTask } from "../../utils/server";
+import { makePcbLayout as generatePcbLayout, getPcbComponentSizes } from "eda-copilot-backend/pcb";
+import type { BoardAssemble as BackendBoardAssemble } from "eda-copilot-backend/types";
 import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import { randomUUID } from "node:crypto";
 import { tmpdir } from "node:os";
@@ -16,7 +17,7 @@ import type { ExplainCircuit } from '@copilot/shared/types/circuit';
 type MakePcbLayoutResponse = {
     content?: string;
     toolReport?: unknown;
-    pcb?: BoardAssemble;
+    pcb?: BackendBoardAssemble;
     preview_image_url?: string;
     placement_debug_artifacts?: PlacementDebugArtifactsResponse;
     error?: string;
@@ -43,7 +44,7 @@ type PcbComponentSizesResponse = {
 };
 
 type StoredPcbLayout = {
-    pcb: BoardAssemble;
+    pcb: BackendBoardAssemble;
     content?: string;
     toolReport?: unknown;
     previewImagePath?: string;
@@ -66,7 +67,6 @@ type SavedPlacementDebugArtifacts = {
     debugArtifacts?: SavedPlacementDebugArtifact[];
 };
 
-const PCB_LAYOUT_TASK_PATH = '/v1/mcp-tools/make-pcb-layout';
 const DEFAULT_PCB_LAYOUT_WAIT_MS = 30_000;
 const PCB_DOCUMENT_RESOURCE = 'current-pcb-document';
 
@@ -283,42 +283,39 @@ async function runPcbLayout(
     const existingPlacement = placementForCircuit(rawExistingPlacement, circuit);
     context.signal.throwIfAborted();
 
-    context.setStage('starting_remote');
-    const remoteOperationId = await startAsyncTask(PCB_LAYOUT_TASK_PATH, {
-        code,
-        circuit,
-        ...(existingPlacement ? { existingPlacement } : {}),
+    context.setStage('placing');
+    const result = await generatePcbLayout({
+        code, circuit, ...(existingPlacement ? { existingPlacement } : {}),
+    }, {
+        signal: context.signal,
+        onProgress: progress => context.setProgress({
+            message: progress.content, details: progress,
+        }),
     });
-    context.onCancel(() => cancelAsyncTask(PCB_LAYOUT_TASK_PATH, remoteOperationId));
     context.signal.throwIfAborted();
+    context.setStage('storing_result');
+    const stored = await storeMakePcbLayoutResult(result);
+    return {
+        status: 'completed' as const,
+        operation_id: context.id,
+        ...stored,
+        content: result.content ?? 'PCB layout finished.',
+    };
+}
 
-    while (true) {
-        context.setStage('placing');
-        const operation = await waitForAsyncTask<MakePcbLayoutResponse>(
-            PCB_LAYOUT_TASK_PATH,
-            remoteOperationId,
-            { pollIntervalMs: 2000, waitMs: 10_000 },
-        );
-        context.setProgress({
-            message: asyncProgressText(operation.intermediateResult),
-            details: operation.intermediateResult,
-        });
-        context.signal.throwIfAborted();
-        if (operation.status === 'pending') continue;
-        if (operation.status === 'failed' || operation.status === 'cancelled') {
-            throw new Error(operation.error ?? `PCB layout operation ${operation.status}.`);
-        }
-        if (!operation.result) throw new Error('PCB layout operation completed without result.');
-
-        context.setStage('storing_result');
-        const stored = await storeMakePcbLayoutResult(operation.result);
-        return {
-            status: 'completed' as const,
-            operation_id: context.id,
-            ...stored,
-            content: operation.result.content ?? operation.result.error ?? 'PCB layout finished.',
-        };
-    }
+function toEasyEdaBoardAssemble(board: BackendBoardAssemble): BoardAssemble {
+    // The extension's existing wire format stores relative hole offsets as x/y.
+    return {
+        ...board,
+        ...(board.pads ? {
+            pads: board.pads.map(pad => ({
+                ...pad,
+                ...(pad.hole ? {
+                    hole: { diameter: pad.hole.diameter, ...pad.hole.offset },
+                } : {}),
+            })),
+        } : {}),
+    };
 }
 
 async function makePcbLayout(bridge: Bridge, file: string, waitMs: number) {
@@ -345,8 +342,8 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
         async ({ designators, includeAll }) => {
             const circuit = await bridge.requestEasyEda('get-multi-page-schematic', {
                 extractFootprintUuid: true
-            });
-            const result = await postJson('/v1/mcp-tools/get-pcb-component-sizes', {
+            }) as ExplainCircuit;
+            const result = await getPcbComponentSizes({
                 circuit,
                 designators,
                 includeAll,
@@ -393,7 +390,7 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
             }
 
             await bridge.requestEasyEda('assemble-board', {
-                boardAssemble: layout.pcb,
+                boardAssemble: toEasyEdaBoardAssemble(layout.pcb),
             }, 300000);
 
             return textResult({
