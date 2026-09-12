@@ -162,7 +162,7 @@ Note: This API requires the user to enable the extension external interaction pe
 
 ```javascript
 // 1. 发起 GET 请求（本例用本机桥接地址演示，实际使用时换成自己的服务地址）
-const response = await eda.sys_ClientUrl.request('http://localhost:49620/health', 'GET');
+const response = await eda.sys_ClientUrl.request('https://example.com/', 'GET');
 
 // 2. 读取响应状态码
 console.log('状态码：', response.status);

@@ -159,7 +159,7 @@ Note: This API requires the user to enable the extension external interaction pe
 
 ```javascript
 // 1. 先注册一条连接用于演示
-eda.sys_WebSocket.register('嘉立创示例_关闭', 'ws://127.0.0.1:49620', () => {}, () => {
+eda.sys_WebSocket.register('嘉立创示例_关闭', 'wss://example.com/socket', () => {}, () => {
 	console.log('连接已建立');
 });
 
@@ -285,7 +285,7 @@ Note: This API requires the user to enable the extension external interaction pe
 
 ```javascript
 // 1. 注册连接，挂上「连接成功」与「收到消息」两个回调
-eda.sys_WebSocket.register('嘉立创示例_注册', 'ws://127.0.0.1:49620', (event) => {
+eda.sys_WebSocket.register('嘉立创示例_注册', 'wss://example.com/socket', (event) => {
 	// 服务器推送的每条消息都会进入这个回调（event.data 是消息内容）
 	console.log('收到服务器消息：', event.data);
 }, () => {
@@ -380,7 +380,7 @@ Note: This API requires the user to enable the extension external interaction pe
 
 ```javascript
 // 1. 注册连接（本例的桥接服务对 ping 消息回 pong，用来演示完整收发回路）
-eda.sys_WebSocket.register('嘉立创示例_发送', 'ws://127.0.0.1:49620', (event) => {
+eda.sys_WebSocket.register('嘉立创示例_发送', 'wss://example.com/socket', (event) => {
 	console.log('收到服务器回复：', event.data);
 }, () => {
 	console.log('连接已建立');

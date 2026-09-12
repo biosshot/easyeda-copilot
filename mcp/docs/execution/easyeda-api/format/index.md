@@ -19,9 +19,9 @@ V3 file format (example files included in the zip):
 
 ### Format Details Documents
 
-- [Project Format](/en/format/project/index/)
-- [Schematic Format](/en/format/schematic/index/)
-- [PCB Format](/en/format/pcb/index/)
+- [Project Format](project/index.md)
+- [Schematic Format](schematic/index.md)
+- [PCB Format](pcb/index.md)
 
 ### Basic Document Format
 

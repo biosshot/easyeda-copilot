@@ -1,7 +1,7 @@
 # EasyEDA API 快速参考
 
 > 此文件提供所有类及其方法/属性的签名一览，便于 AI 快速查找。
-> 详细参数和返回值请查看 docs/classes/<ClassName>.md
+> 详细参数和返回值请查看 classes/<ClassName>.md
 
 ## 全局入口
 

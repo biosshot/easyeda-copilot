@@ -88,7 +88,7 @@ Buses must carry the NET attribute to identify the net name.
 
 ## BUSENTRY Bus Entry Marker
 
-![image](/storage/images/cn/format/schematic/wire/ripper.png)
+![image](https://prodocs.easyeda.com/storage/images/cn/format/schematic/wire/ripper.png)
 
 As shown in the figure:
 -   Light yellow is `BUS`.

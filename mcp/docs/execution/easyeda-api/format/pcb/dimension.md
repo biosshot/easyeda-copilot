@@ -43,16 +43,16 @@
 
 The first coordinate of the coordinate set is the endpoint touching the ARC, and the last coordinate is the default endpoint for displaying text, as shown below.
 
-![image](/storage/images/cn/format/pcb/dimension/dim_radius.png)
+![image](https://prodocs.easyeda.com/storage/images/cn/format/pcb/dimension/dim_radius.png)
 
 ### LENGTH Length Tool
 
 The coordinate set only needs four points, as shown below.
 
-![image](/storage/images/cn/format/pcb/dimension/dim_length.png)
+![image](https://prodocs.easyeda.com/storage/images/cn/format/pcb/dimension/dim_length.png)
 
 ### ANGLE Angle Tool
 
 The coordinate set needs 3 points, as shown below.
 
-![image](/storage/images/cn/format/pcb/dimension/dim_angle.png)
+![image](https://prodocs.easyeda.com/storage/images/cn/format/pcb/dimension/dim_angle.png)

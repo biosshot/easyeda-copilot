@@ -1,12 +1,10 @@
 # Extension Configuration File
 
-In order to define the properties of an extension and the various functions that an extension can invoke, each extension should have an extension configuration file named `extension.json` in the root directory with the following default contents:
-
-<<< @/private/pro-api-sdk/extension.json{json}
+In order to define the properties of an extension and the various functions that an extension can invoke, each extension should have an extension configuration file named `extension.json` in the extension package root directory. The fields are described below.
 
 ## name <Badge type="tip" text="string" />
 
-Extension name. It can only contain lowercase English characters `a-z`, numbers `0-9`, and underscores `-`, and is `5-30` characters long.
+Extension name. It can only contain lowercase English characters `a-z`, numbers `0-9`, and hyphens `-`, and is `5-30` characters long.
 
 ## uuid <Badge type="tip" text="string" />
 
@@ -86,7 +84,7 @@ Extension's activation event.
 
 ## entry <Badge type="tip" text="string" />
 
-Entry file. No modification is recommended, it is correctly defined within the SDK.
+Entry file path relative to the extension package root.
 
 ## dependentExtensions <Badge type="tip" text="Object" /> <Badge type="warning" text="feature" /> <Badge type="info" text="in working" />
 

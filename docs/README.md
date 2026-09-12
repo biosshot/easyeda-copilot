@@ -10,7 +10,7 @@
 - [Keep, repair or restore](../mcp/docs/recovery.md)
 - [Focused JavaScript and API lookup](../mcp/docs/execution/instructions.md)
 
-The agent entry point links to schematic, placement and routing guides. Read the selected guide and exact declarations as needed. The vendored API catalog is reference material, not a second MCP setup guide.
+The agent entry point links to schematic, placement and routing guides. Read the selected guide and exact declarations as needed. The EasyEDA API catalog provides method signatures, types and document format descriptions.
 
 ## Local development
 

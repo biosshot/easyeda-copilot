@@ -2,7 +2,7 @@
 
 In some application scenarios where extensions want to have fully customized windows that are not limited to the popups and controls provided by EasyEDA, we provide a way to build windows using inline frames.
 
-To use inline frames, you need to save all files in the extension's `/iframe/` directory and use [SYS_IFrame.openIFrame()](../reference/pro-api.sys_iframe.openiframe) method to load the specified `html` file as the content of the inline frame.
+To use inline frames, you need to save all files in the extension's `/iframe/` directory and use [SYS_IFrame.openIFrame()](../references/classes/SYS_IFrame.md#openiframe) method to load the specified `html` file as the content of the inline frame.
 
 ```typescript
 // This example loads the index.html file in the /iframe/ directory with a window of 500px in height and width

@@ -16,7 +16,7 @@ For overall schematic organization, PCB placement and routing, start with Copilo
 3. Select one task mode below and read only its references.
 4. Open the exact schematic page or PCB before inspecting or changing it.
 
-Keep a short working record: target instance/document UUID, requested stage, exact scope, current operation or layout ID, and verification still needed. Read one stage guide and the relevant declaration sections; do not load the full API catalog. Follow the current tool schema for tool arguments and the stage's local `dsl.ts` for DSL syntax. The LLM and router-package references are intentionally maintained separately; consult the installed package when diagnosing a missing method or version mismatch. Legacy UI guides and vendored bridge setup are not MCP instructions.
+Keep a short working record: target instance/document UUID, requested stage, exact scope, current operation or layout ID, and verification still needed. Read one stage guide and the relevant declaration sections; do not load the full API catalog. Follow the current tool schema for tool arguments and the stage's local `dsl.ts` for DSL syntax. The LLM and router-package references are intentionally maintained separately; consult the installed package when diagnosing a missing method or version mismatch.
 
 | Task | Read | Stop when |
 |---|---|---|

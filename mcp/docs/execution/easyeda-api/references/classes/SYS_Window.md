@@ -580,7 +580,7 @@ void
 
 ```javascript
 // 1. 在新标签页打开目标地址（同步方法，无返回值）
-eda.sys_Window.open('http://localhost:49620/health', '_blank');
+eda.sys_Window.open('https://example.com/', '_blank');
 
 // 2. 打开的标签页由用户自行关闭
 console.log('已在新标签页打开资源窗口');

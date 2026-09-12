@@ -1,6 +1,6 @@
 # PIN Number
 
-![image](/storage/images/cn/format/schematic/pin/pin.png)
+![image](https://prodocs.easyeda.com/storage/images/cn/format/schematic/pin/pin.png)
 
 As shown in the figure:
 -   The `position X/Y` of all PINs is the endpoint farthest from the black rectangle.
