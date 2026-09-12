@@ -118,7 +118,7 @@ const ARC_TOLERANCE_MM = 0.001;
 const MAX_ARC_SEGMENTS = 1024;
 const MAX_PATH_POINTS = 16_384;
 
-function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number): readonly PointMm[] | undefined {
+function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number, circumscribe = false): readonly PointMm[] | undefined {
     const sweep = sweepDegrees * Math.PI / 180;
     const absoluteSweep = Math.abs(sweep);
     const chord = Math.hypot(end.x - start.x, end.y - start.y);
@@ -139,22 +139,28 @@ function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number): read
     };
     const startAngle = Math.atan2(start.y - center.y, start.x - center.x);
     const boundedTolerance = Math.min(ARC_TOLERANCE_MM, radius);
-    const maxStep = 2 * Math.acos(Math.max(-1, Math.min(1, 1 - boundedTolerance / radius)));
+    const maxStep = 2 * Math.acos(Math.max(-1, Math.min(1, circumscribe
+        ? radius / (radius + boundedTolerance)
+        : 1 - boundedTolerance / radius)));
     if (!Number.isFinite(maxStep) || maxStep <= 0) return undefined;
     const segmentCount = Math.max(2, Math.ceil(absoluteSweep / maxStep));
     if (segmentCount > MAX_ARC_SEGMENTS) return undefined;
 
+    const step = sweep / segmentCount;
+    const sampleRadius = circumscribe ? radius / Math.cos(step / 2) : radius;
     const output = Array.from({ length: segmentCount }, (_, index): PointMm => {
-        const angle = startAngle + sweep * (index + 1) / segmentCount;
-        return { x: center.x + Math.cos(angle) * radius, y: center.y + Math.sin(angle) * radius };
+        // Adjacent tangent intersections enclose the arc; chords cut into it.
+        const angle = startAngle + step * (index + (circumscribe ? 0.5 : 1));
+        return { x: center.x + Math.cos(angle) * sampleRadius, y: center.y + Math.sin(angle) * sampleRadius };
     });
     // Preserve exact chaining instead of retaining floating-point drift at the
     // end of the sampled arc.
-    output[output.length - 1] = end;
+    if (circumscribe) output.push(end);
+    else output[output.length - 1] = end;
     return output;
 }
 
-function decodePath(value: unknown): DecodedPath {
+function decodePath(value: unknown, padWinding = 0): DecodedPath {
     if (!Array.isArray(value) || !value.length) return { points: [], arcCount: 0, error: 'path is empty' };
     const first = point(value[0]);
     if (!first) return { points: [], arcCount: 0, error: 'point 0 is invalid' };
@@ -171,7 +177,7 @@ function decodePath(value: unknown): DecodedPath {
             // point() reflects EasyEDA's Y axis. Reflection reverses the signed
             // sweep, so tessellate using the opposite angle in RoutingBoard's
             // coordinate system.
-            const sampled = tessellateArc(output.at(-1)!, end, -rawSweep);
+            const sampled = tessellateArc(output.at(-1)!, end, -rawSweep, Math.sign(-rawSweep) === padWinding);
             if (!sampled) return {
                 points: [], arcCount,
                 error: `arc ending at point ${index} cannot be represented within the geometry limits`,
@@ -313,7 +319,21 @@ function importedPadShape(pad: JsonRecord, localAt: PointMm, bottom: boolean): R
         return { kind: 'circle', diameterMm };
     }
 
-    const ring = openRing(path(pad.path)).map(item => {
+    let decoded = decodePath(pad.path);
+    if (decoded.error) return undefined;
+    if (decoded.arcCount) {
+        const area = decoded.points.reduce((sum, item, index, points) => {
+            const next = points[(index + 1) % points.length];
+            return sum + item.x * next.y - next.x * item.y;
+        }, 0);
+        if (Math.abs(area) < 1e-12) return undefined;
+        // Enclose convex pad arcs with tangents. At concave arcs, chords already
+        // overestimate copper. Determine winding before bottom-side reflection.
+        // Other paths (tracks, zones, board outlines) keep their own semantics.
+        decoded = decodePath(pad.path, Math.sign(area));
+        if (decoded.error) return undefined;
+    }
+    const ring = openRing(decoded.points).map(item => {
         const localPoint = bottom ? { x: item.x, y: -item.y } : item;
         return { x: localPoint.x - localAt.x, y: localPoint.y - localAt.y };
     });

@@ -61,6 +61,78 @@ assert.deepEqual(imported.board.pads.map(item => item.at), [{ x: 1, y: -3 }, { x
 assert.deepEqual(imported.board.pads[0].shape, { kind: 'rect', widthMm: 1, heightMm: 1 });
 assert.deepEqual(imported.board.pads[1].shape, { kind: 'rect', widthMm: 1, heightMm: 1 });
 
+// Regression: CAN_TX passed the inscribed U3_47 polygon at 0.200036 mm,
+// while native EasyEDA measured only 0.199052 mm to the actual rounded pad.
+const u3Path = [
+    [-4.8649352298704605, -2.38493776987554],
+    [-4.8649352298704605, -2.1149352298704605, -180],
+    [-3.63493776987554, -2.1149352298704605],
+    [-3.63493776987554, -2.38493776987554, -180],
+    [-4.8649352298704605, -2.38493776987554],
+];
+const u3At = [-4.2499, -2.2499];
+const reversePath = source => [...source].reverse().map((item, i) => (
+    i ? [item[0], item[1], -(source[source.length - i][2] ?? 0)] : item.slice(0, 2)
+));
+function importCurvedPad(source, at, layer = 1, rotation = -90) {
+    const data = structuredClone(fixture);
+    data.components = { U3: {
+        footprint: 'curved', layer, rotation, location: [0, 0], nets: { p0: 'SIG' },
+    } };
+    data.footprints = { curved: { pads: {
+        p0: { number: '47', layers: [1], location: at, path: source },
+    } } };
+    const result = adapter.importEasyEdaAutorouteJson(data);
+    assert.ok(result.board, JSON.stringify(result.diagnostics));
+    assert.equal(result.board.pads[0].shape.kind, 'polygon');
+    return result.board.pads[0];
+}
+function containsOrTouches(ring, point) {
+    let inside = false;
+    for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const a = ring[j], b = ring[i];
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const t = Math.max(0, Math.min(1, ((point.x - a.x) * dx + (point.y - a.y) * dy) / (dx * dx + dy * dy)));
+        if (Math.hypot(point.x - a.x - t * dx, point.y - a.y - t * dy) < 1e-9) return true;
+        if ((a.y > point.y) !== (b.y > point.y)
+            && point.x < (b.x - a.x) * (point.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+}
+const radius = (u3Path[1][1] - u3Path[0][1]) / 2;
+const centerY = (u3Path[1][1] + u3Path[0][1]) / 2;
+for (const source of [u3Path, reversePath(u3Path)]) for (const layer of [1, 2]) {
+    const pad = importCurvedPad(source, u3At, layer);
+    const ring = pad.shape.polygon.outer;
+    // Dense analytic boundary samples cover both semicircles, including points
+    // between tessellation vertices; bounding-box checks alone miss shrinkage.
+    for (const [cx, startAngle] of [[u3Path[0][0], Math.PI / 2], [u3Path[2][0], -Math.PI / 2]]) {
+        for (let i = 0; i <= 2048; i++) {
+            const angle = startAngle + Math.PI * i / 2048;
+            const x = cx + radius * Math.cos(angle) - u3At[0];
+            const y = (layer === 2 ? 1 : -1) * (centerY + radius * Math.sin(angle) - u3At[1]);
+            assert.ok(containsOrTouches(ring, { x, y }), 'pad polygon must enclose the exact native arc');
+        }
+    }
+    const exactMaxX = u3Path[2][0] - u3At[0] + radius;
+    const importedMaxX = Math.max(...ring.map(p => p.x));
+    const nativeClearance = importedMaxX + 0.2 - exactMaxX;
+    assert.ok(nativeClearance >= 0.2 - 1e-12, 'routing at 0.20 mm must leave 0.20 mm to the native cap');
+    assert.ok(importedMaxX - exactMaxX <= 0.001 + 1e-12, 'conservative expansion stays within the arc tolerance');
+}
+
+// Concave arcs require chords, not outside-circle tangents: preserve the notch
+// while ensuring its curved boundary is never excluded from the copper model.
+const notch = [[-2, -1], [2, -1], [2, 1], [0.5, 1], [-0.5, 1, -180], [-2, 1], [-2, -1]];
+for (const source of [notch, reversePath(notch)]) {
+    const ring = importCurvedPad(source, [0, 0], 1, 0).shape.polygon.outer;
+    for (let i = 0; i <= 1024; i++) {
+        const angle = -Math.PI * i / 1024;
+        assert.ok(containsOrTouches(ring, { x: 0.5 * Math.cos(angle), y: -(1 + 0.5 * Math.sin(angle)) }));
+    }
+    assert.equal(containsOrTouches(ring, { x: 0, y: -0.9 }), false, 'do not fill the whole notch');
+}
+
 assert.equal(imported.board.pads[2].hole, undefined,
     'autoroute diameter is copper geometry, not drill metadata; importing it must not invent a hole');
 
