@@ -38,7 +38,7 @@ export async function ngspice(options) {
         await mkdir(stage, { recursive: true });
         try {
           console.error('Downloading official ngspice 47 Windows runtime...');
-          const url = 'https://sourceforge.net/projects/ngspice/files/ng-spice-rework/47/ngspice-47_64.7z/download';
+          const url = 'https://downloads.sourceforge.net/project/ngspice/ng-spice-rework/47/ngspice-47_64.7z';
           const sha256 = await download(url, archive);
           const listing = await run('tar', ['-tf', archive]).catch(error => ({ code: -1, stderr: error.message }));
           let extractor = null, names;
