@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, appendFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, appendFile, access, stat } from 'node:fs/promises';
+import { constants } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join, dirname } from 'node:path';
+import { join, dirname, isAbsolute, delimiter, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ngspice } from '../docs/spice/scripts/ngspice.mjs';
 
@@ -19,6 +20,19 @@ try {
   runtime = await ngspice({ cache });
   assert.ok(runtime?.version, 'ngspice installation did not produce a working runtime');
   assert.deepEqual(await ngspice({ cache, 'no-install': true }), runtime, 'Offline runtime reuse failed');
+  // The resolver can return a PATH command; --ngspice accepts a file path.
+  if (!isAbsolute(runtime.path)) {
+    let absolute;
+    for (const directory of (process.env.PATH || '').split(delimiter)) {
+      const candidate = resolve(directory, runtime.path);
+      try {
+        await access(candidate, constants.X_OK);
+        if ((await stat(candidate)).isFile()) { absolute = candidate; break; }
+      } catch { /* next PATH entry */ }
+    }
+    assert.ok(absolute, `Cannot locate ${runtime.path} on PATH`);
+    runtime = await ngspice({ ngspice: absolute, 'no-install': true });
+  }
   if (process.platform === 'win32') assert.ok(runtime.path.startsWith(cache), 'Managed Windows installation was bypassed');
 } finally {
   for (const key of Object.keys(process.env)) if (!(key in original)) delete process.env[key];
