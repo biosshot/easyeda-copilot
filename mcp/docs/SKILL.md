@@ -28,6 +28,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 | Apply layer count, rules, zones, copper, or routing | `pcb-routing/instructions.md`, `pcb-routing/dsl.ts`; finish with `pcb-routing/verification.md` | requested PCB operation is checked |
 | Wait, cancel, or recover a long operation | `operations.md` | terminal result and current document state are checked |
 | Inspect or verify without mutation | `verification.md` | requested evidence is reported |
+| Simulate a circuit or verify analog behavior | `spice/SKILL.md` (standalone Node.js skill); obtain the actual schematic connections with existing read tools | numerical results, PNGs and model assumptions are reviewed |
 | Execute JavaScript or make a focused API edit | `execution/instructions.md`, then the needed API reference | returned data or artifacts and the affected objects are checked |
 | Inspect or edit document File Source | `execution/instructions.md`, `execution/file-source.md` | intended records and the affected stage are verified; standard workflows remain the starting point |
 

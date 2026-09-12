@@ -1,0 +1,9 @@
+RC low-pass: expected cutoff about 1591.55 Hz
+V1 in 0 DC 1 AC 1 PULSE(0 1 0 1n 1n 1m 2m)
+R1 in out 1k
+C1 out 0 100n
+.save v(in) v(out)
+.op
+.ac dec 100 10 1Meg
+.tran 1u 5m
+.end

@@ -19,6 +19,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "test:spice": "node --test tests/spice.test.mjs",
     "prebuild": "node ../scripts/build-local-dependencies.mjs",
     "build": "tsup",
     "router:info": "node scripts/router-info.mjs",

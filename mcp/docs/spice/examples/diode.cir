@@ -1,0 +1,8 @@
+Generic diode DC sweep; use search.mjs for a specific manufacturer model
+V1 in 0 0
+R1 in out 1k
+D1 out 0 demonstration
+.model demonstration D(Is=2n N=1.8)
+.save v(out) i(V1)
+.dc V1 0 5 0.01
+.end
