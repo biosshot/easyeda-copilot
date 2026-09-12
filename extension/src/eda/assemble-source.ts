@@ -1,9 +1,10 @@
+import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey } from "./assembly-symbols";
 import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import PQueue from "p-queue";
 import { searchFreePlaceV2 } from "./free-place-searcher";
 import { getLibraryUuidList, placeComponent } from "./place-component";
 import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
-import { AddedNet, ECHOSYS_LIB, GND_PORT_COMPONENT, NET_PORT_COMPONENT, Offset, shortSymbolsMap, VCC_PORT_COMPONENT } from "./types";
+import { AddedNet, ECHOSYS_LIB, NET_PORT_COMPONENT, Offset, shortSymbolsMap } from "./types";
 import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
 import {
@@ -118,13 +119,6 @@ const getComponentLayoutPosition = (component: AssemblyComponent) => ({
     y: component.pos.y + (component.pos.center?.y ?? component.pos.height / 2),
 });
 
-const getNetFlagKind = (component: AssemblyComponent) =>
-    component.part_uuid === 'GND' || component.part_uuid === GND_PORT_COMPONENT.uuid
-        ? 'Ground'
-        : component.part_uuid === 'VCC' || component.part_uuid === VCC_PORT_COMPONENT.uuid
-            ? 'Power'
-            : undefined;
-
 const usesNativeNetPort = (component: AssemblyComponent) =>
     component.part_uuid === NET_PORT_COMPONENT.uuid &&
     !eda.sys_Environment.isOnlineMode();
@@ -133,27 +127,10 @@ const usesNativeNetPort = (component: AssemblyComponent) =>
 const getComponentRotation = (component: AssemblyComponent) =>
     normalizeRotation((component.pos.rotate ?? 0) + (usesNativeNetPort(component) ? 90 : 0));
 
-const getSpecialSignalName = (component: AssemblyComponent) =>
-    component.pins[0]?.signal_name || (getNetFlagKind(component) === 'Ground' ? 'GND' : 'VCC');
-
 const isNamedNetSymbol = (component: AssemblyComponent) =>
     getNetFlagKind(component) !== undefined ||
     component.value === 'unknown_shortsym' ||
     component.designator.includes('|');
-
-const getComponentTemplateKey = (component: AssemblyComponent) => JSON.stringify({
-    partUuid: component.part_uuid,
-    subPartName: component.sub_part_name ?? '',
-    kind: component.part_uuid === 'GND'
-        ? 'GND'
-        : component.part_uuid === 'VCC'
-            ? 'VCC'
-            : component.value === 'unknown_shortsym'
-                ? 'UNKNOWN_SHORT'
-                : component.designator.includes('|')
-                    ? 'ECOSYSTEM_SHORT'
-                    : 'DEVICE',
-});
 
 const getDesignatorPartIndex = (component: AssemblyComponent): number | undefined => {
     const match = component.designator.trim().match(/\.(\d+)$/);
@@ -302,8 +279,7 @@ async function cacheTemplatesFromCurrentPage(
 ): Promise<number> {
     const missing = [...groups.entries()].filter(([key, group]) =>
         !componentTemplateCache.has(getTemplateCacheKey(projectUuid, key)) &&
-        group[0].input.part_uuid !== 'GND' &&
-        group[0].input.part_uuid !== 'VCC',
+        getNetFlagKind(group[0].input) === undefined,
     );
     if (!missing.length) return 0;
 

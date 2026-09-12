@@ -7,12 +7,12 @@
     "url": "https://github.com/biosshot/easyeda-copilot",
     "source": "github"
   },
-  "version": "1.1.9",
+  "version": "1.2.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "easyeda-copilot-mcp",
-      "version": "1.1.9",
+      "version": "1.2.0",
       "transport": {
         "type": "stdio"
       }

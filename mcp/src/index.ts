@@ -32,7 +32,7 @@ function localSkillDocText() {
 
 const server = new McpServer({
     name: 'easyeda-copilot',
-    version: '1.1.9',
+    version: '1.2.0',
 });
 
 server.registerResource(

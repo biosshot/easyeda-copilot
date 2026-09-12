@@ -1,6 +1,6 @@
 {
   "name": "@copilot/extension",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "private": true,
   "description": "EasyEDA Copilot editor extension and legacy UI",
   "license": "MIT",
