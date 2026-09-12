@@ -13,350 +13,38 @@ class IPCB_PrimitivePour implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[convertToFill()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: fill primitive (default is the fill region)
-
-</td></tr>
-<tr><td>
-
-[convertToPolyline()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: polyline primitive (default is the line)
-
-</td></tr>
-<tr><td>
-
-[convertToRegion()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: region primitive (default is the forbidden region)
-
-</td></tr>
-<tr><td>
-
-[done()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getCopperRegion()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the copper fill primitive of the copper region
-
-</td></tr>
-<tr><td>
-
-[getState\_ComplexPolygon()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_PourFillMethod()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: copper fill method
-
-</td></tr>
-<tr><td>
-
-[getState\_PourName()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: copper border name
-
-</td></tr>
-<tr><td>
-
-[getState\_PourPriority()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: copper priority
-
-</td></tr>
-<tr><td>
-
-[getState\_PreserveSilos()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether to keep islands
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[rebuildCopperRegion()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Rebuild the copper fill of the copper region
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[setState\_PourFillMethod(pourFillMethod)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: copper fill method
-
-</td></tr>
-<tr><td>
-
-[setState\_PourName(pourName)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: copper border name
-
-</td></tr>
-<tr><td>
-
-[setState\_PourPriority(pourPriority)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: copper priority
-
-</td></tr>
-<tr><td>
-
-[setState\_PreserveSilos(preserveSilos)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether to keep islands
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitivePour.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[convertToFill()](./IPCB_PrimitivePour.md)||**_(BETA)_** Convert to: fill primitive (default is the fill region)|
+|[convertToPolyline()](./IPCB_PrimitivePour.md)||**_(BETA)_** Convert to: polyline primitive (default is the line)|
+|[convertToRegion()](./IPCB_PrimitivePour.md)||**_(BETA)_** Convert to: region primitive (default is the forbidden region)|
+|[done()](./IPCB_PrimitivePour.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getCopperRegion()](./IPCB_PrimitivePour.md)||**_(BETA)_** Get the copper fill primitive of the copper region|
+|[getState\_ComplexPolygon()](./IPCB_PrimitivePour.md)||Get the property state: complex polygon|
+|[getState\_Layer()](./IPCB_PrimitivePour.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitivePour.md)||Get the property state: Line width|
+|[getState\_Net()](./IPCB_PrimitivePour.md)||Get the property state: net name|
+|[getState\_PourFillMethod()](./IPCB_PrimitivePour.md)||Get the property state: copper fill method|
+|[getState\_PourName()](./IPCB_PrimitivePour.md)||Get the property state: copper border name|
+|[getState\_PourPriority()](./IPCB_PrimitivePour.md)||Get the property state: copper priority|
+|[getState\_PreserveSilos()](./IPCB_PrimitivePour.md)||Get the property state: whether to keep islands|
+|[getState\_PrimitiveId()](./IPCB_PrimitivePour.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitivePour.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitivePour.md)||Get the property state: primitive type|
+|[isAsync()](./IPCB_PrimitivePour.md)||Query whether the primitive is an async primitive|
+|[rebuildCopperRegion()](./IPCB_PrimitivePour.md)||**_(BETA)_** Rebuild the copper fill of the copper region|
+|[reset()](./IPCB_PrimitivePour.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: complex polygon|
+|[setState\_Layer(layer)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Net(net)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: net name|
+|[setState\_PourFillMethod(pourFillMethod)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: copper fill method|
+|[setState\_PourName(pourName)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: copper border name|
+|[setState\_PourPriority(pourPriority)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: copper priority|
+|[setState\_PreserveSilos(preserveSilos)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: whether to keep islands|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitivePour.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[toAsync()](./IPCB_PrimitivePour.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitivePour.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -400,6 +88,7 @@ console.log('primitiveType:', `${pour.getState_PrimitiveType()} → ${fill.getSt
 console.log('primitiveId:', fill.getState_PrimitiveId());
 ```
 
+
 ### converttopolyline
 
 # IPCB\_PrimitivePour.convertToPolyline() method
@@ -438,6 +127,7 @@ console.log('primitiveType:', `${pour.getState_PrimitiveType()} → ${polyline.g
 console.log('primitiveId:', polyline.getState_PrimitiveId());
 ```
 
+
 ### converttoregion
 
 # IPCB\_PrimitivePour.convertToRegion() method
@@ -475,6 +165,7 @@ const region = await pour.convertToRegion();
 console.log('primitiveType:', `${pour.getState_PrimitiveType()} → ${region.getState_PrimitiveType()}`);
 console.log('primitiveId:', region.getState_PrimitiveId());
 ```
+
 
 ### done
 
@@ -519,6 +210,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### getcopperregion
 
 # IPCB\_PrimitivePour.getCopperRegion() method
@@ -560,6 +252,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('hasCopperRegion:', hasFill);
 ```
 
+
 ### getstate_complexpolygon
 
 # IPCB\_PrimitivePour.getState\_ComplexPolygon() method
@@ -599,6 +292,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('source:', JSON.stringify(source));
 ```
 
+
 ### getstate_layer
 
 # IPCB\_PrimitivePour.getState\_Layer() method
@@ -636,6 +330,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('layer:', layer);
 ```
+
 
 ### getstate_linewidth
 
@@ -675,6 +370,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('lineWidth:', lineWidth);
 ```
 
+
 ### getstate_net
 
 # IPCB\_PrimitivePour.getState\_Net() method
@@ -712,6 +408,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('net:', net);
 ```
+
 
 ### getstate_pourfillmethod
 
@@ -751,6 +448,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('pourFillMethod:', fillMethod);
 ```
 
+
 ### getstate_pourname
 
 # IPCB\_PrimitivePour.getState\_PourName() method
@@ -788,6 +486,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('pourName:', pourName);
 ```
+
 
 ### getstate_pourpriority
 
@@ -827,6 +526,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('pourPriority:', priority);
 ```
 
+
 ### getstate_preservesilos
 
 # IPCB\_PrimitivePour.getState\_PreserveSilos() method
@@ -864,6 +564,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('preserveSilos:', preserveSilos);
 ```
+
 
 ### getstate_primitiveid
 
@@ -903,6 +604,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('primitiveId:', primitiveId);
 ```
 
+
 ### getstate_primitivelock
 
 # IPCB\_PrimitivePour.getState\_PrimitiveLock() method
@@ -940,6 +642,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('primitiveLock:', locked);
 ```
+
 
 ### getstate_primitivetype
 
@@ -979,6 +682,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 console.log('primitiveType:', primitiveType);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitivePour.isAsync() method
@@ -1016,6 +720,7 @@ await eda.pcb_PrimitivePour.delete([pour.getState_PrimitiveId()]);
 
 console.log('isAsync:', asyncMode);
 ```
+
 
 ### rebuildcopperregion
 
@@ -1064,6 +769,7 @@ console.log('rebuildRequested:', true);
 console.log('hasCopperRegion:', rebuilt);
 ```
 
+
 ### reset
 
 # IPCB\_PrimitivePour.reset() method
@@ -1109,6 +815,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_complexpolygon
 
 # IPCB\_PrimitivePour.setState\_ComplexPolygon() method
@@ -1125,33 +832,9 @@ function setState_ComplexPolygon(complexPolygon: IPCB_Polygon): IPCB_PrimitivePo
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[IPCB\_Polygon](./IPCB_Polygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[IPCB\_Polygon](./IPCB_Polygon.md)|Complex polygon|
 
 ## Returns
 
@@ -1184,6 +867,7 @@ console.log('before:', JSON.stringify(before));
 console.log('after:', JSON.stringify(after));
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitivePour.setState\_Layer() method
@@ -1200,33 +884,9 @@ function setState_Layer(layer: TPCB_LayersOfCopper): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)|Layer|
 
 ## Returns
 
@@ -1257,6 +917,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitivePour.setState\_LineWidth() method
@@ -1273,33 +934,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -1331,6 +968,7 @@ const after = pour.getState_LineWidth();
 console.log('lineWidth:', before, '→', after);
 ```
 
+
 ### setstate_net
 
 # IPCB\_PrimitivePour.setState\_Net() method
@@ -1347,33 +985,9 @@ function setState_Net(net: string): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -1404,6 +1018,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('net:', before, '→', refetched.getState_Net());
 ```
 
+
 ### setstate_pourfillmethod
 
 # IPCB\_PrimitivePour.setState\_PourFillMethod() method
@@ -1420,33 +1035,9 @@ function setState_PourFillMethod(pourFillMethod: EPCB_PrimitivePourFillMethod): 
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourFillMethod
-
-</td><td>
-
-[EPCB\_PrimitivePourFillMethod](../enums/EPCB_PrimitivePourFillMethod.md)
-
-</td><td>
-
-Copper fill method
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourFillMethod|[EPCB\_PrimitivePourFillMethod](../enums/EPCB_PrimitivePourFillMethod.md)|Copper fill method|
 
 ## Returns
 
@@ -1477,6 +1068,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('pourFillMethod:', before, '→', refetched.getState_PourFillMethod());
 ```
 
+
 ### setstate_pourname
 
 # IPCB\_PrimitivePour.setState\_PourName() method
@@ -1493,33 +1085,9 @@ function setState_PourName(pourName: string): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourName
-
-</td><td>
-
-string
-
-</td><td>
-
-Copper border name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourName|string|Copper border name|
 
 ## Returns
 
@@ -1550,6 +1118,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('pourName:', before, '→', refetched.getState_PourName());
 ```
 
+
 ### setstate_pourpriority
 
 # IPCB\_PrimitivePour.setState\_PourPriority() method
@@ -1566,33 +1135,9 @@ function setState_PourPriority(pourPriority: number): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourPriority
-
-</td><td>
-
-number
-
-</td><td>
-
-Copper priority
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourPriority|number|Copper priority|
 
 ## Returns
 
@@ -1623,6 +1168,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('pourPriority:', before, '→', refetched.getState_PourPriority());
 ```
 
+
 ### setstate_preservesilos
 
 # IPCB\_PrimitivePour.setState\_PreserveSilos() method
@@ -1639,33 +1185,9 @@ function setState_PreserveSilos(preserveSilos: boolean): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-preserveSilos
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to keep islands
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|preserveSilos|boolean|Whether to keep islands|
 
 ## Returns
 
@@ -1696,6 +1218,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 console.log('preserveSilos:', before, '→', refetched.getState_PreserveSilos());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitivePour.setState\_PrimitiveLock() method
@@ -1712,33 +1235,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitivePour;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1768,6 +1267,7 @@ const refetched = await eda.pcb_PrimitivePour.get(pour.getState_PrimitiveId());
 
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
+
 
 ### toasync
 
@@ -1813,6 +1313,7 @@ console.log('isAsync:', asyncPour.isAsync());
 console.log('layer:', pour.getState_Layer(), '→', refetched.getState_Layer());
 console.log('pourName:', pour.getState_PourName(), '→', refetched.getState_PourName());
 ```
+
 
 ### tosync
 

@@ -10,54 +10,10 @@ interface IPCB_DiscretizedPoint
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[x](./IPCB_DiscretizedPoint.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-[y](./IPCB_DiscretizedPoint.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[x](./IPCB_DiscretizedPoint.md)||number|X coordinate|
+|[y](./IPCB_DiscretizedPoint.md)||number|Y coordinate|
 
 ---
 

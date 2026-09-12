@@ -10,114 +10,14 @@ interface RadioGroupProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[gap?](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Option gap (pixels)
-
-</td></tr>
-<tr><td>
-
-[group](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-[RadioItem](./RadioItem.md)<!-- -->\[\]
-
-</td><td>
-
-Option list (required)
-
-</td></tr>
-<tr><td>
-
-[lineBreak?](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to arrange in line breaks
-
-</td></tr>
-<tr><td>
-
-[onChange?](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-(value: string) =&gt; void
-
-</td><td>
-
-_(Optional)_ 选中值变化时触发，参数为选中项的值
-
-</td></tr>
-<tr><td>
-
-[onlyChangeByBox?](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether the state can only be changed by clicking the radio button itself
-
-</td></tr>
-<tr><td>
-
-[selectedValue?](./RadioGroupProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Currently selected value
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[gap?](./RadioGroupProps.md)||number|_(Optional)_ Option gap (pixels)|
+|[group](./RadioGroupProps.md)||[RadioItem](./RadioItem.md)<!-- -->\[\]|Option list (required)|
+|[lineBreak?](./RadioGroupProps.md)||boolean|_(Optional)_ Whether to arrange in line breaks|
+|[onChange?](./RadioGroupProps.md)||(value: string) =&gt; void|_(Optional)_ 选中值变化时触发，参数为选中项的值|
+|[onlyChangeByBox?](./RadioGroupProps.md)||boolean|_(Optional)_ Whether the state can only be changed by clicking the radio button itself|
+|[selectedValue?](./RadioGroupProps.md)||string|_(Optional)_ Currently selected value|
 
 ---
 

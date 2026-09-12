@@ -14,130 +14,18 @@ Use the multilingual system to display multilingual text
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addLanguageChangedEventListener(id, callFn, onlyOnce)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Add a language change event listener
-
-</td></tr>
-<tr><td>
-
-[getAllSupportedLanguages()](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Query all supported languages
-
-</td></tr>
-<tr><td>
-
-[getCurrentLanguage()](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Get Current language environment
-
-</td></tr>
-<tr><td>
-
-[importMultilingual(language, source)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Import multilingual
-
-</td></tr>
-<tr><td>
-
-[importMultilingualLanguage(namespace, language, source)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Import multilingual: specify namespace and language
-
-</td></tr>
-<tr><td>
-
-[importMultilingualNamespace(namespace, source)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Import multilingual: specify namespace
-
-</td></tr>
-<tr><td>
-
-[isEventListenerAlreadyExist(id)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the event listener exists
-
-</td></tr>
-<tr><td>
-
-[isLanguageSupported(language)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Check whether the language is supported
-
-</td></tr>
-<tr><td>
-
-[removeEventListener(id)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Remove Event listener
-
-</td></tr>
-<tr><td>
-
-[text(tag, namespace, language, args)](./SYS_I18n.md)
-
-</td><td>
-
-</td><td>
-
-Output language text
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addLanguageChangedEventListener(id, callFn, onlyOnce)](./SYS_I18n.md)||Add a language change event listener|
+|[getAllSupportedLanguages()](./SYS_I18n.md)||Query all supported languages|
+|[getCurrentLanguage()](./SYS_I18n.md)||Get Current language environment|
+|[importMultilingual(language, source)](./SYS_I18n.md)||Import multilingual|
+|[importMultilingualLanguage(namespace, language, source)](./SYS_I18n.md)||Import multilingual: specify namespace and language|
+|[importMultilingualNamespace(namespace, source)](./SYS_I18n.md)||Import multilingual: specify namespace|
+|[isEventListenerAlreadyExist(id)](./SYS_I18n.md)||Query whether the event listener exists|
+|[isLanguageSupported(language)](./SYS_I18n.md)||Check whether the language is supported|
+|[removeEventListener(id)](./SYS_I18n.md)||Remove Event listener|
+|[text(tag, namespace, language, args)](./SYS_I18n.md)||Output language text|
 
 ---
 
@@ -161,57 +49,11 @@ function addLanguageChangedEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(newLanguage: string, lastLanguage: string) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|callFn|(newLanguage: string, lastLanguage: string) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean||
 
 ## Returns
 
@@ -235,6 +77,7 @@ console.log('监听已注册：', eda.sys_I18n.isEventListenerAlreadyExist('嘉�
 // 3. 移除监听，恢复原状（保证案例可重复运行）
 console.log('已移除监听：', eda.sys_I18n.removeEventListener('嘉立创示例_语言监听'));
 ```
+
 
 ### getallsupportedlanguages
 
@@ -267,6 +110,7 @@ console.log(
 	['zh-Hans', 'zh-Hant', 'en', 'ja'].every(lang => languages.includes(lang)),
 );
 ```
+
 
 ### getcurrentlanguage
 
@@ -301,6 +145,7 @@ console.log('当前语言：', current);
 console.log('是否中文环境：', current.startsWith('zh'));
 ```
 
+
 ### importmultilingual
 
 # SYS\_I18n.importMultilingual() method
@@ -315,46 +160,10 @@ function importMultilingual(language: string, source: ISYS_LanguageKeyValuePairs
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-language
-
-</td><td>
-
-string
-
-</td><td>
-
-Language
-
-</td></tr>
-<tr><td>
-
-source
-
-</td><td>
-
-[ISYS\_LanguageKeyValuePairs](../types/ISYS_LanguageKeyValuePairs.md)
-
-</td><td>
-
-The multilingual data object to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|language|string|Language|
+|source|[ISYS\_LanguageKeyValuePairs](../interfaces/ISYS_LanguageKeyValuePairs.md)|The multilingual data object to import|
 
 ## Returns
 
@@ -381,6 +190,7 @@ console.log('导入结果：', imported);
 console.log('取回文案：', message);
 ```
 
+
 ### importmultilinguallanguage
 
 # SYS\_I18n.importMultilingualLanguage() method
@@ -399,59 +209,11 @@ function importMultilingualLanguage(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-namespace
-
-</td><td>
-
-string
-
-</td><td>
-
-Namespace
-
-</td></tr>
-<tr><td>
-
-language
-
-</td><td>
-
-string
-
-</td><td>
-
-Language
-
-</td></tr>
-<tr><td>
-
-source
-
-</td><td>
-
-[ISYS\_LanguageKeyValuePairs](../types/ISYS_LanguageKeyValuePairs.md)
-
-</td><td>
-
-The multilingual data object to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|namespace|string|Namespace|
+|language|string|Language|
+|source|[ISYS\_LanguageKeyValuePairs](../interfaces/ISYS_LanguageKeyValuePairs.md)|The multilingual data object to import|
 
 ## Returns
 
@@ -474,6 +236,7 @@ console.log('导入结果：', imported);
 console.log('繁体文案：', message);
 ```
 
+
 ### importmultilingualnamespace
 
 # SYS\_I18n.importMultilingualNamespace() method
@@ -491,46 +254,10 @@ function importMultilingualNamespace(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-namespace
-
-</td><td>
-
-string
-
-</td><td>
-
-Namespace
-
-</td></tr>
-<tr><td>
-
-source
-
-</td><td>
-
-[ISYS\_MultilingualLanguagesData](../interfaces/ISYS_MultilingualLanguagesData.md)
-
-</td><td>
-
-The multilingual data object to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|namespace|string|Namespace|
+|source|[ISYS\_MultilingualLanguagesData](../interfaces/ISYS_MultilingualLanguagesData.md)|The multilingual data object to import|
 
 ## Returns
 
@@ -559,6 +286,7 @@ console.log('中文文案：', zhText);
 console.log('英文文案：', enText);
 ```
 
+
 ### iseventlisteneralreadyexist
 
 # SYS\_I18n.isEventListenerAlreadyExist() method
@@ -573,33 +301,9 @@ function isEventListenerAlreadyExist(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 
@@ -622,6 +326,7 @@ eda.sys_I18n.removeEventListener('嘉立创示例_查询监听');
 console.log('已清理测试监听');
 ```
 
+
 ### islanguagesupported
 
 # SYS\_I18n.isLanguageSupported() method
@@ -636,33 +341,9 @@ function isLanguageSupported(language: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-language
-
-</td><td>
-
-string
-
-</td><td>
-
-Language
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|language|string|Language|
 
 ## Returns
 
@@ -681,6 +362,7 @@ console.log('zh-Hans 是否受支持：', eda.sys_I18n.isLanguageSupported('zh-H
 console.log('zh-CN 是否受支持：', eda.sys_I18n.isLanguageSupported('zh-CN'));
 ```
 
+
 ### removeeventlistener
 
 # SYS\_I18n.removeEventListener() method
@@ -695,33 +377,9 @@ function removeEventListener(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 
@@ -742,6 +400,7 @@ console.log('第一次移除成功：', eda.sys_I18n.removeEventListener('嘉立
 console.log('第二次移除成功：', eda.sys_I18n.removeEventListener('嘉立创示例_移除监听'));
 ```
 
+
 ### text
 
 # SYS\_I18n.text() method
@@ -756,72 +415,12 @@ function text(tag: string, namespace?: string, language?: string, ...args: Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tag
-
-</td><td>
-
-string
-
-</td><td>
-
-Text tag, corresponding to the key in the multilingual file key-value pairs
-
-</td></tr>
-<tr><td>
-
-namespace
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text namespace. In the extension runtime environment, it defaults to the extension UUID; otherwise, it is the system default namespace
-
-</td></tr>
-<tr><td>
-
-language
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Language. `undefined` is the current display language of EDA
-
-</td></tr>
-<tr><td>
-
-args
-
-</td><td>
-
-Array&lt;any&gt;
-
-</td><td>
-
-Arguments for replacing placeholders in the language text
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tag|string|Text tag, corresponding to the key in the multilingual file key-value pairs|
+|namespace|string|_(Optional)_ Text namespace. In the extension runtime environment, it defaults to the extension UUID; otherwise, it is the system default namespace|
+|language|string|_(Optional)_ Language. `undefined` is the current display language of EDA|
+|args|Array&lt;any&gt;|Arguments for replacing placeholders in the language text|
 
 ## Returns
 

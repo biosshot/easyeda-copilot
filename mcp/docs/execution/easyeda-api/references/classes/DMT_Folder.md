@@ -10,97 +10,15 @@ class DMT_Folder
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createFolder(folderName, teamUuid, parentFolderUuid, description)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Folder
-
-</td></tr>
-<tr><td>
-
-[deleteFolder(teamUuid, folderUuid)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-Delete Folder
-
-</td></tr>
-<tr><td>
-
-[getAllFoldersUuid(teamUuid)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUIDs of all folders
-
-</td></tr>
-<tr><td>
-
-[getFolderInfo(teamUuid, folderUuid)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-Get Folder detailed properties
-
-</td></tr>
-<tr><td>
-
-[modifyFolderDescription(teamUuid, folderUuid, description)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Folder description
-
-</td></tr>
-<tr><td>
-
-[modifyFolderName(teamUuid, folderUuid, folderName)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-Modify Folder name
-
-</td></tr>
-<tr><td>
-
-[moveFolderToFolder(teamUuid, folderUuid, parentFolderUuid)](./DMT_Folder.md)
-
-</td><td>
-
-</td><td>
-
-Move folder
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createFolder(folderName, teamUuid, parentFolderUuid, description)](./DMT_Folder.md)||**_(BETA)_** Create Folder|
+|[deleteFolder(teamUuid, folderUuid)](./DMT_Folder.md)||Delete Folder|
+|[getAllFoldersUuid(teamUuid)](./DMT_Folder.md)||Get the UUIDs of all folders|
+|[getFolderInfo(teamUuid, folderUuid)](./DMT_Folder.md)||Get Folder detailed properties|
+|[modifyFolderDescription(teamUuid, folderUuid, description)](./DMT_Folder.md)||**_(BETA)_** Modify Folder description|
+|[modifyFolderName(teamUuid, folderUuid, folderName)](./DMT_Folder.md)||Modify Folder name|
+|[moveFolderToFolder(teamUuid, folderUuid, parentFolderUuid)](./DMT_Folder.md)||Move folder|
 
 ---
 
@@ -127,72 +45,12 @@ function createFolder(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-folderName
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder name
-
-</td></tr>
-<tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-parentFolderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Parent folder UUID. If not specified, it is the root folder
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Folder description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|folderName|string|Folder name|
+|teamUuid|string|Team UUID|
+|parentFolderUuid|string|_(Optional)_ Parent folder UUID. If not specified, it is the root folder|
+|description|string|_(Optional)_ Folder description|
 
 ## Returns
 
@@ -219,6 +77,7 @@ console.log('name:', folderInfo?.name);
 console.log('parentFolderUuid:', folderInfo?.parentFolderUuid === teamUuid ? '(团队根目录)' : folderInfo?.parentFolderUuid);
 ```
 
+
 ### deletefolder
 
 # DMT\_Folder.deleteFolder() method
@@ -233,46 +92,10 @@ function deleteFolder(teamUuid: string, folderUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
+|folderUuid|string|Folder UUID|
 
 ## Returns
 
@@ -302,6 +125,7 @@ console.log('deleted:', deleted);
 console.log('folderInfo after delete:', folderInfo === undefined ? '已不存在' : '仍存在');
 ```
 
+
 ### getallfoldersuuid
 
 # DMT\_Folder.getAllFoldersUuid() method
@@ -316,33 +140,9 @@ function getAllFoldersUuid(teamUuid: string): Promise<Array<string>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
 
 ## Returns
 
@@ -376,6 +176,7 @@ console.log('test folder included:', allUuids.includes(folderUuid));
 await eda.dmt_Folder.deleteFolder(teamUuid, folderUuid);
 ```
 
+
 ### getfolderinfo
 
 # DMT\_Folder.getFolderInfo() method
@@ -390,46 +191,10 @@ function getFolderInfo(teamUuid: string, folderUuid: string): Promise<IDMT_Folde
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
+|folderUuid|string|Folder UUID|
 
 ## Returns
 
@@ -467,6 +232,7 @@ console.log('folderInfo:', JSON.stringify({
 await eda.dmt_Folder.deleteFolder(teamUuid, folderUuid);
 ```
 
+
 ### modifyfolderdescription
 
 # DMT\_Folder.modifyFolderDescription() method
@@ -487,59 +253,11 @@ function modifyFolderDescription(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder UUID
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Folder description. If it is `undefined`<!-- -->, the existing project description is cleared
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
+|folderUuid|string|Folder UUID|
+|description|string|_(Optional)_ Folder description. If it is `undefined`<!-- -->, the existing project description is cleared|
 
 ## Returns
 
@@ -573,6 +291,7 @@ console.log('modified:', modified);
 console.log('description:', folderInfo?.description);
 ```
 
+
 ### modifyfoldername
 
 # DMT\_Folder.modifyFolderName() method
@@ -591,59 +310,11 @@ function modifyFolderName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder UUID
-
-</td></tr>
-<tr><td>
-
-folderName
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
+|folderUuid|string|Folder UUID|
+|folderName|string|Folder name|
 
 ## Returns
 
@@ -673,6 +344,7 @@ console.log('renamed:', renamed);
 console.log('name:', folderInfo?.name);
 ```
 
+
 ### movefoldertofolder
 
 # DMT\_Folder.moveFolderToFolder() method
@@ -691,59 +363,11 @@ function moveFolderToFolder(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder UUID
-
-</td></tr>
-<tr><td>
-
-parentFolderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Parent folder UUID. If not specified, it defaults to the root folder
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|Team UUID|
+|folderUuid|string|Folder UUID|
+|parentFolderUuid|string|_(Optional)_ Parent folder UUID. If not specified, it defaults to the root folder|
 
 ## Returns
 

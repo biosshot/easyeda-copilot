@@ -10,71 +10,11 @@ interface IDMT_WorkspaceItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[itemType](./IDMT_WorkspaceItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[EDMT\_ItemType.WORKSPACE](../enums/EDMT_ItemType.md)
-
-</td><td>
-
-Project type
-
-</td></tr>
-<tr><td>
-
-[name](./IDMT_WorkspaceItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Workspace name
-
-</td></tr>
-<tr><td>
-
-[uuid](./IDMT_WorkspaceItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Workspace UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[itemType](./IDMT_WorkspaceItem.md)|`readonly`|[EDMT\_ItemType.WORKSPACE](../enums/EDMT_ItemType.md)|Project type|
+|[name](./IDMT_WorkspaceItem.md)||string|Workspace name|
+|[uuid](./IDMT_WorkspaceItem.md)||string|Workspace UUID|
 
 ---
 

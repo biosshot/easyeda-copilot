@@ -14,163 +14,21 @@ Get the manufacture data files of the current schematic sheet and quick ordering
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[deleteBomTemplate(template)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete BOM template
-
-</td></tr>
-<tr><td>
-
-[getAssemblyVariantsConfigs()](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the assembly variants configuration list
-
-</td></tr>
-<tr><td>
-
-[getBomFile(fileName, fileType, template, filterOptions, statistics, property, columns, assemblyVariantsConfig)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM file
-
-</td></tr>
-<tr><td>
-
-[getBomTemplateFile(template)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM template file
-
-</td></tr>
-<tr><td>
-
-[getBomTemplates()](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM template list
-
-</td></tr>
-<tr><td>
-
-[getExportDocumentFile(fileName, fileType, typeSpecificParams, object, objectSpecificParams)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Export document file
-
-</td></tr>
-<tr><td>
-
-[getNetlistFile(fileName, netlistType)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the netlist file (Netlist)
-
-</td></tr>
-<tr><td>
-
-[getPngFile(fileName, resolution)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** 获取 PNG 文件
-
-</td></tr>
-<tr><td>
-
-[getSimulationNetlistFile(fileName, netlistType)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the simulation netlist file
-
-</td></tr>
-<tr><td>
-
-[getSvgFile(fileName)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** 获取 SVG 文件
-
-</td></tr>
-<tr><td>
-
-[placeComponentsOrder(interactive, ignoreWarning)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Component ordering
-
-</td></tr>
-<tr><td>
-
-[placeSmtComponentsOrder(interactive, ignoreWarning)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** SMT component ordering
-
-</td></tr>
-<tr><td>
-
-[uploadBomTemplateFile(templateFile, template)](./SCH_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Upload a BOM template file
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[deleteBomTemplate(template)](./SCH_ManufactureData.md)||**_(BETA)_** Delete BOM template|
+|[getAssemblyVariantsConfigs()](./SCH_ManufactureData.md)||**_(BETA)_** Get the assembly variants configuration list|
+|[getBomFile(fileName, fileType, template, filterOptions, statistics, property, columns, assemblyVariantsConfig)](./SCH_ManufactureData.md)||**_(BETA)_** Get BOM file|
+|[getBomTemplateFile(template)](./SCH_ManufactureData.md)||**_(BETA)_** Get BOM template file|
+|[getBomTemplates()](./SCH_ManufactureData.md)||**_(BETA)_** Get BOM template list|
+|[getExportDocumentFile(fileName, fileType, typeSpecificParams, object, objectSpecificParams)](./SCH_ManufactureData.md)||**_(BETA)_** Get Export document file|
+|[getNetlistFile(fileName, netlistType)](./SCH_ManufactureData.md)||**_(BETA)_** Get the netlist file (Netlist)|
+|[getPngFile(fileName, resolution)](./SCH_ManufactureData.md)||**_(BETA)_** 获取 PNG 文件|
+|[getSimulationNetlistFile(fileName, netlistType)](./SCH_ManufactureData.md)||**_(BETA)_** Get the simulation netlist file|
+|[getSvgFile(fileName)](./SCH_ManufactureData.md)||**_(BETA)_** 获取 SVG 文件|
+|[placeComponentsOrder(interactive, ignoreWarning)](./SCH_ManufactureData.md)||**_(BETA)_** Component ordering|
+|[placeSmtComponentsOrder(interactive, ignoreWarning)](./SCH_ManufactureData.md)||**_(BETA)_** SMT component ordering|
+|[uploadBomTemplateFile(templateFile, template)](./SCH_ManufactureData.md)||**_(BETA)_** Upload a BOM template file|
 
 ---
 
@@ -192,33 +50,9 @@ function deleteBomTemplate(template: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-BOM template name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|template|string|BOM template name|
 
 ## Returns
 
@@ -237,6 +71,7 @@ console.log('当前模板：', templates.join('、'));
 const success = await eda.sch_ManufactureData.deleteBomTemplate('嘉立创示例_不存在的模板');
 console.log('删除不存在模板的返回值：', success);
 ```
+
 
 ### getassemblyvariantsconfigs
 
@@ -269,6 +104,7 @@ console.log('配置数量：', variantsConfigs.length);
 variantsConfigs.forEach((config, index) => console.log(`配置 ${index + 1}：`, config.text, config.value));
 ```
 
+
 ### getbomfile
 
 # SCH\_ManufactureData.getBomFile() method
@@ -284,7 +120,7 @@ function getBomFile(
 	fileName?: string,
 	fileType?: 'xlsx' | 'csv',
 	template?: string,
-	filterOptions?: Array<{ property: string; includeValue: string | false | true }>,
+	filterOptions?: Array<{ property: string; includeValue: boolean | string }>,
 	statistics?: Array<string>,
 	property?: Array<string>,
 	columns?: Array<IPCB_BomPropertiesTableColumns>,
@@ -294,124 +130,16 @@ function getBomFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'xlsx' \| 'csv'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Template name
-
-</td></tr>
-<tr><td>
-
-filterOptions
-
-</td><td>
-
-Array&lt;{ property: string; includeValue: string \| false \| true }&gt;
-
-</td><td>
-
-_(Optional)_ Filter rules, which should only contain the rules to be enabled. `property` is the rule name, and `includeValue` is the matched value
-
-</td></tr>
-<tr><td>
-
-statistics
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Statistics, containing the names of all statistic items to be enabled
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Properties, containing the names of all properties to be enabled
-
-</td></tr>
-<tr><td>
-
-columns
-
-</td><td>
-
-Array&lt;[IPCB\_BomPropertiesTableColumns](../interfaces/IPCB_BomPropertiesTableColumns.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Column properties and sorting. If `title`<!-- -->, `sort`<!-- -->, `group`<!-- -->, and `orderWeight` are not passed in, default values are used. `null` means \*\*none\*\* or \*\*empty\*\*
-
-</td></tr>
-<tr><td>
-
-assemblyVariantsConfig
-
-</td><td>
-
-\{ text: string; value: string \}
-
-</td><td>
-
-_(Optional)_ Assembly variants configuration
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'xlsx' \| 'csv'|_(Optional)_ File type|
+|template|string|_(Optional)_ Template name|
+|filterOptions|Array&lt;{ property: string; includeValue: boolean \| string }&gt;|_(Optional)_ Filter rules, which should only contain the rules to be enabled. `property` is the rule name, and `includeValue` is the matched value|
+|statistics|Array&lt;string&gt;|_(Optional)_ Statistics, containing the names of all statistic items to be enabled|
+|property|Array&lt;string&gt;|_(Optional)_ Properties, containing the names of all properties to be enabled|
+|columns|Array&lt;[IPCB\_BomPropertiesTableColumns](../interfaces/IPCB_BomPropertiesTableColumns.md)<!-- -->&gt;|_(Optional)_ Column properties and sorting. If `title`<!-- -->, `sort`<!-- -->, `group`<!-- -->, and `orderWeight` are not passed in, default values are used. `null` means \*\*none\*\* or \*\*empty\*\*|
+|assemblyVariantsConfig|\{ text: string; value: string \}|_(Optional)_ Assembly variants configuration|
 
 ## Returns
 
@@ -439,6 +167,7 @@ console.log('导出文件名：', bomFile?.name);
 console.log('文件大小：', bomFile?.size);
 ```
 
+
 ### getbomtemplatefile
 
 # SCH\_ManufactureData.getBomTemplateFile() method
@@ -455,33 +184,9 @@ function getBomTemplateFile(template: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-BOM template name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|template|string|BOM template name|
 
 ## Returns
 
@@ -502,6 +207,7 @@ const templateFile = await eda.sch_ManufactureData.getBomTemplateFile(templates[
 // 3. 查看导出结果
 console.log('模板文件大小：', templateFile?.size);
 ```
+
 
 ### getbomtemplates
 
@@ -534,6 +240,7 @@ console.log('模板数量：', templates.length);
 templates.forEach((name, index) => console.log(`模板 ${index + 1}：`, name));
 ```
 
+
 ### getexportdocumentfile
 
 # SCH\_ManufactureData.getExportDocumentFile() method
@@ -553,103 +260,31 @@ function getExportDocumentFile(
 	fileName?: string,
 	fileType?: ESCH_ExportDocumentFileType,
 	typeSpecificParams?: {
-		theme?: undefined | 'Default' | 'White on Black' | 'Black on White';
-		lineWidth?: undefined | 'Default' | 'Always 1px' | 'Follow the Zoom Change';
-		displayAttributesAsMenu?: undefined | false | true;
+		theme?: 'Default' | 'White on Black' | 'Black on White';
+		lineWidth?: 'Default' | 'Always 1px' | 'Follow the Zoom Change';
+		displayAttributesAsMenu?: boolean;
 		size?:
-			| undefined
+			| 'Original Size'
 			| string
-			| { width: number; height: number; unit: ESYS_Unit.MILLIMETER | ESYS_Unit.INCH };
+			| { width: number; height: number; unit: ESYS_Unit.INCH | ESYS_Unit.MILLIMETER };
 	},
 	object?: 'All Schematic' | 'Current Schematic' | 'Current Schematic Page' | string,
 	objectSpecificParams?: {
-		range?: undefined | 'All' | any;
-		outputMethod?: undefined | 'Merged sheet' | 'Separated sheet';
+		range?: 'All' | [number, number];
+		outputMethod?: 'Merged sheet' | 'Separated sheet';
 	},
 ): Promise<File | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-[ESCH\_ExportDocumentFileType](../enums/ESCH_ExportDocumentFileType.md)
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-typeSpecificParams
-
-</td><td>
-
-{ theme?: undefined \| 'Default' \| 'White on Black' \| 'Black on White'; lineWidth?: undefined \| 'Default' \| 'Always 1px' \| 'Follow the Zoom Change'; displayAttributesAsMenu?: undefined \| false \| true; size?: undefined \| string \| { width: number; height: number; unit: [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md) } }
-
-</td><td>
-
-_(Optional)_ Type-specific parameters
-
-</td></tr>
-<tr><td>
-
-object
-
-</td><td>
-
-'All Schematic' \| 'Current Schematic' \| 'Current Schematic Page' \| string
-
-</td><td>
-
-_(Optional)_ Object
-
-</td></tr>
-<tr><td>
-
-objectSpecificParams
-
-</td><td>
-
-{ range?: undefined \| 'All' \| any; outputMethod?: undefined \| 'Merged sheet' \| 'Separated sheet' }
-
-</td><td>
-
-_(Optional)_ Object-specific parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|[ESCH\_ExportDocumentFileType](../enums/ESCH_ExportDocumentFileType.md)|_(Optional)_ File type|
+|typeSpecificParams|{ theme?: 'Default' \| 'White on Black' \| 'Black on White'; lineWidth?: 'Default' \| 'Always 1px' \| 'Follow the Zoom Change'; displayAttributesAsMenu?: boolean; size?: 'Original Size' \| string \| { width: number; height: number; unit: [ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) } }|_(Optional)_ Type-specific parameters|
+|object|'All Schematic' \| 'Current Schematic' \| 'Current Schematic Page' \| string|_(Optional)_ Object|
+|objectSpecificParams|{ range?: 'All' \| \[number, number\]; outputMethod?: 'Merged sheet' \| 'Separated sheet' }|_(Optional)_ Object-specific parameters|
 
 ## Returns
 
@@ -685,6 +320,7 @@ You can use [SYS\_FileSystem.saveFile()](./SYS_FileSystem.md) API export the fil
 console.log('演示调用：getExportDocumentFile(文件名, 文件类型, 显示参数, 导出范围, 多页参数)');
 ```
 
+
 ### getnetlistfile
 
 # SCH\_ManufactureData.getNetlistFile() method
@@ -704,46 +340,10 @@ function getNetlistFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-netlistType
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)
-
-</td><td>
-
-_(Optional)_ Netlist type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|netlistType|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)|_(Optional)_ Netlist type|
 
 ## Returns
 
@@ -770,6 +370,7 @@ catch (e) {
 }
 ```
 
+
 ### getpngfile
 
 # SCH\_ManufactureData.getPngFile() method
@@ -789,46 +390,10 @@ function getPngFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 文件名
-
-</td></tr>
-<tr><td>
-
-resolution
-
-</td><td>
-
-[ISCH\_ExportPngResolution](../interfaces/ISCH_ExportPngResolution.md)
-
-</td><td>
-
-_(Optional)_ 导出图片分辨率，见 [ISCH\_ExportPngResolution](../interfaces/ISCH_ExportPngResolution.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ 文件名|
+|resolution|[ISCH\_ExportPngResolution](../interfaces/ISCH_ExportPngResolution.md)|_(Optional)_ 导出图片分辨率，见 [ISCH\_ExportPngResolution](../interfaces/ISCH_ExportPngResolution.md)|
 
 ## Returns
 
@@ -861,46 +426,10 @@ function getSimulationNetlistFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-netlistType
-
-</td><td>
-
-[ESCH\_SimulationNetlistType](../enums/ESCH_SimulationNetlistType.md)
-
-</td><td>
-
-_(Optional)_ Netlist type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|netlistType|[ESCH\_SimulationNetlistType](../enums/ESCH_SimulationNetlistType.md)|_(Optional)_ Netlist type|
 
 ## Returns
 
@@ -923,6 +452,7 @@ You can use [SYS\_FileSystem.saveFile()](./SYS_FileSystem.md) API export the fil
 console.log('演示调用：getSimulationNetlistFile(文件名, 网表类型)');
 ```
 
+
 ### getsvgfile
 
 # SCH\_ManufactureData.getSvgFile() method
@@ -939,33 +469,9 @@ function getSvgFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 文件名
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ 文件名|
 
 ## Returns
 
@@ -995,46 +501,10 @@ function placeComponentsOrder(interactive?: boolean, ignoreWarning?: boolean): P
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -1054,6 +524,7 @@ Whether the ordering check passed
 console.log('演示调用：placeComponentsOrder(true) 交互式检查，或 placeComponentsOrder(false, true) 静默下单');
 ```
 
+
 ### placesmtcomponentsorder
 
 # SCH\_ManufactureData.placeSmtComponentsOrder() method
@@ -1070,46 +541,10 @@ function placeSmtComponentsOrder(interactive?: boolean, ignoreWarning?: boolean)
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -1129,6 +564,7 @@ Whether the ordering check passed
 console.log('演示调用：placeSmtComponentsOrder(true) 交互式检查，或 placeSmtComponentsOrder(false, true) 静默下单');
 ```
 
+
 ### uploadbomtemplatefile
 
 # SCH\_ManufactureData.uploadBomTemplateFile() method
@@ -1145,46 +581,10 @@ function uploadBomTemplateFile(templateFile: File, template?: string): Promise<s
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-templateFile
-
-</td><td>
-
-File
-
-</td><td>
-
-BOM template file
-
-</td></tr>
-<tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ BOM template name. If it is `undefined`<!-- -->, the value is automatically taken from `templateFile`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|templateFile|File|BOM template file|
+|template|string|_(Optional)_ BOM template name. If it is `undefined`<!-- -->, the value is automatically taken from `templateFile`|
 
 ## Returns
 

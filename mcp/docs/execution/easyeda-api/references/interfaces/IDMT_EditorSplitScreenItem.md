@@ -14,99 +14,13 @@ interface IDMT_EditorSplitScreenItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./IDMT_EditorSplitScreenItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[IDMT\_EditorSplitScreenItem](./IDMT_EditorSplitScreenItem.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Child split screens
-
-</td></tr>
-<tr><td>
-
-[direction?](./IDMT_EditorSplitScreenItem.md)
-
-</td><td>
-
-</td><td>
-
-[EDMT\_EditorSplitScreenDirection](../enums/EDMT_EditorSplitScreenDirection.md)
-
-</td><td>
-
-_(Optional)_ Split screen direction
-
-</td></tr>
-<tr><td>
-
-[fatherId?](./IDMT_EditorSplitScreenItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Parent split screen ID
-
-</td></tr>
-<tr><td>
-
-[id](./IDMT_EditorSplitScreenItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Split screen ID
-
-</td></tr>
-<tr><td>
-
-[tabs?](./IDMT_EditorSplitScreenItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[IDMT\_EditorTabItem](./IDMT_EditorTabItem.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Split screen in tab
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./IDMT_EditorSplitScreenItem.md)||Array&lt;[IDMT\_EditorSplitScreenItem](./IDMT_EditorSplitScreenItem.md)<!-- -->&gt;|_(Optional)_ Child split screens|
+|[direction?](./IDMT_EditorSplitScreenItem.md)||[EDMT\_EditorSplitScreenDirection](../enums/EDMT_EditorSplitScreenDirection.md)|_(Optional)_ Split screen direction|
+|[fatherId?](./IDMT_EditorSplitScreenItem.md)||string|_(Optional)_ Parent split screen ID|
+|[id](./IDMT_EditorSplitScreenItem.md)||string|Split screen ID|
+|[tabs?](./IDMT_EditorSplitScreenItem.md)||Array&lt;[IDMT\_EditorTabItem](./IDMT_EditorTabItem.md)<!-- -->&gt;|_(Optional)_ Split screen in tab|
 
 ---
 

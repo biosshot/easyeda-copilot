@@ -11,97 +11,15 @@ class SCH_PrimitiveRectangle implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(topLeftX, topLeftY, width, height, cornerRadius, rotation, color, fillColor, lineWidth, lineType, fillStyle)](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Create Rectangle
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Delete Rectangle
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Rectangle
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Rectangle
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get all Rectangle
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get all Rectangle primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Rectangle
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(topLeftX, topLeftY, width, height, cornerRadius, rotation, color, fillColor, lineWidth, lineType, fillStyle)](./SCH_PrimitiveRectangle.md)||Create Rectangle|
+|[delete(primitiveIds)](./SCH_PrimitiveRectangle.md)||Delete Rectangle|
+|[get(primitiveIds)](./SCH_PrimitiveRectangle.md)||**_(BETA)_** Get Rectangle|
+|[get(primitiveIds)](./SCH_PrimitiveRectangle.md)||**_(BETA)_** Get Rectangle|
+|[getAll()](./SCH_PrimitiveRectangle.md)||Get all Rectangle|
+|[getAllPrimitiveId()](./SCH_PrimitiveRectangle.md)||Get all Rectangle primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitiveRectangle.md)||**_(BETA)_** Modify Rectangle|
 
 ---
 
@@ -133,163 +51,19 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topLeftX
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point X
-
-</td></tr>
-<tr><td>
-
-topLeftY
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point Y
-
-</td></tr>
-<tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-Width
-
-</td></tr>
-<tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-Height
-
-</td></tr>
-<tr><td>
-
-cornerRadius
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Corner radius
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle, rotating around the top-left point. Options: `0` `90` `180` `270`
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-_(Optional)_ Line type. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillStyle
-
-</td><td>
-
-[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null
-
-</td><td>
-
-_(Optional)_ Fill style, `null` indicates the default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topLeftX|number|Top-left point X|
+|topLeftY|number|Top-left point Y|
+|width|number|Width|
+|height|number|Height|
+|cornerRadius|number|_(Optional)_ Corner radius|
+|rotation|number|_(Optional)_ Rotation angle, rotating around the top-left point. Options: `0` `90` `180` `270`|
+|color|string \| null|_(Optional)_ Color, `null` indicates the default|
+|fillColor|string \| null|_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default|
+|lineWidth|number \| null|_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|_(Optional)_ Line type. `null` indicates the default|
+|fillStyle|[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null|_(Optional)_ Fill style, `null` indicates the default|
 
 ## Returns
 
@@ -321,6 +95,7 @@ console.log('lineWidth:', rect.getState_LineWidth());
 console.log('lineType:', rect.getState_LineType());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveRectangle.delete() method
@@ -335,33 +110,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveRectangle | Array<string> |
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md)<!-- -->&gt;
-
-</td><td>
-
-Rectangle primitive ID or Rectangle primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md)<!-- -->&gt;|Rectangle primitive ID or Rectangle primitive object|
 
 ## Returns
 
@@ -393,6 +144,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveRectangle.get() method
@@ -409,33 +161,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveRectangle | undefined>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Rectangle primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Rectangle primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -470,6 +198,7 @@ console.log('rect2 color:', arr[1].getState_Color());
 console.log('rect2 cornerRadius:', arr[1].getState_CornerRadius());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveRectangle.get() method
@@ -486,33 +215,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveRectangle
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Rectangle primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Rectangle primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -562,6 +267,7 @@ console.log('marker rectangle found:', all.some(r => r.getState_PrimitiveId() ==
 console.log('marker color:', all.find(r => r.getState_PrimitiveId() === rectId).getState_Color());
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveRectangle.getAllPrimitiveId() method
@@ -599,6 +305,7 @@ console.log('total rectangle ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(rectId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveRectangle.modify() method
@@ -613,79 +320,27 @@ Modify Rectangle
 function modify(
 	primitiveId: string | ISCH_PrimitiveRectangle,
 	property: {
-		topLeftX?: undefined | number;
-		topLeftY?: undefined | number;
-		width?: undefined | number;
-		height?: undefined | number;
-		cornerRadius?: undefined | number;
-		rotation?: undefined | number;
-		color?: undefined | null | string;
-		fillColor?: undefined | null | string;
-		lineWidth?: undefined | null | number;
-		lineType?:
-			| undefined
-			| null
-			| ESCH_PrimitiveLineType.SOLID
-			| ESCH_PrimitiveLineType.DASHED
-			| ESCH_PrimitiveLineType.DOTTED
-			| ESCH_PrimitiveLineType.DOT_DASHED;
-		fillStyle?:
-			| undefined
-			| null
-			| ESCH_PrimitiveFillStyle.NONE
-			| ESCH_PrimitiveFillStyle.SOLID
-			| ESCH_PrimitiveFillStyle.GRID
-			| ESCH_PrimitiveFillStyle.HORIZONTAL_LINE
-			| ESCH_PrimitiveFillStyle.VERTICAL_LINE
-			| ESCH_PrimitiveFillStyle.RHOMBIC_GRID
-			| ESCH_PrimitiveFillStyle.LEFT_SLASH_LINE
-			| ESCH_PrimitiveFillStyle.RIGHT_SLASH_LINE;
+		topLeftX?: number;
+		topLeftY?: number;
+		width?: number;
+		height?: number;
+		cornerRadius?: number;
+		rotation?: number;
+		color?: string | null;
+		fillColor?: string | null;
+		lineWidth?: number | null;
+		lineType?: ESCH_PrimitiveLineType | null;
+		fillStyle?: ESCH_PrimitiveFillStyle | null;
 	},
 ): Promise<ISCH_PrimitiveRectangle | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ topLeftX?: undefined \| number; topLeftY?: undefined \| number; width?: undefined \| number; height?: undefined \| number; cornerRadius?: undefined \| number; rotation?: undefined \| number; color?: undefined \| null \| string; fillColor?: undefined \| null \| string; lineWidth?: undefined \| null \| number; lineType?: undefined \| null \| [ESCH\_PrimitiveLineType.SOLID](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DASHED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOTTED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOT\_DASHED](../enums/ESCH_PrimitiveLineType.md)<!-- -->; fillStyle?: undefined \| null \| [ESCH\_PrimitiveFillStyle.NONE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.SOLID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.GRID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.HORIZONTAL\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.VERTICAL\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.RHOMBIC\_GRID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.LEFT\_SLASH\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.RIGHT\_SLASH\_LINE](../enums/ESCH_PrimitiveFillStyle.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveRectangle](./ISCH_PrimitiveRectangle.md)|Primitive ID|
+|property|{ topLeftX?: number; topLeftY?: number; width?: number; height?: number; cornerRadius?: number; rotation?: number; color?: string \| null; fillColor?: string \| null; lineWidth?: number \| null; lineType?: [ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null; fillStyle?: [ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null }|Modify Parameter|
 
 ## Returns
 

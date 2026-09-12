@@ -10,69 +10,11 @@ interface IPCB_NetClassItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[color](./IPCB_NetClassItem.md)
-
-</td><td>
-
-</td><td>
-
-{ r: number; g: number; b: number; alpha: number } \| null
-
-</td><td>
-
-Net class color
-
-</td></tr>
-<tr><td>
-
-[name](./IPCB_NetClassItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Net class name
-
-</td></tr>
-<tr><td>
-
-[nets](./IPCB_NetClassItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Net name array
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[color](./IPCB_NetClassItem.md)||{ r: number; g: number; b: number; alpha: number } \| null|Net class color|
+|[name](./IPCB_NetClassItem.md)||string|Net class name|
+|[nets](./IPCB_NetClassItem.md)||Array&lt;string&gt;|Net name array|
 
 ---
 

@@ -10,54 +10,10 @@ interface SlotProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./SlotProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Slot content child nodes
-
-</td></tr>
-<tr><td>
-
-[name](./SlotProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Slot name (required)
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./SlotProps.md)||any|_(Optional)_ Slot content child nodes|
+|[name](./SlotProps.md)||string|Slot name (required)|
 
 ---
 

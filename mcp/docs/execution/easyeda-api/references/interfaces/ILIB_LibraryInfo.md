@@ -14,54 +14,10 @@ Contains the name of the library and its UUID
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name](./ILIB_LibraryInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Library name
-
-</td></tr>
-<tr><td>
-
-[uuid](./ILIB_LibraryInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name](./ILIB_LibraryInfo.md)||string|Library name|
+|[uuid](./ILIB_LibraryInfo.md)||string|Library UUID|
 
 ---
 

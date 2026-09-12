@@ -13,317 +13,35 @@ class IPCB_PrimitiveObject implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_BinaryData()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: binary data
-
-</td></tr>
-<tr><td>
-
-[getState\_FileName()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: file name
-
-</td></tr>
-<tr><td>
-
-[getState\_Height()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: height
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_Mirror()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is horizontally mirrored
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_TopLeftX()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: top-left point X
-
-</td></tr>
-<tr><td>
-
-[getState\_TopLeftY()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: top-left point Y
-
-</td></tr>
-<tr><td>
-
-[getState\_Width()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: width
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_BinaryData(binaryData)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: binary data
-
-</td></tr>
-<tr><td>
-
-[setState\_FileName(fileName)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: file name
-
-</td></tr>
-<tr><td>
-
-[setState\_Height(height)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: height
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_Mirror(mirror)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: whether it is horizontally mirrored
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_TopLeftX(topLeftX)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: top-left point X
-
-</td></tr>
-<tr><td>
-
-[setState\_TopLeftY(topLeftY)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: top-left point Y
-
-</td></tr>
-<tr><td>
-
-[setState\_Width(width)](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: width
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveObject.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_BinaryData()](./IPCB_PrimitiveObject.md)||Get the property state: binary data|
+|[getState\_FileName()](./IPCB_PrimitiveObject.md)||Get the property state: file name|
+|[getState\_Height()](./IPCB_PrimitiveObject.md)||Get the property state: height|
+|[getState\_Layer()](./IPCB_PrimitiveObject.md)||Get the property state: Layer|
+|[getState\_Mirror()](./IPCB_PrimitiveObject.md)||Get the property state: whether it is horizontally mirrored|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveObject.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveObject.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveObject.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./IPCB_PrimitiveObject.md)||Get the property state: rotation angle|
+|[getState\_TopLeftX()](./IPCB_PrimitiveObject.md)||Get the property state: top-left point X|
+|[getState\_TopLeftY()](./IPCB_PrimitiveObject.md)||Get the property state: top-left point Y|
+|[getState\_Width()](./IPCB_PrimitiveObject.md)||Get the property state: width|
+|[isAsync()](./IPCB_PrimitiveObject.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveObject.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_BinaryData(binaryData)](./IPCB_PrimitiveObject.md)||Set the property state: binary data|
+|[setState\_FileName(fileName)](./IPCB_PrimitiveObject.md)||Set the property state: file name|
+|[setState\_Height(height)](./IPCB_PrimitiveObject.md)||Set the property state: height|
+|[setState\_Layer(layer)](./IPCB_PrimitiveObject.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_Mirror(mirror)](./IPCB_PrimitiveObject.md)||Set the property state: whether it is horizontally mirrored|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveObject.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Rotation(rotation)](./IPCB_PrimitiveObject.md)||Set the property state: rotation angle|
+|[setState\_TopLeftX(topLeftX)](./IPCB_PrimitiveObject.md)||Set the property state: top-left point X|
+|[setState\_TopLeftY(topLeftY)](./IPCB_PrimitiveObject.md)||Set the property state: top-left point Y|
+|[setState\_Width(width)](./IPCB_PrimitiveObject.md)||Set the property state: width|
+|[toAsync()](./IPCB_PrimitiveObject.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveObject.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -373,6 +91,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### getstate_binarydata
 
 # IPCB\_PrimitiveObject.getState\_BinaryData() method
@@ -417,6 +136,7 @@ console.log('binaryData 长度：', binaryData.length);
 console.log('binaryData 前缀：', binaryData.substring(0, 30));
 ```
 
+
 ### getstate_filename
 
 # IPCB\_PrimitiveObject.getState\_FileName() method
@@ -453,6 +173,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 
 console.log('fileName:', fileName);
 ```
+
 
 ### getstate_height
 
@@ -491,6 +212,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('height:', height);
 ```
 
+
 ### getstate_layer
 
 # IPCB\_PrimitiveObject.getState\_Layer() method
@@ -527,6 +249,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 
 console.log('layer:', layer);
 ```
+
 
 ### getstate_mirror
 
@@ -565,6 +288,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('mirror:', mirror);
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveObject.getState\_PrimitiveId() method
@@ -601,6 +325,7 @@ await eda.pcb_PrimitiveObject.delete([primitiveId]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -639,6 +364,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveObject.getState\_PrimitiveType() method
@@ -675,6 +401,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -713,6 +440,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_topleftx
 
 # IPCB\_PrimitiveObject.getState\_TopLeftX() method
@@ -749,6 +477,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 
 console.log('topLeftX:', topLeftX);
 ```
+
 
 ### getstate_toplefty
 
@@ -787,6 +516,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('topLeftY:', topLeftY);
 ```
 
+
 ### getstate_width
 
 # IPCB\_PrimitiveObject.getState\_Width() method
@@ -824,6 +554,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 console.log('width:', width);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveObject.isAsync() method
@@ -860,6 +591,7 @@ await eda.pcb_PrimitiveObject.delete([obj.getState_PrimitiveId()]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -905,6 +637,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_binarydata
 
 # IPCB\_PrimitiveObject.setState\_BinaryData() method
@@ -919,33 +652,9 @@ function setState_BinaryData(binaryData: string): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-binaryData
-
-</td><td>
-
-string
-
-</td><td>
-
-Binary data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|binaryData|string|Binary data|
 
 ## Returns
 
@@ -983,6 +692,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('binaryData 长度：', before, '→', refetched.getState_BinaryData().length);
 ```
 
+
 ### setstate_filename
 
 # IPCB\_PrimitiveObject.setState\_FileName() method
@@ -997,33 +707,9 @@ function setState_FileName(fileName: string): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|File name|
 
 ## Returns
 
@@ -1053,6 +739,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('fileName:', before, '→', refetched.getState_FileName());
 ```
 
+
 ### setstate_height
 
 # IPCB\_PrimitiveObject.setState\_Height() method
@@ -1067,33 +754,9 @@ function setState_Height(height: number): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-Height
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|height|number|Height|
 
 ## Returns
 
@@ -1123,6 +786,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('height:', before, '→', refetched.getState_Height());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveObject.setState\_Layer() method
@@ -1139,33 +803,9 @@ function setState_Layer(layer: TPCB_LayersOfObject): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfObject](../types/TPCB_LayersOfObject.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfObject](../types/TPCB_LayersOfObject.md)|Layer|
 
 ## Returns
 
@@ -1195,6 +835,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_mirror
 
 # IPCB\_PrimitiveObject.setState\_Mirror() method
@@ -1209,33 +850,9 @@ function setState_Mirror(mirror: boolean): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is horizontally mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|mirror|boolean|Whether it is horizontally mirrored|
 
 ## Returns
 
@@ -1265,6 +882,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('mirror:', before, '→', refetched.getState_Mirror());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveObject.setState\_PrimitiveLock() method
@@ -1281,33 +899,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1337,6 +931,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
 
+
 ### setstate_rotation
 
 # IPCB\_PrimitiveObject.setState\_Rotation() method
@@ -1351,33 +946,9 @@ function setState_Rotation(rotation: number): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -1407,6 +978,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_topleftx
 
 # IPCB\_PrimitiveObject.setState\_TopLeftX() method
@@ -1421,33 +993,9 @@ function setState_TopLeftX(topLeftX: number): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topLeftX
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topLeftX|number|Top-left point X|
 
 ## Returns
 
@@ -1477,6 +1025,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('topLeftX:', before, '→', refetched.getState_TopLeftX());
 ```
 
+
 ### setstate_toplefty
 
 # IPCB\_PrimitiveObject.setState\_TopLeftY() method
@@ -1491,33 +1040,9 @@ function setState_TopLeftY(topLeftY: number): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topLeftY
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topLeftY|number|Top-left point Y|
 
 ## Returns
 
@@ -1547,6 +1072,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 console.log('topLeftY:', before, '→', refetched.getState_TopLeftY());
 ```
 
+
 ### setstate_width
 
 # IPCB\_PrimitiveObject.setState\_Width() method
@@ -1561,33 +1087,9 @@ function setState_Width(width: number): IPCB_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-Width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|width|number|Width|
 
 ## Returns
 
@@ -1616,6 +1118,7 @@ const refetched = await eda.pcb_PrimitiveObject.get(obj.getState_PrimitiveId());
 
 console.log('width:', before, '→', refetched.getState_Width());
 ```
+
 
 ### toasync
 
@@ -1659,6 +1162,7 @@ console.log('width:', refetched.getState_Width());
 console.log('height:', refetched.getState_Height());
 console.log('fileName:', refetched.getState_FileName());
 ```
+
 
 ### tosync
 

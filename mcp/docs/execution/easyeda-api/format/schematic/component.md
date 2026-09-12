@@ -5,15 +5,15 @@
 
 ### Symbol Types
 
-| Symbol Type ID | Symbol Type     | Description                                                                                                                                                                                                                   |
-| :-------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2               | Part Symbol     | Common device.                                                                                                                                                                                                               |
-| 17              | Block Symbol    | Hierarchical symbol.                                                                                                                                                                                                         |
-| 18              | NetFlag Symbol  | Global net symbol.                                                                                                                                                                                                         |
-| 19              | NetPort Symbol  | Hierarchical net export symbol.                                                                                                                                                                                              |
-| 20              | Sheet Symbol    | Provides a reuse mechanism for schematic sheets.                                                                                                                                                                             |
-| 21              | NoneElec Symbol | Non-electrical symbol. NoneElec is a class of non-electrical primitives without `PIN`.<br>Can also be used as a reuse mechanism for special icons, copyright statements, etc.<br>NoneElec stands for None Electrical. |
-| 22              | Short Symbol    | Short Symbol is a special Symbol that must have two `PIN`s.<br>All nets connected to the `PIN`s of the same `Short Symbol` are electrically shorted.<br>For example, if net A is connected to PIN1 and net B to PIN2, A and B are the same net. |
+|Symbol Type ID|Symbol Type|Description|
+|:---|---|---|
+|2|Part Symbol|Common device.|
+|17|Block Symbol|Hierarchical symbol.|
+|18|NetFlag Symbol|Global net symbol.|
+|19|NetPort Symbol|Hierarchical net export symbol.|
+|20|Sheet Symbol|Provides a reuse mechanism for schematic sheets.|
+|21|NoneElec Symbol|Non-electrical symbol. NoneElec is a class of non-electrical primitives without `PIN`.<br>Can also be used as a reuse mechanism for special icons, copyright statements, etc.<br>NoneElec stands for None Electrical.|
+|22|Short Symbol|Short Symbol is a special Symbol that must have two `PIN`s.<br>All nets connected to the `PIN`s of the same `Short Symbol` are electrically shorted.<br>For example, if net A is connected to PIN1 and net B to PIN2, A and B are the same net.|
 
 ### Component Primitive
 

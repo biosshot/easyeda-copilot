@@ -10,84 +10,12 @@ interface ISCH_ProjectNetInfo
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[boardName](./ISCH_ProjectNetInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Board name
-
-</td></tr>
-<tr><td>
-
-[nets](./ISCH_ProjectNetInfo.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[ISCH\_NetInfo](./ISCH_NetInfo.md)<!-- -->&gt;
-
-</td><td>
-
-Net
-
-</td></tr>
-<tr><td>
-
-[schematicName](./ISCH_ProjectNetInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic name
-
-</td></tr>
-<tr><td>
-
-[schematicUuid](./ISCH_ProjectNetInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[boardName](./ISCH_ProjectNetInfo.md)||string|Board name|
+|[nets](./ISCH_ProjectNetInfo.md)||Array&lt;[ISCH\_NetInfo](./ISCH_NetInfo.md)<!-- -->&gt;|Net|
+|[schematicName](./ISCH_ProjectNetInfo.md)||string|Schematic name|
+|[schematicUuid](./ISCH_ProjectNetInfo.md)||string|Schematic UUID|
 
 ---
 

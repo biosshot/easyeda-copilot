@@ -10,69 +10,11 @@ interface ISYS_LogLine
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[message](./ISYS_LogLine.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Log content
-
-</td></tr>
-<tr><td>
-
-[timestamp](./ISYS_LogLine.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Timestamp
-
-</td></tr>
-<tr><td>
-
-[type](./ISYS_LogLine.md)
-
-</td><td>
-
-</td><td>
-
-[ESYS\_LogType](../enums/ESYS_LogType.md)
-
-</td><td>
-
-Log type
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[message](./ISYS_LogLine.md)||string|Log content|
+|[timestamp](./ISYS_LogLine.md)||number|Timestamp|
+|[type](./ISYS_LogLine.md)||[ESYS\_LogType](../enums/ESYS_LogType.md)|Log type|
 
 ---
 

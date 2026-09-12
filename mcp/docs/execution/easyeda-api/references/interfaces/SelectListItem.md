@@ -10,84 +10,12 @@ interface SelectListItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./SelectListItem.md)
-
-</td><td>
-
-</td><td>
-
-[SelectListItem](./SelectListItem.md)<!-- -->\[\]
-
-</td><td>
-
-_(Optional)_ Child options, used for multi-level nesting
-
-</td></tr>
-<tr><td>
-
-[selected?](./SelectListItem.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Select
-
-</td></tr>
-<tr><td>
-
-[title](./SelectListItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Option title (required)
-
-</td></tr>
-<tr><td>
-
-[value?](./SelectListItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Associated value of the option
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./SelectListItem.md)||[SelectListItem](./SelectListItem.md)<!-- -->\[\]|_(Optional)_ Child options, used for multi-level nesting|
+|[selected?](./SelectListItem.md)||boolean|_(Optional)_ Whether Select|
+|[title](./SelectListItem.md)||string|Option title (required)|
+|[value?](./SelectListItem.md)||string|_(Optional)_ Associated value of the option|
 
 ---
 

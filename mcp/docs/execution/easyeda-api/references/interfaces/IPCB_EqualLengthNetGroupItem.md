@@ -10,69 +10,11 @@ interface IPCB_EqualLengthNetGroupItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[color](./IPCB_EqualLengthNetGroupItem.md)
-
-</td><td>
-
-</td><td>
-
-{ r: number; g: number; b: number; alpha: number } \| null
-
-</td><td>
-
-Equal-length net group color
-
-</td></tr>
-<tr><td>
-
-[name](./IPCB_EqualLengthNetGroupItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Equal-length net group name
-
-</td></tr>
-<tr><td>
-
-[nets](./IPCB_EqualLengthNetGroupItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Net name array
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[color](./IPCB_EqualLengthNetGroupItem.md)||{ r: number; g: number; b: number; alpha: number } \| null|Equal-length net group color|
+|[name](./IPCB_EqualLengthNetGroupItem.md)||string|Equal-length net group name|
+|[nets](./IPCB_EqualLengthNetGroupItem.md)||Array&lt;string&gt;|Net name array|
 
 ---
 

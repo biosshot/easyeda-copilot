@@ -14,64 +14,11 @@ Unified operations on primitives
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getPrimitiveByPrimitiveId(id)](./SCH_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-Get all properties of the primitive with the specified ID
-
-</td></tr>
-<tr><td>
-
-[getPrimitivesBBox(primitiveIds)](./SCH_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The BBox of the primitive
-
-</td></tr>
-<tr><td>
-
-[getPrimitivesByPrimitiveId(ids)](./SCH_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the primitives with the specified IDs
-
-</td></tr>
-<tr><td>
-
-[getPrimitiveTypeByPrimitiveId(id)](./SCH_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the primitive type of the primitive with the specified ID
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getPrimitiveByPrimitiveId(id)](./SCH_Primitive.md)||Get all properties of the primitive with the specified ID|
+|[getPrimitivesBBox(primitiveIds)](./SCH_Primitive.md)||**_(BETA)_** Get The BBox of the primitive|
+|[getPrimitiveTypeByPrimitiveId(id)](./SCH_Primitive.md)||**_(BETA)_** Get the primitive type of the primitive with the specified ID|
 
 ---
 
@@ -91,33 +38,9 @@ function getPrimitiveByPrimitiveId(id: string): Promise<ISCH_Primitive | undefin
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Primitive ID|
 
 ## Returns
 
@@ -144,6 +67,7 @@ console.log('height:', primitive.getState_Height());
 console.log('id match:', primitive.getState_PrimitiveId() === id);
 ```
 
+
 ### getprimitivesbbox
 
 # SCH\_Primitive.getPrimitivesBBox() method
@@ -162,33 +86,9 @@ function getPrimitivesBBox(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string \| [ISCH\_Primitive](../interfaces/ISCH_Primitive.md)<!-- -->&gt;
-
-</td><td>
-
-Array of Primitive ID array or primitive objects
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string \| [ISCH\_Primitive](../interfaces/ISCH_Primitive.md)<!-- -->&gt;|Array of Primitive ID array or primitive objects|
 
 ## Returns
 
@@ -221,55 +121,6 @@ console.log('maxX:', bbox.maxX);
 console.log('maxY:', bbox.maxY);
 ```
 
-### getprimitivesbyprimitiveid
-
-# SCH\_Primitive.getPrimitivesByPrimitiveId() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get all properties of the primitives with the specified IDs
-
-## Signature
-
-```typescript
-function getPrimitivesByPrimitiveId(ids: Array<string>): Promise<Array<ISCH_Primitive>>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-ids
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Primitive ID array
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;Array&lt;[ISCH\_Primitive](../interfaces/ISCH_Primitive.md)<!-- -->&gt;&gt;
-
-All properties of all primitives
 
 ### getprimitivetypebyprimitiveid
 
@@ -287,33 +138,9 @@ function getPrimitiveTypeByPrimitiveId(id: string): Promise<ESCH_PrimitiveType |
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Primitive ID|
 
 ## Returns
 

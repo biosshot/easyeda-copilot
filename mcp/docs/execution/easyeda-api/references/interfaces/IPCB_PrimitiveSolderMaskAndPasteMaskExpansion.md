@@ -22,84 +22,12 @@ The paste mask expansion is generally only used for specific purposes such as st
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[bottomPasteMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Bottom paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[bottomSolderMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Bottom solder mask expansion
-
-</td></tr>
-<tr><td>
-
-[topPasteMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Top paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[topSolderMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Top solder mask expansion
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[bottomPasteMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)||number|_(Optional)_ Bottom paste mask expansion|
+|[bottomSolderMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)||number|_(Optional)_ Bottom solder mask expansion|
+|[topPasteMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)||number|_(Optional)_ Top paste mask expansion|
+|[topSolderMask?](./IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)||number|_(Optional)_ Top solder mask expansion|
 
 ---
 

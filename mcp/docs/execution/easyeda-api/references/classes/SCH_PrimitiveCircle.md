@@ -11,97 +11,15 @@ class SCH_PrimitiveCircle implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(centerX, centerY, radius, color, fillColor, lineWidth, lineType, fillStyle)](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a circle
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the circle
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the circle
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the circle
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all circles
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the primitive IDs of all circles
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the circle
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(centerX, centerY, radius, color, fillColor, lineWidth, lineType, fillStyle)](./SCH_PrimitiveCircle.md)||**_(BETA)_** Create a circle|
+|[delete(primitiveIds)](./SCH_PrimitiveCircle.md)||**_(BETA)_** Delete the circle|
+|[get(primitiveIds)](./SCH_PrimitiveCircle.md)||**_(BETA)_** Get the circle|
+|[get(primitiveIds)](./SCH_PrimitiveCircle.md)||**_(BETA)_** Get the circle|
+|[getAll()](./SCH_PrimitiveCircle.md)||**_(BETA)_** Get all circles|
+|[getAllPrimitiveId()](./SCH_PrimitiveCircle.md)||**_(BETA)_** Get the primitive IDs of all circles|
+|[modify(primitiveId, property)](./SCH_PrimitiveCircle.md)||**_(BETA)_** Modify the circle|
 
 ---
 
@@ -132,124 +50,16 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-centerX
-
-</td><td>
-
-number
-
-</td><td>
-
-Center of the circle X
-
-</td></tr>
-<tr><td>
-
-centerY
-
-</td><td>
-
-number
-
-</td><td>
-
-Center of the circle Y
-
-</td></tr>
-<tr><td>
-
-radius
-
-</td><td>
-
-number
-
-</td><td>
-
-Radius
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-_(Optional)_ Line type. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillStyle
-
-</td><td>
-
-[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null
-
-</td><td>
-
-_(Optional)_ Fill style, `null` indicates the default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|centerX|number|Center of the circle X|
+|centerY|number|Center of the circle Y|
+|radius|number|Radius|
+|color|string \| null|_(Optional)_ Color, `null` indicates the default|
+|fillColor|string \| null|_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default|
+|lineWidth|number \| null|_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|_(Optional)_ Line type. `null` indicates the default|
+|fillStyle|[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null|_(Optional)_ Fill style, `null` indicates the default|
 
 ## Returns
 
@@ -285,6 +95,7 @@ console.log('color:', circle.getState_Color());
 console.log('fillStyle:', circle.getState_FillStyle());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveCircle.delete() method
@@ -301,33 +112,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveCircle | Array<string> | Ar
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md)<!-- -->&gt;
-
-</td><td>
-
-Primitive ID of the circle or the circle primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md)<!-- -->&gt;|Primitive ID of the circle or the circle primitive object|
 
 ## Returns
 
@@ -359,6 +146,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveCircle.get() method
@@ -375,33 +163,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveCircle | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Primitive ID of the circle, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Primitive ID of the circle, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -432,6 +196,7 @@ console.log('array length:', arr.length);
 console.log('circle2 radius:', arr[1].getState_Radius());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveCircle.get() method
@@ -448,33 +213,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveCircle>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Primitive ID of the circle, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Primitive ID of the circle, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -525,6 +266,7 @@ console.log('total circles:', all.length);
 console.log('marker circle found:', all.some(c => c.getState_PrimitiveId() === circleId));
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveCircle.getAllPrimitiveId() method
@@ -564,6 +306,7 @@ console.log('total circle ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(circleId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveCircle.modify() method
@@ -578,76 +321,24 @@ Modify the circle
 function modify(
 	primitiveId: string | ISCH_PrimitiveCircle,
 	property: {
-		centerX?: undefined | number;
-		centerY?: undefined | number;
-		radius?: undefined | number;
-		color?: undefined | null | string;
-		fillColor?: undefined | null | string;
-		lineWidth?: undefined | null | number;
-		lineType?:
-			| undefined
-			| null
-			| ESCH_PrimitiveLineType.SOLID
-			| ESCH_PrimitiveLineType.DASHED
-			| ESCH_PrimitiveLineType.DOTTED
-			| ESCH_PrimitiveLineType.DOT_DASHED;
-		fillStyle?:
-			| undefined
-			| null
-			| ESCH_PrimitiveFillStyle.NONE
-			| ESCH_PrimitiveFillStyle.SOLID
-			| ESCH_PrimitiveFillStyle.GRID
-			| ESCH_PrimitiveFillStyle.HORIZONTAL_LINE
-			| ESCH_PrimitiveFillStyle.VERTICAL_LINE
-			| ESCH_PrimitiveFillStyle.RHOMBIC_GRID
-			| ESCH_PrimitiveFillStyle.LEFT_SLASH_LINE
-			| ESCH_PrimitiveFillStyle.RIGHT_SLASH_LINE;
+		centerX?: number;
+		centerY?: number;
+		radius?: number;
+		color?: string | null;
+		fillColor?: string | null;
+		lineWidth?: number | null;
+		lineType?: ESCH_PrimitiveLineType | null;
+		fillStyle?: ESCH_PrimitiveFillStyle | null;
 	},
 ): Promise<ISCH_PrimitiveCircle | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ centerX?: undefined \| number; centerY?: undefined \| number; radius?: undefined \| number; color?: undefined \| null \| string; fillColor?: undefined \| null \| string; lineWidth?: undefined \| null \| number; lineType?: undefined \| null \| [ESCH\_PrimitiveLineType.SOLID](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DASHED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOTTED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOT\_DASHED](../enums/ESCH_PrimitiveLineType.md)<!-- -->; fillStyle?: undefined \| null \| [ESCH\_PrimitiveFillStyle.NONE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.SOLID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.GRID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.HORIZONTAL\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.VERTICAL\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.RHOMBIC\_GRID](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.LEFT\_SLASH\_LINE](../enums/ESCH_PrimitiveFillStyle.md) \| [ESCH\_PrimitiveFillStyle.RIGHT\_SLASH\_LINE](../enums/ESCH_PrimitiveFillStyle.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveCircle](./ISCH_PrimitiveCircle.md)|Primitive ID|
+|property|{ centerX?: number; centerY?: number; radius?: number; color?: string \| null; fillColor?: string \| null; lineWidth?: number \| null; lineType?: [ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null; fillStyle?: [ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null }|Modify Parameter|
 
 ## Returns
 

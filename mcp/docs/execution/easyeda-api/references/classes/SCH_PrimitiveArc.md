@@ -11,97 +11,15 @@ class SCH_PrimitiveArc implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(startX, startY, referenceX, referenceY, endX, endY, color, fillColor, lineWidth, lineType)](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Arc
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Arc
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Arc
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Arc
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Arc
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Arc primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Arc
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(startX, startY, referenceX, referenceY, endX, endY, color, fillColor, lineWidth, lineType)](./SCH_PrimitiveArc.md)||**_(BETA)_** Create Arc|
+|[delete(primitiveIds)](./SCH_PrimitiveArc.md)||**_(BETA)_** Delete Arc|
+|[get(primitiveIds)](./SCH_PrimitiveArc.md)||**_(BETA)_** Get Arc|
+|[get(primitiveIds)](./SCH_PrimitiveArc.md)||**_(BETA)_** Get Arc|
+|[getAll()](./SCH_PrimitiveArc.md)||**_(BETA)_** Get all Arc|
+|[getAllPrimitiveId()](./SCH_PrimitiveArc.md)||**_(BETA)_** Get all Arc primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitiveArc.md)||**_(BETA)_** Modify Arc|
 
 ---
 
@@ -134,150 +52,18 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startX
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point X
-
-</td></tr>
-<tr><td>
-
-startY
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point Y
-
-</td></tr>
-<tr><td>
-
-referenceX
-
-</td><td>
-
-number
-
-</td><td>
-
-Reference point X
-
-</td></tr>
-<tr><td>
-
-referenceY
-
-</td><td>
-
-number
-
-</td><td>
-
-Reference point Y
-
-</td></tr>
-<tr><td>
-
-endX
-
-</td><td>
-
-number
-
-</td><td>
-
-End point X
-
-</td></tr>
-<tr><td>
-
-endY
-
-</td><td>
-
-number
-
-</td><td>
-
-End point Y
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-_(Optional)_ Line type. `null` indicates the default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startX|number|Start point X|
+|startY|number|Start point Y|
+|referenceX|number|Reference point X|
+|referenceY|number|Reference point Y|
+|endX|number|End point X|
+|endY|number|End point Y|
+|color|string \| null|_(Optional)_ Color, `null` indicates the default|
+|fillColor|string \| null|_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default|
+|lineWidth|number \| null|_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|_(Optional)_ Line type. `null` indicates the default|
 
 ## Returns
 
@@ -305,6 +91,7 @@ console.log('color:', arc.getState_Color());
 console.log('lineWidth:', arc.getState_LineWidth());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveArc.delete() method
@@ -321,33 +108,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveArc | Array<string> | Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md)<!-- -->&gt;
-
-</td><td>
-
-Arc primitive ID or Arc primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md)<!-- -->&gt;|Arc primitive ID or Arc primitive object|
 
 ## Returns
 
@@ -377,6 +140,7 @@ console.log('deleted:', deleted);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveArc.get() method
@@ -393,33 +157,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveArc | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Arc primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Arc primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -450,6 +190,7 @@ console.log('array length:', arr.length);
 console.log('arc2 endX:', arr[1].getState_EndX());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveArc.get() method
@@ -466,33 +207,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveArc>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Arc primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Arc primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -543,6 +260,7 @@ console.log('total arcs:', all.length);
 console.log('marker arc found:', all.some(a => a.getState_PrimitiveId() === arcId));
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveArc.getAllPrimitiveId() method
@@ -582,6 +300,7 @@ console.log('total arc ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(arcId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveArc.modify() method
@@ -596,68 +315,26 @@ Modify Arc
 function modify(
 	primitiveId: string | ISCH_PrimitiveArc,
 	property: {
-		startX?: undefined | number;
-		startY?: undefined | number;
-		referenceX?: undefined | number;
-		referenceY?: undefined | number;
-		endX?: undefined | number;
-		endY?: undefined | number;
-		color?: undefined | null | string;
-		fillColor?: undefined | null | string;
-		lineWidth?: undefined | null | number;
-		lineType?:
-			| undefined
-			| null
-			| ESCH_PrimitiveLineType.SOLID
-			| ESCH_PrimitiveLineType.DASHED
-			| ESCH_PrimitiveLineType.DOTTED
-			| ESCH_PrimitiveLineType.DOT_DASHED;
+		startX?: number;
+		startY?: number;
+		referenceX?: number;
+		referenceY?: number;
+		endX?: number;
+		endY?: number;
+		color?: string | null;
+		fillColor?: string | null;
+		lineWidth?: number | null;
+		lineType?: ESCH_PrimitiveLineType | null;
 	},
 ): Promise<ISCH_PrimitiveArc | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ startX?: undefined \| number; startY?: undefined \| number; referenceX?: undefined \| number; referenceY?: undefined \| number; endX?: undefined \| number; endY?: undefined \| number; color?: undefined \| null \| string; fillColor?: undefined \| null \| string; lineWidth?: undefined \| null \| number; lineType?: undefined \| null \| [ESCH\_PrimitiveLineType.SOLID](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DASHED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOTTED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOT\_DASHED](../enums/ESCH_PrimitiveLineType.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveArc](./ISCH_PrimitiveArc.md)|Primitive ID|
+|property|{ startX?: number; startY?: number; referenceX?: number; referenceY?: number; endX?: number; endY?: number; color?: string \| null; fillColor?: string \| null; lineWidth?: number \| null; lineType?: [ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null }|Modify Parameter|
 
 ## Returns
 

@@ -14,207 +14,25 @@ Operations related to schematic management in the currently open project
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copySchematic(schematicUuid, boardName)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Schematic
-
-</td></tr>
-<tr><td>
-
-[copySchematicPage(schematicPageUuid, schematicUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Schematic sheet
-
-</td></tr>
-<tr><td>
-
-[createSchematic(boardName)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Schematic
-
-</td></tr>
-<tr><td>
-
-[createSchematicPage(schematicUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Schematic sheet
-
-</td></tr>
-<tr><td>
-
-[deleteSchematic(schematicUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Schematic
-
-</td></tr>
-<tr><td>
-
-[deleteSchematicPage(schematicPageUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Schematic sheet
-
-</td></tr>
-<tr><td>
-
-[getAllSchematicPagesInfo()](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all in the project schematic sheet detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getAllSchematicsInfo()](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all in the project schematic detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getCurrentSchematicAllSchematicPagesInfo()](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of all schematic sheets in the current schematic
-
-</td></tr>
-<tr><td>
-
-[getCurrentSchematicInfo()](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get detailed properties of Current schematic
-
-</td></tr>
-<tr><td>
-
-[getCurrentSchematicPageInfo()](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get detailed properties of Current schematic sheet
-
-</td></tr>
-<tr><td>
-
-[getSchematicInfo(schematicUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get detailed properties of Schematic
-
-</td></tr>
-<tr><td>
-
-[getSchematicPageInfo(schematicPageUuid)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get detailed properties of Schematic sheet
-
-</td></tr>
-<tr><td>
-
-[modifySchematicName(schematicUuid, schematicName)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Schematic name
-
-</td></tr>
-<tr><td>
-
-[modifySchematicPageName(schematicPageUuid, schematicPageName)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Schematic sheet name
-
-</td></tr>
-<tr><td>
-
-[modifySchematicPageTitleBlock(showTitleBlock, titleBlockData)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the title block of a schematic sheet
-
-</td></tr>
-<tr><td>
-
-[reorderSchematicPages(schematicUuid, schematicPageItemsArray)](./DMT_Schematic.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reorder schematic sheets
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copySchematic(schematicUuid, boardName)](./DMT_Schematic.md)||**_(BETA)_** Copy Schematic|
+|[copySchematicPage(schematicPageUuid, schematicUuid)](./DMT_Schematic.md)||**_(BETA)_** Copy Schematic sheet|
+|[createSchematic(boardName)](./DMT_Schematic.md)||**_(BETA)_** Create Schematic|
+|[createSchematicPage(schematicUuid)](./DMT_Schematic.md)||**_(BETA)_** Create Schematic sheet|
+|[deleteSchematic(schematicUuid)](./DMT_Schematic.md)||**_(BETA)_** Delete Schematic|
+|[deleteSchematicPage(schematicPageUuid)](./DMT_Schematic.md)||**_(BETA)_** Delete Schematic sheet|
+|[getAllSchematicPagesInfo()](./DMT_Schematic.md)||**_(BETA)_** Get all in the project schematic sheet detailed properties of|
+|[getAllSchematicsInfo()](./DMT_Schematic.md)||**_(BETA)_** Get all in the project schematic detailed properties of|
+|[getCurrentSchematicAllSchematicPagesInfo()](./DMT_Schematic.md)||**_(BETA)_** Get the detailed properties of all schematic sheets in the current schematic|
+|[getCurrentSchematicInfo()](./DMT_Schematic.md)||**_(BETA)_** Get detailed properties of Current schematic|
+|[getCurrentSchematicPageInfo()](./DMT_Schematic.md)||**_(BETA)_** Get detailed properties of Current schematic sheet|
+|[getSchematicInfo(schematicUuid)](./DMT_Schematic.md)||**_(BETA)_** Get detailed properties of Schematic|
+|[getSchematicPageInfo(schematicPageUuid)](./DMT_Schematic.md)||**_(BETA)_** Get detailed properties of Schematic sheet|
+|[modifySchematicName(schematicUuid, schematicName)](./DMT_Schematic.md)||**_(BETA)_** Modify Schematic name|
+|[modifySchematicPageName(schematicPageUuid, schematicPageName)](./DMT_Schematic.md)||**_(BETA)_** Modify Schematic sheet name|
+|[modifySchematicPageTitleBlock(showTitleBlock, titleBlockData)](./DMT_Schematic.md)||**_(BETA)_** Modify the title block of a schematic sheet|
+|[reorderSchematicPages(schematicUuid, schematicPageItemsArray)](./DMT_Schematic.md)||**_(BETA)_** Reorder schematic sheets|
 
 ---
 
@@ -236,46 +54,10 @@ function copySchematic(schematicUuid: string, boardName?: string): Promise<strin
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Source schematic UUID
-
-</td></tr>
-<tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board the new schematic belongs to. If not specified, it is a free schematic
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|Source schematic UUID|
+|boardName|string|_(Optional)_ Name of the board the new schematic belongs to. If not specified, it is a free schematic|
 
 ## Returns
 
@@ -313,6 +95,7 @@ const deletedSource = await eda.dmt_Schematic.deleteSchematic(sourceUuid);
 console.log('deleted:', deletedSource);
 ```
 
+
 ### copyschematicpage
 
 # DMT\_Schematic.copySchematicPage() method
@@ -332,46 +115,10 @@ function copySchematicPage(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicPageUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Source schematic sheet UUID
-
-</td></tr>
-<tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Target schematic UUID. If not specified, it is the current schematic
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicPageUuid|string|Source schematic sheet UUID|
+|schematicUuid|string|_(Optional)_ Target schematic UUID. If not specified, it is the current schematic|
 
 ## Returns
 
@@ -404,6 +151,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### createschematic
 
 # DMT\_Schematic.createSchematic() method
@@ -420,33 +168,9 @@ function createSchematic(boardName?: string): Promise<string | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board it belongs to. If not specified, it is a free schematic
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|boardName|string|_(Optional)_ Name of the board it belongs to. If not specified, it is a free schematic|
 
 ## Returns
 
@@ -474,6 +198,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### createschematicpage
 
 # DMT\_Schematic.createSchematicPage() method
@@ -490,33 +215,9 @@ function createSchematicPage(schematicUuid: string): Promise<string | undefined>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the schematic it belongs to
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|UUID of the schematic it belongs to|
 
 ## Returns
 
@@ -547,6 +248,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### deleteschematic
 
 # DMT\_Schematic.deleteSchematic() method
@@ -563,33 +265,9 @@ function deleteSchematic(schematicUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|Schematic UUID|
 
 ## Returns
 
@@ -618,6 +296,7 @@ const info = await eda.dmt_Schematic.getSchematicInfo(schematicUuid);
 console.log('info after delete:', info === undefined ? '已不存在' : info.name);
 ```
 
+
 ### deleteschematicpage
 
 # DMT\_Schematic.deleteSchematicPage() method
@@ -634,33 +313,9 @@ function deleteSchematicPage(schematicPageUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicPageUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicPageUuid|string|Schematic sheet UUID|
 
 ## Returns
 
@@ -695,6 +350,7 @@ await new Promise(r => setTimeout(r, 1000));
 const deletedSch = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deletedSch);
 ```
+
 
 ### getallschematicpagesinfo
 
@@ -741,6 +397,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### getallschematicsinfo
 
 # DMT\_Schematic.getAllSchematicsInfo() method
@@ -783,6 +440,7 @@ await new Promise(r => setTimeout(r, 1000));
 const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
+
 
 ### getcurrentschematicallschematicpagesinfo
 
@@ -834,6 +492,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### getcurrentschematicinfo
 
 # DMT\_Schematic.getCurrentSchematicInfo() method
@@ -882,6 +541,7 @@ await new Promise(r => setTimeout(r, 1000));
 const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
+
 
 ### getcurrentschematicpageinfo
 
@@ -934,6 +594,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### getschematicinfo
 
 # DMT\_Schematic.getSchematicInfo() method
@@ -950,33 +611,9 @@ function getSchematicInfo(schematicUuid: string): Promise<IDMT_SchematicItem | u
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|Schematic UUID|
 
 ## Returns
 
@@ -1006,6 +643,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### getschematicpageinfo
 
 # DMT\_Schematic.getSchematicPageInfo() method
@@ -1024,33 +662,9 @@ function getSchematicPageInfo(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicPageUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicPageUuid|string|Schematic sheet UUID|
 
 ## Returns
 
@@ -1083,6 +697,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### modifyschematicname
 
 # DMT\_Schematic.modifySchematicName() method
@@ -1099,46 +714,10 @@ function modifySchematicName(schematicUuid: string, schematicName: string): Prom
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic UUID
-
-</td></tr>
-<tr><td>
-
-schematicName
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|Schematic UUID|
+|schematicName|string|Schematic name|
 
 ## Returns
 
@@ -1179,6 +758,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### modifyschematicpagename
 
 # DMT\_Schematic.modifySchematicPageName() method
@@ -1198,46 +778,10 @@ function modifySchematicPageName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicPageUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet UUID
-
-</td></tr>
-<tr><td>
-
-schematicPageName
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicPageUuid|string|Schematic sheet UUID|
+|schematicPageName|string|Schematic sheet name|
 
 ## Returns
 
@@ -1271,6 +815,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### modifyschematicpagetitleblock
 
 # DMT\_Schematic.modifySchematicPageTitleBlock() method
@@ -1284,55 +829,16 @@ Modify the title block of a schematic sheet
 ```typescript
 function modifySchematicPageTitleBlock(
 	showTitleBlock?: boolean,
-	titleBlockData?: Record<
-		string,
-		{ showTitle?: undefined | false | true; showValue?: undefined | false | true; value?: any }
-	>,
+	titleBlockData?: { [key: string]: { showTitle?: boolean; showValue?: boolean; value?: any } },
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-showTitleBlock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to show the title block. If undefined, the current state will be kept
-
-</td></tr>
-<tr><td>
-
-titleBlockData
-
-</td><td>
-
-Record&lt;string, { showTitle?: undefined \| false \| true; showValue?: undefined \| false \| true; value?: any }&gt;
-
-</td><td>
-
-_(Optional)_ The title block items to be modified and their modified values
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|showTitleBlock|boolean|_(Optional)_ Whether to show the title block. If undefined, the current state will be kept|
+|titleBlockData|\{ \[key: string\]: \{ showTitle?: boolean; showValue?: boolean; value?: any \} \}|_(Optional)_ The title block items to be modified and their modified values|
 
 ## Returns
 
@@ -1374,6 +880,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### reorderschematicpages
 
 # DMT\_Schematic.reorderSchematicPages() method
@@ -1393,46 +900,10 @@ function reorderSchematicPages(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-The UUID of the schematic associated with the sheets being sorted
-
-</td></tr>
-<tr><td>
-
-schematicPageItemsArray
-
-</td><td>
-
-Array&lt;[IDMT\_SchematicPageItem](../interfaces/IDMT_SchematicPageItem.md)<!-- -->&gt;
-
-</td><td>
-
-Array of all schematic sheet properties
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|The UUID of the schematic associated with the sheets being sorted|
+|schematicPageItemsArray|Array&lt;[IDMT\_SchematicPageItem](../interfaces/IDMT_SchematicPageItem.md)<!-- -->&gt;|Array of all schematic sheet properties|
 
 ## Returns
 

@@ -14,75 +14,13 @@ developer.mozilla.org/zh-CN/docs/Web/SVG/Attribute/fill-rule \| fill-rule<!-- --
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addSource(complexPolygon)](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Add Polygon data
-
-</td></tr>
-<tr><td>
-
-[getCenter()](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Complex polygon center point
-
-</td></tr>
-<tr><td>
-
-[getSource()](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get Polygon data
-
-</td></tr>
-<tr><td>
-
-[getSourceStrictComplex()](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get Complex polygon data
-
-</td></tr>
-<tr><td>
-
-[toPolygon()](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Split is single polygon array
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addSource(complexPolygon)](./IPCB_ComplexPolygon.md)||Add Polygon data|
+|[getCenter()](./IPCB_ComplexPolygon.md)||**_(BETA)_** Get Complex polygon center point|
+|[getSource()](./IPCB_ComplexPolygon.md)||Get Polygon data|
+|[getSourceStrictComplex()](./IPCB_ComplexPolygon.md)||Get Complex polygon data|
+|[toPolygon()](./IPCB_ComplexPolygon.md)||Split is single polygon array|
 
 ---
 
@@ -108,33 +46,9 @@ function addSource(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| Array&lt;[IPCB\_Polygon](./IPCB_Polygon.md)<!-- -->&gt;
-
-</td><td>
-
-Complex polygon data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| Array&lt;[IPCB\_Polygon](./IPCB_Polygon.md)<!-- -->&gt;|Complex polygon data|
 
 ## Returns
 
@@ -162,6 +76,7 @@ console.log('primitiveId:', fill.getState_PrimitiveId());
 console.log('polygonCount:', complexPolygon.getSourceStrictComplex().length);
 ```
 
+
 ### getcenter
 
 # IPCB\_ComplexPolygon.getCenter() method
@@ -173,12 +88,12 @@ Get Complex polygon center point
 ## Signature
 
 ```typescript
-function getCenter(): Promise<{ x: number; y: number }>;
+function getCenter(): { x: number; y: number };
 ```
 
 ## Returns
 
-Promise&lt;{ x: number; y: number }&gt;
+\{ x: number; y: number \}
 
 Complex polygon center point
 
@@ -220,6 +135,7 @@ console.log('singleSource:', JSON.stringify(single.getSource()));
 console.log('multiSource:', JSON.stringify(multi.getSource()));
 ```
 
+
 ### getsourcestrictcomplex
 
 # IPCB\_ComplexPolygon.getSourceStrictComplex() method
@@ -256,6 +172,7 @@ console.log('simplifiedFirstItem:', typeof simplified[0]);
 console.log('strictFirstItemIsArray:', Array.isArray(strict[0]));
 console.log('strictPolygonCount:', strict.length);
 ```
+
 
 ### topolygon
 

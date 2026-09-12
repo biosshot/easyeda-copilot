@@ -12,31 +12,9 @@ class SYS_RightClickMenu
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[changeMenu(menuId, menuItems)](./SYS_RightClickMenu.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the right-click menu
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[changeMenu(menuId, menuItems)](./SYS_RightClickMenu.md)||**_(BETA)_** Modify the right-click menu|
 
 ---
 
@@ -61,46 +39,10 @@ function changeMenu(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-menuId
-
-</td><td>
-
-string
-
-</td><td>
-
-Menu ID
-
-</td></tr>
-<tr><td>
-
-menuItems
-
-</td><td>
-
-Array&lt;[ISYS\_RightClickMenuItem](../interfaces/ISYS_RightClickMenuItem.md) \| null&gt;
-
-</td><td>
-
-Menu items. `null` represents a separator
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|menuId|string|Menu ID|
+|menuItems|Array&lt;[ISYS\_RightClickMenuItem](../interfaces/ISYS_RightClickMenuItem.md) \| null&gt;|Menu items. `null` represents a separator|
 
 ## Returns
 

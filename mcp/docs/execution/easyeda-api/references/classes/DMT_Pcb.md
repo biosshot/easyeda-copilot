@@ -14,97 +14,15 @@ Operations related to PCB management in the currently open project
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copyPcb(pcbUuid, boardName)](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Copy PCB
-
-</td></tr>
-<tr><td>
-
-[createPcb(boardName)](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Create PCB
-
-</td></tr>
-<tr><td>
-
-[deletePcb(pcbUuid)](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Delete PCB
-
-</td></tr>
-<tr><td>
-
-[getAllPcbsInfo()](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Get all in the project PCB detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getCurrentPcbInfo()](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Current PCB
-
-</td></tr>
-<tr><td>
-
-[getPcbInfo(pcbUuid)](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of PCB
-
-</td></tr>
-<tr><td>
-
-[modifyPcbName(pcbUuid, pcbName)](./DMT_Pcb.md)
-
-</td><td>
-
-</td><td>
-
-Modify PCB name
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copyPcb(pcbUuid, boardName)](./DMT_Pcb.md)||Copy PCB|
+|[createPcb(boardName)](./DMT_Pcb.md)||Create PCB|
+|[deletePcb(pcbUuid)](./DMT_Pcb.md)||Delete PCB|
+|[getAllPcbsInfo()](./DMT_Pcb.md)||Get all in the project PCB detailed properties of|
+|[getCurrentPcbInfo()](./DMT_Pcb.md)||Get detailed properties of Current PCB|
+|[getPcbInfo(pcbUuid)](./DMT_Pcb.md)||Get detailed properties of PCB|
+|[modifyPcbName(pcbUuid, pcbName)](./DMT_Pcb.md)||Modify PCB name|
 
 ---
 
@@ -124,46 +42,10 @@ function copyPcb(pcbUuid: string, boardName?: string): Promise<string | undefine
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pcbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Source PCB UUID
-
-</td></tr>
-<tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board the new PCB belongs to. If not specified, it is a free PCB
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pcbUuid|string|Source PCB UUID|
+|boardName|string|_(Optional)_ Name of the board the new PCB belongs to. If not specified, it is a free PCB|
 
 ## Returns
 
@@ -199,6 +81,7 @@ const deletedSource = await eda.dmt_Pcb.deletePcb(sourceUuid);
 console.log('deleted:', deletedSource);
 ```
 
+
 ### createpcb
 
 # DMT\_Pcb.createPcb() method
@@ -213,33 +96,9 @@ function createPcb(boardName?: string): Promise<string | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board it belongs to. If not specified, it is a free PCB
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|boardName|string|_(Optional)_ Name of the board it belongs to. If not specified, it is a free PCB|
 
 ## Returns
 
@@ -265,6 +124,7 @@ const deleted = await eda.dmt_Pcb.deletePcb(pcbUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### deletepcb
 
 # DMT\_Pcb.deletePcb() method
@@ -279,33 +139,9 @@ function deletePcb(pcbUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pcbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pcbUuid|string|PCB UUID|
 
 ## Returns
 
@@ -332,6 +168,7 @@ console.log('deleted:', deleted);
 const info = await eda.dmt_Pcb.getPcbInfo(pcbUuid);
 console.log('info after delete:', info === undefined ? '已不存在' : info.name);
 ```
+
 
 ### getallpcbsinfo
 
@@ -371,6 +208,7 @@ console.log('test pcb included:', pcbs.some(p => p.uuid === pcbUuid));
 // 4. 清理测试 PCB（查询类案例不留测试对象）
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
+
 
 ### getcurrentpcbinfo
 
@@ -415,6 +253,7 @@ console.log('parentProjectUuid:', pcb?.parentProjectUuid);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### getpcbinfo
 
 # DMT\_Pcb.getPcbInfo() method
@@ -429,33 +268,9 @@ function getPcbInfo(pcbUuid: string): Promise<IDMT_PcbItem | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pcbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pcbUuid|string|PCB UUID|
 
 ## Returns
 
@@ -483,6 +298,7 @@ console.log('parentProjectUuid:', pcbInfo?.parentProjectUuid);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### modifypcbname
 
 # DMT\_Pcb.modifyPcbName() method
@@ -497,46 +313,10 @@ function modifyPcbName(pcbUuid: string, pcbName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pcbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB UUID
-
-</td></tr>
-<tr><td>
-
-pcbName
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pcbUuid|string|PCB UUID|
+|pcbName|string|PCB name|
 
 ## Returns
 

@@ -10,130 +10,18 @@ class LIB_Symbol
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(symbolUuid, libraryUuid, targetLibraryUuid, targetClassification, newSymbolName)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Symbol
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, symbolName, classification, symbolType, description)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Symbol
-
-</td></tr>
-<tr><td>
-
-[delete(symbolUuid, libraryUuid)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Symbol
-
-</td></tr>
-<tr><td>
-
-[get(symbolUuid, libraryUuid)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the symbol
-
-</td></tr>
-<tr><td>
-
-[getRenderImage(source)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the symbol render image
-
-</td></tr>
-<tr><td>
-
-[modify(symbolUuid, libraryUuid, symbolName, classification, description)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Symbol
-
-</td></tr>
-<tr><td>
-
-[openInEditor(symbolUuid, libraryUuid, splitScreenId)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open in the editor document
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search symbol
-
-</td></tr>
-<tr><td>
-
-[searchByProperties(properties, libraryUuid)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search symbols precisely by properties
-
-</td></tr>
-<tr><td>
-
-[updateDocumentSource(symbolUuid, libraryUuid, documentSource)](./LIB_Symbol.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Update the document source code of the symbol
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(symbolUuid, libraryUuid, targetLibraryUuid, targetClassification, newSymbolName)](./LIB_Symbol.md)||**_(BETA)_** Copy Symbol|
+|[create(libraryUuid, symbolName, classification, symbolType, description, otherProperty)](./LIB_Symbol.md)||**_(BETA)_** Create Symbol|
+|[delete(symbolUuid, libraryUuid)](./LIB_Symbol.md)||**_(BETA)_** Delete Symbol|
+|[get(symbolUuid, libraryUuid)](./LIB_Symbol.md)||**_(BETA)_** Get all properties of the symbol|
+|[getRenderImage(source)](./LIB_Symbol.md)||**_(BETA)_** Get the symbol render image|
+|[modify(symbolUuid, libraryUuid, symbolName, classification, description, otherProperty)](./LIB_Symbol.md)||**_(BETA)_** Modify Symbol|
+|[openInEditor(symbolUuid, libraryUuid, splitScreenId)](./LIB_Symbol.md)||**_(BETA)_** Open in the editor document|
+|[search(key, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Symbol.md)||**_(BETA)_** Search symbol|
+|[searchByProperties(properties, libraryUuid)](./LIB_Symbol.md)||**_(BETA)_** Search symbols precisely by properties|
+|[updateDocumentSource(symbolUuid, libraryUuid, documentSource)](./LIB_Symbol.md)||**_(BETA)_** Update the document source code of the symbol|
 
 ---
 
@@ -161,85 +49,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newSymbolName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New symbol name. If a symbol with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newSymbolName|string|_(Optional)_ New symbol name. If a symbol with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -273,6 +89,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_Symbol.create() method
@@ -290,90 +107,20 @@ function create(
 	classification?: ILIB_ClassificationIndex | Array<string>,
 	symbolType?: ELIB_SymbolType,
 	description?: string,
+	otherProperty?: Record<string, boolean | number | string | undefined>,
 ): Promise<string | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-symbolName
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-symbolType
-
-</td><td>
-
-[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)
-
-</td><td>
-
-_(Optional)_ Symbol type
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|symbolName|string|Symbol name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|symbolType|[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)|_(Optional)_ Symbol type|
+|description|string|_(Optional)_ Description|
+|otherProperty|Record&lt;string, boolean \| number \| string \| undefined&gt;|_(Optional)_ 其它属性|
 
 ## Returns
 
@@ -397,6 +144,7 @@ console.log('symbolUuid:', symbolUuid);
 console.log('symbolName:', symbolName);
 ```
 
+
 ### delete
 
 # LIB\_Symbol.delete() method
@@ -413,46 +161,10 @@ function delete(symbolUuid: string, libraryUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -474,6 +186,7 @@ console.log('symbolUuid:', symbolUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_Symbol.get() method
@@ -490,46 +203,10 @@ function get(symbolUuid: string, libraryUuid?: string): Promise<ILIB_SymbolItem 
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -551,37 +228,15 @@ Get the symbol render image
 function getRenderImage(source: {
 	symbolUuid: string;
 	libraryUuid: string;
-	subPartName?: undefined | string;
+	subPartName?: string;
 }): Promise<Blob | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-source
-
-</td><td>
-
-\{ symbolUuid: string; libraryUuid: string; subPartName?: undefined \| string \}
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|source|\{ symbolUuid: string; libraryUuid: string; subPartName?: string \}||
 
 ## Returns
 
@@ -607,6 +262,7 @@ console.log('imageSize:', blob.size);
 console.log('imageType:', blob.type);
 ```
 
+
 ### modify
 
 # LIB\_Symbol.modify() method
@@ -624,90 +280,20 @@ function modify(
 	symbolName?: string,
 	classification?: ILIB_ClassificationIndex | Array<string> | null,
 	description?: string | null,
+	otherProperty?: Record<string, boolean | number | string | undefined | null>,
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-symbolName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Symbol name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|symbolName|string|_(Optional)_ Symbol name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
+|otherProperty|Record&lt;string, boolean \| number \| string \| undefined \| null&gt;|_(Optional)_ 其它属性，如希望清除某些属性，则将其的值设置为 `null`|
 
 ## Returns
 
@@ -743,6 +329,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### openineditor
 
 # LIB\_Symbol.openInEditor() method
@@ -763,59 +350,11 @@ function openInEditor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|splitScreenId|string|_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)|
 
 ## Returns
 
@@ -847,6 +386,7 @@ console.log('symbolUuid:', symbolUuid);
 console.log('tabId:', tabId);
 ```
 
+
 ### search
 
 # LIB\_Symbol.search() method
@@ -870,98 +410,14 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-symbolType
-
-</td><td>
-
-[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)
-
-</td><td>
-
-_(Optional)_ Symbol type, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|symbolType|[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)|_(Optional)_ Symbol type, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 
@@ -992,6 +448,7 @@ results.forEach((item, i) => {
 });
 ```
 
+
 ### searchbyproperties
 
 # LIB\_Symbol.searchByProperties() method
@@ -1011,46 +468,10 @@ function searchByProperties(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-properties
-
-</td><td>
-
-[ILIB\_SymbolPropertiesForSearch](../interfaces/ILIB_SymbolPropertiesForSearch.md)
-
-</td><td>
-
-Property
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|properties|[ILIB\_SymbolPropertiesForSearch](../interfaces/ILIB_SymbolPropertiesForSearch.md)|Property|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -1080,6 +501,7 @@ results.forEach((item, i) => {
 });
 ```
 
+
 ### updatedocumentsource
 
 # LIB\_Symbol.updateDocumentSource() method
@@ -1100,59 +522,11 @@ function updateDocumentSource(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-documentSource
-
-</td><td>
-
-string
-
-</td><td>
-
-Document source code
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string|Symbol UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|documentSource|string|Document source code|
 
 ## Returns
 

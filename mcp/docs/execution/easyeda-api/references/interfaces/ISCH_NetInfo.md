@@ -10,54 +10,10 @@ interface ISCH_NetInfo
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[net](./ISCH_NetInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-[wires](./ISCH_NetInfo.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[ISCH\_WireInfo](./ISCH_WireInfo.md)<!-- -->&gt;
-
-</td><td>
-
-Wire
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[net](./ISCH_NetInfo.md)||string|Net name|
+|[wires](./ISCH_NetInfo.md)||Array&lt;[ISCH\_WireInfo](./ISCH_WireInfo.md)<!-- -->&gt;|Wire|
 
 ---
 

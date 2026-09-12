@@ -14,65 +14,11 @@ This object is obtained from [addEventListener](../classes/SYS_Window.md) and ca
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[listener](./ISYS_WindowEventListenerRemovableObject.md)
-
-</td><td>
-
-</td><td>
-
-(ev: any) =&gt; any
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[options?](./ISYS_WindowEventListenerRemovableObject.md)
-
-</td><td>
-
-</td><td>
-
-\{ capture?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-<tr><td>
-
-[type](./ISYS_WindowEventListenerRemovableObject.md)
-
-</td><td>
-
-</td><td>
-
-[ESYS\_WindowEventType](../enums/ESYS_WindowEventType.md)
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[listener](./ISYS_WindowEventListenerRemovableObject.md)||(ev: any) =&gt; any||
+|[options?](./ISYS_WindowEventListenerRemovableObject.md)||\{ capture?: boolean \}|_(Optional)_|
+|[type](./ISYS_WindowEventListenerRemovableObject.md)||[ESYS\_WindowEventType](../enums/ESYS_WindowEventType.md)||
 
 ---
 
@@ -95,7 +41,7 @@ listener: (ev: any) => any;
 ## Signature
 
 ```typescript
-options?: { capture?: undefined | false | true };
+options?: { capture?: boolean };
 ```
 
 ### type

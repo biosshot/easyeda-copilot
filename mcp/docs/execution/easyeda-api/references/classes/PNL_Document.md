@@ -14,31 +14,9 @@ Operations performed on the design document as a whole
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[save()](./PNL_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Save Document
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[save()](./PNL_Document.md)||**_(BETA)_** Save Document|
 
 ---
 

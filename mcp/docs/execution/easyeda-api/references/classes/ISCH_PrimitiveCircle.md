@@ -13,273 +13,31 @@ class ISCH_PrimitiveCircle implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_CenterX()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: center of the circle X
-
-</td></tr>
-<tr><td>
-
-[getState\_CenterY()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: center of the circle Y
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: color
-
-</td></tr>
-<tr><td>
-
-[getState\_FillColor()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[getState\_FillStyle()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill style
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Radius()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: radius
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_CenterX(centerX)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: center of the circle X
-
-</td></tr>
-<tr><td>
-
-[setState\_CenterY(centerY)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: center of the circle Y
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: color
-
-</td></tr>
-<tr><td>
-
-[setState\_FillColor(fillColor)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[setState\_FillStyle(fillStyle)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill style
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Radius(radius)](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: radius
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveCircle.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_CenterX()](./ISCH_PrimitiveCircle.md)||Get the property state: center of the circle X|
+|[getState\_CenterY()](./ISCH_PrimitiveCircle.md)||Get the property state: center of the circle Y|
+|[getState\_Color()](./ISCH_PrimitiveCircle.md)||Get the property state: color|
+|[getState\_FillColor()](./ISCH_PrimitiveCircle.md)||Get the property state: fill color|
+|[getState\_FillStyle()](./ISCH_PrimitiveCircle.md)||Get the property state: fill style|
+|[getState\_LineType()](./ISCH_PrimitiveCircle.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitiveCircle.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveCircle.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveCircle.md)||Get the property state: primitive type|
+|[getState\_Radius()](./ISCH_PrimitiveCircle.md)||Get the property state: radius|
+|[isAsync()](./ISCH_PrimitiveCircle.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_CenterX(centerX)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: center of the circle X|
+|[setState\_CenterY(centerY)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: center of the circle Y|
+|[setState\_Color(color)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: color|
+|[setState\_FillColor(fillColor)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: fill color|
+|[setState\_FillStyle(fillStyle)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: fill style|
+|[setState\_LineType(lineType)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Radius(radius)](./ISCH_PrimitiveCircle.md)||**_(BETA)_** Set the property state: radius|
+|[toAsync()](./ISCH_PrimitiveCircle.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveCircle.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -330,6 +88,7 @@ console.log('radius:', 150, '→', refetched.getState_Radius());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_centerx
 
 # ISCH\_PrimitiveCircle.getState\_CenterX() method
@@ -362,6 +121,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 
 console.log('centerX:', centerX);
 ```
+
 
 ### getstate_centery
 
@@ -396,6 +156,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('centerY:', centerY);
 ```
 
+
 ### getstate_color
 
 # ISCH\_PrimitiveCircle.getState\_Color() method
@@ -428,6 +189,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 
 console.log('color:', color);
 ```
+
 
 ### getstate_fillcolor
 
@@ -462,6 +224,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('fillColor:', fillColor);
 ```
 
+
 ### getstate_fillstyle
 
 # ISCH\_PrimitiveCircle.getState\_FillStyle() method
@@ -494,6 +257,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 
 console.log('fillStyle:', fillStyle);
 ```
+
 
 ### getstate_linetype
 
@@ -528,6 +292,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('lineType:', lineType);
 ```
 
+
 ### getstate_linewidth
 
 # ISCH\_PrimitiveCircle.getState\_LineWidth() method
@@ -560,6 +325,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_primitiveid
 
@@ -594,6 +360,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('primitiveId:', primitiveId);
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveCircle.getState\_PrimitiveType() method
@@ -627,6 +394,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('primitiveType:', primitiveType);
 ```
 
+
 ### getstate_radius
 
 # ISCH\_PrimitiveCircle.getState\_Radius() method
@@ -659,6 +427,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 
 console.log('radius:', radius);
 ```
+
 
 ### isasync
 
@@ -695,6 +464,7 @@ await eda.sch_PrimitiveCircle.delete([circle.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -739,6 +509,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_centerx
 
 # ISCH\_PrimitiveCircle.setState\_CenterX() method
@@ -755,33 +526,9 @@ function setState_CenterX(centerX: number): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-centerX
-
-</td><td>
-
-number
-
-</td><td>
-
-Center of the circle X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|centerX|number|Center of the circle X|
 
 ## Returns
 
@@ -810,6 +557,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('centerX:', x, '→', refetched.getState_CenterX());
 ```
 
+
 ### setstate_centery
 
 # ISCH\_PrimitiveCircle.setState\_CenterY() method
@@ -826,33 +574,9 @@ function setState_CenterY(centerY: number): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-centerY
-
-</td><td>
-
-number
-
-</td><td>
-
-Center of the circle Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|centerY|number|Center of the circle Y|
 
 ## Returns
 
@@ -881,6 +605,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('centerY:', y, '→', refetched.getState_CenterY());
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitiveCircle.setState\_Color() method
@@ -897,33 +622,9 @@ function setState_Color(color: string | null): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Color|
 
 ## Returns
 
@@ -952,6 +653,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('color:', '#FF0000', '→', refetched.getState_Color());
 ```
 
+
 ### setstate_fillcolor
 
 # ISCH\_PrimitiveCircle.setState\_FillColor() method
@@ -968,33 +670,9 @@ function setState_FillColor(fillColor: string | null): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Fill color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillColor|string \| null|Fill color|
 
 ## Returns
 
@@ -1023,6 +701,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('fillColor:', '#FFEC8B', '→', refetched.getState_FillColor());
 ```
 
+
 ### setstate_fillstyle
 
 # ISCH\_PrimitiveCircle.setState\_FillStyle() method
@@ -1039,33 +718,9 @@ function setState_FillStyle(fillStyle: ESCH_PrimitiveFillStyle | null): ISCH_Pri
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillStyle
-
-</td><td>
-
-[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null
-
-</td><td>
-
-Fill style
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillStyle|[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null|Fill style|
 
 ## Returns
 
@@ -1094,6 +749,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('fillStyle:', 'Solid', '→', refetched.getState_FillStyle());
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitiveCircle.setState\_LineType() method
@@ -1110,33 +766,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -1165,6 +797,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('lineType:', 0, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitiveCircle.setState\_LineWidth() method
@@ -1181,33 +814,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -1236,6 +845,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_radius
 
 # ISCH\_PrimitiveCircle.setState\_Radius() method
@@ -1252,33 +862,9 @@ function setState_Radius(radius: number): ISCH_PrimitiveCircle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-radius
-
-</td><td>
-
-number
-
-</td><td>
-
-Radius
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|radius|number|Radius|
 
 ## Returns
 
@@ -1306,6 +892,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 
 console.log('radius:', 150, '→', refetched.getState_Radius());
 ```
+
 
 ### toasync
 
@@ -1349,6 +936,7 @@ const refetched = await eda.sch_PrimitiveCircle.get(circle.getState_PrimitiveId(
 console.log('isAsync after toAsync:', circle.isAsync());
 console.log('radius:', 150, '→', refetched.getState_Radius());
 ```
+
 
 ### tosync
 

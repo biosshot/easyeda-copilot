@@ -10,116 +10,15 @@ interface ILIB_FootprintItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[classification?](./ILIB_FootprintItem.md)
-
-</td><td>
-
-</td><td>
-
-[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-[description?](./ILIB_FootprintItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-<tr><td>
-
-[libraryType](./ILIB_FootprintItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-[libraryUuid](./ILIB_FootprintItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the library it belongs to
-
-</td></tr>
-<tr><td>
-
-[name](./ILIB_FootprintItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint name
-
-</td></tr>
-<tr><td>
-
-[uuid](./ILIB_FootprintItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[classification?](./ILIB_FootprintItem.md)||[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|[description?](./ILIB_FootprintItem.md)||string|_(Optional)_ Description|
+|[libraryType](./ILIB_FootprintItem.md)|`readonly`|[ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)|Library type|
+|[libraryUuid](./ILIB_FootprintItem.md)||string|UUID of the library it belongs to|
+|[name](./ILIB_FootprintItem.md)||string|Footprint name|
+|[otherProperty?](./ILIB_FootprintItem.md)||Record&lt;string, boolean \| number \| string \| undefined&gt;|_(Optional)_ 其它属性|
+|[uuid](./ILIB_FootprintItem.md)||string|Footprint UUID|
 
 ---
 
@@ -183,6 +82,18 @@ Footprint name
 
 ```typescript
 name: string;
+```
+
+### otherproperty
+
+# ILIB\_FootprintItem.otherProperty property
+
+其它属性
+
+## Signature
+
+```typescript
+otherProperty?: Record<string, boolean | number | string | undefined>;
 ```
 
 ### uuid

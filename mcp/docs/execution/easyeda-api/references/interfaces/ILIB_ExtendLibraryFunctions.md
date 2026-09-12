@@ -10,69 +10,11 @@ interface ILIB_ExtendLibraryFunctions
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getClassificationTree](./ILIB_ExtendLibraryFunctions.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; Promise&lt;Array&lt;{ name: string; uuid?: undefined \| string; children?: undefined \| ({ name: string; uuid?: undefined \| string })\[\] }&gt;&gt;
-
-</td><td>
-
-获取分类树
-
-</td></tr>
-<tr><td>
-
-[getDetail](./ILIB_ExtendLibraryFunctions.md)
-
-</td><td>
-
-</td><td>
-
-(uuid: string) =&gt; Promise&lt;any&gt;
-
-</td><td>
-
-获取详细信息
-
-</td></tr>
-<tr><td>
-
-[getList](./ILIB_ExtendLibraryFunctions.md)
-
-</td><td>
-
-</td><td>
-
-(props: [ILIB\_ExtendLibrarySearchProperty](./ILIB_ExtendLibrarySearchProperty.md)<!-- -->&lt;any&gt;) =&gt; Promise&lt;[ILIB\_ExtendLibrarySearchResult](./ILIB_ExtendLibrarySearchResult.md)<!-- -->&lt;any&gt;&gt;
-
-</td><td>
-
-获取列表
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[getClassificationTree](./ILIB_ExtendLibraryFunctions.md)||() =&gt; Promise&lt;Array&lt;{ name: string; uuid?: string; children?: Array&lt;{ name: string; uuid?: string }&gt; \| undefined }&gt;&gt;|获取分类树|
+|[getDetail](./ILIB_ExtendLibraryFunctions.md)||(uuid: string) =&gt; Promise&lt;any&gt;|获取详细信息|
+|[getList](./ILIB_ExtendLibraryFunctions.md)||(props: [ILIB\_ExtendLibrarySearchProperty](./ILIB_ExtendLibrarySearchProperty.md)<!-- -->&lt;any&gt;) =&gt; Promise&lt;[ILIB\_ExtendLibrarySearchResult](./ILIB_ExtendLibrarySearchResult.md)<!-- -->&lt;any&gt;&gt;|获取列表|
 
 ---
 
@@ -91,8 +33,8 @@ getClassificationTree: () =>
 	Promise<
 		Array<{
 			name: string;
-			uuid?: undefined | string;
-			children?: undefined | { name: string; uuid?: undefined | string }[];
+			uuid?: string;
+			children?: Array<{ name: string; uuid?: string }> | undefined;
 		}>
 	>;
 ```

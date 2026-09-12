@@ -10,174 +10,18 @@ interface ILIB_DeviceExtendPropertyItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addIntoBom?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Add to BOM
-
-</td></tr>
-<tr><td>
-
-[addIntoPcb?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Transfer to PCB
-
-</td></tr>
-<tr><td>
-
-[designator?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Designator
-
-</td></tr>
-<tr><td>
-
-[manufacturer?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Manufacturer
-
-</td></tr>
-<tr><td>
-
-[manufacturerId?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Manufacturer ID
-
-</td></tr>
-<tr><td>
-
-[name?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name
-
-</td></tr>
-<tr><td>
-
-[net?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net
-
-</td></tr>
-<tr><td>
-
-[otherProperty?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-Record&lt;string, boolean \| number \| string \| undefined&gt;
-
-</td><td>
-
-_(Optional)_ Other property
-
-</td></tr>
-<tr><td>
-
-[supplier?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Supplier
-
-</td></tr>
-<tr><td>
-
-[supplierId?](./ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Supplier ID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[addIntoBom?](./ILIB_DeviceExtendPropertyItem.md)||boolean|_(Optional)_ Add to BOM|
+|[addIntoPcb?](./ILIB_DeviceExtendPropertyItem.md)||boolean|_(Optional)_ Transfer to PCB|
+|[designator?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Designator|
+|[manufacturer?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Manufacturer|
+|[manufacturerId?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Manufacturer ID|
+|[name?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Name|
+|[net?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Net|
+|[otherProperty?](./ILIB_DeviceExtendPropertyItem.md)||\{ \[key: string\]: boolean \| number \| string \| undefined \}|_(Optional)_ Other property|
+|[supplier?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Supplier|
+|[supplierId?](./ILIB_DeviceExtendPropertyItem.md)||string|_(Optional)_ Supplier ID|
 
 ---
 
@@ -276,7 +120,7 @@ Other property
 ## Signature
 
 ```typescript
-otherProperty?: Record<string, boolean | number | string | undefined>;
+otherProperty?: { [key: string]: boolean | number | string | undefined };
 ```
 
 ### supplier

@@ -14,141 +14,19 @@ Get the runtime environment parameters of EasyEDA Pro
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getEditorCompliedDate()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Get the editor compiled date
-
-</td></tr>
-<tr><td>
-
-[getEditorCurrentVersion(onlySemantic)](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Get the current version of the editor
-
-</td></tr>
-<tr><td>
-
-[getUserInfo()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Get user information
-
-</td></tr>
-<tr><td>
-
-[isClient()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is in the client environment
-
-</td></tr>
-<tr><td>
-
-[isEasyEDAProEdition()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is the EasyEDA Pro edition
-
-</td></tr>
-<tr><td>
-
-[isHalfOfflineMode()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is half-offline mode
-
-</td></tr>
-<tr><td>
-
-[isJLCEDAProEdition()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is the EasyEDA Pro edition
-
-</td></tr>
-<tr><td>
-
-[isOfflineMode()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is fully-offline mode
-
-</td></tr>
-<tr><td>
-
-[isOnlineMode()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is online mode
-
-</td></tr>
-<tr><td>
-
-[isProPrivateEdition()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is the private deployment edition
-
-</td></tr>
-<tr><td>
-
-[isWeb()](./SYS_Environment.md)
-
-</td><td>
-
-</td><td>
-
-Whether it is in the browser environment
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getEditorCompliedDate()](./SYS_Environment.md)||Get the editor compiled date|
+|[getEditorCurrentVersion(onlySemantic)](./SYS_Environment.md)||Get the current version of the editor|
+|[getUserInfo()](./SYS_Environment.md)||Get user information|
+|[isClient()](./SYS_Environment.md)||Whether it is in the client environment|
+|[isEasyEDAProEdition()](./SYS_Environment.md)||Whether it is the EasyEDA Pro edition|
+|[isHalfOfflineMode()](./SYS_Environment.md)||Whether it is half-offline mode|
+|[isJLCEDAProEdition()](./SYS_Environment.md)||Whether it is the EasyEDA Pro edition|
+|[isOfflineMode()](./SYS_Environment.md)||Whether it is fully-offline mode|
+|[isOnlineMode()](./SYS_Environment.md)||Whether it is online mode|
+|[isProPrivateEdition()](./SYS_Environment.md)||Whether it is the private deployment edition|
+|[isWeb()](./SYS_Environment.md)||Whether it is in the browser environment|
 
 ---
 
@@ -182,6 +60,7 @@ const compliedDate = eda.sys_Environment.getEditorCompliedDate();
 console.log('编辑器编译日期：', compliedDate);
 ```
 
+
 ### geteditorcurrentversion
 
 # SYS\_Environment.getEditorCurrentVersion() method
@@ -196,33 +75,9 @@ function getEditorCurrentVersion(onlySemantic?: boolean): string;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-onlySemantic
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to only return the semantic version number. ADD since EDA v3.2.176, ADD since EDA v4.1.13
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|onlySemantic|boolean|_(Optional)_ Whether to only return the semantic version number. ADD since EDA v3.2.176, ADD since EDA v4.1.13|
 
 ## Returns
 
@@ -240,6 +95,7 @@ const version = eda.sys_Environment.getEditorCurrentVersion();
 console.log('编辑器当前版本：', version);
 ```
 
+
 ### getuserinfo
 
 # SYS\_Environment.getUserInfo() method
@@ -250,17 +106,17 @@ Get user information
 
 ```typescript
 function getUserInfo(): {
-	username?: undefined | string;
-	nickname?: undefined | string;
-	avatar?: undefined | string;
-	uuid?: undefined | string;
-	customerCode?: undefined | string;
+	username?: string;
+	nickname?: string;
+	avatar?: string;
+	uuid?: string;
+	customerCode?: string;
 };
 ```
 
 ## Returns
 
-\{ username?: undefined \| string; nickname?: undefined \| string; avatar?: undefined \| string; uuid?: undefined \| string; customerCode?: undefined \| string \}
+\{ username?: string; nickname?: string; avatar?: string; uuid?: string; customerCode?: string \}
 
 User information
 
@@ -276,6 +132,7 @@ console.log('昵称：', userInfo?.nickname);
 console.log('用户 uuid：', userInfo?.uuid);
 console.log('客户编号：', userInfo?.customerCode);
 ```
+
 
 ### isclient
 
@@ -305,6 +162,7 @@ const isClient = eda.sys_Environment.isClient();
 console.log('是否客户端环境：', isClient);
 ```
 
+
 ### iseasyedaproedition
 
 # SYS\_Environment.isEasyEDAProEdition() method
@@ -332,6 +190,7 @@ const isEasyEDAPro = eda.sys_Environment.isEasyEDAProEdition();
 // 2. 输出判断结果（国际版为 true，嘉立创 EDA 专业版为 false）
 console.log('是否 EasyEDA Pro 国际版：', isEasyEDAPro);
 ```
+
 
 ### ishalfofflinemode
 
@@ -361,6 +220,7 @@ const isHalfOffline = eda.sys_Environment.isHalfOfflineMode();
 console.log('是否半离线模式：', isHalfOffline);
 ```
 
+
 ### isjlcedaproedition
 
 # SYS\_Environment.isJLCEDAProEdition() method
@@ -388,6 +248,7 @@ const isJLCEDAPro = eda.sys_Environment.isJLCEDAProEdition();
 // 2. 输出判断结果（嘉立创 EDA 专业版为 true）
 console.log('是否嘉立创 EDA 专业版：', isJLCEDAPro);
 ```
+
 
 ### isofflinemode
 
@@ -417,6 +278,7 @@ const isOffline = eda.sys_Environment.isOfflineMode();
 console.log('是否全离线模式：', isOffline);
 ```
 
+
 ### isonlinemode
 
 # SYS\_Environment.isOnlineMode() method
@@ -445,6 +307,7 @@ const isOnline = eda.sys_Environment.isOnlineMode();
 console.log('是否在线模式：', isOnline);
 ```
 
+
 ### isproprivateedition
 
 # SYS\_Environment.isProPrivateEdition() method
@@ -472,6 +335,7 @@ const isPrivateEdition = eda.sys_Environment.isProPrivateEdition();
 // 2. 输出判断结果（私有化部署版为 true）
 console.log('是否私有化部署版本：', isPrivateEdition);
 ```
+
 
 ### isweb
 

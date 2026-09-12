@@ -14,53 +14,11 @@ Register an event callback
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addEditorTabEventListener(id, eventType, callFn, onlyOnce)](./DMT_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add an editor tab event listener
-
-</td></tr>
-<tr><td>
-
-[isEventListenerAlreadyExist(id)](./DMT_Event.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the event listener exists
-
-</td></tr>
-<tr><td>
-
-[removeEventListener(id)](./DMT_Event.md)
-
-</td><td>
-
-</td><td>
-
-Remove Event listener
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addEditorTabEventListener(id, eventType, callFn, onlyOnce)](./DMT_Event.md)||**_(BETA)_** Add an editor tab event listener|
+|[isEventListenerAlreadyExist(id)](./DMT_Event.md)||Query whether the event listener exists|
+|[removeEventListener(id)](./DMT_Event.md)||Remove Event listener|
 
 ---
 
@@ -90,72 +48,12 @@ function addEditorTabEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [EDMT\_EditorTabEventType](../enums/EDMT_EditorTabEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [EDMT\_EditorTabEventType](../enums/EDMT_EditorTabEventType.md)<!-- -->, props: { documentType: [EDMT\_EditorDocumentType](../enums/EDMT_EditorDocumentType.md)<!-- -->; title: string; tabId: string }) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [EDMT\_EditorTabEventType](../enums/EDMT_EditorTabEventType.md)|Event type|
+|callFn|(eventType: [EDMT\_EditorTabEventType](../enums/EDMT_EditorTabEventType.md)<!-- -->, props: { documentType: [EDMT\_EditorDocumentType](../enums/EDMT_EditorDocumentType.md)<!-- -->; title: string; tabId: string }) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -206,6 +104,7 @@ const removed = eda.dmt_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### iseventlisteneralreadyexist
 
 # DMT\_Event.isEventListenerAlreadyExist() method
@@ -220,33 +119,9 @@ function isEventListenerAlreadyExist(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 
@@ -280,6 +155,7 @@ const afterRemove = eda.dmt_Event.isEventListenerAlreadyExist(listenerId);
 console.log('afterRemove:', afterRemove);
 ```
 
+
 ### removeeventlistener
 
 # DMT\_Event.removeEventListener() method
@@ -294,33 +170,9 @@ function removeEventListener(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 

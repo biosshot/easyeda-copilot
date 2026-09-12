@@ -11,69 +11,11 @@ interface FlexItemProps extends StyleProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./FlexItemProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Child node
-
-</td></tr>
-<tr><td>
-
-[flexRatio?](./FlexItemProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Flex ratio (flex grow factor)
-
-</td></tr>
-<tr><td>
-
-[onClick?](./FlexItemProps.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; void
-
-</td><td>
-
-_(Optional)_ 点击子项时触发
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./FlexItemProps.md)||any|_(Optional)_ Child node|
+|[flexRatio?](./FlexItemProps.md)||number|_(Optional)_ Flex ratio (flex grow factor)|
+|[onClick?](./FlexItemProps.md)||() =&gt; void|_(Optional)_ 点击子项时触发|
 
 ---
 

@@ -10,53 +10,11 @@ class DMT_Workspace
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getAllWorkspacesInfo()](./DMT_Workspace.md)
-
-</td><td>
-
-</td><td>
-
-Get the detailed properties of all workspaces
-
-</td></tr>
-<tr><td>
-
-[getCurrentWorkspaceInfo()](./DMT_Workspace.md)
-
-</td><td>
-
-</td><td>
-
-Get the detailed properties of the current workspace
-
-</td></tr>
-<tr><td>
-
-[toggleToWorkspace(workspaceUuid)](./DMT_Workspace.md)
-
-</td><td>
-
-</td><td>
-
-Switch to workspace
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getAllWorkspacesInfo()](./DMT_Workspace.md)||Get the detailed properties of all workspaces|
+|[getCurrentWorkspaceInfo()](./DMT_Workspace.md)||Get the detailed properties of the current workspace|
+|[toggleToWorkspace(workspaceUuid)](./DMT_Workspace.md)||Switch to workspace|
 
 ---
 
@@ -93,6 +51,7 @@ workspaces.forEach((ws, i) => {
 });
 ```
 
+
 ### getcurrentworkspaceinfo
 
 # DMT\_Workspace.getCurrentWorkspaceInfo() method
@@ -126,6 +85,7 @@ console.log('当前工作区名称：', workspace?.name);
 console.log('当前工作区 uuid：', workspace?.uuid);
 ```
 
+
 ### toggletoworkspace
 
 # DMT\_Workspace.toggleToWorkspace() method
@@ -140,33 +100,9 @@ function toggleToWorkspace(workspaceUuid?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-workspaceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Workspace UUID. If not specified, it will switch to the personal workspace
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|workspaceUuid|string|_(Optional)_ Workspace UUID. If not specified, it will switch to the personal workspace|
 
 ## Returns
 

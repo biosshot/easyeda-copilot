@@ -12,75 +12,13 @@ class SYS_HeaderMenu
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[insertHeaderMenus(headerMenus)](./SYS_HeaderMenu.md)
-
-</td><td>
-
-</td><td>
-
-Import top menu data
-
-</td></tr>
-<tr><td>
-
-[insertSystemHeaderMenuItem(env, id, props)](./SYS_HeaderMenu.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Insert a system header menu item at the specified position
-
-</td></tr>
-<tr><td>
-
-[removeHeaderMenus()](./SYS_HeaderMenu.md)
-
-</td><td>
-
-</td><td>
-
-Remove Top menu data
-
-</td></tr>
-<tr><td>
-
-[removeSystemHeaderMenuItem(id, props)](./SYS_HeaderMenu.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Remove a system header menu item
-
-</td></tr>
-<tr><td>
-
-[replaceHeaderMenus(headerMenus)](./SYS_HeaderMenu.md)
-
-</td><td>
-
-</td><td>
-
-Replace top menu data
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[insertHeaderMenus(headerMenus)](./SYS_HeaderMenu.md)||Import top menu data|
+|[insertSystemHeaderMenuItem(env, id, props)](./SYS_HeaderMenu.md)||**_(BETA)_** Insert a system header menu item at the specified position|
+|[removeHeaderMenus()](./SYS_HeaderMenu.md)||Remove Top menu data|
+|[removeSystemHeaderMenuItem(id, props)](./SYS_HeaderMenu.md)||**_(BETA)_** Remove a system header menu item|
+|[replaceHeaderMenus(headerMenus)](./SYS_HeaderMenu.md)||Replace top menu data|
 
 ---
 
@@ -100,33 +38,9 @@ function insertHeaderMenus(headerMenus: ISYS_HeaderMenus): Promise<void>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-headerMenus
-
-</td><td>
-
-[ISYS\_HeaderMenus](../interfaces/ISYS_HeaderMenus.md)
-
-</td><td>
-
-Top menu data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|headerMenus|[ISYS\_HeaderMenus](../interfaces/ISYS_HeaderMenus.md)|Top menu data|
 
 ## Returns
 
@@ -155,6 +69,7 @@ eda.sys_HeaderMenu.removeHeaderMenus();
 console.log('已还原系统默认菜单');
 ```
 
+
 ### insertsystemheadermenuitem
 
 # SYS\_HeaderMenu.insertSystemHeaderMenuItem() method
@@ -171,72 +86,23 @@ function insertSystemHeaderMenuItem(
 	id: Array<string>,
 	props: {
 		title: string;
-		registerFn?: undefined | string;
-		menuItems?:
-			undefined | (null | ISYS_HeaderMenuSub2MenuItem | ISYS_HeaderMenuSub1MenuItem)[];
-		insertDividerBefore?: undefined | false | true;
-		insertDividerAfter?: undefined | false | true;
-		insertBefore?: undefined | string;
-		crossDividerWhenInsert?: undefined | false | true;
+		registerFn?: string;
+		menuItems?: Array<ISYS_HeaderMenuSub1MenuItem | ISYS_HeaderMenuSub2MenuItem | null>;
+		insertDividerBefore?: boolean;
+		insertDividerAfter?: boolean;
+		insertBefore?: string;
+		crossDividerWhenInsert?: boolean;
 	},
 ): Promise<string | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-env
-
-</td><td>
-
-[ESYS\_HeaderMenuEnvironment](../enums/ESYS_HeaderMenuEnvironment.md)
-
-</td><td>
-
-Environment
-
-</td></tr>
-<tr><td>
-
-id
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Menu item ID tree. It will match menu items by hierarchy in array order and use the last element of the array as the ID of the menu item to insert
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-{ title: string; registerFn?: undefined \| string; menuItems?: undefined \| (null \| [ISYS\_HeaderMenuSub2MenuItem](../interfaces/ISYS_HeaderMenuSub2MenuItem.md) \| [ISYS\_HeaderMenuSub1MenuItem](../interfaces/ISYS_HeaderMenuSub1MenuItem.md)<!-- -->)\[\]; insertDividerBefore?: undefined \| false \| true; insertDividerAfter?: undefined \| false \| true; insertBefore?: undefined \| string; crossDividerWhenInsert?: undefined \| false \| true }
-
-</td><td>
-
-Other parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|env|[ESYS\_HeaderMenuEnvironment](../enums/ESYS_HeaderMenuEnvironment.md)|Environment|
+|id|Array&lt;string&gt;|Menu item ID tree. It will match menu items by hierarchy in array order and use the last element of the array as the ID of the menu item to insert|
+|props|{ title: string; registerFn?: string; menuItems?: Array&lt;[ISYS\_HeaderMenuSub1MenuItem](../interfaces/ISYS_HeaderMenuSub1MenuItem.md) \| [ISYS\_HeaderMenuSub2MenuItem](../interfaces/ISYS_HeaderMenuSub2MenuItem.md) \| null&gt;; insertDividerBefore?: boolean; insertDividerAfter?: boolean; insertBefore?: string; crossDividerWhenInsert?: boolean }|Other parameters|
 
 ## Returns
 
@@ -279,6 +145,7 @@ const removed = await eda.sys_HeaderMenu.removeSystemHeaderMenuItem(['Tools', me
 console.log('移除结果：', removed);
 ```
 
+
 ### removeheadermenus
 
 # SYS\_HeaderMenu.removeHeaderMenus() method
@@ -309,6 +176,7 @@ eda.sys_HeaderMenu.removeHeaderMenus();
 console.log('已移除导入的顶部菜单数据');
 ```
 
+
 ### removesystemheadermenuitem
 
 # SYS\_HeaderMenu.removeSystemHeaderMenuItem() method
@@ -322,55 +190,16 @@ Remove a system header menu item
 ```typescript
 function removeSystemHeaderMenuItem(
 	id: Array<string>,
-	props?: {
-		removeTheBeforeDivider?: undefined | false | true;
-		removeTheAfterDivider?: undefined | false | true;
-	},
+	props?: { removeTheBeforeDivider?: boolean; removeTheAfterDivider?: boolean },
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Menu item ID tree. It will match menu items by hierarchy in array order and remove the menu item corresponding to the last element; when only one element is passed, the corresponding first-level menu is removed
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-\{ removeTheBeforeDivider?: undefined \| false \| true; removeTheAfterDivider?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_ Other parameters. Whether to remove the separators before and after the menu item (only takes effect when removing a sub-menu item)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|Array&lt;string&gt;|Menu item ID tree. It will match menu items by hierarchy in array order and remove the menu item corresponding to the last element; when only one element is passed, the corresponding first-level menu is removed|
+|props|\{ removeTheBeforeDivider?: boolean; removeTheAfterDivider?: boolean \}|_(Optional)_ Other parameters. Whether to remove the separators before and after the menu item (only takes effect when removing a sub-menu item)|
 
 ## Returns
 
@@ -408,6 +237,7 @@ const removed = await eda.sys_HeaderMenu.removeSystemHeaderMenuItem(['Tools', me
 console.log('移除结果：', removed);
 ```
 
+
 ### replaceheadermenus
 
 # SYS\_HeaderMenu.replaceHeaderMenus() method
@@ -422,33 +252,9 @@ function replaceHeaderMenus(headerMenus: ISYS_HeaderMenus): Promise<void>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-headerMenus
-
-</td><td>
-
-[ISYS\_HeaderMenus](../interfaces/ISYS_HeaderMenus.md)
-
-</td><td>
-
-Top menu data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|headerMenus|[ISYS\_HeaderMenus](../interfaces/ISYS_HeaderMenus.md)|Top menu data|
 
 ## Returns
 

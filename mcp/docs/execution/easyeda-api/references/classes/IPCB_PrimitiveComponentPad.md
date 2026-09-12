@@ -17,113 +17,19 @@ You can only obtain a device pad primitive through [the getAllPinsByPrimitiveId 
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[primitiveType](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-`protected`
-
-`readonly`
-
-</td><td>
-
-[EPCB\_PrimitiveType.COMPONENT\_PAD](../enums/EPCB_PrimitiveType.md)
-
-</td><td>
-
-图元类型
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[primitiveType](./IPCB_PrimitiveComponentPad.md)|`protected` `readonly`|[EPCB\_PrimitiveType.COMPONENT\_PAD](../enums/EPCB_PrimitiveType.md)|图元类型|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getConnectedPrimitives(onlyCentreConnection)](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get connected primitives
-
-</td></tr>
-<tr><td>
-
-[getConnectedPrimitives(onlyCentreConnection)](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[getState\_ParentComponentPrimitiveId()](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: parent device primitive ID
-
-</td></tr>
-<tr><td>
-
-[setState\_ParentComponentPrimitiveId()](./IPCB_PrimitiveComponentPad.md)
-
-</td><td>
-
-</td><td>
-
-Set the property state: parent device primitive ID
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveComponentPad.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getConnectedPrimitives(onlyCentreConnection)](./IPCB_PrimitiveComponentPad.md)||**_(BETA)_** Get connected primitives|
+|[getConnectedPrimitives(onlyCentreConnection)](./IPCB_PrimitiveComponentPad.md)|||
+|[getState\_ParentComponentPrimitiveId()](./IPCB_PrimitiveComponentPad.md)||Get the property state: parent device primitive ID|
+|[setState\_ParentComponentPrimitiveId()](./IPCB_PrimitiveComponentPad.md)||Set the property state: parent device primitive ID|
 
 ---
 
@@ -191,6 +97,7 @@ console.log('before:', before, '→ after:', after);
 console.log('moved:', after === before + 100);
 ```
 
+
 ### getconnectedprimitives
 
 # IPCB\_PrimitiveComponentPad.getConnectedPrimitives() method
@@ -209,33 +116,9 @@ function getConnectedPrimitives(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-onlyCentreConnection
-
-</td><td>
-
-true
-
-</td><td>
-
-Whether to only use center connection. If it is `true`<!-- -->, only center-connected primitives (lines, arc lines, vias) are obtained; if it is `false`<!-- -->, all contacting primitives are obtained
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|onlyCentreConnection|true|Whether to only use center connection. If it is `true`<!-- -->, only center-connected primitives (lines, arc lines, vias) are obtained; if it is `false`<!-- -->, all contacting primitives are obtained|
 
 ## Returns
 
@@ -275,6 +158,7 @@ console.log('centreContainsLine:', centreConnected.some(p => p.getState_Primitiv
 console.log('allConnectedCount:', allConnected.length);
 ```
 
+
 ### getconnectedprimitives_1
 
 # IPCB\_PrimitiveComponentPad.getConnectedPrimitives() method
@@ -297,31 +181,9 @@ function getConnectedPrimitives(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-onlyCentreConnection
-
-</td><td>
-
-false
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|onlyCentreConnection|false||
 
 ## Returns
 
@@ -364,6 +226,7 @@ console.log('pinCount:', pins.length);
 console.log('allBelongToComponent:', parentIds.every(id => id === compId));
 console.log('firstPinParentId:', parentIds[0]);
 ```
+
 
 ### setstate_parentcomponentprimitiveid
 

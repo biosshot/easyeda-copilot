@@ -13,207 +13,25 @@ class ISCH_PrimitivePolygon implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: color
-
-</td></tr>
-<tr><td>
-
-[getState\_FillColor()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[getState\_Line()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: coordinate group
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: color
-
-</td></tr>
-<tr><td>
-
-[setState\_FillColor(fillColor)](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[setState\_Line(line)](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: coordinate group
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Color()](./ISCH_PrimitivePolygon.md)||Get the property state: color|
+|[getState\_FillColor()](./ISCH_PrimitivePolygon.md)||Get the property state: fill color|
+|[getState\_Line()](./ISCH_PrimitivePolygon.md)||Get the property state: coordinate group|
+|[getState\_LineType()](./ISCH_PrimitivePolygon.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitivePolygon.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./ISCH_PrimitivePolygon.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitivePolygon.md)||Get the property state: primitive type|
+|[isAsync()](./ISCH_PrimitivePolygon.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_Color(color)](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Set the property state: color|
+|[setState\_FillColor(fillColor)](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Set the property state: fill color|
+|[setState\_Line(line)](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Set the property state: coordinate group|
+|[setState\_LineType(lineType)](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitivePolygon.md)||**_(BETA)_** Set the property state: Line width|
+|[toAsync()](./ISCH_PrimitivePolygon.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitivePolygon.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -265,6 +83,7 @@ console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_color
 
 # ISCH\_PrimitivePolygon.getState\_Color() method
@@ -298,6 +117,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 
 console.log('color:', color);
 ```
+
 
 ### getstate_fillcolor
 
@@ -333,6 +153,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 console.log('fillColor:', fillColor);
 ```
 
+
 ### getstate_line
 
 # ISCH\_PrimitivePolygon.getState\_Line() method
@@ -366,6 +187,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 
 console.log('line:', JSON.stringify(coords));
 ```
+
 
 ### getstate_linetype
 
@@ -401,6 +223,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 console.log('lineType:', lineType);
 ```
 
+
 ### getstate_linewidth
 
 # ISCH\_PrimitivePolygon.getState\_LineWidth() method
@@ -434,6 +257,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_primitiveid
 
@@ -469,6 +293,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 console.log('primitiveId:', primitiveId);
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitivePolygon.getState\_PrimitiveType() method
@@ -502,6 +327,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### isasync
 
@@ -539,6 +365,7 @@ await eda.sch_PrimitivePolygon.delete([polygon.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -584,6 +411,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitivePolygon.setState\_Color() method
@@ -600,33 +428,9 @@ function setState_Color(color: string | null): ISCH_PrimitivePolygon;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Color|
 
 ## Returns
 
@@ -656,6 +460,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('color:', '#FF0000', '→', refetched.getState_Color());
 ```
 
+
 ### setstate_fillcolor
 
 # ISCH\_PrimitivePolygon.setState\_FillColor() method
@@ -672,33 +477,9 @@ function setState_FillColor(fillColor: string | null): ISCH_PrimitivePolygon;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Fill color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillColor|string \| null|Fill color|
 
 ## Returns
 
@@ -728,6 +509,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('fillColor:', '#FFFF00', '→', refetched.getState_FillColor());
 ```
 
+
 ### setstate_line
 
 # ISCH\_PrimitivePolygon.setState\_Line() method
@@ -744,33 +526,9 @@ function setState_Line(line: Array<number>): ISCH_PrimitivePolygon;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-line
-
-</td><td>
-
-Array&lt;number&gt;
-
-</td><td>
-
-Coordinate group
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|line|Array&lt;number&gt;|Coordinate group|
 
 ## Returns
 
@@ -800,6 +558,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('line:', JSON.stringify(rect), '→', JSON.stringify(refetched.getState_Line()));
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitivePolygon.setState\_LineType() method
@@ -816,33 +575,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -872,6 +607,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('lineType:', 0, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitivePolygon.setState\_LineWidth() method
@@ -888,33 +624,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitivePolygon;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -943,6 +655,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
+
 
 ### toasync
 
@@ -984,6 +697,7 @@ const refetched = await eda.sch_PrimitivePolygon.get(polygon.getState_PrimitiveI
 console.log('isAsync after toAsync:', polygon.isAsync());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
+
 
 ### tosync
 

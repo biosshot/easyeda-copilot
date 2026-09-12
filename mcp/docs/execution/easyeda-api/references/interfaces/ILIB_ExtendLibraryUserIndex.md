@@ -18,54 +18,10 @@ If you only want to display the user name, you can pass in the `name` field
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name?](./ILIB_ExtendLibraryUserIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ User name
-
-</td></tr>
-<tr><td>
-
-[uuid?](./ILIB_ExtendLibraryUserIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ User UUID within the EasyEDA system
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name?](./ILIB_ExtendLibraryUserIndex.md)||string|_(Optional)_ User name|
+|[uuid?](./ILIB_ExtendLibraryUserIndex.md)||string|_(Optional)_ User UUID within the EasyEDA system|
 
 ---
 

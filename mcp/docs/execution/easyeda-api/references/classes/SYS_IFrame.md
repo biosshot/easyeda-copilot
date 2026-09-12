@@ -12,75 +12,12 @@ class SYS_IFrame
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[closeIFrame(id)](./SYS_IFrame.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Close iframe window
-
-</td></tr>
-<tr><td>
-
-[hideIFrame(id)](./SYS_IFrame.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Hide iframe window
-
-</td></tr>
-<tr><td>
-
-[isIFrameAlreadyExist(id)](./SYS_IFrame.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Whether the iframe already exists
-
-</td></tr>
-<tr><td>
-
-[openIFrame(htmlFileName, width, height, id, props)](./SYS_IFrame.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open iframe window
-
-</td></tr>
-<tr><td>
-
-[showIFrame(id)](./SYS_IFrame.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Show iframe window
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[closeIFrame(id)](./SYS_IFrame.md)||**_(BETA)_** Close iframe window|
+|[hideIFrame(id)](./SYS_IFrame.md)||**_(BETA)_** Hide iframe window|
+|[openIFrame(htmlFileName, width, height, id, props)](./SYS_IFrame.md)||**_(BETA)_** Open iframe window|
+|[showIFrame(id)](./SYS_IFrame.md)||**_(BETA)_** Show iframe window|
 
 ---
 
@@ -102,33 +39,9 @@ function closeIFrame(id?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Iframe window ID. If not passed in, all iframe windows opened by this extension will be closed
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|_(Optional)_ Iframe window ID. If not passed in, all iframe windows opened by this extension will be closed|
 
 ## Returns
 
@@ -163,6 +76,7 @@ const closedAgain = await eda.sys_IFrame.closeIFrame('嘉立创示例_窗口A');
 console.log('重复关闭已关窗口结果：', closedAgain);
 ```
 
+
 ### hideiframe
 
 # SYS\_IFrame.hideIFrame() method
@@ -179,33 +93,9 @@ function hideIFrame(id?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Iframe window ID. If not passed in, all iframe windows associated with the extension will be hidden
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|_(Optional)_ Iframe window ID. If not passed in, all iframe windows associated with the extension will be hidden|
 
 ## Returns
 
@@ -245,59 +135,6 @@ const closed = await eda.sys_IFrame.closeIFrame('嘉立创示例_隐藏演示');
 console.log('关闭隐藏窗口结果：', closed);
 ```
 
-### isiframealreadyexist
-
-# SYS\_IFrame.isIFrameAlreadyExist() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Whether the iframe already exists
-
-## Signature
-
-```typescript
-function isIFrameAlreadyExist(id: string): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Iframe ID
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether Exists
-
-## Remarks
-
-Note: This API is only valid for extensions. Calling it in a standalone script environment will always `throw Error` ADD since EDA v4.2
 
 ### openiframe
 
@@ -316,102 +153,28 @@ function openIFrame(
 	height?: number,
 	id?: string,
 	props?: {
-		maximizeButton?: undefined | false | true;
-		minimizeButton?: undefined | false | true;
-		minimizeStyle?: undefined | 'collapsed' | 'constricted';
-		buttonCallbackFn?:
-			undefined | ((button: 'close' | 'minimize' | 'maximize') => void | Promise<void>);
-		onBeforeCloseCallFn?:
-			undefined | (() => boolean | undefined | Promise<boolean | undefined>);
-		grayscaleMask?: undefined | false | true;
-		title?: undefined | string;
-		x?: undefined | number;
-		y?: undefined | number;
+		maximizeButton?: boolean;
+		minimizeButton?: boolean;
+		minimizeStyle?: 'collapsed' | 'constricted';
+		buttonCallbackFn?: (button: 'close' | 'minimize' | 'maximize') => void | Promise<void>;
+		onBeforeCloseCallFn?: () => boolean | undefined | Promise<boolean | undefined>;
+		grayscaleMask?: boolean;
+		title?: string;
+		x?: number;
+		y?: number;
 	},
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-htmlFileName
-
-</td><td>
-
-string
-
-</td><td>
-
-The path of the HTML file to load within the extension package, starting from the extension root directory, e.g. `/iframe/index.html`
-
-</td></tr>
-<tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Width of the iframe window
-
-</td></tr>
-<tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Height of the iframe window
-
-</td></tr>
-<tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Iframe window ID, used to close the iframe window
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-{ maximizeButton?: undefined \| false \| true; minimizeButton?: undefined \| false \| true; minimizeStyle?: undefined \| 'collapsed' \| 'constricted'; buttonCallbackFn?: undefined \| ((button: 'close' \| 'minimize' \| 'maximize') =&gt; void \| Promise&lt;void&gt;); onBeforeCloseCallFn?: undefined \| (() =&gt; boolean \| undefined \| Promise&lt;boolean \| undefined&gt;); grayscaleMask?: undefined \| false \| true; title?: undefined \| string; x?: undefined \| number; y?: undefined \| number }
-
-</td><td>
-
-_(Optional)_ Other parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|htmlFileName|string|The path of the HTML file to load within the extension package, starting from the extension root directory, e.g. `/iframe/index.html`|
+|width|number|_(Optional)_ Width of the iframe window|
+|height|number|_(Optional)_ Height of the iframe window|
+|id|string|_(Optional)_ Iframe window ID, used to close the iframe window|
+|props|{ maximizeButton?: boolean; minimizeButton?: boolean; minimizeStyle?: 'collapsed' \| 'constricted'; buttonCallbackFn?: (button: 'close' \| 'minimize' \| 'maximize') =&gt; void \| Promise&lt;void&gt;; onBeforeCloseCallFn?: () =&gt; boolean \| undefined \| Promise&lt;boolean \| undefined&gt;; grayscaleMask?: boolean; title?: string; x?: number; y?: number }|_(Optional)_ Other parameters|
 
 ## Returns
 
@@ -448,6 +211,7 @@ const closed = await eda.sys_IFrame.closeIFrame('嘉立创示例_窗口');
 console.log('关闭结果：', closed);
 ```
 
+
 ### showiframe
 
 # SYS\_IFrame.showIFrame() method
@@ -464,33 +228,9 @@ function showIFrame(id?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Iframe window ID. If not passed in, all iframe windows associated with the extension will be shown
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|_(Optional)_ Iframe window ID. If not passed in, all iframe windows associated with the extension will be shown|
 
 ## Returns
 

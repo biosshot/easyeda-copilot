@@ -20,54 +20,10 @@ If both the `uuid` and `name` fields are passed, only `uuid` cannot be duplicate
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name](./ILIB_ExtendLibraryItemIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Library name
-
-</td></tr>
-<tr><td>
-
-[uuid?](./ILIB_ExtendLibraryItemIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name](./ILIB_ExtendLibraryItemIndex.md)||string|Library name|
+|[uuid?](./ILIB_ExtendLibraryItemIndex.md)||string|_(Optional)_ Library UUID|
 
 ---
 

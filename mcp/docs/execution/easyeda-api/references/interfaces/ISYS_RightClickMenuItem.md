@@ -10,99 +10,13 @@ interface ISYS_RightClickMenuItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[icon?](./ISYS_RightClickMenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Menu item icon
-
-</td></tr>
-<tr><td>
-
-[id](./ISYS_RightClickMenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Menu item ID, cannot be repeated
-
-</td></tr>
-<tr><td>
-
-[menuItems?](./ISYS_RightClickMenuItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[ISYS\_RightClickMenuItem](./ISYS_RightClickMenuItem.md) \| null&gt;
-
-</td><td>
-
-_(Optional)_ Sub-menu item
-
-</td></tr>
-<tr><td>
-
-[registerFn?](./ISYS_RightClickMenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Registration method name (the method needs to be exported in the extension entry file)
-
-</td></tr>
-<tr><td>
-
-[title?](./ISYS_RightClickMenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Menu item title
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[icon?](./ISYS_RightClickMenuItem.md)||string|_(Optional)_ Menu item icon|
+|[id](./ISYS_RightClickMenuItem.md)||string|Menu item ID, cannot be repeated|
+|[menuItems?](./ISYS_RightClickMenuItem.md)||Array&lt;[ISYS\_RightClickMenuItem](./ISYS_RightClickMenuItem.md) \| null&gt;|_(Optional)_ Sub-menu item|
+|[registerFn?](./ISYS_RightClickMenuItem.md)||string|_(Optional)_ Registration method name (the method needs to be exported in the extension entry file)|
+|[title?](./ISYS_RightClickMenuItem.md)||string|_(Optional)_ Menu item title|
 
 ---
 

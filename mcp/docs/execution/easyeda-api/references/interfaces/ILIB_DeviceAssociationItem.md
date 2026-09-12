@@ -10,114 +10,14 @@ interface ILIB_DeviceAssociationItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[footprint?](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-\{ uuid: string; libraryUuid: string \}
-
-</td><td>
-
-_(Optional)_ Footprint
-
-</td></tr>
-<tr><td>
-
-[footprintUuid](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-封装 UUID
-
-</td></tr>
-<tr><td>
-
-[images?](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-<tr><td>
-
-[symbol](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-{ type: [ELIB\_SymbolType](../enums/ELIB_SymbolType.md)<!-- -->; uuid: string; libraryUuid: string }
-
-</td><td>
-
-Symbol
-
-</td></tr>
-<tr><td>
-
-[symbolType](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)
-
-</td><td>
-
-符号类型
-
-</td></tr>
-<tr><td>
-
-[symbolUuid](./ILIB_DeviceAssociationItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-符号 UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[footprint?](./ILIB_DeviceAssociationItem.md)||\{ uuid: string; libraryUuid: string \}|_(Optional)_ Footprint|
+|[footprintUuid](./ILIB_DeviceAssociationItem.md)||string|封装 UUID|
+|[images?](./ILIB_DeviceAssociationItem.md)||Array&lt;string&gt;|_(Optional)_|
+|[symbol](./ILIB_DeviceAssociationItem.md)||{ type: [ELIB\_SymbolType](../enums/ELIB_SymbolType.md)<!-- -->; uuid: string; libraryUuid: string }|Symbol|
+|[symbolType](./ILIB_DeviceAssociationItem.md)||[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)|符号类型|
+|[symbolUuid](./ILIB_DeviceAssociationItem.md)||string|符号 UUID|
 
 ---
 

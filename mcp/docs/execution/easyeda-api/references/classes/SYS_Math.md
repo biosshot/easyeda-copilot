@@ -14,196 +14,24 @@ Provides polygon geometry calculation methods, supporting discrete point coordin
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[bboxIntersects(bbox1, bbox2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Quickly determine whether two BBoxes intersect
-
-</td></tr>
-<tr><td>
-
-[calculateArea(polygon)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the area of a polygon
-
-</td></tr>
-<tr><td>
-
-[calculatePerimeter(polygon)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the perimeter of a polygon
-
-</td></tr>
-<tr><td>
-
-[contains(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Determine whether polygon1 completely contains polygon2
-
-</td></tr>
-<tr><td>
-
-[containsPoint(polygon, point)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Determine whether the point is inside the polygon
-
-</td></tr>
-<tr><td>
-
-[distanceToPoint(polygon, point)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the shortest distance from a point to the polygon boundary
-
-</td></tr>
-<tr><td>
-
-[getBBox(polygon)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Get the minimum bounding rectangle (BBox) of the polygon
-
-</td></tr>
-<tr><td>
-
-[getCentroid(polygon)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the centroid of the polygon
-
-</td></tr>
-<tr><td>
-
-[intersection(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the intersection of two polygons
-
-</td></tr>
-<tr><td>
-
-[intersects(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Determine whether two polygons intersect
-
-</td></tr>
-<tr><td>
-
-[rotate(polygon, angle, centerX, centerY)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Rotate the polygon
-
-</td></tr>
-<tr><td>
-
-[scale(polygon, scaleX, scaleY, centerX, centerY)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Scale the polygon
-
-</td></tr>
-<tr><td>
-
-[subtract(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the difference of two polygons (polygon1 - polygon2)
-
-</td></tr>
-<tr><td>
-
-[translate(polygon, dx, dy)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Translate the polygon
-
-</td></tr>
-<tr><td>
-
-[union(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the union of two polygons
-
-</td></tr>
-<tr><td>
-
-[xor(polygon1, polygon2)](./SYS_Math.md)
-
-</td><td>
-
-</td><td>
-
-Calculate the symmetric difference (XOR) of two polygons
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[bboxIntersects(bbox1, bbox2)](./SYS_Math.md)||Quickly determine whether two BBoxes intersect|
+|[calculateArea(polygon)](./SYS_Math.md)||Calculate the area of a polygon|
+|[calculatePerimeter(polygon)](./SYS_Math.md)||Calculate the perimeter of a polygon|
+|[contains(polygon1, polygon2)](./SYS_Math.md)||Determine whether polygon1 completely contains polygon2|
+|[containsPoint(polygon, point)](./SYS_Math.md)||Determine whether the point is inside the polygon|
+|[distanceToPoint(polygon, point)](./SYS_Math.md)||Calculate the shortest distance from a point to the polygon boundary|
+|[getBBox(polygon)](./SYS_Math.md)||Get the minimum bounding rectangle (BBox) of the polygon|
+|[getCentroid(polygon)](./SYS_Math.md)||Calculate the centroid of the polygon|
+|[intersection(polygon1, polygon2)](./SYS_Math.md)||Calculate the intersection of two polygons|
+|[intersects(polygon1, polygon2)](./SYS_Math.md)||Determine whether two polygons intersect|
+|[rotate(polygon, angle, centerX, centerY)](./SYS_Math.md)||Rotate the polygon|
+|[scale(polygon, scaleX, scaleY, centerX, centerY)](./SYS_Math.md)||Scale the polygon|
+|[subtract(polygon1, polygon2)](./SYS_Math.md)||Calculate the difference of two polygons (polygon1 - polygon2)|
+|[translate(polygon, dx, dy)](./SYS_Math.md)||Translate the polygon|
+|[union(polygon1, polygon2)](./SYS_Math.md)||Calculate the union of two polygons|
+|[xor(polygon1, polygon2)](./SYS_Math.md)||Calculate the symmetric difference (XOR) of two polygons|
 
 ---
 
@@ -223,46 +51,10 @@ function bboxIntersects(bbox1: ISYS_MathBBox, bbox2: ISYS_MathBBox): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-bbox1
-
-</td><td>
-
-[ISYS\_MathBBox](../interfaces/ISYS_MathBBox.md)
-
-</td><td>
-
-BBox 1
-
-</td></tr>
-<tr><td>
-
-bbox2
-
-</td><td>
-
-[ISYS\_MathBBox](../interfaces/ISYS_MathBBox.md)
-
-</td><td>
-
-BBox 2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|bbox1|[ISYS\_MathBBox](../interfaces/ISYS_MathBBox.md)|BBox 1|
+|bbox2|[ISYS\_MathBBox](../interfaces/ISYS_MathBBox.md)|BBox 2|
 
 ## Returns
 
@@ -287,6 +79,7 @@ const zoneD = { minX: 100, minY: 0, maxX: 180, maxY: 40 };
 console.log('区域 A 与区域 D 相交：', eda.sys_Math.bboxIntersects(zoneA, zoneD));
 ```
 
+
 ### calculatearea
 
 # SYS\_Math.calculateArea() method
@@ -301,33 +94,9 @@ function calculateArea(polygon: TSYS_MathPolygonInput): number;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon or polygon group
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon or polygon group|
 
 ## Returns
 
@@ -356,6 +125,7 @@ const merged = eda.sys_Math.union(rect, overlap);
 console.log('两矩形合并后的净面积：', eda.sys_Math.calculateArea(merged));
 ```
 
+
 ### calculateperimeter
 
 # SYS\_Math.calculatePerimeter() method
@@ -370,33 +140,9 @@ function calculatePerimeter(polygon: TSYS_MathPolygonInput): number;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
 
 ## Returns
 
@@ -428,6 +174,7 @@ const cut = eda.sys_Math.subtract(rect, hole);
 console.log('挖孔后多边形组的周长：', eda.sys_Math.calculatePerimeter(cut));
 ```
 
+
 ### contains
 
 # SYS\_Math.contains() method
@@ -442,46 +189,10 @@ function contains(polygon1: TSYS_MathPolygonInput, polygon2: TSYS_MathPolygonInp
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Outer polygon
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Internal polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Outer polygon|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Internal polygon|
 
 ## Returns
 
@@ -505,6 +216,7 @@ console.log('板框完全包含越界器件：', eda.sys_Math.contains(board, ov
 console.log('两器件区域有重叠：', eda.sys_Math.intersects(device, overhang));
 ```
 
+
 ### containspoint
 
 # SYS\_Math.containsPoint() method
@@ -519,46 +231,10 @@ function containsPoint(polygon: TSYS_MathPolygonInput, point: ISYS_MathPoint): b
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-<tr><td>
-
-point
-
-</td><td>
-
-[ISYS\_MathPoint](../interfaces/ISYS_MathPoint.md)
-
-</td><td>
-
-The point to determine
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
+|point|[ISYS\_MathPoint](../interfaces/ISYS_MathPoint.md)|The point to determine|
 
 ## Returns
 
@@ -591,6 +267,7 @@ console.log('顶点在禁布区内：', eda.sys_Math.containsPoint(keepout, corn
 console.log('顶点到边界的距离：', eda.sys_Math.distanceToPoint(keepout, corner));
 ```
 
+
 ### distancetopoint
 
 # SYS\_Math.distanceToPoint() method
@@ -605,46 +282,10 @@ function distanceToPoint(polygon: TSYS_MathPolygonInput, point: ISYS_MathPoint):
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-<tr><td>
-
-point
-
-</td><td>
-
-[ISYS\_MathPoint](../interfaces/ISYS_MathPoint.md)
-
-</td><td>
-
-The point to calculate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
+|point|[ISYS\_MathPoint](../interfaces/ISYS_MathPoint.md)|The point to calculate|
 
 ## Returns
 
@@ -671,6 +312,7 @@ const diagonalPoint = { x: 130, y: 110 };
 console.log('斜向点到边界的最短距离：', eda.sys_Math.distanceToPoint(zone, diagonalPoint));
 ```
 
+
 ### getbbox
 
 # SYS\_Math.getBBox() method
@@ -685,33 +327,9 @@ function getBBox(polygon: TSYS_MathPolygonInput): ISYS_MathBBox;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
 
 ## Returns
 
@@ -738,6 +356,7 @@ const other = { minX: 200, minY: 0, maxX: 280, maxY: 40 };
 console.log('两区域外接矩形相交：', eda.sys_Math.bboxIntersects(bbox, other));
 ```
 
+
 ### getcentroid
 
 # SYS\_Math.getCentroid() method
@@ -752,33 +371,9 @@ function getCentroid(polygon: TSYS_MathPolygonInput): ISYS_MathPoint;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
 
 ## Returns
 
@@ -810,6 +405,7 @@ const rotated = eda.sys_Math.rotate(rect, 90);
 console.log('绕质心旋转 90 度后的第一个点：', JSON.stringify(rotated[0]));
 ```
 
+
 ### intersection
 
 # SYS\_Math.intersection() method
@@ -827,46 +423,10 @@ function intersection(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 1
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 1|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 2|
 
 ## Returns
 
@@ -895,6 +455,7 @@ const far = [{ x: 200, y: 0 }, { x: 280, y: 0 }, { x: 280, y: 40 }, { x: 200, y:
 console.log('分离区域的交集个数：', eda.sys_Math.intersection(copperA, far).length);
 ```
 
+
 ### intersects
 
 # SYS\_Math.intersects() method
@@ -909,46 +470,10 @@ function intersects(polygon1: TSYS_MathPolygonInput, polygon2: TSYS_MathPolygonI
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 1
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 1|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 2|
 
 ## Returns
 
@@ -981,6 +506,7 @@ const touching = [{ x: 100, y: 0 }, { x: 180, y: 0 }, { x: 180, y: 40 }, { x: 10
 console.log('两区域边界贴合：', eda.sys_Math.intersects(trace, touching));
 ```
 
+
 ### rotate
 
 # SYS\_Math.rotate() method
@@ -1000,72 +526,12 @@ function rotate(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-<tr><td>
-
-angle
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle (in degrees, positive values are counterclockwise)
-
-</td></tr>
-<tr><td>
-
-centerX
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ X coordinate of the rotation center, defaulting to the centroid
-
-</td></tr>
-<tr><td>
-
-centerY
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Y coordinate of the rotation center, defaulting to the centroid
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
+|angle|number|Rotation angle (in degrees, positive values are counterclockwise)|
+|centerX|number|_(Optional)_ X coordinate of the rotation center, defaulting to the centroid|
+|centerY|number|_(Optional)_ Y coordinate of the rotation center, defaulting to the centroid|
 
 ## Returns
 
@@ -1093,6 +559,7 @@ const back = eda.sys_Math.rotate(originRotated, -90, 0, 0);
 console.log('再顺时针转回后的第一个点：', JSON.stringify(back[0]));
 ```
 
+
 ### scale
 
 # SYS\_Math.scale() method
@@ -1113,85 +580,13 @@ function scale(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-<tr><td>
-
-scaleX
-
-</td><td>
-
-number
-
-</td><td>
-
-X direction scale ratio
-
-</td></tr>
-<tr><td>
-
-scaleY
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Y direction scale ratio, defaulting to the same as scaleX
-
-</td></tr>
-<tr><td>
-
-centerX
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ X coordinate of the scaling center, defaulting to the centroid
-
-</td></tr>
-<tr><td>
-
-centerY
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Y coordinate of the scaling center, defaulting to the centroid
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
+|scaleX|number|X direction scale ratio|
+|scaleY|number|_(Optional)_ Y direction scale ratio, defaulting to the same as scaleX|
+|centerX|number|_(Optional)_ X coordinate of the scaling center, defaulting to the centroid|
+|centerY|number|_(Optional)_ Y coordinate of the scaling center, defaulting to the centroid|
 
 ## Returns
 
@@ -1219,6 +614,7 @@ const fromOrigin = eda.sys_Math.scale(pad, 2, 2, 0, 0);
 console.log('绕原点放大后的第一个点：', JSON.stringify(fromOrigin[0]));
 ```
 
+
 ### subtract
 
 # SYS\_Math.subtract() method
@@ -1236,46 +632,10 @@ function subtract(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Minuend polygon
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Subtrahend polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Minuend polygon|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Subtrahend polygon|
 
 ## Returns
 
@@ -1304,6 +664,7 @@ const untouched = eda.sys_Math.subtract(copper, far);
 console.log('减去分离区域后的面积：', eda.sys_Math.calculateArea(untouched));
 ```
 
+
 ### translate
 
 # SYS\_Math.translate() method
@@ -1318,59 +679,11 @@ function translate(polygon: TSYS_MathPolygonInput, dx: number, dy: number): Arra
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon
-
-</td></tr>
-<tr><td>
-
-dx
-
-</td><td>
-
-number
-
-</td><td>
-
-X direction offset
-
-</td></tr>
-<tr><td>
-
-dy
-
-</td><td>
-
-number
-
-</td><td>
-
-Y direction offset
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon|
+|dx|number|X direction offset|
+|dy|number|Y direction offset|
 
 ## Returns
 
@@ -1396,6 +709,7 @@ console.log('再平移回原位后的第一个点：', JSON.stringify(back[0]));
 console.log('平移前后周长：', eda.sys_Math.calculatePerimeter(footprint), '/', eda.sys_Math.calculatePerimeter(placed));
 ```
 
+
 ### union
 
 # SYS\_Math.union() method
@@ -1413,46 +727,10 @@ function union(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 1
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 1|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 2|
 
 ## Returns
 
@@ -1481,6 +759,7 @@ const far = [{ x: 200, y: 0 }, { x: 280, y: 0 }, { x: 280, y: 40 }, { x: 200, y:
 console.log('分离区域合并后个数：', eda.sys_Math.union(copperA, far).length);
 ```
 
+
 ### xor
 
 # SYS\_Math.xor() method
@@ -1498,46 +777,10 @@ function xor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon1
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 1
-
-</td></tr>
-<tr><td>
-
-polygon2
-
-</td><td>
-
-[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)
-
-</td><td>
-
-Polygon 2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon1|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 1|
+|polygon2|[TSYS\_MathPolygonInput](../types/TSYS_MathPolygonInput.md)|Polygon 2|
 
 ## Returns
 

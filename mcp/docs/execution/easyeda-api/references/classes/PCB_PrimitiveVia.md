@@ -11,97 +11,15 @@ class PCB_PrimitiveVia implements IPCB_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(net, x, y, holeDiameter, diameter, viaType, designRuleBlindViaName, solderMaskExpansion, primitiveLock)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Create Via
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Via
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Via
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Via
-
-</td></tr>
-<tr><td>
-
-[getAll(net, primitiveLock)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Via
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId(net, primitiveLock)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Via primitive ID
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./PCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Via
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(net, x, y, holeDiameter, diameter, viaType, designRuleBlindViaName, solderMaskExpansion, primitiveLock)](./PCB_PrimitiveVia.md)||Create Via|
+|[delete(primitiveIds)](./PCB_PrimitiveVia.md)||**_(BETA)_** Delete Via|
+|[get(primitiveIds)](./PCB_PrimitiveVia.md)||**_(BETA)_** Get Via|
+|[get(primitiveIds)](./PCB_PrimitiveVia.md)||**_(BETA)_** Get Via|
+|[getAll(net, primitiveLock)](./PCB_PrimitiveVia.md)||**_(BETA)_** Get all Via|
+|[getAllPrimitiveId(net, primitiveLock)](./PCB_PrimitiveVia.md)||**_(BETA)_** Get all Via primitive ID|
+|[modify(primitiveId, property)](./PCB_PrimitiveVia.md)||**_(BETA)_** Modify Via|
 
 ---
 
@@ -131,137 +49,17 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-holeDiameter
-
-</td><td>
-
-number
-
-</td><td>
-
-Hole diameter
-
-</td></tr>
-<tr><td>
-
-diameter
-
-</td><td>
-
-number
-
-</td><td>
-
-Outer diameter
-
-</td></tr>
-<tr><td>
-
-viaType
-
-</td><td>
-
-[EPCB\_PrimitiveViaType](../enums/EPCB_PrimitiveViaType.md)
-
-</td><td>
-
-_(Optional)_ Via type
-
-</td></tr>
-<tr><td>
-
-designRuleBlindViaName
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Blind/buried via design rule item name, which defines the start and end layers of the via. `null` means it is not a blind/buried via
-
-</td></tr>
-<tr><td>
-
-solderMaskExpansion
-
-</td><td>
-
-[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null
-
-</td><td>
-
-_(Optional)_ Solder mask/paste mask expansion. `null` means following the rules
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|holeDiameter|number|Hole diameter|
+|diameter|number|Outer diameter|
+|viaType|[EPCB\_PrimitiveViaType](../enums/EPCB_PrimitiveViaType.md)|_(Optional)_ Via type|
+|designRuleBlindViaName|string \| null|_(Optional)_ Blind/buried via design rule item name, which defines the start and end layers of the via. `null` means it is not a blind/buried via|
+|solderMaskExpansion|[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null|_(Optional)_ Solder mask/paste mask expansion. `null` means following the rules|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -288,6 +86,7 @@ console.log('diameter:', via.getState_Diameter());
 console.log('x:', via.getState_X(), 'y:', via.getState_Y());
 ```
 
+
 ### delete
 
 # PCB\_PrimitiveVia.delete() method
@@ -304,33 +103,9 @@ function delete(primitiveIds: string | IPCB_PrimitiveVia | Array<string> | Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md)<!-- -->&gt;
-
-</td><td>
-
-Via primitive ID or Via primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md)<!-- -->&gt;|Via primitive ID or Via primitive object|
 
 ## Returns
 
@@ -360,6 +135,7 @@ console.log('deleted:', deleted);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # PCB\_PrimitiveVia.get() method
@@ -376,33 +152,9 @@ function get(primitiveIds: string): Promise<IPCB_PrimitiveVia | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Via primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Via primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -433,6 +185,7 @@ console.log('array length:', arr.length);
 console.log('via2 diameter:', arr[1].getState_Diameter());
 ```
 
+
 ### get_1
 
 # PCB\_PrimitiveVia.get() method
@@ -449,33 +202,9 @@ function get(primitiveIds: Array<string>): Promise<Array<IPCB_PrimitiveVia>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Via primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Via primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -503,46 +232,10 @@ function getAll(net?: string, primitiveLock?: boolean): Promise<Array<IPCB_Primi
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|_(Optional)_ Net name|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -573,6 +266,7 @@ console.log('vias on demo net:', netVias.length);
 console.log('marker via found:', netVias.some(v => v.getState_PrimitiveId() === viaId));
 ```
 
+
 ### getallprimitiveid
 
 # PCB\_PrimitiveVia.getAllPrimitiveId() method
@@ -589,46 +283,10 @@ function getAllPrimitiveId(net?: string, primitiveLock?: boolean): Promise<Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|_(Optional)_ Net name|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -659,6 +317,7 @@ console.log('demo net via ids:', netIds.length);
 console.log('marker id in filtered list:', netIds.includes(viaId));
 ```
 
+
 ### modify
 
 # PCB\_PrimitiveVia.modify() method
@@ -673,65 +332,25 @@ Modify Via
 function modify(
 	primitiveId: string | IPCB_PrimitiveVia,
 	property: {
-		net?: undefined | string;
-		x?: undefined | number;
-		y?: undefined | number;
-		holeDiameter?: undefined | number;
-		diameter?: undefined | number;
-		viaType?:
-			| undefined
-			| EPCB_PrimitiveViaType.VIA
-			| EPCB_PrimitiveViaType.BLIND
-			| EPCB_PrimitiveViaType.SUTURE;
-		designRuleBlindViaName?: undefined | null | string;
-		solderMaskExpansion?: undefined | null | IPCB_PrimitiveSolderMaskAndPasteMaskExpansion;
-		primitiveLock?: undefined | false | true;
+		net?: string;
+		x?: number;
+		y?: number;
+		holeDiameter?: number;
+		diameter?: number;
+		viaType?: EPCB_PrimitiveViaType;
+		designRuleBlindViaName?: string | null;
+		solderMaskExpansion?: IPCB_PrimitiveSolderMaskAndPasteMaskExpansion | null;
+		primitiveLock?: boolean;
 	},
 ): Promise<IPCB_PrimitiveVia | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ net?: undefined \| string; x?: undefined \| number; y?: undefined \| number; holeDiameter?: undefined \| number; diameter?: undefined \| number; viaType?: undefined \| [EPCB\_PrimitiveViaType.VIA](../enums/EPCB_PrimitiveViaType.md) \| [EPCB\_PrimitiveViaType.BLIND](../enums/EPCB_PrimitiveViaType.md) \| [EPCB\_PrimitiveViaType.SUTURE](../enums/EPCB_PrimitiveViaType.md)<!-- -->; designRuleBlindViaName?: undefined \| null \| string; solderMaskExpansion?: undefined \| null \| [IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)<!-- -->; primitiveLock?: undefined \| false \| true }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [IPCB\_PrimitiveVia](./IPCB_PrimitiveVia.md)|Primitive ID|
+|property|{ net?: string; x?: number; y?: number; holeDiameter?: number; diameter?: number; viaType?: [EPCB\_PrimitiveViaType](../enums/EPCB_PrimitiveViaType.md)<!-- -->; designRuleBlindViaName?: string \| null; solderMaskExpansion?: [IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null; primitiveLock?: boolean }|Modify Parameter|
 
 ## Returns
 

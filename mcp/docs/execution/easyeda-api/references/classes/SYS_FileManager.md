@@ -10,196 +10,24 @@ class SYS_FileManager
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[extractLibInfo(data)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-Extract the library configuration information from the file
-
-</td></tr>
-<tr><td>
-
-[extractProjectInfo(data)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-Extract the project configuration information from the file
-
-</td></tr>
-<tr><td>
-
-[getCbbFileByCbbUuid(cbbUuid, libraryUuid, props)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use reuse block UUID get reuse block file
-
-</td></tr>
-<tr><td>
-
-[getDeviceFileByDeviceUuid(deviceUuid, libraryUuid, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-Use device UUID get device file
-
-</td></tr>
-<tr><td>
-
-[getDocumentFile(fileName, password, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-Get Document file
-
-</td></tr>
-<tr><td>
-
-[getDocumentFootprintSources()](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the document footprint source code
-
-</td></tr>
-<tr><td>
-
-[getDocumentSource()](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Document source code
-
-</td></tr>
-<tr><td>
-
-[getFootprintFileByFootprintUuid(footprintUuid, libraryUuid, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use footprint UUID get footprint file
-
-</td></tr>
-<tr><td>
-
-[getPanelLibraryFileByPanelLibraryUuid(panelLibraryUuid, libraryUuid, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use panel library UUID get panel library file
-
-</td></tr>
-<tr><td>
-
-[getProjectFile(fileName, password, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-Get Project file
-
-</td></tr>
-<tr><td>
-
-[getProjectFileByProjectUuid(projectUuid, fileName, password, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use project UUID get project file
-
-</td></tr>
-<tr><td>
-
-[getSchematicFile(fileName, password, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** 获取原理图文件
-
-</td></tr>
-<tr><td>
-
-[getSymbolFileBySymbolUuid(symbolUuid, libraryUuid, fileType)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use symbol UUID get symbol file
-
-</td></tr>
-<tr><td>
-
-[importProjectByProjectFile(projectFile, fileType, props, saveTo, librariesImportSetting)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use project file import project
-
-</td></tr>
-<tr><td>
-
-[importProjectByProjectFile(projectFile, fileType, props, saveTo, librariesImportSetting)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Use project file import project
-
-</td></tr>
-<tr><td>
-
-[setDocumentSource(source)](./SYS_FileManager.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Document source code
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[extractLibInfo(data)](./SYS_FileManager.md)||Extract the library configuration information from the file|
+|[extractProjectInfo(data)](./SYS_FileManager.md)||Extract the project configuration information from the file|
+|[getCbbFileByCbbUuid(cbbUuid, libraryUuid, props)](./SYS_FileManager.md)||**_(BETA)_** Use reuse block UUID get reuse block file|
+|[getDeviceFileByDeviceUuid(deviceUuid, libraryUuid, fileType)](./SYS_FileManager.md)||Use device UUID get device file|
+|[getDocumentFile(fileName, password, fileType)](./SYS_FileManager.md)||Get Document file|
+|[getDocumentFootprintSources()](./SYS_FileManager.md)||**_(BETA)_** Get the document footprint source code|
+|[getDocumentSource()](./SYS_FileManager.md)||**_(BETA)_** Get Document source code|
+|[getFootprintFileByFootprintUuid(footprintUuid, libraryUuid, fileType)](./SYS_FileManager.md)||**_(BETA)_** Use footprint UUID get footprint file|
+|[getPanelLibraryFileByPanelLibraryUuid(panelLibraryUuid, libraryUuid, fileType)](./SYS_FileManager.md)||**_(BETA)_** Use panel library UUID get panel library file|
+|[getProjectFile(fileName, password, fileType)](./SYS_FileManager.md)||Get Project file|
+|[getProjectFileByProjectUuid(projectUuid, fileName, password, fileType)](./SYS_FileManager.md)||**_(BETA)_** Use project UUID get project file|
+|[getSchematicFile(fileName, password, fileType)](./SYS_FileManager.md)||**_(BETA)_** 获取原理图文件|
+|[getSymbolFileBySymbolUuid(symbolUuid, libraryUuid, fileType)](./SYS_FileManager.md)||**_(BETA)_** Use symbol UUID get symbol file|
+|[importProjectByProjectFile(projectFile, fileType, props, saveTo, librariesImportSetting)](./SYS_FileManager.md)||**_(BETA)_** Use project file import project|
+|[importProjectByProjectFile(projectFile, fileType, props, saveTo, librariesImportSetting)](./SYS_FileManager.md)||**_(BETA)_** Use project file import project|
+|[setDocumentSource(source)](./SYS_FileManager.md)||**_(BETA)_** Modify Document source code|
 
 ---
 
@@ -219,33 +47,9 @@ function extractLibInfo(data: File | Array<File>): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-data
-
-</td><td>
-
-File \| Array&lt;File&gt;
-
-</td><td>
-
-Library file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|data|File \| Array&lt;File&gt;|Library file|
 
 ## Returns
 
@@ -274,6 +78,7 @@ console.log('首个封装标题：', firstFootprint?.title);
 console.log('首个封装 uuid：', firstFootprint?.uuid);
 ```
 
+
 ### extractprojectinfo
 
 # SYS\_FileManager.extractProjectInfo() method
@@ -288,33 +93,9 @@ function extractProjectInfo(data: File): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-data
-
-</td><td>
-
-File
-
-</td><td>
-
-Project file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|data|File|Project file|
 
 ## Returns
 
@@ -340,6 +121,7 @@ console.log('是否复用模块工程：', projectInfo.cbbProject);
 console.log('标签：', (projectInfo.tags ?? []).join('、'));
 ```
 
+
 ### getcbbfilebycbbuuid
 
 # SYS\_FileManager.getCbbFileByCbbUuid() method
@@ -355,70 +137,22 @@ function getCbbFileByCbbUuid(
 	cbbUuid: string,
 	libraryUuid?: string,
 	props?: {
-		fileName?: undefined | string;
-		password?: undefined | string;
-		fileType?: undefined | 'epro' | 'epro2';
-		templateSchematicUuid?: undefined | string;
-		templatePcbUuid?: undefined | string;
+		fileName?: string;
+		password?: string;
+		fileType?: 'epro' | 'epro2';
+		templateSchematicUuid?: string;
+		templatePcbUuid?: string;
 	},
 ): Promise<File | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-{ fileName?: undefined \| string; password?: undefined \| string; fileType?: undefined \| 'epro' \| 'epro2'; templateSchematicUuid?: undefined \| string; templatePcbUuid?: undefined \| string }
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library|
+|props|{ fileName?: string; password?: string; fileType?: 'epro' \| 'epro2'; templateSchematicUuid?: string; templatePcbUuid?: string }|_(Optional)_|
 
 ## Returns
 
@@ -450,6 +184,7 @@ console.log('文件名：', cbbFile.name);
 console.log('文件大小：', cbbFile.size);
 ```
 
+
 ### getdevicefilebydeviceuuid
 
 # SYS\_FileManager.getDeviceFileByDeviceUuid() method
@@ -468,59 +203,11 @@ function getDeviceFileByDeviceUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-deviceUuid
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Device UUID or device UUID list
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'elibz' \| 'elibz2'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|deviceUuid|string \| Array&lt;string&gt;|Device UUID or device UUID list|
+|libraryUuid|string|_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library|
+|fileType|'elibz' \| 'elibz2'|_(Optional)_|
 
 ## Returns
 
@@ -550,6 +237,7 @@ console.log('文件名：', deviceFile.name);
 console.log('文件大小：', deviceFile.size);
 ```
 
+
 ### getdocumentfile
 
 # SYS\_FileManager.getDocumentFile() method
@@ -568,59 +256,11 @@ function getDocumentFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-password
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Encrypted password
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'epro' \| 'epro2'
-
-</td><td>
-
-_(Optional)_ File format
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|password|string|_(Optional)_ Encrypted password|
+|fileType|'epro' \| 'epro2'|_(Optional)_ File format|
 
 ## Returns
 
@@ -644,6 +284,7 @@ const documentFile = await eda.sys_FileManager.getDocumentFile('嘉立创示例_
 console.log('文件名：', documentFile.name);
 console.log('文件大小：', documentFile.size);
 ```
+
 
 ### getdocumentfootprintsources
 
@@ -680,6 +321,7 @@ sources.forEach((item, i) => {
 });
 ```
 
+
 ### getdocumentsource
 
 # SYS\_FileManager.getDocumentSource() method
@@ -711,6 +353,7 @@ console.log('源码长度：', source.length);
 console.log('源码预览：', source.slice(0, 60));
 ```
 
+
 ### getfootprintfilebyfootprintuuid
 
 # SYS\_FileManager.getFootprintFileByFootprintUuid() method
@@ -731,59 +374,11 @@ function getFootprintFileByFootprintUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Footprint UUID or footprint UUID list
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'elibz' \| 'elibz2'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string \| Array&lt;string&gt;|Footprint UUID or footprint UUID list|
+|libraryUuid|string|_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library|
+|fileType|'elibz' \| 'elibz2'|_(Optional)_|
 
 ## Returns
 
@@ -813,6 +408,7 @@ console.log('文件名：', footprintFile.name);
 console.log('文件大小：', footprintFile.size);
 ```
 
+
 ### getpanellibraryfilebypanellibraryuuid
 
 # SYS\_FileManager.getPanelLibraryFileByPanelLibraryUuid() method
@@ -833,59 +429,11 @@ function getPanelLibraryFileByPanelLibraryUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Panel library UUID or panel library UUID list
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'elibz' \| 'elibz2'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string \| Array&lt;string&gt;|Panel library UUID or panel library UUID list|
+|libraryUuid|string|_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library|
+|fileType|'elibz' \| 'elibz2'|_(Optional)_|
 
 ## Returns
 
@@ -915,6 +463,7 @@ console.log('文件名：', panelFile.name);
 console.log('文件大小：', panelFile.size);
 ```
 
+
 ### getprojectfile
 
 # SYS\_FileManager.getProjectFile() method
@@ -933,59 +482,11 @@ function getProjectFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-password
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Encrypted password
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'epro' \| 'epro2'
-
-</td><td>
-
-_(Optional)_ File format
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|password|string|_(Optional)_ Encrypted password|
+|fileType|'epro' \| 'epro2'|_(Optional)_ File format|
 
 ## Returns
 
@@ -1010,6 +511,7 @@ console.log('文件名：', projectFile.name);
 console.log('文件大小：', projectFile.size);
 ```
 
+
 ### getprojectfilebyprojectuuid
 
 # SYS\_FileManager.getProjectFileByProjectUuid() method
@@ -1031,72 +533,12 @@ function getProjectFileByProjectUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Project UUID
-
-</td></tr>
-<tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-password
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Encrypted password
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'epro' \| 'epro2'
-
-</td><td>
-
-_(Optional)_ File format
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectUuid|string|Project UUID|
+|fileName|string|_(Optional)_ File name|
+|password|string|_(Optional)_ Encrypted password|
+|fileType|'epro' \| 'epro2'|_(Optional)_ File format|
 
 ## Returns
 
@@ -1124,6 +566,7 @@ console.log('文件名：', projectFile.name);
 console.log('文件大小：', projectFile.size);
 ```
 
+
 ### getschematicfile
 
 # SYS\_FileManager.getSchematicFile() method
@@ -1144,59 +587,11 @@ function getSchematicFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 文件名
-
-</td></tr>
-<tr><td>
-
-password
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 加密密码
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'epro' \| 'epro2'
-
-</td><td>
-
-_(Optional)_ 文件格式
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ 文件名|
+|password|string|_(Optional)_ 加密密码|
+|fileType|'epro' \| 'epro2'|_(Optional)_ 文件格式|
 
 ## Returns
 
@@ -1232,59 +627,11 @@ function getSymbolFileBySymbolUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbolUuid
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Symbol UUID or symbol UUID list
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'elibz' \| 'elibz2'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbolUuid|string \| Array&lt;string&gt;|Symbol UUID or symbol UUID list|
+|libraryUuid|string|_(Optional)_ Library UUID. It can be obtained using the APIs in [LIB\_LibrariesList](./LIB_LibrariesList.md)<!-- -->. If not passed in, it is the system library|
+|fileType|'elibz' \| 'elibz2'|_(Optional)_|
 
 ## Returns
 
@@ -1314,6 +661,7 @@ console.log('文件名：', symbolFile.name);
 console.log('文件大小：', symbolFile.size);
 ```
 
+
 ### importprojectbyprojectfile
 
 # SYS\_FileManager.importProjectByProjectFile() method
@@ -1339,125 +687,44 @@ function importProjectByProjectFile(
 		| 'PADS'
 		| 'LTspice',
 	props?: {
-		importOption?:
-			| undefined
-			| ESYS_ImportProjectImportOption.IMPORT_DOCUMENT
-			| ESYS_ImportProjectImportOption.EXTRACT_LIBRARIES
-			| ESYS_ImportProjectImportOption.IMPORT_DOCUMENT_EXTRACT_LIBRARIES;
-		schematicObjectStyle?:
-			| undefined
-			| ESYS_ImportProjectSchematicObjectStyle.USE_SYSTEM_THEME
-			| ESYS_ImportProjectSchematicObjectStyle.USE_SOURCE_FILE_STYLE;
-		associateFootprint?: undefined | false | true;
-		associate3DModel?: undefined | false | true;
-		importFootprintNotesLayer?: undefined | false | true;
+		importOption?: ESYS_ImportProjectImportOption;
+		schematicObjectStyle?: ESYS_ImportProjectSchematicObjectStyle;
+		associateFootprint?: boolean;
+		associate3DModel?: boolean;
+		importFootprintNotesLayer?: boolean;
 	},
 	saveTo?:
 		| {
 			operation: 'New Project';
-			newProjectOwnerTeamUuid: string;
-			newProjectOwnerFolderUuid?: undefined | string;
-			newProjectName?: undefined | string;
-			newProjectFriendlyName?: undefined | string;
-			newProjectDescription?: undefined | string;
-			newProjectCollaborationMode?:
-				| undefined
-				| EDMT_ProjectCollaborationMode.STRICT
-				| EDMT_ProjectCollaborationMode.FREE;
+			newProjectOwnerTeamUuid: IDMT_TeamItem['uuid'];
+			newProjectOwnerFolderUuid?: IDMT_FolderItem['uuid'];
+			newProjectName?: string;
+			newProjectFriendlyName?: string;
+			newProjectDescription?: string;
+			newProjectCollaborationMode?: EDMT_ProjectCollaborationMode;
 		}
-		| { operation: 'Existing Project'; existingProjectUuid: string },
+		| { operation: 'Existing Project'; existingProjectUuid: IDMT_BriefProjectItem['uuid'] }
+		| { operation: 'Offline Client Local Path'; folderPath: string },
 	librariesImportSetting?: {
-		ownerTeamUuid: string;
-		deviceClassification?: undefined | string[];
-		symbolClassification?: undefined | string[];
-		footprintClassification?: undefined | string[];
-		createDeviceForSingleSymbol?: undefined | false | true;
-		updateExistingLibrariesWithTheSameName?: undefined | false | true;
+		ownerTeamUuid: IDMT_TeamItem['uuid'];
+		deviceClassification?: Array<string>;
+		symbolClassification?: Array<string>;
+		footprintClassification?: Array<string>;
+		createDeviceForSingleSymbol?: boolean;
+		updateExistingLibrariesWithTheSameName?: boolean;
 	},
 ): Promise<IDMT_BriefProjectItem | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectFile
-
-</td><td>
-
-File
-
-</td><td>
-
-Project file
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'JLCEDA' \| 'JLCEDA Pro' \| 'EasyEDA' \| 'EasyEDA Pro' \| 'Allegro' \| 'OrCAD' \| 'EAGLE' \| 'KiCad' \| 'PADS' \| 'LTspice'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-{ importOption?: undefined \| [ESYS\_ImportProjectImportOption.IMPORT\_DOCUMENT](../enums/ESYS_ImportProjectImportOption.md) \| [ESYS\_ImportProjectImportOption.EXTRACT\_LIBRARIES](../enums/ESYS_ImportProjectImportOption.md) \| [ESYS\_ImportProjectImportOption.IMPORT\_DOCUMENT\_EXTRACT\_LIBRARIES](../enums/ESYS_ImportProjectImportOption.md)<!-- -->; schematicObjectStyle?: undefined \| [ESYS\_ImportProjectSchematicObjectStyle.USE\_SYSTEM\_THEME](../enums/ESYS_ImportProjectSchematicObjectStyle.md) \| [ESYS\_ImportProjectSchematicObjectStyle.USE\_SOURCE\_FILE\_STYLE](../enums/ESYS_ImportProjectSchematicObjectStyle.md)<!-- -->; associateFootprint?: undefined \| false \| true; associate3DModel?: undefined \| false \| true; importFootprintNotesLayer?: undefined \| false \| true }
-
-</td><td>
-
-_(Optional)_ Import parameters. Refer to the configuration items in the \*\*Import\*\* window of the EDA front end
-
-</td></tr>
-<tr><td>
-
-saveTo
-
-</td><td>
-
-{ operation: 'New Project'; newProjectOwnerTeamUuid: string; newProjectOwnerFolderUuid?: undefined \| string; newProjectName?: undefined \| string; newProjectFriendlyName?: undefined \| string; newProjectDescription?: undefined \| string; newProjectCollaborationMode?: undefined \| [EDMT\_ProjectCollaborationMode.STRICT](../enums/EDMT_ProjectCollaborationMode.md) \| [EDMT\_ProjectCollaborationMode.FREE](../enums/EDMT_ProjectCollaborationMode.md) } \| { operation: 'Existing Project'; existingProjectUuid: string }
-
-</td><td>
-
-_(Optional)_ Save To project parameter
-
-</td></tr>
-<tr><td>
-
-librariesImportSetting
-
-</td><td>
-
-\{ ownerTeamUuid: string; deviceClassification?: undefined \| string\[\]; symbolClassification?: undefined \| string\[\]; footprintClassification?: undefined \| string\[\]; createDeviceForSingleSymbol?: undefined \| false \| true; updateExistingLibrariesWithTheSameName?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectFile|File|Project file|
+|fileType|'JLCEDA' \| 'JLCEDA Pro' \| 'EasyEDA' \| 'EasyEDA Pro' \| 'Allegro' \| 'OrCAD' \| 'EAGLE' \| 'KiCad' \| 'PADS' \| 'LTspice'|_(Optional)_ File type|
+|props|{ importOption?: [ESYS\_ImportProjectImportOption](../enums/ESYS_ImportProjectImportOption.md)<!-- -->; schematicObjectStyle?: [ESYS\_ImportProjectSchematicObjectStyle](../enums/ESYS_ImportProjectSchematicObjectStyle.md)<!-- -->; associateFootprint?: boolean; associate3DModel?: boolean; importFootprintNotesLayer?: boolean }|_(Optional)_ Import parameters. Refer to the configuration items in the \*\*Import\*\* window of the EDA front end|
+|saveTo|{ operation: 'New Project'; newProjectOwnerTeamUuid: [IDMT\_TeamItem](../interfaces/IDMT_TeamItem.md)<!-- -->\['uuid'\]; newProjectOwnerFolderUuid?: [IDMT\_FolderItem](../interfaces/IDMT_FolderItem.md)<!-- -->\['uuid'\]; newProjectName?: string; newProjectFriendlyName?: string; newProjectDescription?: string; newProjectCollaborationMode?: [EDMT\_ProjectCollaborationMode](../enums/EDMT_ProjectCollaborationMode.md) } \| { operation: 'Existing Project'; existingProjectUuid: [IDMT\_BriefProjectItem](../interfaces/IDMT_BriefProjectItem.md)<!-- -->\['uuid'\] } \| { operation: 'Offline Client Local Path'; folderPath: string }|_(Optional)_ Save To project parameter|
+|librariesImportSetting|{ ownerTeamUuid: [IDMT\_TeamItem](../interfaces/IDMT_TeamItem.md)<!-- -->\['uuid'\]; deviceClassification?: Array&lt;string&gt;; symbolClassification?: Array&lt;string&gt;; footprintClassification?: Array&lt;string&gt;; createDeviceForSingleSymbol?: boolean; updateExistingLibrariesWithTheSameName?: boolean }|_(Optional)_ 库导入配置|
 
 ## Returns
 
@@ -1484,133 +751,46 @@ function importProjectByProjectFile(
 	projectFile: File,
 	fileType?: 'Altium Designer' | 'Protel',
 	props?: {
-		importOption?:
-			| undefined
-			| ESYS_ImportProjectImportOption.IMPORT_DOCUMENT
-			| ESYS_ImportProjectImportOption.EXTRACT_LIBRARIES
-			| ESYS_ImportProjectImportOption.IMPORT_DOCUMENT_EXTRACT_LIBRARIES;
-		viaSolderMaskExpansion?:
-			| undefined
-			| ESYS_ImportProjectViaSolderMaskExpansion.ALL_COVER_OIL
-			| ESYS_ImportProjectViaSolderMaskExpansion.FOLLOW_ORIGINAL_SETTING;
-		boardOutlineSource?:
-			| undefined
-			| ESYS_ImportProjectBoardOutlineSource.FROM_KEEPOUT_LAYER
-			| ESYS_ImportProjectBoardOutlineSource.FROM_MECHANICAL_LAYER_1;
-		schematicObjectStyle?:
-			| undefined
-			| ESYS_ImportProjectSchematicObjectStyle.USE_SYSTEM_THEME
-			| ESYS_ImportProjectSchematicObjectStyle.USE_SOURCE_FILE_STYLE;
-		associateFootprint?: undefined | false | true;
-		associate3DModel?: undefined | false | true;
-		importFootprintNotesLayer?: undefined | false | true;
+		importOption?: ESYS_ImportProjectImportOption;
+		viaSolderMaskExpansion?: ESYS_ImportProjectViaSolderMaskExpansion;
+		boardOutlineSource?: ESYS_ImportProjectBoardOutlineSource;
+		schematicObjectStyle?: ESYS_ImportProjectSchematicObjectStyle;
+		associateFootprint?: boolean;
+		associate3DModel?: boolean;
+		importFootprintNotesLayer?: boolean;
 	},
 	saveTo?:
 		| {
 			operation: 'New Project';
-			newProjectOwnerTeamUuid: string;
-			newProjectOwnerFolderUuid?: undefined | string;
-			newProjectName?: undefined | string;
-			newProjectFriendlyName?: undefined | string;
-			newProjectDescription?: undefined | string;
-			newProjectCollaborationMode?:
-				| undefined
-				| EDMT_ProjectCollaborationMode.STRICT
-				| EDMT_ProjectCollaborationMode.FREE;
+			newProjectOwnerTeamUuid: IDMT_TeamItem['uuid'];
+			newProjectOwnerFolderUuid?: IDMT_FolderItem['uuid'];
+			newProjectName?: string;
+			newProjectFriendlyName?: string;
+			newProjectDescription?: string;
+			newProjectCollaborationMode?: EDMT_ProjectCollaborationMode;
 		}
-		| { operation: 'Existing Project'; existingProjectUuid: string },
+		| { operation: 'Existing Project'; existingProjectUuid: IDMT_BriefProjectItem['uuid'] }
+		| { operation: 'Offline Client Local Path'; folderPath: string },
 	librariesImportSetting?: {
-		ownerTeamUuid: string;
-		deviceClassification?: undefined | string[];
-		symbolClassification?: undefined | string[];
-		footprintClassification?: undefined | string[];
-		createDeviceForSingleSymbol?: undefined | false | true;
-		updateExistingLibrariesWithTheSameName?: undefined | false | true;
+		ownerTeamUuid: IDMT_TeamItem['uuid'];
+		deviceClassification?: Array<string>;
+		symbolClassification?: Array<string>;
+		footprintClassification?: Array<string>;
+		createDeviceForSingleSymbol?: boolean;
+		updateExistingLibrariesWithTheSameName?: boolean;
 	},
 ): Promise<IDMT_BriefProjectItem | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectFile
-
-</td><td>
-
-File
-
-</td><td>
-
-Project file
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'Altium Designer' \| 'Protel'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-{ importOption?: undefined \| [ESYS\_ImportProjectImportOption.IMPORT\_DOCUMENT](../enums/ESYS_ImportProjectImportOption.md) \| [ESYS\_ImportProjectImportOption.EXTRACT\_LIBRARIES](../enums/ESYS_ImportProjectImportOption.md) \| [ESYS\_ImportProjectImportOption.IMPORT\_DOCUMENT\_EXTRACT\_LIBRARIES](../enums/ESYS_ImportProjectImportOption.md)<!-- -->; viaSolderMaskExpansion?: undefined \| [ESYS\_ImportProjectViaSolderMaskExpansion.ALL\_COVER\_OIL](../enums/ESYS_ImportProjectViaSolderMaskExpansion.md) \| [ESYS\_ImportProjectViaSolderMaskExpansion.FOLLOW\_ORIGINAL\_SETTING](../enums/ESYS_ImportProjectViaSolderMaskExpansion.md)<!-- -->; boardOutlineSource?: undefined \| [ESYS\_ImportProjectBoardOutlineSource.FROM\_KEEPOUT\_LAYER](../enums/ESYS_ImportProjectBoardOutlineSource.md) \| [ESYS\_ImportProjectBoardOutlineSource.FROM\_MECHANICAL\_LAYER\_1](../enums/ESYS_ImportProjectBoardOutlineSource.md)<!-- -->; schematicObjectStyle?: undefined \| [ESYS\_ImportProjectSchematicObjectStyle.USE\_SYSTEM\_THEME](../enums/ESYS_ImportProjectSchematicObjectStyle.md) \| [ESYS\_ImportProjectSchematicObjectStyle.USE\_SOURCE\_FILE\_STYLE](../enums/ESYS_ImportProjectSchematicObjectStyle.md)<!-- -->; associateFootprint?: undefined \| false \| true; associate3DModel?: undefined \| false \| true; importFootprintNotesLayer?: undefined \| false \| true }
-
-</td><td>
-
-_(Optional)_ Import parameters. Refer to the configuration items in the \*\*Import\*\* window of the EDA front end
-
-</td></tr>
-<tr><td>
-
-saveTo
-
-</td><td>
-
-{ operation: 'New Project'; newProjectOwnerTeamUuid: string; newProjectOwnerFolderUuid?: undefined \| string; newProjectName?: undefined \| string; newProjectFriendlyName?: undefined \| string; newProjectDescription?: undefined \| string; newProjectCollaborationMode?: undefined \| [EDMT\_ProjectCollaborationMode.STRICT](../enums/EDMT_ProjectCollaborationMode.md) \| [EDMT\_ProjectCollaborationMode.FREE](../enums/EDMT_ProjectCollaborationMode.md) } \| { operation: 'Existing Project'; existingProjectUuid: string }
-
-</td><td>
-
-_(Optional)_ Save To project parameter
-
-</td></tr>
-<tr><td>
-
-librariesImportSetting
-
-</td><td>
-
-\{ ownerTeamUuid: string; deviceClassification?: undefined \| string\[\]; symbolClassification?: undefined \| string\[\]; footprintClassification?: undefined \| string\[\]; createDeviceForSingleSymbol?: undefined \| false \| true; updateExistingLibrariesWithTheSameName?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectFile|File|Project file|
+|fileType|'Altium Designer' \| 'Protel'|_(Optional)_ File type|
+|props|{ importOption?: [ESYS\_ImportProjectImportOption](../enums/ESYS_ImportProjectImportOption.md)<!-- -->; viaSolderMaskExpansion?: [ESYS\_ImportProjectViaSolderMaskExpansion](../enums/ESYS_ImportProjectViaSolderMaskExpansion.md)<!-- -->; boardOutlineSource?: [ESYS\_ImportProjectBoardOutlineSource](../enums/ESYS_ImportProjectBoardOutlineSource.md)<!-- -->; schematicObjectStyle?: [ESYS\_ImportProjectSchematicObjectStyle](../enums/ESYS_ImportProjectSchematicObjectStyle.md)<!-- -->; associateFootprint?: boolean; associate3DModel?: boolean; importFootprintNotesLayer?: boolean }|_(Optional)_ Import parameters. Refer to the configuration items in the \*\*Import\*\* window of the EDA front end|
+|saveTo|{ operation: 'New Project'; newProjectOwnerTeamUuid: [IDMT\_TeamItem](../interfaces/IDMT_TeamItem.md)<!-- -->\['uuid'\]; newProjectOwnerFolderUuid?: [IDMT\_FolderItem](../interfaces/IDMT_FolderItem.md)<!-- -->\['uuid'\]; newProjectName?: string; newProjectFriendlyName?: string; newProjectDescription?: string; newProjectCollaborationMode?: [EDMT\_ProjectCollaborationMode](../enums/EDMT_ProjectCollaborationMode.md) } \| { operation: 'Existing Project'; existingProjectUuid: [IDMT\_BriefProjectItem](../interfaces/IDMT_BriefProjectItem.md)<!-- -->\['uuid'\] } \| { operation: 'Offline Client Local Path'; folderPath: string }|_(Optional)_ Save To project parameter|
+|librariesImportSetting|{ ownerTeamUuid: [IDMT\_TeamItem](../interfaces/IDMT_TeamItem.md)<!-- -->\['uuid'\]; deviceClassification?: Array&lt;string&gt;; symbolClassification?: Array&lt;string&gt;; footprintClassification?: Array&lt;string&gt;; createDeviceForSingleSymbol?: boolean; updateExistingLibrariesWithTheSameName?: boolean }|_(Optional)_ 库导入配置|
 
 ## Returns
 
@@ -1638,33 +818,9 @@ function setDocumentSource(source: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-source
-
-</td><td>
-
-string
-
-</td><td>
-
-Document source code
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|source|string|Document source code|
 
 ## Returns
 

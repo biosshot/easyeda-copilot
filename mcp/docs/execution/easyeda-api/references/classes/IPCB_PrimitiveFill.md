@@ -13,262 +13,30 @@ class IPCB_PrimitiveFill implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[convertToPolyline()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: polyline primitive
-
-</td></tr>
-<tr><td>
-
-[convertToPour()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: Copper border primitive
-
-</td></tr>
-<tr><td>
-
-[convertToRegion()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: region primitive (default is the forbidden region)
-
-</td></tr>
-<tr><td>
-
-[done()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_ComplexPolygon()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[getState\_FillMode()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill mode
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[setState\_FillMode(fillMode)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill mode
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveFill.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[convertToPolyline()](./IPCB_PrimitiveFill.md)||**_(BETA)_** Convert to: polyline primitive|
+|[convertToPour()](./IPCB_PrimitiveFill.md)||**_(BETA)_** Convert to: Copper border primitive|
+|[convertToRegion()](./IPCB_PrimitiveFill.md)||**_(BETA)_** Convert to: region primitive (default is the forbidden region)|
+|[done()](./IPCB_PrimitiveFill.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_ComplexPolygon()](./IPCB_PrimitiveFill.md)||Get the property state: complex polygon|
+|[getState\_FillMode()](./IPCB_PrimitiveFill.md)||Get the property state: fill mode|
+|[getState\_Layer()](./IPCB_PrimitiveFill.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitiveFill.md)||Get the property state: Line width|
+|[getState\_Net()](./IPCB_PrimitiveFill.md)||Get the property state: net name|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveFill.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveFill.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveFill.md)||Get the property state: primitive type|
+|[isAsync()](./IPCB_PrimitiveFill.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveFill.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: complex polygon|
+|[setState\_FillMode(fillMode)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: fill mode|
+|[setState\_Layer(layer)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Net(net)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: net name|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveFill.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[toAsync()](./IPCB_PrimitiveFill.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveFill.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -312,6 +80,7 @@ console.log('primitiveType:', `Fill → ${polyline.getState_PrimitiveType()}`);
 console.log('primitiveId:', polyline.getState_PrimitiveId());
 ```
 
+
 ### converttopour
 
 # IPCB\_PrimitiveFill.convertToPour() method
@@ -350,6 +119,7 @@ console.log('primitiveType:', `Fill → ${pour.getState_PrimitiveType()}`);
 console.log('primitiveId:', pour.getState_PrimitiveId());
 ```
 
+
 ### converttoregion
 
 # IPCB\_PrimitiveFill.convertToRegion() method
@@ -387,6 +157,7 @@ const region = await fill.convertToRegion();
 console.log('primitiveType:', `Fill → ${region.getState_PrimitiveType()}`);
 console.log('primitiveId:', region.getState_PrimitiveId());
 ```
+
 
 ### done
 
@@ -431,6 +202,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### getstate_complexpolygon
 
 # IPCB\_PrimitiveFill.getState\_ComplexPolygon() method
@@ -468,6 +240,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 console.log('polygonSource:', JSON.stringify(source));
 ```
 
+
 ### getstate_fillmode
 
 # IPCB\_PrimitiveFill.getState\_FillMode() method
@@ -503,6 +276,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 
 console.log('fillMode:', fillMode);
 ```
+
 
 ### getstate_layer
 
@@ -540,6 +314,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 console.log('layer:', layer);
 ```
 
+
 ### getstate_linewidth
 
 # IPCB\_PrimitiveFill.getState\_LineWidth() method
@@ -575,6 +350,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_net
 
@@ -612,6 +388,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 console.log('net:', JSON.stringify(net));
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveFill.getState\_PrimitiveId() method
@@ -647,6 +424,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -684,6 +462,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveFill.getState\_PrimitiveType() method
@@ -720,6 +499,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 console.log('primitiveType:', primitiveType);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveFill.isAsync() method
@@ -755,6 +535,7 @@ await eda.pcb_PrimitiveFill.delete([fill.getState_PrimitiveId()]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -801,6 +582,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_complexpolygon
 
 # IPCB\_PrimitiveFill.setState\_ComplexPolygon() method
@@ -817,33 +599,9 @@ function setState_ComplexPolygon(complexPolygon: IPCB_Polygon): IPCB_PrimitiveFi
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[IPCB\_Polygon](./IPCB_Polygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[IPCB\_Polygon](./IPCB_Polygon.md)|Complex polygon|
 
 ## Returns
 
@@ -876,6 +634,7 @@ const after = JSON.stringify(refetched.getState_ComplexPolygon().getSource());
 console.log('polygonSource:', before, '→', after);
 ```
 
+
 ### setstate_fillmode
 
 # IPCB\_PrimitiveFill.setState\_FillMode() method
@@ -892,33 +651,9 @@ function setState_FillMode(fillMode: EPCB_PrimitiveFillMode): IPCB_PrimitiveFill
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillMode
-
-</td><td>
-
-[EPCB\_PrimitiveFillMode](../enums/EPCB_PrimitiveFillMode.md)
-
-</td><td>
-
-Fill mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillMode|[EPCB\_PrimitiveFillMode](../enums/EPCB_PrimitiveFillMode.md)|Fill mode|
 
 ## Returns
 
@@ -949,6 +684,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('fillMode:', before, '→', refetched.getState_FillMode());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveFill.setState\_Layer() method
@@ -965,33 +701,9 @@ function setState_Layer(layer: TPCB_LayersOfFill): IPCB_PrimitiveFill;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfFill](../types/TPCB_LayersOfFill.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfFill](../types/TPCB_LayersOfFill.md)|Layer|
 
 ## Returns
 
@@ -1022,6 +734,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitiveFill.setState\_LineWidth() method
@@ -1038,33 +751,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitiveFill;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -1096,6 +785,7 @@ const after = fill.getState_LineWidth();
 console.log('lineWidth:', before, '→', after);
 ```
 
+
 ### setstate_net
 
 # IPCB\_PrimitiveFill.setState\_Net() method
@@ -1112,33 +802,9 @@ function setState_Net(net: string): IPCB_PrimitiveFill;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -1169,6 +835,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('net:', JSON.stringify(before), '→', JSON.stringify(refetched.getState_Net()));
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveFill.setState\_PrimitiveLock() method
@@ -1185,33 +852,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveFill;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1241,6 +884,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
+
 
 ### toasync
 
@@ -1283,6 +927,7 @@ const refetched = await eda.pcb_PrimitiveFill.get(fill.getState_PrimitiveId());
 console.log('net:', JSON.stringify(refetched.getState_Net()));
 console.log('layer:', refetched.getState_Layer());
 ```
+
 
 ### tosync
 

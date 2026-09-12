@@ -11,84 +11,12 @@ interface GridProps extends StyleProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./GridProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Child node
-
-</td></tr>
-<tr><td>
-
-[colGap?](./GridProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Column gap (pixels)
-
-</td></tr>
-<tr><td>
-
-[columns](./GridProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Number of columns (required)
-
-</td></tr>
-<tr><td>
-
-[rowGap?](./GridProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Row gap (pixels)
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./GridProps.md)||any|_(Optional)_ Child node|
+|[colGap?](./GridProps.md)||number|_(Optional)_ Column gap (pixels)|
+|[columns](./GridProps.md)||number \| (number \| string)\[\]|列数（必填）。 - number：等宽 n 列（repeat(n, 1fr)） - number\[\]：数组长度 = 列数，元素 = 各列宽度（像素） - string\[\]：数组长度 = 列数，元素 = 各列宽度（CSS 值，如 '1fr' / 'auto'）|
+|[rowGap?](./GridProps.md)||number|_(Optional)_ Row gap (pixels)|
 
 ---
 
@@ -122,12 +50,12 @@ colGap?: number;
 
 # GridProps.columns property
 
-Number of columns (required)
+列数（必填）。 - number：等宽 n 列（repeat(n, 1fr)） - number\[\]：数组长度 = 列数，元素 = 各列宽度（像素） - string\[\]：数组长度 = 列数，元素 = 各列宽度（CSS 值，如 '1fr' / 'auto'）
 
 ## Signature
 
 ```typescript
-columns: number;
+columns: number | (number | string)[];
 ```
 
 ### rowgap

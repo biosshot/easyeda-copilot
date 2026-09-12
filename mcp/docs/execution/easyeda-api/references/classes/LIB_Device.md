@@ -10,119 +10,17 @@ class LIB_Device
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(deviceUuid, libraryUuid, targetLibraryUuid, targetClassification, newDeviceName)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Device
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, deviceName, classification, association, description, property)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Device
-
-</td></tr>
-<tr><td>
-
-[delete(deviceUuid, libraryUuid)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Device
-
-</td></tr>
-<tr><td>
-
-[get(deviceUuid, libraryUuid)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the device
-
-</td></tr>
-<tr><td>
-
-[getByLcscIds(lcscIds, libraryUuid, allowMultiMatch)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get a device using an LCSC C number
-
-</td></tr>
-<tr><td>
-
-[getByLcscIds(lcscIds, libraryUuid, allowMultiMatch)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Batch get devices using LCSC C numbers
-
-</td></tr>
-<tr><td>
-
-[modify(deviceUuid, libraryUuid, deviceName, classification, association, description, property)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Device
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search device
-
-</td></tr>
-<tr><td>
-
-[searchByProperties(properties, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Device.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search devices precisely by properties
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(deviceUuid, libraryUuid, targetLibraryUuid, targetClassification, newDeviceName)](./LIB_Device.md)||**_(BETA)_** Copy Device|
+|[create(libraryUuid, deviceName, classification, association, description, property)](./LIB_Device.md)||**_(BETA)_** Create Device|
+|[delete(deviceUuid, libraryUuid)](./LIB_Device.md)||**_(BETA)_** Delete Device|
+|[get(deviceUuid, libraryUuid)](./LIB_Device.md)||**_(BETA)_** Get all properties of the device|
+|[getByLcscIds(lcscIds, libraryUuid, allowMultiMatch)](./LIB_Device.md)||**_(BETA)_** Get a device using an LCSC C number|
+|[getByLcscIds(lcscIds, libraryUuid, allowMultiMatch)](./LIB_Device.md)||**_(BETA)_** Batch get devices using LCSC C numbers|
+|[modify(deviceUuid, libraryUuid, deviceName, classification, association, description, property)](./LIB_Device.md)||**_(BETA)_** Modify Device|
+|[search(key, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Device.md)||**_(BETA)_** Search device|
+|[searchByProperties(properties, libraryUuid, classification, symbolType, itemsOfPage, page)](./LIB_Device.md)||**_(BETA)_** Search devices precisely by properties|
 
 ---
 
@@ -150,85 +48,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-deviceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Device UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newDeviceName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New device name. If a device with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|deviceUuid|string|Device UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newDeviceName|string|_(Optional)_ New device name. If a device with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -257,6 +83,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_Device.create() method
@@ -273,23 +100,13 @@ function create(
 	deviceName: string,
 	classification?: ILIB_ClassificationIndex | Array<string>,
 	association?: {
-		symbolType?:
-			| undefined
-			| ELIB_SymbolType.COMPONENT
-			| ELIB_SymbolType.NET_FLAG
-			| ELIB_SymbolType.NET_PORT
-			| ELIB_SymbolType.DRAWING
-			| ELIB_SymbolType.NON_ELECTRICAL
-			| ELIB_SymbolType.SHORT_CIRCUIT_FLAG
-			| ELIB_SymbolType.OFF_PAGE_CONNECTOR
-			| ELIB_SymbolType.DIFFERENTIAL_PAIRS_FLAG
-			| ELIB_SymbolType.CBB_SYMBOL;
-		symbolUuid?: undefined | string;
-		symbol?: undefined | { uuid: string; libraryUuid: string };
-		footprintUuid?: undefined | string;
-		footprint?: undefined | { uuid: string; libraryUuid: string };
-		model3D?: undefined | { uuid: string; libraryUuid: string };
-		imageData?: undefined | File | Blob;
+		symbolType?: ELIB_SymbolType;
+		symbolUuid?: string;
+		symbol?: { uuid: string; libraryUuid: string };
+		footprintUuid?: string;
+		footprint?: { uuid: string; libraryUuid: string };
+		model3D?: { uuid: string; libraryUuid: string };
+		imageData?: File | Blob;
 	},
 	description?: string,
 	property?: ILIB_DeviceExtendPropertyItem,
@@ -298,98 +115,14 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-deviceName
-
-</td><td>
-
-string
-
-</td><td>
-
-Device name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-association
-
-</td><td>
-
-{ symbolType?: undefined \| [ELIB\_SymbolType.COMPONENT](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.NET\_FLAG](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.NET\_PORT](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.DRAWING](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.NON\_ELECTRICAL](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.SHORT\_CIRCUIT\_FLAG](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.OFF\_PAGE\_CONNECTOR](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.DIFFERENTIAL\_PAIRS\_FLAG](../enums/ELIB_SymbolType.md) \| [ELIB\_SymbolType.CBB\_SYMBOL](../enums/ELIB_SymbolType.md)<!-- -->; symbolUuid?: undefined \| string; symbol?: undefined \| { uuid: string; libraryUuid: string }; footprintUuid?: undefined \| string; footprint?: undefined \| { uuid: string; libraryUuid: string }; model3D?: undefined \| { uuid: string; libraryUuid: string }; imageData?: undefined \| File \| Blob }
-
-</td><td>
-
-_(Optional)_ Associate a symbol, footprint, and image. Specifying `symbolType` creates a new symbol; if no new symbol is needed, `symbolType` does not need to be specified. However, note that if no new symbol is created and no symbol association information is specified, the device cannot be created
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-[ILIB\_DeviceExtendPropertyItem](../interfaces/ILIB_DeviceExtendPropertyItem.md)
-
-</td><td>
-
-_(Optional)_ Other property, only `designator`<!-- -->, `addIntoBom`<!-- -->, `addIntoPcb` exists default value
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|deviceName|string|Device name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|association|{ symbolType?: [ELIB\_SymbolType](../enums/ELIB_SymbolType.md)<!-- -->; symbolUuid?: string; symbol?: { uuid: string; libraryUuid: string }; footprintUuid?: string; footprint?: { uuid: string; libraryUuid: string }; model3D?: { uuid: string; libraryUuid: string }; imageData?: File \| Blob }|_(Optional)_ Associate a symbol, footprint, and image. Specifying `symbolType` creates a new symbol; if no new symbol is needed, `symbolType` does not need to be specified. However, note that if no new symbol is created and no symbol association information is specified, the device cannot be created|
+|description|string|_(Optional)_ Description|
+|property|[ILIB\_DeviceExtendPropertyItem](../interfaces/ILIB_DeviceExtendPropertyItem.md)|_(Optional)_ Other property, only `designator`<!-- -->, `addIntoBom`<!-- -->, `addIntoPcb` exists default value|
 
 ## Returns
 
@@ -420,6 +153,7 @@ console.log('deviceUuid:', deviceUuid);
 console.log('deviceName:', deviceName);
 ```
 
+
 ### delete
 
 # LIB\_Device.delete() method
@@ -436,46 +170,10 @@ function delete(deviceUuid: string, libraryUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-deviceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Device UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|deviceUuid|string|Device UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -502,6 +200,7 @@ console.log('deviceUuid:', deviceUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_Device.get() method
@@ -518,46 +217,10 @@ function get(deviceUuid: string, libraryUuid?: string): Promise<ILIB_DeviceItem 
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-deviceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Device UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|deviceUuid|string|Device UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -585,59 +248,11 @@ function getByLcscIds<T extends boolean>(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lcscIds
-
-</td><td>
-
-string
-
-</td><td>
-
-LCSC C number
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-allowMultiMatch
-
-</td><td>
-
-T
-
-</td><td>
-
-_(Optional)_ Whether a single LCSC C number is allowed to match multiple results
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lcscIds|string|LCSC C number|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|allowMultiMatch|T|_(Optional)_ Whether a single LCSC C number is allowed to match multiple results|
 
 ## Returns
 
@@ -673,59 +288,11 @@ function getByLcscIds(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lcscIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Array of LCSC C numbers
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-allowMultiMatch
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether a single LCSC C number is allowed to match multiple results
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lcscIds|Array&lt;string&gt;|Array of LCSC C numbers|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|allowMultiMatch|boolean|_(Optional)_ Whether a single LCSC C number is allowed to match multiple results|
 
 ## Returns
 
@@ -757,6 +324,7 @@ many.forEach((item, i) => {
 });
 ```
 
+
 ### modify
 
 # LIB\_Device.modify() method
@@ -774,137 +342,40 @@ function modify(
 	deviceName?: string,
 	classification?: ILIB_ClassificationIndex | Array<string> | null,
 	association?: {
-		symbolUuid?: undefined | string;
-		symbol?: undefined | { uuid: string; libraryUuid: string };
-		footprintUuid?: undefined | null | string;
-		footprint?: undefined | null | { uuid: string; libraryUuid: string };
-		model3D?: undefined | null | { uuid: string; libraryUuid: string };
-		imageData?: undefined | null | File | Blob;
+		symbolUuid?: string;
+		symbol?: { uuid: string; libraryUuid: string };
+		footprintUuid?: string | null;
+		footprint?: { uuid: string; libraryUuid: string } | null;
+		model3D?: { uuid: string; libraryUuid: string } | null;
+		imageData?: File | Blob | null;
 	},
 	description?: string | null,
 	property?: {
-		name?: undefined | null | string;
-		designator?: undefined | string;
-		addIntoBom?: undefined | false | true;
-		addIntoPcb?: undefined | false | true;
-		net?: undefined | string;
-		manufacturer?: undefined | null | string;
-		manufacturerId?: undefined | null | string;
-		supplier?: undefined | null | string;
-		supplierId?: undefined | null | string;
-		otherProperty?:
-			undefined | Record<string, undefined | null | string | number | false | true>;
+		name?: string | null;
+		designator?: string;
+		addIntoBom?: boolean;
+		addIntoPcb?: boolean;
+		net?: string;
+		manufacturer?: string | null;
+		manufacturerId?: string | null;
+		supplier?: string | null;
+		supplierId?: string | null;
+		otherProperty?: { [key: string]: boolean | number | string | undefined | null };
 	},
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-deviceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Device UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-deviceName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Device name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-association
-
-</td><td>
-
-\{ symbolUuid?: undefined \| string; symbol?: undefined \| \{ uuid: string; libraryUuid: string \}; footprintUuid?: undefined \| null \| string; footprint?: undefined \| null \| \{ uuid: string; libraryUuid: string \}; model3D?: undefined \| null \| \{ uuid: string; libraryUuid: string \}; imageData?: undefined \| null \| File \| Blob \}
-
-</td><td>
-
-_(Optional)_ Associated symbol, footprint, image
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ name?: undefined \| null \| string; designator?: undefined \| string; addIntoBom?: undefined \| false \| true; addIntoPcb?: undefined \| false \| true; net?: undefined \| string; manufacturer?: undefined \| null \| string; manufacturerId?: undefined \| null \| string; supplier?: undefined \| null \| string; supplierId?: undefined \| null \| string; otherProperty?: undefined \| Record&lt;string, undefined \| null \| string \| number \| false \| true&gt; }
-
-</td><td>
-
-_(Optional)_ Other property
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|deviceUuid|string|Device UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|deviceName|string|_(Optional)_ Device name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|association|\{ symbolUuid?: string; symbol?: \{ uuid: string; libraryUuid: string \}; footprintUuid?: string \| null; footprint?: \{ uuid: string; libraryUuid: string \} \| null; model3D?: \{ uuid: string; libraryUuid: string \} \| null; imageData?: File \| Blob \| null \}|_(Optional)_ Associated symbol, footprint, image|
+|description|string \| null|_(Optional)_ Description|
+|property|\{ name?: string \| null; designator?: string; addIntoBom?: boolean; addIntoPcb?: boolean; net?: string; manufacturer?: string \| null; manufacturerId?: string \| null; supplier?: string \| null; supplierId?: string \| null; otherProperty?: \{ \[key: string\]: boolean \| number \| string \| undefined \| null \} \}|_(Optional)_ Other property|
 
 ## Returns
 
@@ -943,6 +414,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### search
 
 # LIB\_Device.search() method
@@ -966,98 +438,14 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-symbolType
-
-</td><td>
-
-[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)
-
-</td><td>
-
-_(Optional)_ Symbol type, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|symbolType|[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)|_(Optional)_ Symbol type, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 
@@ -1077,6 +465,7 @@ results.forEach((item, i) => {
 	console.log(`[${i}] name:`, item.name, 'uuid:', item.uuid, 'supplierId:', item.supplierId);
 });
 ```
+
 
 ### searchbyproperties
 
@@ -1101,98 +490,14 @@ function searchByProperties(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-properties
-
-</td><td>
-
-[ILIB\_DevicePropertiesForSearch](../interfaces/ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-Property
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all ADD since EDA v4
-
-</td></tr>
-<tr><td>
-
-symbolType
-
-</td><td>
-
-[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)
-
-</td><td>
-
-_(Optional)_ Symbol type, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|properties|[ILIB\_DevicePropertiesForSearch](../interfaces/ILIB_DevicePropertiesForSearch.md)|Property|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|Array&lt;string&gt;|_(Optional)_ Classification, defaults to all ADD since EDA v4|
+|symbolType|[ELIB\_SymbolType](../enums/ELIB_SymbolType.md)|_(Optional)_ Symbol type, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 

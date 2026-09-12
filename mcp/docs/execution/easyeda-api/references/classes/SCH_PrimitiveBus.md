@@ -11,97 +11,15 @@ class SCH_PrimitiveBus implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(busName, line, color, lineWidth, lineType)](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a bus
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the bus
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the bus
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the bus
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all buses
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the primitive IDs of all buses
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the bus
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(busName, line, color, lineWidth, lineType)](./SCH_PrimitiveBus.md)||**_(BETA)_** Create a bus|
+|[delete(primitiveIds)](./SCH_PrimitiveBus.md)||**_(BETA)_** Delete the bus|
+|[get(primitiveIds)](./SCH_PrimitiveBus.md)||**_(BETA)_** Get the bus|
+|[get(primitiveIds)](./SCH_PrimitiveBus.md)||**_(BETA)_** Get the bus|
+|[getAll()](./SCH_PrimitiveBus.md)||**_(BETA)_** Get all buses|
+|[getAllPrimitiveId()](./SCH_PrimitiveBus.md)||**_(BETA)_** Get the primitive IDs of all buses|
+|[modify(primitiveId, property)](./SCH_PrimitiveBus.md)||**_(BETA)_** Modify the bus|
 
 ---
 
@@ -129,85 +47,13 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-busName
-
-</td><td>
-
-string
-
-</td><td>
-
-Bus name
-
-</td></tr>
-<tr><td>
-
-line
-
-</td><td>
-
-Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;
-
-</td><td>
-
-Polyline coordinate group. Each segment is a continuous line described by `[x1, y1, x2, y2, x3, y3]`<!-- -->. If the polylines have no connection to each other, the creation will fail. Examples for the type `Array<Array<number>>`<!-- -->: 1. `[[], [0, 0, 0, 1]]` - segment 1 has no path, invalid; 2. `[[1], [0, 0, 0, 1]]` - segment 1 only has x, missing y, invalid; 3. `[[0, 0, -1, 0], [0, 0, 1, 1]]` - segment 1 is a horizontal line but segment 2 is a diagonal line, invalid; 4. `[[0, 0, -1, 0, -1, 1], [0, 1, 1, 1]]` - the two segments have no connection, invalid; 5. `[[1, 1], [1, 2, 2, 2]]` - segment 1 has only one point, ignored; segment 2 is a horizontal segment, and the final path keeps only segment 2, valid; 6. `[[1, 1], [1, 2]]` - segment 1 has only one point, ignored; segment 2 is also ignored, and the final path is empty, invalid
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Bus color. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-_(Optional)_ Line type. `null` indicates the default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|busName|string|Bus name|
+|line|Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;|Polyline coordinate group. Each segment is a continuous line described by `[x1, y1, x2, y2, x3, y3]`<!-- -->. If the polylines have no connection to each other, the creation will fail. Examples for the type `Array<Array<number>>`<!-- -->: 1. `[[], [0, 0, 0, 1]]` - segment 1 has no path, invalid; 2. `[[1], [0, 0, 0, 1]]` - segment 1 only has x, missing y, invalid; 3. `[[0, 0, -1, 0], [0, 0, 1, 1]]` - segment 1 is a horizontal line but segment 2 is a diagonal line, invalid; 4. `[[0, 0, -1, 0, -1, 1], [0, 1, 1, 1]]` - the two segments have no connection, invalid; 5. `[[1, 1], [1, 2, 2, 2]]` - segment 1 has only one point, ignored; segment 2 is a horizontal segment, and the final path keeps only segment 2, valid; 6. `[[1, 1], [1, 2]]` - segment 1 has only one point, ignored; segment 2 is also ignored, and the final path is empty, invalid|
+|color|string \| null|_(Optional)_ Bus color. `null` indicates the default|
+|lineWidth|number \| null|_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|_(Optional)_ Line type. `null` indicates the default|
 
 ## Returns
 
@@ -239,6 +85,7 @@ console.log('color:', bus.getState_Color());
 console.log('lineWidth:', bus.getState_LineWidth());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveBus.delete() method
@@ -255,33 +102,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveBus | Array<string> | Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md)<!-- -->&gt;
-
-</td><td>
-
-Primitive ID of the bus or the bus primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md)<!-- -->&gt;|Primitive ID of the bus or the bus primitive object|
 
 ## Returns
 
@@ -313,6 +136,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveBus.get() method
@@ -329,33 +153,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveBus | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Primitive ID of the bus, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Primitive ID of the bus, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -386,6 +186,7 @@ console.log('array length:', arr.length);
 console.log('bus2 busName:', arr[1].getState_BusName());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveBus.get() method
@@ -402,33 +203,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveBus>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Primitive ID of the bus, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Primitive ID of the bus, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -479,6 +256,7 @@ console.log('total buses:', all.length);
 console.log('marker bus found:', all.some(b => b.getState_PrimitiveId() === busId));
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveBus.getAllPrimitiveId() method
@@ -518,6 +296,7 @@ console.log('total bus ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(busId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveBus.modify() method
@@ -532,63 +311,21 @@ Modify the bus
 function modify(
 	primitiveId: string | ISCH_PrimitiveBus,
 	property: {
-		busName?: undefined | string;
-		line?: undefined | number[] | number[][];
-		color?: undefined | null | string;
-		lineWidth?: undefined | null | number;
-		lineType?:
-			| undefined
-			| null
-			| ESCH_PrimitiveLineType.SOLID
-			| ESCH_PrimitiveLineType.DASHED
-			| ESCH_PrimitiveLineType.DOTTED
-			| ESCH_PrimitiveLineType.DOT_DASHED;
+		busName?: string;
+		line?: Array<number> | Array<Array<number>>;
+		color?: string | null;
+		lineWidth?: number | null;
+		lineType?: ESCH_PrimitiveLineType | null;
 	},
 ): Promise<ISCH_PrimitiveBus | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-Primitive ID of the bus or the bus primitive object
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ busName?: undefined \| string; line?: undefined \| number\[\] \| number\[\]\[\]; color?: undefined \| null \| string; lineWidth?: undefined \| null \| number; lineType?: undefined \| null \| [ESCH\_PrimitiveLineType.SOLID](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DASHED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOTTED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOT\_DASHED](../enums/ESCH_PrimitiveLineType.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveBus](./ISCH_PrimitiveBus.md)|Primitive ID of the bus or the bus primitive object|
+|property|{ busName?: string; line?: Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;; color?: string \| null; lineWidth?: number \| null; lineType?: [ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null }|Modify Parameter|
 
 ## Returns
 

@@ -13,262 +13,30 @@ class IPCB_PrimitiveDimension implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_CoordinateSet()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: coordinate set
-
-</td></tr>
-<tr><td>
-
-[getState\_DimensionType()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: dimension type
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Precision()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: precision
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_TextFollow()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: text follows
-
-</td></tr>
-<tr><td>
-
-[getState\_Unit()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: unit
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_CoordinateSet(coordinateSet)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: coordinate set
-
-</td></tr>
-<tr><td>
-
-[setState\_DimensionType(dimensionType)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: dimension type
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Precision(precision)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: precision
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Unit(unit)](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: unit
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveDimension.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_CoordinateSet()](./IPCB_PrimitiveDimension.md)||Get the property state: coordinate set|
+|[getState\_DimensionType()](./IPCB_PrimitiveDimension.md)||Get the property state: dimension type|
+|[getState\_Layer()](./IPCB_PrimitiveDimension.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitiveDimension.md)||Get the property state: Line width|
+|[getState\_Precision()](./IPCB_PrimitiveDimension.md)||Get the property state: precision|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveDimension.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveDimension.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveDimension.md)||Get the property state: primitive type|
+|[getState\_TextFollow()](./IPCB_PrimitiveDimension.md)||Get the property state: text follows|
+|[getState\_Unit()](./IPCB_PrimitiveDimension.md)||Get the property state: unit|
+|[isAsync()](./IPCB_PrimitiveDimension.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_CoordinateSet(coordinateSet)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: coordinate set|
+|[setState\_DimensionType(dimensionType)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: dimension type|
+|[setState\_Layer(layer)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Precision(precision)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: precision|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Unit(unit)](./IPCB_PrimitiveDimension.md)||**_(BETA)_** Set the property state: unit|
+|[toAsync()](./IPCB_PrimitiveDimension.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveDimension.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -324,6 +92,7 @@ console.log('lineWidth:', 10, '→', refetched.getState_LineWidth());
 console.log('layer:', 3, '→', refetched.getState_Layer());
 ```
 
+
 ### getstate_coordinateset
 
 # IPCB\_PrimitiveDimension.getState\_CoordinateSet() method
@@ -360,6 +129,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 
 console.log('coordinateSet:', JSON.stringify(coordinateSet));
 ```
+
 
 ### getstate_dimensiontype
 
@@ -398,6 +168,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 console.log('dimensionType:', dimensionType);
 ```
 
+
 ### getstate_layer
 
 # IPCB\_PrimitiveDimension.getState\_Layer() method
@@ -434,6 +205,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 
 console.log('layer:', layer);
 ```
+
 
 ### getstate_linewidth
 
@@ -473,6 +245,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_precision
 
@@ -514,6 +287,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 console.log('precision:', precision);
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveDimension.getState\_PrimitiveId() method
@@ -550,6 +324,7 @@ await eda.pcb_PrimitiveDimension.delete([primitiveId]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -588,6 +363,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveDimension.getState\_PrimitiveType() method
@@ -624,6 +400,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_textfollow
 
@@ -662,6 +439,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 console.log('textFollow:', textFollow);
 ```
 
+
 ### getstate_unit
 
 # IPCB\_PrimitiveDimension.getState\_Unit() method
@@ -699,6 +477,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 
 console.log('unit:', unit);
 ```
+
 
 ### isasync
 
@@ -739,6 +518,7 @@ await eda.pcb_PrimitiveDimension.delete([dim.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -788,6 +568,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_coordinateset
 
 # IPCB\_PrimitiveDimension.setState\_CoordinateSet() method
@@ -806,33 +587,9 @@ function setState_CoordinateSet(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-coordinateSet
-
-</td><td>
-
-[TPCB\_PrimitiveDimensionCoordinateSet](../types/TPCB_PrimitiveDimensionCoordinateSet.md)
-
-</td><td>
-
-Coordinate set
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|coordinateSet|[TPCB\_PrimitiveDimensionCoordinateSet](../types/TPCB_PrimitiveDimensionCoordinateSet.md)|Coordinate set|
 
 ## Returns
 
@@ -865,6 +622,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('coordinateSet:', JSON.stringify(before), '→', JSON.stringify(refetched.getState_CoordinateSet()));
 ```
 
+
 ### setstate_dimensiontype
 
 # IPCB\_PrimitiveDimension.setState\_DimensionType() method
@@ -883,33 +641,9 @@ function setState_DimensionType(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-dimensionType
-
-</td><td>
-
-[EPCB\_PrimitiveDimensionType](../enums/EPCB_PrimitiveDimensionType.md)
-
-</td><td>
-
-Dimension type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|dimensionType|[EPCB\_PrimitiveDimensionType](../enums/EPCB_PrimitiveDimensionType.md)|Dimension type|
 
 ## Returns
 
@@ -943,6 +677,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('dimensionType:', before, '→', refetched.getState_DimensionType());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveDimension.setState\_Layer() method
@@ -959,33 +694,9 @@ function setState_Layer(layer: TPCB_LayersOfDimension): IPCB_PrimitiveDimension;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfDimension](../types/TPCB_LayersOfDimension.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfDimension](../types/TPCB_LayersOfDimension.md)|Layer|
 
 ## Returns
 
@@ -1018,6 +729,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitiveDimension.setState\_LineWidth() method
@@ -1034,33 +746,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitiveDimension;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -1095,6 +783,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('lineWidth:', before, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_precision
 
 # IPCB\_PrimitiveDimension.setState\_Precision() method
@@ -1111,33 +800,9 @@ function setState_Precision(precision: number): IPCB_PrimitiveDimension;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-precision
-
-</td><td>
-
-number
-
-</td><td>
-
-Precision
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|precision|number|Precision|
 
 ## Returns
 
@@ -1173,6 +838,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('precision:', before, '→', refetched.getState_Precision());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveDimension.setState\_PrimitiveLock() method
@@ -1189,33 +855,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveDimension
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1248,6 +890,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
 
+
 ### setstate_unit
 
 # IPCB\_PrimitiveDimension.setState\_Unit() method
@@ -1266,33 +909,9 @@ function setState_Unit(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.CENTIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md)
-
-</td><td>
-
-Unit
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|unit|[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.CENTIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md)|Unit|
 
 ## Returns
 
@@ -1324,6 +943,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 
 console.log('unit:', before, '→', refetched.getState_Unit());
 ```
+
 
 ### toasync
 
@@ -1371,6 +991,7 @@ const refetched = await eda.pcb_PrimitiveDimension.get(dim.getState_PrimitiveId(
 console.log('isAsync after toAsync:', dim.isAsync());
 console.log('lineWidth:', 10, '→', refetched.getState_LineWidth());
 ```
+
 
 ### tosync
 

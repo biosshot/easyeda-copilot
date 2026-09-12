@@ -10,31 +10,9 @@ class LIB_SelectControl
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getSelectedLibraryRowInfo()](./LIB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the information of the currently selected row in the bottom library
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getSelectedLibraryRowInfo()](./LIB_SelectControl.md)||**_(BETA)_** Get the information of the currently selected row in the bottom library|
 
 ---
 

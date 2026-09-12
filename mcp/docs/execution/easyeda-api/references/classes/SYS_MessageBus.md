@@ -12,218 +12,26 @@ class SYS_MessageBus
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createPrivateMessageBus()](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Create Private message bus
-
-</td></tr>
-<tr><td>
-
-[publish(topic, message)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: publish a message
-
-</td></tr>
-<tr><td>
-
-[publishPublic(topic, message)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: publish a message
-
-</td></tr>
-<tr><td>
-
-[pull(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: pull a message
-
-</td></tr>
-<tr><td>
-
-[pullAsync(topic)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: pull a message (Promise version)
-
-</td></tr>
-<tr><td>
-
-[pullAsyncPublic(topic)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: pull a message (Promise version)
-
-</td></tr>
-<tr><td>
-
-[pullPublic(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: pull a message
-
-</td></tr>
-<tr><td>
-
-[push(topic, message)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: push a message
-
-</td></tr>
-<tr><td>
-
-[pushPublic(topic, message)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: push a message
-
-</td></tr>
-<tr><td>
-
-[removePrivateMessageBus()](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Remove Private message bus
-
-</td></tr>
-<tr><td>
-
-[rpcCall(topic, message, timeout)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: call RPC service
-
-</td></tr>
-<tr><td>
-
-[rpcCallPublic(topic, message, timeout)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: call RPC service
-
-</td></tr>
-<tr><td>
-
-[rpcService(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: register RPC service
-
-</td></tr>
-<tr><td>
-
-[rpcServicePublic(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: register RPC service
-
-</td></tr>
-<tr><td>
-
-[subscribe(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: subscribe to a message
-
-</td></tr>
-<tr><td>
-
-[subscribeOnce(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Private message bus: subscribe to a message once
-
-</td></tr>
-<tr><td>
-
-[subscribeOncePublic(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: subscribe to a message once
-
-</td></tr>
-<tr><td>
-
-[subscribePublic(topic, callbackFn)](./SYS_MessageBus.md)
-
-</td><td>
-
-</td><td>
-
-Public message bus: subscribe to a message
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createPrivateMessageBus()](./SYS_MessageBus.md)||Create Private message bus|
+|[publish(topic, message)](./SYS_MessageBus.md)||Private message bus: publish a message|
+|[publishPublic(topic, message)](./SYS_MessageBus.md)||Public message bus: publish a message|
+|[pull(topic, callbackFn)](./SYS_MessageBus.md)||Private message bus: pull a message|
+|[pullAsync(topic)](./SYS_MessageBus.md)||Private message bus: pull a message (Promise version)|
+|[pullAsyncPublic(topic)](./SYS_MessageBus.md)||Public message bus: pull a message (Promise version)|
+|[pullPublic(topic, callbackFn)](./SYS_MessageBus.md)||Public message bus: pull a message|
+|[push(topic, message)](./SYS_MessageBus.md)||Private message bus: push a message|
+|[pushPublic(topic, message)](./SYS_MessageBus.md)||Public message bus: push a message|
+|[removePrivateMessageBus()](./SYS_MessageBus.md)||Remove Private message bus|
+|[rpcCall(topic, message, timeout)](./SYS_MessageBus.md)||Private message bus: call RPC service|
+|[rpcCallPublic(topic, message, timeout)](./SYS_MessageBus.md)||Public message bus: call RPC service|
+|[rpcService(topic, callbackFn)](./SYS_MessageBus.md)||Private message bus: register RPC service|
+|[rpcServicePublic(topic, callbackFn)](./SYS_MessageBus.md)||Public message bus: register RPC service|
+|[subscribe(topic, callbackFn)](./SYS_MessageBus.md)||Private message bus: subscribe to a message|
+|[subscribeOnce(topic, callbackFn)](./SYS_MessageBus.md)||Private message bus: subscribe to a message once|
+|[subscribeOncePublic(topic, callbackFn)](./SYS_MessageBus.md)||Public message bus: subscribe to a message once|
+|[subscribePublic(topic, callbackFn)](./SYS_MessageBus.md)||Public message bus: subscribe to a message|
 
 ---
 
@@ -268,6 +76,7 @@ task.cancel();
 console.log('已取消订阅');
 ```
 
+
 ### publish
 
 # SYS\_MessageBus.publish() method
@@ -282,46 +91,10 @@ function publish(topic: string, message: any): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-Message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|Message|
 
 ## Returns
 
@@ -351,6 +124,7 @@ cacheTask.cancel();
 console.log('已取消全部订阅');
 ```
 
+
 ### publishpublic
 
 # SYS\_MessageBus.publishPublic() method
@@ -365,46 +139,10 @@ function publishPublic(topic: string, message: any): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-Message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|Message|
 
 ## Returns
 
@@ -438,6 +176,7 @@ privateTask.cancel();
 console.log('已取消全部订阅');
 ```
 
+
 ### pull
 
 # SYS\_MessageBus.pull() method
@@ -452,46 +191,10 @@ function pull(topic: string, callbackFn: (message: any) => void): ISYS_MessageBu
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after a message is pulled
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after a message is pulled|
 
 ## Returns
 
@@ -524,6 +227,7 @@ task.cancel();
 console.log('已取消拉取任务');
 ```
 
+
 ### pullasync
 
 # SYS\_MessageBus.pullAsync() method
@@ -538,33 +242,9 @@ function pullAsync(topic: string): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
 
 ## Returns
 
@@ -590,6 +270,7 @@ const message = await pending;
 console.log('拉到的消息：', message);
 ```
 
+
 ### pullasyncpublic
 
 # SYS\_MessageBus.pullAsyncPublic() method
@@ -604,33 +285,9 @@ function pullAsyncPublic(topic: string): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
 
 ## Returns
 
@@ -656,6 +313,7 @@ const message = await pending;
 console.log('拉到的公共消息：', message);
 ```
 
+
 ### pullpublic
 
 # SYS\_MessageBus.pullPublic() method
@@ -670,46 +328,10 @@ function pullPublic(topic: string, callbackFn: (message: any) => void): ISYS_Mes
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after a message is pulled
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after a message is pulled|
 
 ## Returns
 
@@ -737,6 +359,7 @@ task.cancel();
 console.log('已取消公共拉取任务');
 ```
 
+
 ### push
 
 # SYS\_MessageBus.push() method
@@ -751,46 +374,10 @@ function push(topic: string, message: any): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-Message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|Message|
 
 ## Returns
 
@@ -823,6 +410,7 @@ task2.cancel();
 console.log('已取消拉取任务');
 ```
 
+
 ### pushpublic
 
 # SYS\_MessageBus.pushPublic() method
@@ -837,46 +425,10 @@ function pushPublic(topic: string, message: any): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-Message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|Message|
 
 ## Returns
 
@@ -908,6 +460,7 @@ taskA.cancel();
 taskB.cancel();
 console.log('已取消公共拉取任务');
 ```
+
 
 ### removeprivatemessagebus
 
@@ -953,6 +506,7 @@ eda.sys_MessageBus.publish('嘉立创示例_移除总线', '重建后的消息')
 console.log('重建后收到：', received);
 ```
 
+
 ### rpccall
 
 # SYS\_MessageBus.rpcCall() method
@@ -967,59 +521,11 @@ function rpcCall(topic: string, message?: any, timeout?: number): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Message
-
-</td></tr>
-<tr><td>
-
-timeout
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Timeout
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|_(Optional)_ Message|
+|timeout|number|_(Optional)_ Timeout|
 
 ## Returns
 
@@ -1043,6 +549,7 @@ const reply = await eda.sys_MessageBus.rpcCall('嘉立创示例_RPC调用', {
 console.log('服务返回：', reply);
 ```
 
+
 ### rpccallpublic
 
 # SYS\_MessageBus.rpcCallPublic() method
@@ -1057,59 +564,11 @@ function rpcCallPublic(topic: string, message?: any, timeout?: number): Promise<
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-message
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Message
-
-</td></tr>
-<tr><td>
-
-timeout
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Timeout
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|message|any|_(Optional)_ Message|
+|timeout|number|_(Optional)_ Timeout|
 
 ## Returns
 
@@ -1130,6 +589,7 @@ const reply = await eda.sys_MessageBus.rpcCallPublic('嘉立创示例_公共RPC�
 console.log('查询结果：', reply.name, '库存', reply.stock);
 ```
 
+
 ### rpcservice
 
 # SYS\_MessageBus.rpcService() method
@@ -1144,46 +604,10 @@ function rpcService(topic: string, callbackFn: (...args: Array<any>) => any | Pr
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(...args: Array&lt;any&gt;) =&gt; any \| Promise&lt;any&gt;
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(...args: Array&lt;any&gt;) =&gt; any \| Promise&lt;any&gt;|Callback after receiving the message|
 
 ## Returns
 
@@ -1208,6 +632,7 @@ console.log(await eda.sys_MessageBus.rpcCall('嘉立创示例_RPC服务_同步',
 console.log(await eda.sys_MessageBus.rpcCall('嘉立创示例_RPC服务_异步', '参数乙'));
 ```
 
+
 ### rpcservicepublic
 
 # SYS\_MessageBus.rpcServicePublic() method
@@ -1225,46 +650,10 @@ function rpcServicePublic(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(...args: Array&lt;any&gt;) =&gt; any \| Promise&lt;any&gt;
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(...args: Array&lt;any&gt;) =&gt; any \| Promise&lt;any&gt;|Callback after receiving the message|
 
 ## Returns
 
@@ -1283,6 +672,7 @@ const reply = await eda.sys_MessageBus.rpcCallPublic('嘉立创示例_公共RPC�
 console.log('公共服务返回：', reply);
 ```
 
+
 ### subscribe
 
 # SYS\_MessageBus.subscribe() method
@@ -1297,46 +687,10 @@ function subscribe(topic: string, callbackFn: (message: any) => void): ISYS_Mess
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after receiving the message|
 
 ## Returns
 
@@ -1368,6 +722,7 @@ eda.sys_MessageBus.publish('嘉立创示例_订阅', '取消后的消息');
 console.log('cancel 后仍停留在：', received.join('、'));
 ```
 
+
 ### subscribeonce
 
 # SYS\_MessageBus.subscribeOnce() method
@@ -1382,46 +737,10 @@ function subscribeOnce(topic: string, callbackFn: (message: any) => void): ISYS_
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after receiving the message|
 
 ## Returns
 
@@ -1448,6 +767,7 @@ task.cancel();
 console.log('已清理单次订阅任务');
 ```
 
+
 ### subscribeoncepublic
 
 # SYS\_MessageBus.subscribeOncePublic() method
@@ -1465,46 +785,10 @@ function subscribeOncePublic(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after receiving the message|
 
 ## Returns
 
@@ -1531,6 +815,7 @@ eda.sys_MessageBus.publish('嘉立创示例_公共单次订阅', '私有消息')
 console.log('私有消息到达后仍停留在：', received);
 ```
 
+
 ### subscribepublic
 
 # SYS\_MessageBus.subscribePublic() method
@@ -1545,46 +830,10 @@ function subscribePublic(topic: string, callbackFn: (message: any) => void): ISY
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topic
-
-</td><td>
-
-string
-
-</td><td>
-
-Theme
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(message: any) =&gt; void
-
-</td><td>
-
-Callback after receiving the message
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topic|string|Theme|
+|callbackFn|(message: any) =&gt; void|Callback after receiving the message|
 
 ## Returns
 

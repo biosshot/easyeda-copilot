@@ -14,97 +14,15 @@ Operations related to panel management in the currently open project
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copyPanel(panelUuid)](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Copy Panel
-
-</td></tr>
-<tr><td>
-
-[createPanel()](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Panel
-
-</td></tr>
-<tr><td>
-
-[deletePanel(panelUuid)](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Delete Panel
-
-</td></tr>
-<tr><td>
-
-[getAllPanelsInfo()](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Get all in the project panel detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getCurrentPanelInfo()](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Current panel
-
-</td></tr>
-<tr><td>
-
-[getPanelInfo(panelUuid)](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Panel
-
-</td></tr>
-<tr><td>
-
-[modifyPanelName(panelUuid, panelName)](./DMT_Panel.md)
-
-</td><td>
-
-</td><td>
-
-Modify Panel name
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copyPanel(panelUuid)](./DMT_Panel.md)||Copy Panel|
+|[createPanel()](./DMT_Panel.md)||**_(BETA)_** Create Panel|
+|[deletePanel(panelUuid)](./DMT_Panel.md)||Delete Panel|
+|[getAllPanelsInfo()](./DMT_Panel.md)||Get all in the project panel detailed properties of|
+|[getCurrentPanelInfo()](./DMT_Panel.md)||Get detailed properties of Current panel|
+|[getPanelInfo(panelUuid)](./DMT_Panel.md)||Get detailed properties of Panel|
+|[modifyPanelName(panelUuid, panelName)](./DMT_Panel.md)||Modify Panel name|
 
 ---
 
@@ -124,33 +42,9 @@ function copyPanel(panelUuid: string): Promise<string | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Source panel UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelUuid|string|Source panel UUID|
 
 ## Returns
 
@@ -180,6 +74,7 @@ console.log('deleted:', deletedCopy);
 const deletedSource = await eda.dmt_Panel.deletePanel(sourceUuid);
 console.log('deleted:', deletedSource);
 ```
+
 
 ### createpanel
 
@@ -218,6 +113,7 @@ const deleted = await eda.dmt_Panel.deletePanel(panelUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### deletepanel
 
 # DMT\_Panel.deletePanel() method
@@ -232,33 +128,9 @@ function deletePanel(panelUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelUuid|string|Panel UUID|
 
 ## Returns
 
@@ -281,6 +153,7 @@ console.log('deleted:', deleted);
 const info = await eda.dmt_Panel.getPanelInfo(panelUuid);
 console.log('info after delete:', info === undefined ? '已不存在' : info.name);
 ```
+
 
 ### getallpanelsinfo
 
@@ -320,6 +193,7 @@ console.log('test panel included:', panels.some(p => p.uuid === panelUuid));
 // 4. 清理测试面板（查询类案例不留测试对象）
 await eda.dmt_Panel.deletePanel(panelUuid);
 ```
+
 
 ### getcurrentpanelinfo
 
@@ -364,6 +238,7 @@ console.log('parentProjectUuid:', panel?.parentProjectUuid);
 await eda.dmt_Panel.deletePanel(panelUuid);
 ```
 
+
 ### getpanelinfo
 
 # DMT\_Panel.getPanelInfo() method
@@ -378,33 +253,9 @@ function getPanelInfo(panelUuid: string): Promise<IDMT_PanelItem | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelUuid|string|Panel UUID|
 
 ## Returns
 
@@ -431,6 +282,7 @@ console.log('parentProjectUuid:', panelInfo?.parentProjectUuid);
 await eda.dmt_Panel.deletePanel(panelUuid);
 ```
 
+
 ### modifypanelname
 
 # DMT\_Panel.modifyPanelName() method
@@ -445,46 +297,10 @@ function modifyPanelName(panelUuid: string, panelName: string): Promise<boolean>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel UUID
-
-</td></tr>
-<tr><td>
-
-panelName
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelUuid|string|Panel UUID|
+|panelName|string|Panel name|
 
 ## Returns
 

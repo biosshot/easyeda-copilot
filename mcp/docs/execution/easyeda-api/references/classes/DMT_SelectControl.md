@@ -14,31 +14,9 @@ Query and control of the selection focus in the document tree
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getCurrentDocumentInfo()](./DMT_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the properties of the current document
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getCurrentDocumentInfo()](./DMT_SelectControl.md)||**_(BETA)_** Get the properties of the current document|
 
 ---
 

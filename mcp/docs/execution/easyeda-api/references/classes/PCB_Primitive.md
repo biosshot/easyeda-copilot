@@ -14,42 +14,10 @@ Unified operations on primitives
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getPrimitiveBoardLine(primitiveId, layers)](./PCB_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the board line of the primitive
-
-</td></tr>
-<tr><td>
-
-[getPrimitivesBBox(primitiveIds)](./PCB_Primitive.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The BBox of the primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getPrimitiveBoardLine(primitiveId, layers)](./PCB_Primitive.md)||**_(BETA)_** Get the board line of the primitive|
+|[getPrimitivesBBox(primitiveIds)](./PCB_Primitive.md)||**_(BETA)_** Get The BBox of the primitive|
 
 ---
 
@@ -69,55 +37,19 @@ Get the board line of the primitive
 function getPrimitiveBoardLine(
 	primitiveId: string,
 	layers?: Array<EPCB_LayerId>,
-): Promise<IPCB_ComplexPolygon | undefined>;
+): IPCB_ComplexPolygon | undefined;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-layers
-
-</td><td>
-
-Array&lt;[EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Layers to calculate. When calculating devices, pads, and vias, the union of the board lines of the specified multiple layers can be precisely calculated
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string|Primitive ID|
+|layers|Array&lt;[EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->&gt;|_(Optional)_ Layers to calculate. When calculating devices, pads, and vias, the union of the board lines of the specified multiple layers can be precisely calculated|
 
 ## Returns
 
-Promise&lt;[IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md) \| undefined&gt;
+[IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md) \| undefined
 
 Complex polygon. If the primitive ID does not match or the primitive does not exist on the specified layer, `undefined` is returned
 
@@ -145,6 +77,7 @@ console.log('returns:', typeof pending.then === 'function' ? 'Promise' : typeof 
 console.log('settled:', settled);
 ```
 
+
 ### getprimitivesbbox
 
 # PCB\_Primitive.getPrimitivesBBox() method
@@ -163,33 +96,9 @@ function getPrimitivesBBox(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string \| [IPCB\_Primitive](../interfaces/IPCB_Primitive.md)<!-- -->&gt;
-
-</td><td>
-
-Array of Primitive ID array or primitive objects
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string \| [IPCB\_Primitive](../interfaces/IPCB_Primitive.md)<!-- -->&gt;|Array of Primitive ID array or primitive objects|
 
 ## Returns
 

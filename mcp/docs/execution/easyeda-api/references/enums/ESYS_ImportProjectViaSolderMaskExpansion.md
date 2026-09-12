@@ -10,42 +10,10 @@ enum ESYS_ImportProjectViaSolderMaskExpansion
 
 ## Enumeration Members
 
-<table><thead><tr><th>
-
-Member
-
-</th><th>
-
-Value
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-ALL\_COVER\_OIL
-
-</td><td>
-
-`'cover'`
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-FOLLOW\_ORIGINAL\_SETTING
-
-</td><td>
-
-`'custom'`
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Member|Value|Description|
+|---|---|---|
+|ALL\_COVER\_OIL|`'cover'`||
+|FOLLOW\_ORIGINAL\_SETTING|`'custom'`||
 
 ## Remarks
 

@@ -13,471 +13,49 @@ class IPCB_PrimitiveComponent implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getAllPins()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all pads associated with the device
-
-</td></tr>
-<tr><td>
-
-[getState\_AddIntoBom()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether to add BOM
-
-</td></tr>
-<tr><td>
-
-[getState\_Component()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library device
-
-</td></tr>
-<tr><td>
-
-[getState\_Designator()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: designator
-
-</td></tr>
-<tr><td>
-
-[getState\_Footprint()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library footprint
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_Manufacturer()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: manufacturer
-
-</td></tr>
-<tr><td>
-
-[getState\_ManufacturerId()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: manufacturer ID
-
-</td></tr>
-<tr><td>
-
-[getState\_Model3D()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library 3D model
-
-</td></tr>
-<tr><td>
-
-[getState\_Name()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: name
-
-</td></tr>
-<tr><td>
-
-[getState\_OtherProperty()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[getState\_Pads()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pad
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_Supplier()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: supplier
-
-</td></tr>
-<tr><td>
-
-[getState\_SupplierId()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: supplier ID
-
-</td></tr>
-<tr><td>
-
-[getState\_UniqueId()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: unique ID
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setAttribute(key, value, keyVisible, valueVisible)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set Property
-
-</td></tr>
-<tr><td>
-
-[setState\_AddIntoBom(addIntoBom)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether to add BOM
-
-</td></tr>
-<tr><td>
-
-[setState\_Designator(designator)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: designator
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_Manufacturer(manufacturer)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: manufacturer
-
-</td></tr>
-<tr><td>
-
-[setState\_ManufacturerId(manufacturerId)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: manufacturer ID
-
-</td></tr>
-<tr><td>
-
-[setState\_Name(name)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: name
-
-</td></tr>
-<tr><td>
-
-[setState\_OtherProperty(otherProperty)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_Supplier(supplier)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: supplier
-
-</td></tr>
-<tr><td>
-
-[setState\_SupplierId(supplierId)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: supplier ID
-
-</td></tr>
-<tr><td>
-
-[setState\_UniqueId(uniqueId)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: unique ID
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getAllPins()](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Get all pads associated with the device|
+|[getState\_AddIntoBom()](./IPCB_PrimitiveComponent.md)||Get the property state: whether to add BOM|
+|[getState\_Component()](./IPCB_PrimitiveComponent.md)||Get the property state: associate library device|
+|[getState\_Designator()](./IPCB_PrimitiveComponent.md)||Get the property state: designator|
+|[getState\_Footprint()](./IPCB_PrimitiveComponent.md)||Get the property state: associate library footprint|
+|[getState\_Layer()](./IPCB_PrimitiveComponent.md)||Get the property state: Layer|
+|[getState\_Manufacturer()](./IPCB_PrimitiveComponent.md)||Get the property state: manufacturer|
+|[getState\_ManufacturerId()](./IPCB_PrimitiveComponent.md)||Get the property state: manufacturer ID|
+|[getState\_Model3D()](./IPCB_PrimitiveComponent.md)||Get the property state: associate library 3D model|
+|[getState\_Name()](./IPCB_PrimitiveComponent.md)||Get the property state: name|
+|[getState\_OtherProperty()](./IPCB_PrimitiveComponent.md)||Get the property state: other parameters|
+|[getState\_Pads()](./IPCB_PrimitiveComponent.md)||Get the property state: pad|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveComponent.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveComponent.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveComponent.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./IPCB_PrimitiveComponent.md)||Get the property state: rotation angle|
+|[getState\_Supplier()](./IPCB_PrimitiveComponent.md)||Get the property state: supplier|
+|[getState\_SupplierId()](./IPCB_PrimitiveComponent.md)||Get the property state: supplier ID|
+|[getState\_UniqueId()](./IPCB_PrimitiveComponent.md)||Get the property state: unique ID|
+|[getState\_X()](./IPCB_PrimitiveComponent.md)||Get the property state: X coordinate|
+|[getState\_Y()](./IPCB_PrimitiveComponent.md)||Get the property state: Y coordinate|
+|[isAsync()](./IPCB_PrimitiveComponent.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setAttribute(key, value, keyVisible, valueVisible)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set Property|
+|[setState\_AddIntoBom(addIntoBom)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: whether to add BOM|
+|[setState\_Designator(designator)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: designator|
+|[setState\_Layer(layer)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_Manufacturer(manufacturer)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: manufacturer|
+|[setState\_ManufacturerId(manufacturerId)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: manufacturer ID|
+|[setState\_Name(name)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: name|
+|[setState\_OtherProperty(otherProperty)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: other parameters|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Rotation(rotation)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_Supplier(supplier)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: supplier|
+|[setState\_SupplierId(supplierId)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: supplier ID|
+|[setState\_UniqueId(uniqueId)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: unique ID|
+|[setState\_X(x)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./IPCB_PrimitiveComponent.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./IPCB_PrimitiveComponent.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveComponent.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -532,6 +110,7 @@ console.log('designator:', designatorBefore, '→', refetched[0].getState_Design
 console.log('rotation:', rotationBefore, '→', refetched[0].getState_Rotation());
 ```
 
+
 ### getallpins
 
 # IPCB\_PrimitiveComponent.getAllPins() method
@@ -577,6 +156,7 @@ console.log('allBelongToComponent:', pinInfos.every(p => p.parentMatch));
 console.log('firstPinPrimitiveId:', pinInfos[0].primitiveId);
 ```
 
+
 ### getstate_addintobom
 
 # IPCB\_PrimitiveComponent.getState\_AddIntoBom() method
@@ -611,6 +191,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('addIntoBom:', addIntoBom);
 ```
 
+
 ### getstate_component
 
 # IPCB\_PrimitiveComponent.getState\_Component() method
@@ -620,13 +201,12 @@ Get the property state: associate library device
 ## Signature
 
 ```typescript
-function getState_Component():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Component(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library device
 
@@ -647,6 +227,7 @@ console.log('deviceName:', component.name);
 console.log('deviceUuid:', component.uuid);
 console.log('libraryUuid:', component.libraryUuid);
 ```
+
 
 ### getstate_designator
 
@@ -682,6 +263,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('designator:', designator);
 ```
 
+
 ### getstate_footprint
 
 # IPCB\_PrimitiveComponent.getState\_Footprint() method
@@ -691,13 +273,12 @@ Get the property state: associate library footprint
 ## Signature
 
 ```typescript
-function getState_Footprint():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Footprint(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library footprint
 
@@ -718,6 +299,7 @@ console.log('footprintName:', footprint.name);
 console.log('footprintUuid:', footprint.uuid);
 console.log('libraryUuid:', footprint.libraryUuid);
 ```
+
 
 ### getstate_layer
 
@@ -753,6 +335,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('layer:', layer, layer === 1 ? '(顶面)' : '(底面)');
 ```
 
+
 ### getstate_manufacturer
 
 # IPCB\_PrimitiveComponent.getState\_Manufacturer() method
@@ -786,6 +369,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 
 console.log('manufacturer:', manufacturer);
 ```
+
 
 ### getstate_manufacturerid
 
@@ -821,6 +405,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('manufacturerId:', manufacturerId);
 ```
 
+
 ### getstate_model3d
 
 # IPCB\_PrimitiveComponent.getState\_Model3D() method
@@ -830,13 +415,12 @@ Get the property state: associate library 3D model
 ## Signature
 
 ```typescript
-function getState_Model3D():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Model3D(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library 3D model
 
@@ -856,6 +440,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('model3dName:', model3d ? model3d.name : '(未关联 3D 模型)');
 console.log('model3dUuid:', model3d ? model3d.uuid : '(未关联 3D 模型)');
 ```
+
 
 ### getstate_name
 
@@ -891,6 +476,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('name:', name);
 ```
 
+
 ### getstate_otherproperty
 
 # IPCB\_PrimitiveComponent.getState\_OtherProperty() method
@@ -900,12 +486,12 @@ Get the property state: other parameters
 ## Signature
 
 ```typescript
-function getState_OtherProperty(): Record<string, string | number | boolean> | undefined;
+function getState_OtherProperty(): { [key: string]: string | number | boolean } | undefined;
 ```
 
 ## Returns
 
-Record&lt;string, string \| number \| boolean&gt; \| undefined
+{ \[key: string\]: string \| number \| boolean } \| undefined
 
 Other parameters
 
@@ -926,6 +512,7 @@ console.log('propertyCount:', Object.keys(otherProperty).length);
 console.log('value:', otherProperty.Value);
 console.log('description:', otherProperty.Description);
 ```
+
 
 ### getstate_pads
 
@@ -966,6 +553,7 @@ console.log('padCount:', pads.length);
 console.log('padSummaries:', JSON.stringify(padSummaries));
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveComponent.getState\_PrimitiveId() method
@@ -999,6 +587,7 @@ await eda.pcb_PrimitiveComponent.delete([primitiveId]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -1034,6 +623,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveComponent.getState\_PrimitiveType() method
@@ -1067,6 +657,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -1102,6 +693,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_supplier
 
 # IPCB\_PrimitiveComponent.getState\_Supplier() method
@@ -1135,6 +727,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 
 console.log('supplier:', supplier);
 ```
+
 
 ### getstate_supplierid
 
@@ -1170,6 +763,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('supplierId:', supplierId);
 ```
 
+
 ### getstate_uniqueid
 
 # IPCB\_PrimitiveComponent.getState\_UniqueId() method
@@ -1203,6 +797,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 
 console.log('uniqueId:', JSON.stringify(uniqueId));
 ```
+
 
 ### getstate_x
 
@@ -1238,6 +833,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('x:', x);
 ```
 
+
 ### getstate_y
 
 # IPCB\_PrimitiveComponent.getState\_Y() method
@@ -1272,6 +868,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 console.log('y:', y);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveComponent.isAsync() method
@@ -1305,6 +902,7 @@ await eda.pcb_PrimitiveComponent.delete([comp.getState_PrimitiveId()]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -1352,6 +950,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('rotation:', original, '→', refetched[0].getState_Rotation(), '(修改已丢弃)');
 ```
 
+
 ### setattribute
 
 # IPCB\_PrimitiveComponent.setAttribute() method
@@ -1373,72 +972,12 @@ function setAttribute(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Attribute name. If the device does not have an attribute with this name, the attribute will be added
-
-</td></tr>
-<tr><td>
-
-value
-
-</td><td>
-
-string \| number \| boolean
-
-</td><td>
-
-_(Optional)_ Property value
-
-</td></tr>
-<tr><td>
-
-keyVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Attribute name visibility
-
-</td></tr>
-<tr><td>
-
-valueVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Attribute value visibility
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Attribute name. If the device does not have an attribute with this name, the attribute will be added|
+|value|string \| number \| boolean|_(Optional)_ Property value|
+|keyVisible|boolean|_(Optional)_ Attribute name visibility|
+|valueVisible|boolean|_(Optional)_ Attribute value visibility|
 
 ## Returns
 
@@ -1470,6 +1009,7 @@ console.log('attrKey:', added.getState_Key());
 console.log('attrValue:', added.getState_Value());
 ```
 
+
 ### setstate_addintobom
 
 # IPCB\_PrimitiveComponent.setState\_AddIntoBom() method
@@ -1486,33 +1026,9 @@ function setState_AddIntoBom(addIntoBom: boolean): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-addIntoBom
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether Add to BOM
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|addIntoBom|boolean|Whether Add to BOM|
 
 ## Returns
 
@@ -1546,6 +1062,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('addIntoBom:', before, '→', refetched[0].getState_AddIntoBom());
 ```
 
+
 ### setstate_designator
 
 # IPCB\_PrimitiveComponent.setState\_Designator() method
@@ -1562,33 +1079,9 @@ function setState_Designator(designator: string | undefined): IPCB_PrimitiveComp
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-designator
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Designator
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|designator|string \| undefined|Designator|
 
 ## Returns
 
@@ -1622,6 +1115,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('designator:', before, '→', refetched[0].getState_Designator());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveComponent.setState\_Layer() method
@@ -1638,33 +1132,9 @@ function setState_Layer(layer: TPCB_LayersOfComponent): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)|Layer|
 
 ## Returns
 
@@ -1698,6 +1168,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('layer:', before, '→', refetched[0].getState_Layer());
 ```
 
+
 ### setstate_manufacturer
 
 # IPCB\_PrimitiveComponent.setState\_Manufacturer() method
@@ -1714,33 +1185,9 @@ function setState_Manufacturer(manufacturer: string | undefined): IPCB_Primitive
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-manufacturer
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Manufacturer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|manufacturer|string \| undefined|Manufacturer|
 
 ## Returns
 
@@ -1774,6 +1221,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('manufacturer:', before, '→', refetched[0].getState_Manufacturer());
 ```
 
+
 ### setstate_manufacturerid
 
 # IPCB\_PrimitiveComponent.setState\_ManufacturerId() method
@@ -1790,33 +1238,9 @@ function setState_ManufacturerId(manufacturerId: string | undefined): IPCB_Primi
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-manufacturerId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Manufacturer ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|manufacturerId|string \| undefined|Manufacturer ID|
 
 ## Returns
 
@@ -1850,6 +1274,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('manufacturerId:', before, '→', refetched[0].getState_ManufacturerId());
 ```
 
+
 ### setstate_name
 
 # IPCB\_PrimitiveComponent.setState\_Name() method
@@ -1866,33 +1291,9 @@ function setState_Name(name: string | undefined): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-name
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|name|string \| undefined|Name|
 
 ## Returns
 
@@ -1926,6 +1327,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('name:', before, '→', refetched[0].getState_Name());
 ```
 
+
 ### setstate_otherproperty
 
 # IPCB\_PrimitiveComponent.setState\_OtherProperty() method
@@ -1937,40 +1339,16 @@ Set the property state: other parameters
 ## Signature
 
 ```typescript
-function setState_OtherProperty(
-	otherProperty: Record<string, string | number | boolean>,
-): IPCB_PrimitiveComponent;
+function setState_OtherProperty(otherProperty: {
+	[key: string]: string | number | boolean;
+}): IPCB_PrimitiveComponent;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-otherProperty
-
-</td><td>
-
-Record&lt;string, string \| number \| boolean&gt;
-
-</td><td>
-
-Other parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|otherProperty|\{ \[key: string\]: string \| number \| boolean \}|Other parameters|
 
 ## Returns
 
@@ -2006,6 +1384,7 @@ console.log('propertyCount:', beforeCount, '→', Object.keys(after).length);
 console.log('customValue:', after['嘉立创示例_Custom']);
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveComponent.setState\_PrimitiveLock() method
@@ -2022,33 +1401,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveComponent
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -2082,6 +1437,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('primitiveLock:', before, '→', refetched[0].getState_PrimitiveLock());
 ```
 
+
 ### setstate_rotation
 
 # IPCB\_PrimitiveComponent.setState\_Rotation() method
@@ -2098,33 +1454,9 @@ function setState_Rotation(rotation: number): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -2158,6 +1490,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('rotation:', before, '→', refetched[0].getState_Rotation());
 ```
 
+
 ### setstate_supplier
 
 # IPCB\_PrimitiveComponent.setState\_Supplier() method
@@ -2174,33 +1507,9 @@ function setState_Supplier(supplier: string | undefined): IPCB_PrimitiveComponen
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-supplier
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Supplier
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|supplier|string \| undefined|Supplier|
 
 ## Returns
 
@@ -2234,6 +1543,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('supplier:', before, '→', refetched[0].getState_Supplier());
 ```
 
+
 ### setstate_supplierid
 
 # IPCB\_PrimitiveComponent.setState\_SupplierId() method
@@ -2250,33 +1560,9 @@ function setState_SupplierId(supplierId: string | undefined): IPCB_PrimitiveComp
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-supplierId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Supplier ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|supplierId|string \| undefined|Supplier ID|
 
 ## Returns
 
@@ -2310,6 +1596,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('supplierId:', before, '→', refetched[0].getState_SupplierId());
 ```
 
+
 ### setstate_uniqueid
 
 # IPCB\_PrimitiveComponent.setState\_UniqueId() method
@@ -2326,33 +1613,9 @@ function setState_UniqueId(uniqueId: string | undefined): IPCB_PrimitiveComponen
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uniqueId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Unique ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uniqueId|string \| undefined|Unique ID|
 
 ## Returns
 
@@ -2386,6 +1649,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('uniqueId:', JSON.stringify(before), '→', JSON.stringify(refetched[0].getState_UniqueId()));
 ```
 
+
 ### setstate_x
 
 # IPCB\_PrimitiveComponent.setState\_X() method
@@ -2402,33 +1666,9 @@ function setState_X(x: number): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -2462,6 +1702,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('x:', before, '→', refetched[0].getState_X());
 ```
 
+
 ### setstate_y
 
 # IPCB\_PrimitiveComponent.setState\_Y() method
@@ -2478,33 +1719,9 @@ function setState_Y(y: number): IPCB_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -2537,6 +1754,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 
 console.log('y:', before, '→', refetched[0].getState_Y());
 ```
+
 
 ### toasync
 
@@ -2582,6 +1800,7 @@ const refetched = await eda.pcb_PrimitiveComponent.get([compId]);
 console.log('isAsync:', isAsyncNow);
 console.log('designator:', refetched[0].getState_Designator());
 ```
+
 
 ### tosync
 

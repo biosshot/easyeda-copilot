@@ -10,131 +10,15 @@ interface IDMT_SchematicItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[cbbSymbol?](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-[ILIB\_SymbolItem](./ILIB_SymbolItem.md)
-
-</td><td>
-
-_(Optional)_ The module symbol associated with the reuse block schematic
-
-</td></tr>
-<tr><td>
-
-[itemType](./IDMT_SchematicItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[EDMT\_ItemType.SCHEMATIC](../enums/EDMT_ItemType.md) \| [EDMT\_ItemType.CBB\_SCHEMATIC](../enums/EDMT_ItemType.md)
-
-</td><td>
-
-Project type
-
-</td></tr>
-<tr><td>
-
-[name](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic name
-
-</td></tr>
-<tr><td>
-
-[page](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[IDMT\_SchematicPageItem](./IDMT_SchematicPageItem.md)<!-- -->&gt;
-
-</td><td>
-
-Subordinate schematic sheet
-
-</td></tr>
-<tr><td>
-
-[parentBoardName?](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board it belongs to
-
-</td></tr>
-<tr><td>
-
-[parentProjectUuid](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the project it belongs to
-
-</td></tr>
-<tr><td>
-
-[uuid](./IDMT_SchematicItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[cbbSymbol?](./IDMT_SchematicItem.md)||[ILIB\_SymbolItem](./ILIB_SymbolItem.md)|_(Optional)_ The module symbol associated with the reuse block schematic|
+|[itemType](./IDMT_SchematicItem.md)|`readonly`|[EDMT\_ItemType.SCHEMATIC](../enums/EDMT_ItemType.md) \| [EDMT\_ItemType.CBB\_SCHEMATIC](../enums/EDMT_ItemType.md)|Project type|
+|[name](./IDMT_SchematicItem.md)||string|Schematic name|
+|[page](./IDMT_SchematicItem.md)||Array&lt;[IDMT\_SchematicPageItem](./IDMT_SchematicPageItem.md)<!-- -->&gt;|Subordinate schematic sheet|
+|[parentBoardName?](./IDMT_SchematicItem.md)||string|_(Optional)_ Name of the board it belongs to|
+|[parentProjectUuid](./IDMT_SchematicItem.md)||string|UUID of the project it belongs to|
+|[uuid](./IDMT_SchematicItem.md)||string|Schematic UUID|
 
 ---
 

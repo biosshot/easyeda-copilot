@@ -14,119 +14,12 @@ Operations performed on the design document as a whole
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[autoLayout(props)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Auto layout
-
-</td></tr>
-<tr><td>
-
-[autoRouting(props)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Auto routing
-
-</td></tr>
-<tr><td>
-
-[getCurrentFilterConfiguration()](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current canvas filter configuration
-
-</td></tr>
-<tr><td>
-
-[getPrimitiveAtPoint(x, y)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The primitive at the coordinate point
-
-</td></tr>
-<tr><td>
-
-[getPrimitivesInRegion(left, right, top, bottom)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get All primitives in the region
-
-</td></tr>
-<tr><td>
-
-[importChanges()](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-Import changes from the PCB
-
-</td></tr>
-<tr><td>
-
-[navigateToCoordinates(x, y)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Locate to canvas coordinate
-
-</td></tr>
-<tr><td>
-
-[navigateToRegion(left, right, top, bottom)](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Locate to canvas region
-
-</td></tr>
-<tr><td>
-
-[save()](./SCH_Document.md)
-
-</td><td>
-
-</td><td>
-
-Save Document
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[autoLayout(props)](./SCH_Document.md)||**_(BETA)_** Auto layout|
+|[autoRouting(props)](./SCH_Document.md)||**_(BETA)_** Auto routing|
+|[importChanges()](./SCH_Document.md)||Import changes from the PCB|
+|[save()](./SCH_Document.md)||Save Document|
 
 ---
 
@@ -144,29 +37,23 @@ Auto layout
 
 ```typescript
 function autoLayout(props?: {
-	uuids?: undefined | string[];
-	netlist?:
-		| undefined
-		| {
-			component: Record<
-				string,
-				{
-					pinInfoMap: Record<
-						string,
-						{
-							name: string;
-							number: string;
-							net: string;
-							props: { 'Pin Number': string };
-						}
-					>;
-				}
-			>;
+	uuids?: Array<string>;
+	netlist?: {
+		component: {
+			[uniqueId: string]: {
+				pinInfoMap: {
+					[key: string]: {
+						name: string;
+						number: string;
+						net: string;
+						props: { 'Pin Number': string };
+					};
+				};
+			};
 		};
-	designatorDeviceTypeMap?:
-		| undefined
-		| Record<
-			string,
+	};
+	designatorDeviceTypeMap?: {
+		[designator: string]:
 			| 'resistor'
 			| 'capacitor'
 			| 'inductive'
@@ -174,40 +61,16 @@ function autoLayout(props?: {
 			| 'triode'
 			| 'oscillator'
 			| 'chip'
-			| 'otherDevice'
-		>;
+			| 'otherDevice';
+	};
 }): Promise<any>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-props
-
-</td><td>
-
-{ uuids?: undefined \| string\[\]; netlist?: undefined \| { component: Record&lt;string, { pinInfoMap: Record&lt;string, { name: string; number: string; net: string; props: { 'Pin Number': string } }&gt; }&gt; }; designatorDeviceTypeMap?: undefined \| Record&lt;string, 'resistor' \| 'capacitor' \| 'inductive' \| 'diode' \| 'triode' \| 'oscillator' \| 'chip' \| 'otherDevice'&gt; }
-
-</td><td>
-
-_(Optional)_ Auto layout parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|props|{ uuids?: Array&lt;string&gt;; netlist?: { component: { \[uniqueId: string\]: { pinInfoMap: { \[key: string\]: { name: string; number: string; net: string; props: { 'Pin Number': string } } } } } }; designatorDeviceTypeMap?: { \[designator: string\]: 'resistor' \| 'capacitor' \| 'inductive' \| 'diode' \| 'triode' \| 'oscillator' \| 'chip' \| 'otherDevice' } }|_(Optional)_ Auto layout parameter|
 
 ## Returns
 
@@ -238,6 +101,7 @@ await new Promise(r => setTimeout(r, 1500));
 await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 ```
 
+
 ### autorouting
 
 # SCH\_Document.autoRouting() method
@@ -250,29 +114,23 @@ Auto routing
 
 ```typescript
 function autoRouting(props?: {
-	uuids?: undefined | string[];
-	netlist?:
-		| undefined
-		| {
-			component: Record<
-				string,
-				{
-					pinInfoMap: Record<
-						string,
-						{
-							name: string;
-							number: string;
-							net: string;
-							props: { 'Pin Number': string };
-						}
-					>;
-				}
-			>;
+	uuids?: Array<string>;
+	netlist?: {
+		component: {
+			[uniqueId: string]: {
+				pinInfoMap: {
+					[key: string]: {
+						name: string;
+						number: string;
+						net: string;
+						props: { 'Pin Number': string };
+					};
+				};
+			};
 		};
-	designatorDeviceTypeMap?:
-		| undefined
-		| Record<
-			string,
+	};
+	designatorDeviceTypeMap?: {
+		[designator: string]:
 			| 'resistor'
 			| 'capacitor'
 			| 'inductive'
@@ -280,40 +138,16 @@ function autoRouting(props?: {
 			| 'triode'
 			| 'oscillator'
 			| 'chip'
-			| 'otherDevice'
-		>;
+			| 'otherDevice';
+	};
 }): Promise<any>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-props
-
-</td><td>
-
-{ uuids?: undefined \| string\[\]; netlist?: undefined \| { component: Record&lt;string, { pinInfoMap: Record&lt;string, { name: string; number: string; net: string; props: { 'Pin Number': string } }&gt; }&gt; }; designatorDeviceTypeMap?: undefined \| Record&lt;string, 'resistor' \| 'capacitor' \| 'inductive' \| 'diode' \| 'triode' \| 'oscillator' \| 'chip' \| 'otherDevice'&gt; }
-
-</td><td>
-
-_(Optional)_ Auto routing parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|props|{ uuids?: Array&lt;string&gt;; netlist?: { component: { \[uniqueId: string\]: { pinInfoMap: { \[key: string\]: { name: string; number: string; net: string; props: { 'Pin Number': string } } } } } }; designatorDeviceTypeMap?: { \[designator: string\]: 'resistor' \| 'capacitor' \| 'inductive' \| 'diode' \| 'triode' \| 'oscillator' \| 'chip' \| 'otherDevice' } }|_(Optional)_ Auto routing parameter|
 
 ## Returns
 
@@ -361,194 +195,6 @@ await new Promise(r => setTimeout(r, 1500));
 await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 ```
 
-### getcurrentfilterconfiguration
-
-# SCH\_Document.getCurrentFilterConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get Current canvas filter configuration
-
-## Signature
-
-```typescript
-function getCurrentFilterConfiguration(): Promise<Record<string, boolean> | undefined>;
-```
-
-## Returns
-
-Promise&lt;Record&lt;string, boolean&gt; \| undefined&gt;
-
-Current canvas filter configuration; `undefined` indicates that the retrieval failed
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getprimitiveatpoint
-
-# SCH\_Document.getPrimitiveAtPoint() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get The primitive at the coordinate point
-
-## Signature
-
-```typescript
-function getPrimitiveAtPoint(x: number, y: number): Promise<ISCH_Primitive | undefined>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-Coordinate point X
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Coordinate point Y
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;[ISCH\_Primitive](../interfaces/ISCH_Primitive.md) \| undefined&gt;
-
-The primitive at the coordinate point. If no primitive can be found at the coordinate point, `undefined` will be returned
-
-## Remarks
-
-This operation is similar to clicking with the mouse on the front end; it will get the primitive at the specified coordinate point ADD since EDA v4.2
-
-### getprimitivesinregion
-
-# SCH\_Document.getPrimitivesInRegion() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get All primitives in the region
-
-## Signature
-
-```typescript
-function getPrimitivesInRegion(
-	left: number,
-	right: number,
-	top: number,
-	bottom: number,
-): Promise<Array<ISCH_Primitive>>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-left
-
-</td><td>
-
-number
-
-</td><td>
-
-First X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-right
-
-</td><td>
-
-number
-
-</td><td>
-
-Second X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-top
-
-</td><td>
-
-number
-
-</td><td>
-
-First Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-bottom
-
-</td><td>
-
-number
-
-</td><td>
-
-Second Y coordinate of the rectangle
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;Array&lt;[ISCH\_Primitive](../interfaces/ISCH_Primitive.md)<!-- -->&gt;&gt;
-
-All primitives in the region
-
-## Remarks
-
-This API only returns primitives that are completely contained in the region. If a primitive is partially outside the region, it will be ignored ADD since EDA v4.2
 
 ### importchanges
 
@@ -598,178 +244,6 @@ await new Promise(r => setTimeout(r, 500));
 await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 ```
 
-### navigatetocoordinates
-
-# SCH\_Document.navigateToCoordinates() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Locate to canvas coordinate
-
-## Signature
-
-```typescript
-function navigateToCoordinates(x: number, y: number): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the operation is successful
-
-## Remarks
-
-This API positions on the front-end canvas to the specified coordinate;
-
-The unit span here is 0.01inch ADD since EDA v4.2
-
-### navigatetoregion
-
-# SCH\_Document.navigateToRegion() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Locate to canvas region
-
-## Signature
-
-```typescript
-function navigateToRegion(
-	left: number,
-	right: number,
-	top: number,
-	bottom: number,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-left
-
-</td><td>
-
-number
-
-</td><td>
-
-First X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-right
-
-</td><td>
-
-number
-
-</td><td>
-
-Second X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-top
-
-</td><td>
-
-number
-
-</td><td>
-
-First Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-bottom
-
-</td><td>
-
-number
-
-</td><td>
-
-Second Y coordinate of the rectangle
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the operation is successful
-
-## Remarks
-
-This API positions on the front-end canvas to the specified region;
-
-For example: the passed-in data is `{left: 0, right: 60, top: 100, bottom: -20}` =<!-- -->&gt; `navigateToRegion(0, 60, 100, -20)`<!-- -->, then the canvas will be positioned to a rectangular range centered at `[30, 40]` with a length of `60` in the x-axis direction and `120` in the y-axis direction;
-
-This API does not perform zooming, but it will generate a rectangle frame indicating the positioning center and the region range;
-
-The unit span here is 0.01inch ADD since EDA v4.2
 
 ### save
 

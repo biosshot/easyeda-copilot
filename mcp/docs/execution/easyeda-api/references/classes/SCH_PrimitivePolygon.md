@@ -11,97 +11,15 @@ class SCH_PrimitivePolygon implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(line, color, fillColor, lineWidth, lineType)](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Polygon
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Polygon
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Polygon
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Polygon
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Polygon
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Polygon primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitivePolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Polygon
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(line, color, fillColor, lineWidth, lineType)](./SCH_PrimitivePolygon.md)||**_(BETA)_** Create Polygon|
+|[delete(primitiveIds)](./SCH_PrimitivePolygon.md)||**_(BETA)_** Delete Polygon|
+|[get(primitiveIds)](./SCH_PrimitivePolygon.md)||**_(BETA)_** Get Polygon|
+|[get(primitiveIds)](./SCH_PrimitivePolygon.md)||**_(BETA)_** Get Polygon|
+|[getAll()](./SCH_PrimitivePolygon.md)||**_(BETA)_** Get all Polygon|
+|[getAllPrimitiveId()](./SCH_PrimitivePolygon.md)||**_(BETA)_** Get all Polygon primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitivePolygon.md)||**_(BETA)_** Modify Polygon|
 
 ---
 
@@ -129,85 +47,13 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-line
-
-</td><td>
-
-Array&lt;number&gt;
-
-</td><td>
-
-Coordinate group, a continuous set of lines described by `[x1, y1, x2, y2, x3, y3]`
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-_(Optional)_ Line type. `null` indicates the default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|line|Array&lt;number&gt;|Coordinate group, a continuous set of lines described by `[x1, y1, x2, y2, x3, y3]`|
+|color|string \| null|_(Optional)_ Color, `null` indicates the default|
+|fillColor|string \| null|_(Optional)_ Fill color. `none` indicates no fill, `null` indicates the default|
+|lineWidth|number \| null|_(Optional)_ Line width, range `1-10`<!-- -->. `null` indicates the default|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|_(Optional)_ Line type. `null` indicates the default|
 
 ## Returns
 
@@ -235,6 +81,7 @@ console.log('fillColor:', polygon.getState_FillColor());
 console.log('lineWidth:', polygon.getState_LineWidth());
 ```
 
+
 ### delete
 
 # SCH\_PrimitivePolygon.delete() method
@@ -251,33 +98,9 @@ function delete(primitiveIds: string | ISCH_PrimitivePolygon | Array<string> | A
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md)<!-- -->&gt;
-
-</td><td>
-
-Polygon primitive ID or Polygon primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md)<!-- -->&gt;|Polygon primitive ID or Polygon primitive object|
 
 ## Returns
 
@@ -309,6 +132,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitivePolygon.get() method
@@ -325,33 +149,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitivePolygon | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Polygon primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Polygon primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -385,6 +185,7 @@ console.log('array length:', arr.length);
 console.log('poly2 color:', arr[1].getState_Color());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitivePolygon.get() method
@@ -401,33 +202,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitivePolygon>>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Polygon primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Polygon primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -479,6 +256,7 @@ console.log('marker polygon found:', all.some(p => p.getState_PrimitiveId() === 
 console.log('marker color:', all.find(p => p.getState_PrimitiveId() === polygonId).getState_Color());
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitivePolygon.getAllPrimitiveId() method
@@ -518,6 +296,7 @@ console.log('total polygon ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(polygonId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitivePolygon.modify() method
@@ -532,63 +311,21 @@ Modify Polygon
 function modify(
 	primitiveId: string | ISCH_PrimitivePolygon,
 	property: {
-		line?: undefined | number[];
-		color?: undefined | null | string;
-		fillColor?: undefined | null | string;
-		lineWidth?: undefined | null | number;
-		lineType?:
-			| undefined
-			| null
-			| ESCH_PrimitiveLineType.SOLID
-			| ESCH_PrimitiveLineType.DASHED
-			| ESCH_PrimitiveLineType.DOTTED
-			| ESCH_PrimitiveLineType.DOT_DASHED;
+		line?: Array<number>;
+		color?: string | null;
+		fillColor?: string | null;
+		lineWidth?: number | null;
+		lineType?: ESCH_PrimitiveLineType | null;
 	},
 ): Promise<ISCH_PrimitivePolygon | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ line?: undefined \| number\[\]; color?: undefined \| null \| string; fillColor?: undefined \| null \| string; lineWidth?: undefined \| null \| number; lineType?: undefined \| null \| [ESCH\_PrimitiveLineType.SOLID](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DASHED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOTTED](../enums/ESCH_PrimitiveLineType.md) \| [ESCH\_PrimitiveLineType.DOT\_DASHED](../enums/ESCH_PrimitiveLineType.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitivePolygon](./ISCH_PrimitivePolygon.md)|Primitive ID|
+|property|{ line?: Array&lt;number&gt;; color?: string \| null; fillColor?: string \| null; lineWidth?: number \| null; lineType?: [ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null }|Modify Parameter|
 
 ## Returns
 

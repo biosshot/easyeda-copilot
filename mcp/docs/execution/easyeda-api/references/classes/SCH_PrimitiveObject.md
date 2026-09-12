@@ -11,97 +11,15 @@ class SCH_PrimitiveObject implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(content, startX, startY, width, height, rotation, mirror, fileName)](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Binary embedded object
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Binary embedded object
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Binary embedded object
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Binary embedded object
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Binary embedded object
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Binary embedded object primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Binary embedded object
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(content, startX, startY, width, height, rotation, mirror, fileName)](./SCH_PrimitiveObject.md)||**_(BETA)_** Create Binary embedded object|
+|[delete(primitiveIds)](./SCH_PrimitiveObject.md)||**_(BETA)_** Delete Binary embedded object|
+|[get(primitiveIds)](./SCH_PrimitiveObject.md)||**_(BETA)_** Get Binary embedded object|
+|[get(primitiveIds)](./SCH_PrimitiveObject.md)||**_(BETA)_** Get Binary embedded object|
+|[getAll()](./SCH_PrimitiveObject.md)||**_(BETA)_** Get all Binary embedded object|
+|[getAllPrimitiveId()](./SCH_PrimitiveObject.md)||**_(BETA)_** Get all Binary embedded object primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitiveObject.md)||**_(BETA)_** Modify Binary embedded object|
 
 ---
 
@@ -132,124 +50,16 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-File \| string
-
-</td><td>
-
-Object content
-
-</td></tr>
-<tr><td>
-
-startX
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point coordinates X
-
-</td></tr>
-<tr><td>
-
-startY
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point coordinates Y
-
-</td></tr>
-<tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Width
-
-</td></tr>
-<tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Height
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|File \| string|Object content|
+|startX|number|Start point coordinates X|
+|startY|number|Start point coordinates Y|
+|width|number|_(Optional)_ Width|
+|height|number|_(Optional)_ Height|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -279,6 +89,7 @@ console.log('fileName:', obj.getState_FileName());
 console.log('content length:', obj.getState_Content().length);
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveObject.delete() method
@@ -295,33 +106,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveObject | Array<string> | Ar
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md)<!-- -->&gt;
-
-</td><td>
-
-Binary embedded object primitive ID or Binary embedded object primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md)<!-- -->&gt;|Binary embedded object primitive ID or Binary embedded object primitive object|
 
 ## Returns
 
@@ -354,6 +141,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveObject.get() method
@@ -370,33 +158,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveObject | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Binary embedded object primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Binary embedded object primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -429,6 +193,7 @@ console.log('array length:', arr.length);
 console.log('obj2 fileName:', arr[1].getState_FileName());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveObject.get() method
@@ -445,33 +210,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveObject>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Binary embedded object primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Binary embedded object primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -524,6 +265,7 @@ console.log('marker object found:', all.some(o => o.getState_PrimitiveId() === o
 console.log('marker fileName:', all.find(o => o.getState_PrimitiveId() === objId).getState_FileName());
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveObject.getAllPrimitiveId() method
@@ -564,6 +306,7 @@ console.log('total object ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(objId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveObject.modify() method
@@ -578,60 +321,24 @@ Modify Binary embedded object
 function modify(
 	primitiveId: string | ISCH_PrimitiveObject,
 	property: {
-		content?: undefined | string | File;
-		startX?: undefined | number;
-		startY?: undefined | number;
-		width?: undefined | number;
-		height?: undefined | number;
-		rotation?: undefined | number;
-		mirror?: undefined | false | true;
-		fileName?: undefined | string;
+		content?: File | string;
+		startX?: number;
+		startY?: number;
+		width?: number;
+		height?: number;
+		rotation?: number;
+		mirror?: boolean;
+		fileName?: string;
 	},
 ): Promise<ISCH_PrimitiveObject | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-\{ content?: undefined \| string \| File; startX?: undefined \| number; startY?: undefined \| number; width?: undefined \| number; height?: undefined \| number; rotation?: undefined \| number; mirror?: undefined \| false \| true; fileName?: undefined \| string \}
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveObject](./ISCH_PrimitiveObject.md)|Primitive ID|
+|property|\{ content?: File \| string; startX?: number; startY?: number; width?: number; height?: number; rotation?: number; mirror?: boolean; fileName?: string \}|Modify Parameter|
 
 ## Returns
 

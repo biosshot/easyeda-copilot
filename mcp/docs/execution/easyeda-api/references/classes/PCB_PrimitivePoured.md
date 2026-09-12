@@ -11,75 +11,13 @@ class PCB_PrimitivePoured implements IPCB_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[delete(primitiveIds)](./PCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Copper fill
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Copper fill
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Copper fill
-
-</td></tr>
-<tr><td>
-
-[getAll()](./PCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Copper fill primitive
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./PCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Copper fill primitive IDs
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[delete(primitiveIds)](./PCB_PrimitivePoured.md)||**_(BETA)_** Delete Copper fill|
+|[get(primitiveIds)](./PCB_PrimitivePoured.md)||**_(BETA)_** Get Copper fill|
+|[get(primitiveIds)](./PCB_PrimitivePoured.md)||**_(BETA)_** Get Copper fill|
+|[getAll()](./PCB_PrimitivePoured.md)||**_(BETA)_** Get all Copper fill primitive|
+|[getAllPrimitiveId()](./PCB_PrimitivePoured.md)||**_(BETA)_** Get all Copper fill primitive IDs|
 
 ---
 
@@ -101,33 +39,9 @@ function delete(primitiveIds: string | IPCB_PrimitivePoured | Array<string> | Ar
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [IPCB\_PrimitivePoured](./IPCB_PrimitivePoured.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitivePoured](./IPCB_PrimitivePoured.md)<!-- -->&gt;
-
-</td><td>
-
-Copper fill primitive ID or Copper fill primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [IPCB\_PrimitivePoured](./IPCB_PrimitivePoured.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitivePoured](./IPCB_PrimitivePoured.md)<!-- -->&gt;|Copper fill primitive ID or Copper fill primitive object|
 
 ## Returns
 
@@ -158,6 +72,7 @@ console.log('deleted:', deleted);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # PCB\_PrimitivePoured.get() method
@@ -174,33 +89,9 @@ function get(primitiveIds: string): Promise<IPCB_PrimitivePoured | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Copper fill primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Copper fill primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -232,6 +123,7 @@ console.log('含未匹配 ID 时返回数量：', partial.length);
 console.log('关联覆铜边框 ID：', single.getState_PourPrimitiveId());
 ```
 
+
 ### get_1
 
 # PCB\_PrimitivePoured.get() method
@@ -248,33 +140,9 @@ function get(primitiveIds: Array<string>): Promise<Array<IPCB_PrimitivePoured>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Copper fill primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Copper fill primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -324,6 +192,7 @@ console.log('first primitiveType:', first.getState_PrimitiveType());
 console.log('first 关联覆铜边框 ID：', first.getState_PourPrimitiveId());
 console.log('first 子区域数量：', first.getState_PourFills().length);
 ```
+
 
 ### getallprimitiveid
 

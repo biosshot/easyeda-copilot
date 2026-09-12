@@ -13,273 +13,31 @@ class ISCH_PrimitiveObject implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Content()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: object content
-
-</td></tr>
-<tr><td>
-
-[getState\_FileName()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: file name
-
-</td></tr>
-<tr><td>
-
-[getState\_Height()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: height
-
-</td></tr>
-<tr><td>
-
-[getState\_Mirror()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_StartX()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_StartY()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Width()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: width
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_Content(content)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: object content
-
-</td></tr>
-<tr><td>
-
-[setState\_FileName(fileName)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: file name
-
-</td></tr>
-<tr><td>
-
-[setState\_Height(height)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: height
-
-</td></tr>
-<tr><td>
-
-[setState\_Mirror(mirror)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_StartX(startX)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start point coordinates X
-
-</td></tr>
-<tr><td>
-
-[setState\_StartY(startY)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start point coordinates Y
-
-</td></tr>
-<tr><td>
-
-[setState\_Width(width)](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: width
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveObject.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveObject.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Content()](./ISCH_PrimitiveObject.md)||Get the property state: object content|
+|[getState\_FileName()](./ISCH_PrimitiveObject.md)||Get the property state: file name|
+|[getState\_Height()](./ISCH_PrimitiveObject.md)||Get the property state: height|
+|[getState\_Mirror()](./ISCH_PrimitiveObject.md)||Get the property state: whether it is mirrored|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveObject.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveObject.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./ISCH_PrimitiveObject.md)||Get the property state: rotation angle|
+|[getState\_StartX()](./ISCH_PrimitiveObject.md)||Get the property state: X coordinate|
+|[getState\_StartY()](./ISCH_PrimitiveObject.md)||Get the property state: Y coordinate|
+|[getState\_Width()](./ISCH_PrimitiveObject.md)||Get the property state: width|
+|[isAsync()](./ISCH_PrimitiveObject.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveObject.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_Content(content)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: object content|
+|[setState\_FileName(fileName)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: file name|
+|[setState\_Height(height)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: height|
+|[setState\_Mirror(mirror)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: whether it is mirrored|
+|[setState\_Rotation(rotation)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_StartX(startX)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: start point coordinates X|
+|[setState\_StartY(startY)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: start point coordinates Y|
+|[setState\_Width(width)](./ISCH_PrimitiveObject.md)||**_(BETA)_** Set the property state: width|
+|[toAsync()](./ISCH_PrimitiveObject.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveObject.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -539,33 +297,9 @@ function setState_Content(content: File | string): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-File \| string
-
-</td><td>
-
-Object content
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|File \| string|Object content|
 
 ## Returns
 
@@ -589,33 +323,9 @@ function setState_FileName(fileName: string): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|File name|
 
 ## Returns
 
@@ -639,33 +349,9 @@ function setState_Height(height: number): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-Height
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|height|number|Height|
 
 ## Returns
 
@@ -689,33 +375,9 @@ function setState_Mirror(mirror: boolean): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|mirror|boolean|Whether it is mirrored|
 
 ## Returns
 
@@ -739,33 +401,9 @@ function setState_Rotation(rotation: number): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -789,33 +427,9 @@ function setState_StartX(startX: number): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startX
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point coordinates X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startX|number|Start point coordinates X|
 
 ## Returns
 
@@ -839,33 +453,9 @@ function setState_StartY(startY: number): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startY
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point coordinates Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startY|number|Start point coordinates Y|
 
 ## Returns
 
@@ -889,33 +479,9 @@ function setState_Width(width: number): ISCH_PrimitiveObject;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-Width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|width|number|Width|
 
 ## Returns
 

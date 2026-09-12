@@ -18,84 +18,12 @@ This classification index is used to index the classifications in the specified 
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[libraryType](./ILIB_ClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-[libraryUuid](./ILIB_ClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-[primaryClassificationUuid](./ILIB_ClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Primary classification UUID
-
-</td></tr>
-<tr><td>
-
-[secondaryClassificationUuid?](./ILIB_ClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Secondary classification UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[libraryType](./ILIB_ClassificationIndex.md)||[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|[libraryUuid](./ILIB_ClassificationIndex.md)||string|Library UUID|
+|[primaryClassificationUuid](./ILIB_ClassificationIndex.md)||string|Primary classification UUID|
+|[secondaryClassificationUuid?](./ILIB_ClassificationIndex.md)||string|_(Optional)_ Secondary classification UUID|
 
 ---
 

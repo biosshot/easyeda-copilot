@@ -12,53 +12,11 @@ class IPCB_Polygon
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[discretize(options)](./IPCB_Polygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Discretize a single polygon into point data
-
-</td></tr>
-<tr><td>
-
-[getCenter()](./IPCB_Polygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Single polygon center point
-
-</td></tr>
-<tr><td>
-
-[getSource()](./IPCB_Polygon.md)
-
-</td><td>
-
-</td><td>
-
-Get Single polygon data
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[discretize(options)](./IPCB_Polygon.md)||**_(BETA)_** Discretize a single polygon into point data|
+|[getCenter()](./IPCB_Polygon.md)||**_(BETA)_** Get Single polygon center point|
+|[getSource()](./IPCB_Polygon.md)||Get Single polygon data|
 
 ---
 
@@ -75,42 +33,18 @@ Discretize a single polygon into point data
 ## Signature
 
 ```typescript
-function discretize(options?: IPCB_DiscretizeOptions): Promise<Array<IPCB_DiscretizedPoint>>;
+function discretize(options?: IPCB_DiscretizeOptions): Array<IPCB_DiscretizedPoint>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-options
-
-</td><td>
-
-[IPCB\_DiscretizeOptions](../interfaces/IPCB_DiscretizeOptions.md)
-
-</td><td>
-
-_(Optional)_ Discretization options
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|options|[IPCB\_DiscretizeOptions](../interfaces/IPCB_DiscretizeOptions.md)|_(Optional)_ Discretization options|
 
 ## Returns
 
-Promise&lt;Array&lt;[IPCB\_DiscretizedPoint](../interfaces/IPCB_DiscretizedPoint.md)<!-- -->&gt;&gt;
+Array&lt;[IPCB\_DiscretizedPoint](../interfaces/IPCB_DiscretizedPoint.md)<!-- -->&gt;
 
 Discretized point data
 

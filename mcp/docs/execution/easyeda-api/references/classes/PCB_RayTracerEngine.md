@@ -14,75 +14,13 @@ Controls the docking and interaction of the ray tracer engine
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[dispose()](./PCB_RayTracerEngine.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Stop the ray tracer engine
-
-</td></tr>
-<tr><td>
-
-[getLightConfigurations(lightName)](./PCB_RayTracerEngine.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the ray tracer light configurations
-
-</td></tr>
-<tr><td>
-
-[getRenderConfigurations()](./PCB_RayTracerEngine.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the ray tracer render configurations
-
-</td></tr>
-<tr><td>
-
-[init()](./PCB_RayTracerEngine.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Initialize the ray tracer engine
-
-</td></tr>
-<tr><td>
-
-[setRenderConfigurations(configurations)](./PCB_RayTracerEngine.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the ray tracer render configurations
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[dispose()](./PCB_RayTracerEngine.md)||**_(BETA)_** Stop the ray tracer engine|
+|[getLightConfigurations(lightName)](./PCB_RayTracerEngine.md)||**_(BETA)_** Get the ray tracer light configurations|
+|[getRenderConfigurations()](./PCB_RayTracerEngine.md)||**_(BETA)_** Get the ray tracer render configurations|
+|[init()](./PCB_RayTracerEngine.md)||**_(BETA)_** Initialize the ray tracer engine|
+|[setRenderConfigurations(configurations)](./PCB_RayTracerEngine.md)||**_(BETA)_** Set the ray tracer render configurations|
 
 ---
 
@@ -126,31 +64,9 @@ function getLightConfigurations(lightName: string): Promise<any>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lightName
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lightName|string||
 
 ## Returns
 
@@ -226,33 +142,9 @@ function setRenderConfigurations(configurations: any): Promise<void>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurations
-
-</td><td>
-
-any
-
-</td><td>
-
-Render configuration
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|configurations|any|Render configuration|
 
 ## Returns
 

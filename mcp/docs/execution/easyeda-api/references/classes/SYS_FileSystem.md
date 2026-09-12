@@ -12,207 +12,24 @@ class SYS_FileSystem
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createDirectoryInFileSystem(folderPath)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** In file system in create folder
-
-</td></tr>
-<tr><td>
-
-[createObjectURL(blob)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-Create ObjectURL
-
-</td></tr>
-<tr><td>
-
-[deleteFileInFileSystem(uri, force)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete a file in the file system
-
-</td></tr>
-<tr><td>
-
-[existsPathInFileSystem(uri)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Check whether a file or directory exists in the file system
-
-</td></tr>
-<tr><td>
-
-[getDocumentsPath()](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the document directory path
-
-</td></tr>
-<tr><td>
-
-[getEdaPath()](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the EDA document directory path
-
-</td></tr>
-<tr><td>
-
-[getExtensionFile(uri)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-Get a file from the extension
-
-</td></tr>
-<tr><td>
-
-[getLibrariesPaths()](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the library directory paths
-
-</td></tr>
-<tr><td>
-
-[getProjectsPaths()](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the project directory paths
-
-</td></tr>
-<tr><td>
-
-[listFilesOfFileSystem(folderPath, recursive)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** View the file list under a file system path
-
-</td></tr>
-<tr><td>
-
-[openReadFileDialog(filenameExtensions, multiFiles)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open the read-file dialog
-
-</td></tr>
-<tr><td>
-
-[openReadFileDialog(filenameExtensions, multiFiles)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open the read-file dialog
-
-</td></tr>
-<tr><td>
-
-[openReadFolderDialog()](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open the read-folder dialog
-
-</td></tr>
-<tr><td>
-
-[readFileFromFileSystem(uri)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Read a file from the file system
-
-</td></tr>
-<tr><td>
-
-[revokeObjectURL(url)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-Revoke the ObjectURL
-
-</td></tr>
-<tr><td>
-
-[saveFile(fileData, fileName)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-Save File
-
-</td></tr>
-<tr><td>
-
-[saveFileToFileSystem(uri, fileData, fileName, force)](./SYS_FileSystem.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Write a file to the file system
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createDirectoryInFileSystem(folderPath)](./SYS_FileSystem.md)||**_(BETA)_** In file system in create folder|
+|[createObjectURL(blob)](./SYS_FileSystem.md)||Create ObjectURL|
+|[deleteFileInFileSystem(uri, force)](./SYS_FileSystem.md)||**_(BETA)_** Delete a file in the file system|
+|[existsPathInFileSystem(uri)](./SYS_FileSystem.md)||**_(BETA)_** Check whether a file or directory exists in the file system|
+|[getDocumentsPath()](./SYS_FileSystem.md)||**_(BETA)_** Get the document directory path|
+|[getEdaPath()](./SYS_FileSystem.md)||**_(BETA)_** Get the EDA document directory path|
+|[getExtensionFile(uri)](./SYS_FileSystem.md)||Get a file from the extension|
+|[getLibrariesPaths()](./SYS_FileSystem.md)||**_(BETA)_** Get the library directory paths|
+|[getProjectsPaths()](./SYS_FileSystem.md)||**_(BETA)_** Get the project directory paths|
+|[listFilesOfFileSystem(folderPath, recursive)](./SYS_FileSystem.md)||**_(BETA)_** View the file list under a file system path|
+|[openReadFileDialog(filenameExtensions, multiFiles)](./SYS_FileSystem.md)||**_(BETA)_** Open the read-file dialog|
+|[openReadFileDialog(filenameExtensions, multiFiles)](./SYS_FileSystem.md)||**_(BETA)_** Open the read-file dialog|
+|[readFileFromFileSystem(uri)](./SYS_FileSystem.md)||**_(BETA)_** Read a file from the file system|
+|[revokeObjectURL(url)](./SYS_FileSystem.md)||Revoke the ObjectURL|
+|[saveFile(fileData, fileName)](./SYS_FileSystem.md)||Save File|
+|[saveFileToFileSystem(uri, fileData, fileName, force)](./SYS_FileSystem.md)||**_(BETA)_** Write a file to the file system|
 
 ---
 
@@ -234,33 +51,9 @@ function createDirectoryInFileSystem(folderPath: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-folderPath
-
-</td><td>
-
-string
-
-</td><td>
-
-Folder path
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|folderPath|string|Folder path|
 
 ## Returns
 
@@ -290,33 +83,9 @@ function createObjectURL(blob: Blob | File): string;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-blob
-
-</td><td>
-
-Blob \| File
-
-</td><td>
-
-Blob or File object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|blob|Blob \| File|Blob or File object|
 
 ## Returns
 
@@ -340,6 +109,7 @@ const url = eda.sys_FileSystem.createObjectURL(blob);
 console.log('ObjectURL：', url);
 ```
 
+
 ### deletefileinfilesystem
 
 # SYS\_FileSystem.deleteFileInFileSystem() method
@@ -356,46 +126,10 @@ function deleteFileInFileSystem(uri: string, force?: boolean): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uri
-
-</td><td>
-
-string
-
-</td><td>
-
-File resource locator. If it ends with a slash `/` (a backslash `\` on Windows), it is recognized as a folder; if it does not end with a slash, it is recognized as a complete file name, in which case the `fileName` parameter is ignored
-
-</td></tr>
-<tr><td>
-
-force
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Force delete the folder (whether to force delete the folder when the target is a folder containing files)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uri|string|File resource locator. If it ends with a slash `/` (a backslash `\` on Windows), it is recognized as a folder; if it does not end with a slash, it is recognized as a complete file name, in which case the `fileName` parameter is ignored|
+|force|boolean|_(Optional)_ Force delete the folder (whether to force delete the folder when the target is a folder containing files)|
 
 ## Returns
 
@@ -425,33 +159,9 @@ function existsPathInFileSystem(uri: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uri
-
-</td><td>
-
-string
-
-</td><td>
-
-File resource locator. An absolute path containing the complete file name is required
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uri|string|File resource locator. An absolute path containing the complete file name is required|
 
 ## Returns
 
@@ -535,33 +245,9 @@ function getExtensionFile(uri: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uri
-
-</td><td>
-
-string
-
-</td><td>
-
-File path
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uri|string|File path|
 
 ## Returns
 
@@ -579,6 +265,7 @@ const file = await eda.sys_FileSystem.getExtensionFile('extension.json');
 console.log('文件名：', file.name);
 console.log('文件大小：', file.size);
 ```
+
 
 ### getlibrariespaths
 
@@ -651,46 +338,10 @@ function listFilesOfFileSystem(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-folderPath
-
-</td><td>
-
-string
-
-</td><td>
-
-Directory path
-
-</td></tr>
-<tr><td>
-
-recursive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to recursively get all sub-files
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|folderPath|string|Directory path|
+|recursive|boolean|_(Optional)_ Whether to recursively get all sub-files|
 
 ## Returns
 
@@ -723,46 +374,10 @@ function openReadFileDialog(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-filenameExtensions
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ File extension
-
-</td></tr>
-<tr><td>
-
-multiFiles
-
-</td><td>
-
-true
-
-</td><td>
-
-_(Optional)_ Whether multiple files are allowed to be read
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|filenameExtensions|string \| Array&lt;string&gt;|_(Optional)_ File extension|
+|multiFiles|true|_(Optional)_ Whether multiple files are allowed to be read|
 
 ## Returns
 
@@ -785,6 +400,7 @@ eda.sys_FileSystem.openReadFileDialog('.json').then((file) => {
 console.log('已打开文件选择窗口');
 ```
 
+
 ### openreadfiledialog_1
 
 # SYS\_FileSystem.openReadFileDialog() method
@@ -804,76 +420,16 @@ function openReadFileDialog(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-filenameExtensions
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ File extension
-
-</td></tr>
-<tr><td>
-
-multiFiles
-
-</td><td>
-
-false
-
-</td><td>
-
-_(Optional)_ Whether multiple files are allowed to be read
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|filenameExtensions|string \| Array&lt;string&gt;|_(Optional)_ File extension|
+|multiFiles|false|_(Optional)_ Whether multiple files are allowed to be read|
 
 ## Returns
 
 Promise&lt;File \| undefined&gt;
 
 File format file
-
-### openreadfolderdialog
-
-# SYS\_FileSystem.openReadFolderDialog() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Open the read-folder dialog
-
-## Signature
-
-```typescript
-function openReadFolderDialog(): Promise<Array<{ relativePath: string; file: File }>>;
-```
-
-## Returns
-
-Promise&lt;Array&lt;{ relativePath: string; file: File }&gt;&gt;
-
-All read files and their path information
-
-## Remarks
-
-developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/webkitdirectory \| MDN<!-- -->} ADD since EDA v4.2
 
 ### readfilefromfilesystem
 
@@ -891,33 +447,9 @@ function readFileFromFileSystem(uri: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uri
-
-</td><td>
-
-string
-
-</td><td>
-
-File resource locator. An absolute path containing the complete file name is required
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uri|string|File resource locator. An absolute path containing the complete file name is required|
 
 ## Returns
 
@@ -945,33 +477,9 @@ function revokeObjectURL(url: string): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-url
-
-</td><td>
-
-string
-
-</td><td>
-
-ObjectURL string
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|url|string|ObjectURL string|
 
 ## Returns
 
@@ -994,6 +502,7 @@ eda.sys_FileSystem.revokeObjectURL(url);
 console.log('已吊销');
 ```
 
+
 ### savefile
 
 # SYS\_FileSystem.saveFile() method
@@ -1008,46 +517,10 @@ function saveFile(fileData: File | Blob, fileName?: string): Promise<void>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileData
-
-</td><td>
-
-File \| Blob
-
-</td><td>
-
-File data
-
-</td></tr>
-<tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileData|File \| Blob|File data|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -1070,6 +543,7 @@ await eda.sys_FileSystem.saveFile(blob, '嘉立创示例_BOM导出.csv');
 console.log('已保存文件：', '嘉立创示例_BOM导出.csv', blob.size, '字节');
 ```
 
+
 ### savefiletofilesystem
 
 # SYS\_FileSystem.saveFileToFileSystem() method
@@ -1091,72 +565,12 @@ function saveFileToFileSystem(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uri
-
-</td><td>
-
-string
-
-</td><td>
-
-File resource locator. If it ends with a slash `/` (a backslash `\` on Windows), it is recognized as a folder; if it does not end with a slash, it is recognized as a complete file name, in which case the `fileName` parameter is ignored
-
-</td></tr>
-<tr><td>
-
-fileData
-
-</td><td>
-
-File \| Blob
-
-</td><td>
-
-File data
-
-</td></tr>
-<tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-force
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Force write (overwrite the file if it exists)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uri|string|File resource locator. If it ends with a slash `/` (a backslash `\` on Windows), it is recognized as a folder; if it does not end with a slash, it is recognized as a complete file name, in which case the `fileName` parameter is ignored|
+|fileData|File \| Blob|File data|
+|fileName|string|_(Optional)_ File name|
+|force|boolean|_(Optional)_ Force write (overwrite the file if it exists)|
 
 ## Returns
 

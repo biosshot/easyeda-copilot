@@ -13,339 +13,37 @@ class ISCH_PrimitiveRectangle implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: border color
-
-</td></tr>
-<tr><td>
-
-[getState\_CornerRadius()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: corner radius
-
-</td></tr>
-<tr><td>
-
-[getState\_FillColor()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[getState\_FillStyle()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill style
-
-</td></tr>
-<tr><td>
-
-[getState\_Height()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: height
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_TopLeftX()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: top-left point X
-
-</td></tr>
-<tr><td>
-
-[getState\_TopLeftY()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: top-left point Y
-
-</td></tr>
-<tr><td>
-
-[getState\_Width()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: width
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: border color
-
-</td></tr>
-<tr><td>
-
-[setState\_CornerRadius(cornerRadius)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: corner radius
-
-</td></tr>
-<tr><td>
-
-[setState\_FillColor(fillColor)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[setState\_FillStyle(fillStyle)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill style
-
-</td></tr>
-<tr><td>
-
-[setState\_Height(height)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: height
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_TopLeftX(topLeftX)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: top-left point X
-
-</td></tr>
-<tr><td>
-
-[setState\_TopLeftY(topLeftY)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: top-left point Y
-
-</td></tr>
-<tr><td>
-
-[setState\_Width(width)](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: width
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveRectangle.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Color()](./ISCH_PrimitiveRectangle.md)||Get the property state: border color|
+|[getState\_CornerRadius()](./ISCH_PrimitiveRectangle.md)||Get the property state: corner radius|
+|[getState\_FillColor()](./ISCH_PrimitiveRectangle.md)||Get the property state: fill color|
+|[getState\_FillStyle()](./ISCH_PrimitiveRectangle.md)||Get the property state: fill style|
+|[getState\_Height()](./ISCH_PrimitiveRectangle.md)||Get the property state: height|
+|[getState\_LineType()](./ISCH_PrimitiveRectangle.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitiveRectangle.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveRectangle.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveRectangle.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./ISCH_PrimitiveRectangle.md)||Get the property state: rotation angle|
+|[getState\_TopLeftX()](./ISCH_PrimitiveRectangle.md)||Get the property state: top-left point X|
+|[getState\_TopLeftY()](./ISCH_PrimitiveRectangle.md)||Get the property state: top-left point Y|
+|[getState\_Width()](./ISCH_PrimitiveRectangle.md)||Get the property state: width|
+|[isAsync()](./ISCH_PrimitiveRectangle.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_Color(color)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: border color|
+|[setState\_CornerRadius(cornerRadius)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: corner radius|
+|[setState\_FillColor(fillColor)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: fill color|
+|[setState\_FillStyle(fillStyle)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: fill style|
+|[setState\_Height(height)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: height|
+|[setState\_LineType(lineType)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Rotation(rotation)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_TopLeftX(topLeftX)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: top-left point X|
+|[setState\_TopLeftY(topLeftY)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: top-left point Y|
+|[setState\_Width(width)](./ISCH_PrimitiveRectangle.md)||**_(BETA)_** Set the property state: width|
+|[toAsync()](./ISCH_PrimitiveRectangle.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveRectangle.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -396,6 +94,7 @@ console.log('width:', 200, '→', refetched.getState_Width());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_color
 
 # ISCH\_PrimitiveRectangle.getState\_Color() method
@@ -428,6 +127,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('color:', color);
 ```
+
 
 ### getstate_cornerradius
 
@@ -462,6 +162,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('cornerRadius:', cornerRadius);
 ```
 
+
 ### getstate_fillcolor
 
 # ISCH\_PrimitiveRectangle.getState\_FillColor() method
@@ -494,6 +195,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('fillColor:', fillColor);
 ```
+
 
 ### getstate_fillstyle
 
@@ -528,6 +230,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('fillStyle:', fillStyle);
 ```
 
+
 ### getstate_height
 
 # ISCH\_PrimitiveRectangle.getState\_Height() method
@@ -560,6 +263,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('height:', height);
 ```
+
 
 ### getstate_linetype
 
@@ -594,6 +298,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('lineType:', lineType);
 ```
 
+
 ### getstate_linewidth
 
 # ISCH\_PrimitiveRectangle.getState\_LineWidth() method
@@ -626,6 +331,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_primitiveid
 
@@ -664,6 +370,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetched width:', refetched.getState_Width());
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveRectangle.getState\_PrimitiveType() method
@@ -696,6 +403,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -730,6 +438,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_topleftx
 
 # ISCH\_PrimitiveRectangle.getState\_TopLeftX() method
@@ -762,6 +471,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('topLeftX:', topLeftX);
 ```
+
 
 ### getstate_toplefty
 
@@ -796,6 +506,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('topLeftY:', topLeftY);
 ```
 
+
 ### getstate_width
 
 # ISCH\_PrimitiveRectangle.getState\_Width() method
@@ -828,6 +539,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 
 console.log('width:', width);
 ```
+
 
 ### isasync
 
@@ -864,6 +576,7 @@ await eda.sch_PrimitiveRectangle.delete([rect.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -908,6 +621,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitiveRectangle.setState\_Color() method
@@ -924,33 +638,9 @@ function setState_Color(color: string | null): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Border color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Border color|
 
 ## Returns
 
@@ -979,6 +669,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('color:', '#FF0000', '→', refetched.getState_Color());
 ```
 
+
 ### setstate_cornerradius
 
 # ISCH\_PrimitiveRectangle.setState\_CornerRadius() method
@@ -995,33 +686,9 @@ function setState_CornerRadius(cornerRadius: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cornerRadius
-
-</td><td>
-
-number
-
-</td><td>
-
-Corner radius
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cornerRadius|number|Corner radius|
 
 ## Returns
 
@@ -1050,6 +717,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('cornerRadius:', 0, '→', refetched.getState_CornerRadius());
 ```
 
+
 ### setstate_fillcolor
 
 # ISCH\_PrimitiveRectangle.setState\_FillColor() method
@@ -1066,33 +734,9 @@ function setState_FillColor(fillColor: string | null): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Fill color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillColor|string \| null|Fill color|
 
 ## Returns
 
@@ -1121,6 +765,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('fillColor:', null, '→', refetched.getState_FillColor());
 ```
 
+
 ### setstate_fillstyle
 
 # ISCH\_PrimitiveRectangle.setState\_FillStyle() method
@@ -1137,33 +782,9 @@ function setState_FillStyle(fillStyle: ESCH_PrimitiveFillStyle | null): ISCH_Pri
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillStyle
-
-</td><td>
-
-[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null
-
-</td><td>
-
-Fill style
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillStyle|[ESCH\_PrimitiveFillStyle](../enums/ESCH_PrimitiveFillStyle.md) \| null|Fill style|
 
 ## Returns
 
@@ -1192,6 +813,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('fillStyle:', null, '→', refetched.getState_FillStyle());
 ```
 
+
 ### setstate_height
 
 # ISCH\_PrimitiveRectangle.setState\_Height() method
@@ -1208,33 +830,9 @@ function setState_Height(height: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-Height
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|height|number|Height|
 
 ## Returns
 
@@ -1263,6 +861,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('height:', 100, '→', refetched.getState_Height());
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitiveRectangle.setState\_LineType() method
@@ -1279,33 +878,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -1334,6 +909,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('lineType:', 0, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitiveRectangle.setState\_LineWidth() method
@@ -1350,33 +926,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -1405,6 +957,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_rotation
 
 # ISCH\_PrimitiveRectangle.setState\_Rotation() method
@@ -1421,33 +974,9 @@ function setState_Rotation(rotation: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -1477,6 +1006,7 @@ console.log('rotation:', 0, '→', refetched.getState_Rotation());
 console.log('topLeft moved by rotate:', x, '→', refetched.getState_TopLeftX());
 ```
 
+
 ### setstate_topleftx
 
 # ISCH\_PrimitiveRectangle.setState\_TopLeftX() method
@@ -1493,33 +1023,9 @@ function setState_TopLeftX(topLeftX: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topLeftX
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topLeftX|number|Top-left point X|
 
 ## Returns
 
@@ -1548,6 +1054,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('topLeftX:', x, '→', refetched.getState_TopLeftX());
 ```
 
+
 ### setstate_toplefty
 
 # ISCH\_PrimitiveRectangle.setState\_TopLeftY() method
@@ -1564,33 +1071,9 @@ function setState_TopLeftY(topLeftY: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-topLeftY
-
-</td><td>
-
-number
-
-</td><td>
-
-Top-left point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|topLeftY|number|Top-left point Y|
 
 ## Returns
 
@@ -1619,6 +1102,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 console.log('topLeftY:', y, '→', refetched.getState_TopLeftY());
 ```
 
+
 ### setstate_width
 
 # ISCH\_PrimitiveRectangle.setState\_Width() method
@@ -1635,33 +1119,9 @@ function setState_Width(width: number): ISCH_PrimitiveRectangle;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-Width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|width|number|Width|
 
 ## Returns
 
@@ -1689,6 +1149,7 @@ const refetched = await eda.sch_PrimitiveRectangle.get(rect.getState_PrimitiveId
 
 console.log('width:', 200, '→', refetched.getState_Width());
 ```
+
 
 ### toasync
 
@@ -1734,6 +1195,7 @@ console.log('isAsync after toAsync:', rect.isAsync());
 console.log('width:', 200, '→', refetched.getState_Width());
 console.log('height:', 100, '→', refetched.getState_Height());
 ```
+
 
 ### tosync
 

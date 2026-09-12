@@ -10,39 +10,9 @@ interface ILIB_SymbolPropertiesForSearch
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name?](./ILIB_SymbolPropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Symbol name
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name?](./ILIB_SymbolPropertiesForSearch.md)||string|_(Optional)_ Symbol name|
 
 ---
 

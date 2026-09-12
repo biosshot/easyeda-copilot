@@ -13,108 +13,16 @@ class IPCB_PrimitivePoured implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addSolderMaskFill(pourFillId)](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add: solder mask region
-
-</td></tr>
-<tr><td>
-
-[convertToFill(pourFillId)](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: fill primitive
-
-</td></tr>
-<tr><td>
-
-[deletePourFills(pourFillIds)](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Copper fill region
-
-</td></tr>
-<tr><td>
-
-[getState\_PourFills()](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: copper fill region
-
-</td></tr>
-<tr><td>
-
-[getState\_PourPrimitiveId()](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: copper border primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitivePoured.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addSolderMaskFill(pourFillId)](./IPCB_PrimitivePoured.md)||**_(BETA)_** Add: solder mask region|
+|[convertToFill(pourFillId)](./IPCB_PrimitivePoured.md)||**_(BETA)_** Convert to: fill primitive|
+|[deletePourFills(pourFillIds)](./IPCB_PrimitivePoured.md)||**_(BETA)_** Delete Copper fill region|
+|[getState\_PourFills()](./IPCB_PrimitivePoured.md)||Get the property state: copper fill region|
+|[getState\_PourPrimitiveId()](./IPCB_PrimitivePoured.md)||Get the property state: copper border primitive ID|
+|[getState\_PrimitiveId()](./IPCB_PrimitivePoured.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./IPCB_PrimitivePoured.md)||Get the property state: primitive type|
+|[reset()](./IPCB_PrimitivePoured.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
 
 ---
 
@@ -138,31 +46,9 @@ function addSolderMaskFill(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourFillId
-
-</td><td>
-
-[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourFillId|[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]||
 
 ## Returns
 
@@ -200,6 +86,7 @@ if (solderMaskFill) {
 }
 ```
 
+
 ### converttofill
 
 # IPCB\_PrimitivePoured.convertToFill() method
@@ -218,31 +105,9 @@ function convertToFill(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourFillId
-
-</td><td>
-
-[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourFillId|[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]||
 
 ## Returns
 
@@ -280,6 +145,7 @@ if (fill) {
 }
 ```
 
+
 ### deletepourfills
 
 # IPCB\_PrimitivePoured.deletePourFills() method
@@ -298,33 +164,9 @@ function deletePourFills(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pourFillIds
-
-</td><td>
-
-[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\] \| Array&lt;[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]&gt;
-
-</td><td>
-
-Copper fill region ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pourFillIds|[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\] \| Array&lt;[IPCB\_PrimitivePouredPourFill](../interfaces/IPCB_PrimitivePouredPourFill.md)<!-- -->\['id'\]&gt;|Copper fill region ID|
 
 ## Returns
 
@@ -360,6 +202,7 @@ const after = refreshed ? refreshed.getState_PourFills().length : 0;
 console.log('deleted:', deleted);
 console.log('删除后子区域数量：', after);
 ```
+
 
 ### getstate_pourfills
 
@@ -402,6 +245,7 @@ if (pourFills.length > 0) {
 }
 ```
 
+
 ### getstate_pourprimitiveid
 
 # IPCB\_PrimitivePoured.getState\_PourPrimitiveId() method
@@ -439,6 +283,7 @@ console.log('pourPrimitiveId:', pourPrimitiveId);
 const pour = await eda.pcb_PrimitivePour.get(pourPrimitiveId);
 console.log('对应覆铜边框：', pour ? pour.getState_PourName() : '（边框已被删除）');
 ```
+
 
 ### getstate_primitiveid
 
@@ -478,6 +323,7 @@ const again = await eda.pcb_PrimitivePoured.get(primitiveId);
 console.log('按 ID 重新读取：', again ? '成功' : '未找到');
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitivePoured.getState\_PrimitiveType() method
@@ -511,6 +357,7 @@ const poured = pouredList[0];
 const primitiveType = poured.getState_PrimitiveType();
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### reset
 

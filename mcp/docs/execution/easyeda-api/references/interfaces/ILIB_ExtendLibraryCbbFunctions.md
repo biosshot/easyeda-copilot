@@ -11,37 +11,9 @@ interface ILIB_ExtendLibraryCbbFunctions extends ILIB_ExtendLibraryFunctions
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getList](./ILIB_ExtendLibraryCbbFunctions.md)
-
-</td><td>
-
-</td><td>
-
-(props: any) =&gt; Promise&lt;[ILIB\_ExtendLibrarySearchResult](./ILIB_ExtendLibrarySearchResult.md)<!-- -->&lt;[ILIB\_ExtendLibraryItem](./ILIB_ExtendLibraryItem.md) &amp; [ILIB\_ExtendLibrarySearchResultDataLine](./ILIB_ExtendLibrarySearchResultDataLine.md) &amp; { schematics?: undefined \| ({ uuid: string; name: string; updateTime: string; description?: undefined \| string })\[\]; pcbs?: undefined \| ({ uuid: string; name: string; updateTime: number; thumb?: undefined \| string; createTime?: undefined \| number; creator?: undefined \| [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; modifier?: undefined \| [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; description?: undefined \| string })\[\]; boards?: undefined \| { pcbUuid: string; schUuid: string; name: string }\[\]; sheets?: undefined \| ({ uuid: string; name: string; belongSchematicUuid: string; updateTime: number; thumb?: undefined \| string; createTime?: undefined \| number; creator?: undefined \| [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; modifier?: undefined \| [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; description?: undefined \| string })\[\] }&gt;&gt;
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[getList](./ILIB_ExtendLibraryCbbFunctions.md)||(props: any) =&gt; Promise&lt;[ILIB\_ExtendLibrarySearchResult](./ILIB_ExtendLibrarySearchResult.md)<!-- -->&lt;[ILIB\_ExtendLibraryItem](./ILIB_ExtendLibraryItem.md) &amp; [ILIB\_ExtendLibrarySearchResultDataLine](./ILIB_ExtendLibrarySearchResultDataLine.md) &amp; { schematics?: Array&lt;{ uuid: string; name: string; updateTime: string; description?: string }&gt;; pcbs?: Array&lt;{ uuid: string; name: string; updateTime: number; thumb?: string; createTime?: number; creator?: [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; modifier?: [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; description?: string }&gt;; boards?: Array&lt;{ pcbUuid: string; schUuid: string; name: string }&gt;; sheets?: Array&lt;{ uuid: string; name: string; belongSchematicUuid: string; updateTime: number; thumb?: string; createTime?: number; creator?: [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; modifier?: [ILIB\_ExtendLibraryUserIndex](./ILIB_ExtendLibraryUserIndex.md)<!-- -->; description?: string }&gt; }&gt;&gt;||
 
 ---
 
@@ -59,40 +31,34 @@ getList: (props: any) =>
 		ILIB_ExtendLibrarySearchResult<
 			ILIB_ExtendLibraryItem
 			& ILIB_ExtendLibrarySearchResultDataLine & {
-				schematics?:
-					| undefined
-					| {
-						uuid: string;
-						name: string;
-						updateTime: string;
-						description?: undefined | string;
-					}[];
-				pcbs?:
-					| undefined
-					| {
-						uuid: string;
-						name: string;
-						updateTime: number;
-						thumb?: undefined | string;
-						createTime?: undefined | number;
-						creator?: undefined | ILIB_ExtendLibraryUserIndex;
-						modifier?: undefined | ILIB_ExtendLibraryUserIndex;
-						description?: undefined | string;
-					}[];
-				boards?: undefined | { pcbUuid: string; schUuid: string; name: string }[];
-				sheets?:
-					| undefined
-					| {
-						uuid: string;
-						name: string;
-						belongSchematicUuid: string;
-						updateTime: number;
-						thumb?: undefined | string;
-						createTime?: undefined | number;
-						creator?: undefined | ILIB_ExtendLibraryUserIndex;
-						modifier?: undefined | ILIB_ExtendLibraryUserIndex;
-						description?: undefined | string;
-					}[];
+				schematics?: Array<{
+					uuid: string;
+					name: string;
+					updateTime: string;
+					description?: string;
+				}>;
+				pcbs?: Array<{
+					uuid: string;
+					name: string;
+					updateTime: number;
+					thumb?: string;
+					createTime?: number;
+					creator?: ILIB_ExtendLibraryUserIndex;
+					modifier?: ILIB_ExtendLibraryUserIndex;
+					description?: string;
+				}>;
+				boards?: Array<{ pcbUuid: string; schUuid: string; name: string }>;
+				sheets?: Array<{
+					uuid: string;
+					name: string;
+					belongSchematicUuid: string;
+					updateTime: number;
+					thumb?: string;
+					createTime?: number;
+					creator?: ILIB_ExtendLibraryUserIndex;
+					modifier?: ILIB_ExtendLibraryUserIndex;
+					description?: string;
+				}>;
 			}
 		>
 	>;

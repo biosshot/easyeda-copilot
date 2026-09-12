@@ -14,31 +14,9 @@ Make secure cURL requests to external servers
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[request(url, method, data, options, succeedCallFn)](./SYS_ClientUrl.md)
-
-</td><td>
-
-</td><td>
-
-Make an immediate request
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[request(url, method, data, options, succeedCallFn)](./SYS_ClientUrl.md)||Make an immediate request|
 
 ---
 
@@ -57,92 +35,20 @@ function request(
 	url: string,
 	method?: 'GET' | 'POST' | 'HEAD' | 'PUT' | 'DELETE' | 'PATCH',
 	data?: string | Blob | FormData | URLSearchParams,
-	options?: { headers?: undefined | { [key: string]: any }; integrity?: undefined | string },
+	options?: { headers?: { [header: string]: any }; integrity?: string },
 	succeedCallFn?: (data: Response) => void | Promise<void>,
 ): Promise<Response>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-url
-
-</td><td>
-
-string
-
-</td><td>
-
-Request URL
-
-</td></tr>
-<tr><td>
-
-method
-
-</td><td>
-
-'GET' \| 'POST' \| 'HEAD' \| 'PUT' \| 'DELETE' \| 'PATCH'
-
-</td><td>
-
-_(Optional)_ Request method
-
-</td></tr>
-<tr><td>
-
-data
-
-</td><td>
-
-string \| Blob \| FormData \| URLSearchParams
-
-</td><td>
-
-_(Optional)_ Data to be sent with the request, which can be direct data or a [URLSearchParams](https://developer.mozilla.org/docs/Web/API/URLSearchParams) object. If the method is `HEAD` or `GET`<!-- -->, this parameter will be ignored
-
-</td></tr>
-<tr><td>
-
-options
-
-</td><td>
-
-\{ headers?: undefined \| \{ \[key: string\]: any \}; integrity?: undefined \| string \}
-
-</td><td>
-
-_(Optional)_ Request options
-
-</td></tr>
-<tr><td>
-
-succeedCallFn
-
-</td><td>
-
-(data: Response) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-_(Optional)_ Function to call back after the request succeeds
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|url|string|Request URL|
+|method|'GET' \| 'POST' \| 'HEAD' \| 'PUT' \| 'DELETE' \| 'PATCH'|_(Optional)_ Request method|
+|data|string \| Blob \| FormData \| URLSearchParams|_(Optional)_ Data to be sent with the request, which can be direct data or a [URLSearchParams](https://developer.mozilla.org/docs/Web/API/URLSearchParams) object. If the method is `HEAD` or `GET`<!-- -->, this parameter will be ignored|
+|options|\{ headers?: \{ \[header: string\]: any \}; integrity?: string \}|_(Optional)_ Request options|
+|succeedCallFn|(data: Response) =&gt; void \| Promise&lt;void&gt;|_(Optional)_ Function to call back after the request succeeds|
 
 ## Returns
 

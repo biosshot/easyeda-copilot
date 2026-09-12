@@ -14,119 +14,17 @@ Register an event callback
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addCrossProbeSelectEventListener(id, callFn)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a cross-probe selection event listener
-
-</td></tr>
-<tr><td>
-
-[addMouseEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a mouse event listener
-
-</td></tr>
-<tr><td>
-
-[addNetEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a net event listener
-
-</td></tr>
-<tr><td>
-
-[addPrimitiveEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a primitive event listener
-
-</td></tr>
-<tr><td>
-
-[addRayTracerEngine3DViewCameraChangeEventListener(id, callFn, onlyOnce)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a ray tracer engine 3D preview camera change (dragging the 3D model) event listener
-
-</td></tr>
-<tr><td>
-
-[addRayTracerEngine3DViewClickMaterialEventListener(id, callFn, onlyOnce)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a ray tracer engine 3D preview material click event listener
-
-</td></tr>
-<tr><td>
-
-[addRealTimeDrcResultEventListener(id, eventType, callFn)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a real-time DRC result event listener
-
-</td></tr>
-<tr><td>
-
-[isEventListenerAlreadyExist(id)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the event listener exists
-
-</td></tr>
-<tr><td>
-
-[removeEventListener(id)](./PCB_Event.md)
-
-</td><td>
-
-</td><td>
-
-Remove Event listener
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addCrossProbeSelectEventListener(id, callFn)](./PCB_Event.md)||**_(BETA)_** Add a cross-probe selection event listener|
+|[addMouseEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)||**_(BETA)_** Add a mouse event listener|
+|[addNetEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)||**_(BETA)_** Add a net event listener|
+|[addPrimitiveEventListener(id, eventType, callFn, onlyOnce)](./PCB_Event.md)||**_(BETA)_** Add a primitive event listener|
+|[addRayTracerEngine3DViewCameraChangeEventListener(id, callFn, onlyOnce)](./PCB_Event.md)||**_(BETA)_** Add a ray tracer engine 3D preview camera change (dragging the 3D model) event listener|
+|[addRayTracerEngine3DViewClickMaterialEventListener(id, callFn, onlyOnce)](./PCB_Event.md)||**_(BETA)_** Add a ray tracer engine 3D preview material click event listener|
+|[addRealTimeDrcResultEventListener(id, eventType, callFn)](./PCB_Event.md)||**_(BETA)_** Add a real-time DRC result event listener|
+|[isEventListenerAlreadyExist(id)](./PCB_Event.md)||Query whether the event listener exists|
+|[removeEventListener(id)](./PCB_Event.md)||Remove Event listener|
 
 ---
 
@@ -151,46 +49,10 @@ function addCrossProbeSelectEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(props: any) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|callFn|(props: any) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
 
 ## Returns
 
@@ -219,6 +81,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addmouseeventlistener
 
 # PCB\_Event.addMouseEventListener() method
@@ -239,10 +102,10 @@ function addMouseEventListener(
 			{
 				primitiveId: string;
 				primitiveType: EPCB_PrimitiveType;
-				net?: undefined | string;
-				designator?: undefined | string;
-				parentComponentPrimitiveId?: undefined | string;
-				parentComponentDesignator?: undefined | string;
+				net?: string;
+				designator?: string;
+				parentComponentPrimitiveId?: string;
+				parentComponentDesignator?: string;
 			},
 		],
 	) => void | Promise<void>,
@@ -252,72 +115,12 @@ function addMouseEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [EPCB\_MouseEventType](../enums/EPCB_MouseEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [EPCB\_MouseEventType](../enums/EPCB_MouseEventType.md)<!-- -->, props: \[{ primitiveId: string; primitiveType: [EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->; net?: undefined \| string; designator?: undefined \| string; parentComponentPrimitiveId?: undefined \| string; parentComponentDesignator?: undefined \| string }\]) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [EPCB\_MouseEventType](../enums/EPCB_MouseEventType.md)|Event type|
+|callFn|(eventType: [EPCB\_MouseEventType](../enums/EPCB_MouseEventType.md)<!-- -->, props: \[{ primitiveId: string; primitiveType: [EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->; net?: string; designator?: string; parentComponentPrimitiveId?: string; parentComponentDesignator?: string }\]) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -352,6 +155,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addneteventlistener
 
 # PCB\_Event.addNetEventListener() method
@@ -373,72 +177,12 @@ function addNetEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [EPCB\_NetEventType](../enums/EPCB_NetEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [EPCB\_NetEventType](../enums/EPCB_NetEventType.md)<!-- -->, props: \[{ net: string }\]) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [EPCB\_NetEventType](../enums/EPCB_NetEventType.md)|Event type|
+|callFn|(eventType: [EPCB\_NetEventType](../enums/EPCB_NetEventType.md)<!-- -->, props: \[{ net: string }\]) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -481,6 +225,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addprimitiveeventlistener
 
 # PCB\_Event.addPrimitiveEventListener() method
@@ -501,10 +246,10 @@ function addPrimitiveEventListener(
 			{
 				primitiveId: string;
 				primitiveType: EPCB_PrimitiveType;
-				net?: undefined | string;
-				designator?: undefined | string;
-				parentComponentPrimitiveId?: undefined | string;
-				parentComponentDesignator?: undefined | string;
+				net?: string;
+				designator?: string;
+				parentComponentPrimitiveId?: string;
+				parentComponentDesignator?: string;
 			},
 		],
 	) => void | Promise<void>,
@@ -514,72 +259,12 @@ function addPrimitiveEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [EPCB\_PrimitiveEventType](../enums/EPCB_PrimitiveEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [EPCB\_PrimitiveEventType](../enums/EPCB_PrimitiveEventType.md)<!-- -->, props: \[{ primitiveId: string; primitiveType: [EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->; net?: undefined \| string; designator?: undefined \| string; parentComponentPrimitiveId?: undefined \| string; parentComponentDesignator?: undefined \| string }\]) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [EPCB\_PrimitiveEventType](../enums/EPCB_PrimitiveEventType.md)|Event type|
+|callFn|(eventType: [EPCB\_PrimitiveEventType](../enums/EPCB_PrimitiveEventType.md)<!-- -->, props: \[{ primitiveId: string; primitiveType: [EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->; net?: string; designator?: string; parentComponentPrimitiveId?: string; parentComponentDesignator?: string }\]) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -621,6 +306,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addraytracerengine3dviewcamerachangeeventlistener
 
 # PCB\_Event.addRayTracerEngine3DViewCameraChangeEventListener() method
@@ -645,59 +331,11 @@ function addRayTracerEngine3DViewCameraChangeEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(props: { position: { x: number; y: number; z: number }; rotation: { x: number; y: number; z: number }; focalLength: number }) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|callFn|(props: { position: { x: number; y: number; z: number }; rotation: { x: number; y: number; z: number }; focalLength: number }) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -729,6 +367,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addraytracerengine3dviewclickmaterialeventlistener
 
 # PCB\_Event.addRayTracerEngine3DViewClickMaterialEventListener() method
@@ -749,59 +388,11 @@ function addRayTracerEngine3DViewClickMaterialEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(props: { materialId: number; material: any }) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|callFn|(props: { materialId: number; material: any }) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -833,6 +424,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addrealtimedrcresulteventlistener
 
 # PCB\_Event.addRealTimeDrcResultEventListener() method
@@ -853,59 +445,11 @@ function addRealTimeDrcResultEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all'
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: undefined, props: \[{ drcResult: any }\]) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all'|Event type|
+|callFn|(eventType: undefined, props: \[{ drcResult: any }\]) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
 
 ## Returns
 
@@ -939,6 +483,7 @@ const removed = eda.pcb_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### iseventlisteneralreadyexist
 
 # PCB\_Event.isEventListenerAlreadyExist() method
@@ -953,33 +498,9 @@ function isEventListenerAlreadyExist(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 
@@ -1009,6 +530,7 @@ const afterRemove = eda.pcb_Event.isEventListenerAlreadyExist(listenerId);
 console.log('afterRemove:', afterRemove);
 ```
 
+
 ### removeeventlistener
 
 # PCB\_Event.removeEventListener() method
@@ -1023,33 +545,9 @@ function removeEventListener(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 

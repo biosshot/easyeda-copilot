@@ -11,129 +11,15 @@ interface FlexProps extends StyleProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[alignX?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-'start' \| 'center' \| 'end'
-
-</td><td>
-
-_(Optional)_ Main axis alignment (horizontal)
-
-</td></tr>
-<tr><td>
-
-[alignY?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-'start' \| 'center' \| 'end' \| 'stretch'
-
-</td><td>
-
-_(Optional)_ Cross axis alignment (vertical)
-
-</td></tr>
-<tr><td>
-
-[children?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Child node
-
-</td></tr>
-<tr><td>
-
-[classes?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-string\[\]
-
-</td><td>
-
-_(Optional)_ List of additional style class names
-
-</td></tr>
-<tr><td>
-
-[direction?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-'column' \| 'column-reverse' \| 'row' \| 'row-reverse'
-
-</td><td>
-
-_(Optional)_ Main axis direction: row (horizontal) / column (vertical, including reverse)
-
-</td></tr>
-<tr><td>
-
-[gap?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Gap between child elements (pixels)
-
-</td></tr>
-<tr><td>
-
-[onClick?](./FlexProps.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; void
-
-</td><td>
-
-_(Optional)_ 点击容器时触发
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[alignX?](./FlexProps.md)||'start' \| 'center' \| 'end'|_(Optional)_ Main axis alignment (horizontal)|
+|[alignY?](./FlexProps.md)||'start' \| 'center' \| 'end' \| 'stretch'|_(Optional)_ Cross axis alignment (vertical)|
+|[children?](./FlexProps.md)||any|_(Optional)_ Child node|
+|[classes?](./FlexProps.md)||string\[\]|_(Optional)_ List of additional style class names|
+|[direction?](./FlexProps.md)||'column' \| 'column-reverse' \| 'row' \| 'row-reverse'|_(Optional)_ Main axis direction: row (horizontal) / column (vertical, including reverse)|
+|[gap?](./FlexProps.md)||number|_(Optional)_ Gap between child elements (pixels)|
+|[onClick?](./FlexProps.md)||() =&gt; void|_(Optional)_ 点击容器时触发|
 
 ---
 

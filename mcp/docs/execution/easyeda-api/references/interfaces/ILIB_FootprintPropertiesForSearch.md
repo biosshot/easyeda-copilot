@@ -10,39 +10,9 @@ interface ILIB_FootprintPropertiesForSearch
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name?](./ILIB_FootprintPropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Footprint name
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name?](./ILIB_FootprintPropertiesForSearch.md)||string|_(Optional)_ Footprint name|
 
 ---
 

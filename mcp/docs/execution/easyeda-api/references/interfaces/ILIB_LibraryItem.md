@@ -10,69 +10,11 @@ interface ILIB_LibraryItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[libraryType](./ILIB_LibraryItem.md)
-
-</td><td>
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-[libraryUuid?](./ILIB_LibraryItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ UUID of the library it belongs to
-
-</td></tr>
-<tr><td>
-
-[uuid](./ILIB_LibraryItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[libraryType](./ILIB_LibraryItem.md)||[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|[libraryUuid?](./ILIB_LibraryItem.md)||string|_(Optional)_ UUID of the library it belongs to|
+|[uuid](./ILIB_LibraryItem.md)||string|UUID|
 
 ---
 

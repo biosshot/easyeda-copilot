@@ -14,64 +14,12 @@ Perform cross file format conversion with other board-level EDA software
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[convertAltiumDesignerLibrariesToEasyEDAMultiFiles(file)](./SYS_FormatConversion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert Altium Designer libraries to multiple EasyEDA library files (one file per device)
-
-</td></tr>
-<tr><td>
-
-[convertAltiumDesignerLibrariesToEasyEDASingleFile(file)](./SYS_FormatConversion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert Altium Designer libraries to a single EasyEDA library file
-
-</td></tr>
-<tr><td>
-
-[convertDisaLibrariesToEasyEDAMultiFiles(file)](./SYS_FormatConversion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert T/DISA 4001 libraries to multiple EasyEDA library files (one file per device)
-
-</td></tr>
-<tr><td>
-
-[convertDisaLibrariesToEasyEDASingleFile(file)](./SYS_FormatConversion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert T/DISA 4001 libraries to a single EasyEDA library file
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[convertAltiumDesignerLibrariesToEasyEDAMultiFiles(file)](./SYS_FormatConversion.md)||**_(BETA)_** Convert Altium Designer libraries to multiple EasyEDA library files (one file per device)|
+|[convertAltiumDesignerLibrariesToEasyEDASingleFile(file)](./SYS_FormatConversion.md)||**_(BETA)_** Convert Altium Designer libraries to a single EasyEDA library file|
+|[convertDisaLibrariesToEasyEDAMultiFiles(file)](./SYS_FormatConversion.md)||**_(BETA)_** Convert T/DISA 4001 libraries to multiple EasyEDA library files (one file per device)|
+|[convertDisaLibrariesToEasyEDASingleFile(file)](./SYS_FormatConversion.md)||**_(BETA)_** Convert T/DISA 4001 libraries to a single EasyEDA library file|
 
 ---
 
@@ -95,33 +43,9 @@ function convertAltiumDesignerLibrariesToEasyEDAMultiFiles(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-file
-
-</td><td>
-
-File \| Array&lt;File&gt;
-
-</td><td>
-
-Altium Designer library file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|file|File \| Array&lt;File&gt;|Altium Designer library file|
 
 ## Returns
 
@@ -147,6 +71,7 @@ libFiles.forEach((file, index) => {
 });
 ```
 
+
 ### convertaltiumdesignerlibrariestoeasyedasinglefile
 
 # SYS\_FormatConversion.convertAltiumDesignerLibrariesToEasyEDASingleFile() method
@@ -165,33 +90,9 @@ function convertAltiumDesignerLibrariesToEasyEDASingleFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-file
-
-</td><td>
-
-File \| Array&lt;File&gt;
-
-</td><td>
-
-Altium Designer library file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|file|File \| Array&lt;File&gt;|Altium Designer library file|
 
 ## Returns
 
@@ -214,6 +115,7 @@ console.log('库文件名：', easyedaLib.name);
 console.log('文件大小：', easyedaLib.size, '字节');
 ```
 
+
 ### convertdisalibrariestoeasyedamultifiles
 
 # SYS\_FormatConversion.convertDisaLibrariesToEasyEDAMultiFiles() method
@@ -230,33 +132,9 @@ function convertDisaLibrariesToEasyEDAMultiFiles(file: File | Array<File>): Prom
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-file
-
-</td><td>
-
-File \| Array&lt;File&gt;
-
-</td><td>
-
-T/DISA 4001 library file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|file|File \| Array&lt;File&gt;|T/DISA 4001 library file|
 
 ## Returns
 
@@ -281,6 +159,7 @@ libFiles.forEach((file, index) => {
 });
 ```
 
+
 ### convertdisalibrariestoeasyedasinglefile
 
 # SYS\_FormatConversion.convertDisaLibrariesToEasyEDASingleFile() method
@@ -299,33 +178,9 @@ function convertDisaLibrariesToEasyEDASingleFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-file
-
-</td><td>
-
-File \| Array&lt;File&gt;
-
-</td><td>
-
-T/DISA 4001 library file
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|file|File \| Array&lt;File&gt;|T/DISA 4001 library file|
 
 ## Returns
 

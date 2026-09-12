@@ -10,84 +10,12 @@ interface IPCB_PrimitivePouredPourFill
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[fill](./IPCB_PrimitivePouredPourFill.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to fill
-
-</td></tr>
-<tr><td>
-
-[id](./IPCB_PrimitivePouredPourFill.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-ID
-
-</td></tr>
-<tr><td>
-
-[lineWidth](./IPCB_PrimitivePouredPourFill.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-<tr><td>
-
-[path](./IPCB_PrimitivePouredPourFill.md)
-
-</td><td>
-
-</td><td>
-
-[IPCB\_ComplexPolygon](../classes/IPCB_ComplexPolygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[fill](./IPCB_PrimitivePouredPourFill.md)||boolean|Whether to fill|
+|[id](./IPCB_PrimitivePouredPourFill.md)||string|ID|
+|[lineWidth](./IPCB_PrimitivePouredPourFill.md)||number|Line width|
+|[path](./IPCB_PrimitivePouredPourFill.md)||[IPCB\_ComplexPolygon](../classes/IPCB_ComplexPolygon.md)|Complex polygon|
 
 ---
 

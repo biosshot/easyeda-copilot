@@ -13,667 +13,65 @@ class ISCH_PrimitiveComponent implements ISCH_Primitive
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[async](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-异步
-
-</td></tr>
-<tr><td>
-
-[designator?](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Component 属性：位号
-
-</td></tr>
-<tr><td>
-
-[mirror](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-是否镜像
-
-</td></tr>
-<tr><td>
-
-[name?](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Component 属性：名称
-
-</td></tr>
-<tr><td>
-
-[otherProperty?](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-Record&lt;string, string \| number \| boolean&gt;
-
-</td><td>
-
-_(Optional)_ 其它参数
-
-</td></tr>
-<tr><td>
-
-[primitiveId?](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 图元 ID
-
-</td></tr>
-<tr><td>
-
-[rotation](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-旋转角度
-
-</td></tr>
-<tr><td>
-
-[x](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-坐标 X
-
-</td></tr>
-<tr><td>
-
-[y](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-坐标 Y
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[async](./ISCH_PrimitiveComponent.md)|`protected`|boolean|异步|
+|[designator?](./ISCH_PrimitiveComponent.md)|`protected`|string|_(Optional)_ Component 属性：位号|
+|[mirror](./ISCH_PrimitiveComponent.md)|`protected`|boolean|是否镜像|
+|[name?](./ISCH_PrimitiveComponent.md)|`protected`|string|_(Optional)_ Component 属性：名称|
+|[otherProperty?](./ISCH_PrimitiveComponent.md)|`protected`|Record&lt;string, string \| number \| boolean&gt;|_(Optional)_ 其它参数|
+|[primitiveId?](./ISCH_PrimitiveComponent.md)|`protected`|string|_(Optional)_ 图元 ID|
+|[rotation](./ISCH_PrimitiveComponent.md)|`protected`|number|旋转角度|
+|[x](./ISCH_PrimitiveComponent.md)|`protected`|number|坐标 X|
+|[y](./ISCH_PrimitiveComponent.md)|`protected`|number|坐标 Y|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getAllPins()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all pins associated with the device
-
-</td></tr>
-<tr><td>
-
-[getState\_AddIntoBom()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether to add BOM
-
-</td></tr>
-<tr><td>
-
-[getState\_AddIntoPcb()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether to switch to PCB
-
-</td></tr>
-<tr><td>
-
-[getState\_Component()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library device
-
-</td></tr>
-<tr><td>
-
-[getState\_ComponentType()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: device type
-
-</td></tr>
-<tr><td>
-
-[getState\_Designator()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: designator
-
-</td></tr>
-<tr><td>
-
-[getState\_Footprint()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library footprint
-
-</td></tr>
-<tr><td>
-
-[getState\_Manufacturer()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: manufacturer
-
-</td></tr>
-<tr><td>
-
-[getState\_ManufacturerId()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: manufacturer ID
-
-</td></tr>
-<tr><td>
-
-[getState\_Mirror()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[getState\_Name()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: name
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_OtherProperty()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_SubPartName()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: sub-part name
-
-</td></tr>
-<tr><td>
-
-[getState\_Supplier()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: supplier
-
-</td></tr>
-<tr><td>
-
-[getState\_SupplierId()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: supplier ID
-
-</td></tr>
-<tr><td>
-
-[getState\_Symbol()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate library symbol
-
-</td></tr>
-<tr><td>
-
-[getState\_UniqueId()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: unique ID
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_AddIntoBom(addIntoBom)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether to add BOM
-
-</td></tr>
-<tr><td>
-
-[setState\_AddIntoPcb(addIntoPcb)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether to switch to PCB
-
-</td></tr>
-<tr><td>
-
-[setState\_Designator(designator)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: designator
-
-</td></tr>
-<tr><td>
-
-[setState\_Manufacturer(manufacturer)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: manufacturer
-
-</td></tr>
-<tr><td>
-
-[setState\_ManufacturerId(manufacturerId)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: manufacturer ID
-
-</td></tr>
-<tr><td>
-
-[setState\_Mirror(mirror)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[setState\_Name(name)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: name
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[setState\_OtherProperty(otherProperty)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_Supplier(supplier)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: supplier
-
-</td></tr>
-<tr><td>
-
-[setState\_SupplierId(supplierId)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: supplier ID
-
-</td></tr>
-<tr><td>
-
-[setState\_UniqueId(uniqueId)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: unique ID
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getAllPins()](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Get all pins associated with the device|
+|[getState\_AddIntoBom()](./ISCH_PrimitiveComponent.md)||Get the property state: whether to add BOM|
+|[getState\_AddIntoPcb()](./ISCH_PrimitiveComponent.md)||Get the property state: whether to switch to PCB|
+|[getState\_Component()](./ISCH_PrimitiveComponent.md)||Get the property state: associate library device|
+|[getState\_ComponentType()](./ISCH_PrimitiveComponent.md)||Get the property state: device type|
+|[getState\_Designator()](./ISCH_PrimitiveComponent.md)||Get the property state: designator|
+|[getState\_Footprint()](./ISCH_PrimitiveComponent.md)||Get the property state: associate library footprint|
+|[getState\_Manufacturer()](./ISCH_PrimitiveComponent.md)||Get the property state: manufacturer|
+|[getState\_ManufacturerId()](./ISCH_PrimitiveComponent.md)||Get the property state: manufacturer ID|
+|[getState\_Mirror()](./ISCH_PrimitiveComponent.md)||Get the property state: whether it is mirrored|
+|[getState\_Name()](./ISCH_PrimitiveComponent.md)||Get the property state: name|
+|[getState\_Net()](./ISCH_PrimitiveComponent.md)||Get the property state: net name|
+|[getState\_OtherProperty()](./ISCH_PrimitiveComponent.md)||Get the property state: other parameters|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveComponent.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveComponent.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./ISCH_PrimitiveComponent.md)||Get the property state: rotation angle|
+|[getState\_SubPartName()](./ISCH_PrimitiveComponent.md)||Get the property state: sub-part name|
+|[getState\_Supplier()](./ISCH_PrimitiveComponent.md)||Get the property state: supplier|
+|[getState\_SupplierId()](./ISCH_PrimitiveComponent.md)||Get the property state: supplier ID|
+|[getState\_Symbol()](./ISCH_PrimitiveComponent.md)||Get the property state: associate library symbol|
+|[getState\_UniqueId()](./ISCH_PrimitiveComponent.md)||Get the property state: unique ID|
+|[getState\_X()](./ISCH_PrimitiveComponent.md)||Get the property state: X coordinate|
+|[getState\_Y()](./ISCH_PrimitiveComponent.md)||Get the property state: Y coordinate|
+|[isAsync()](./ISCH_PrimitiveComponent.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_AddIntoBom(addIntoBom)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: whether to add BOM|
+|[setState\_AddIntoPcb(addIntoPcb)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: whether to switch to PCB|
+|[setState\_Designator(designator)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: designator|
+|[setState\_Manufacturer(manufacturer)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: manufacturer|
+|[setState\_ManufacturerId(manufacturerId)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: manufacturer ID|
+|[setState\_Mirror(mirror)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: whether it is mirrored|
+|[setState\_Name(name)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: name|
+|[setState\_Net(net)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: net name|
+|[setState\_OtherProperty(otherProperty)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: other parameters|
+|[setState\_Rotation(rotation)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_Supplier(supplier)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: supplier|
+|[setState\_SupplierId(supplierId)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: supplier ID|
+|[setState\_UniqueId(uniqueId)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: unique ID|
+|[setState\_X(x)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./ISCH_PrimitiveComponent.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./ISCH_PrimitiveComponent.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveComponent.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -838,6 +236,7 @@ console.log('designator: C? →', refetched.getState_Designator());
 console.log('rotation: 0 →', refetched.getState_Rotation());
 ```
 
+
 ### getallpins
 
 # ISCH\_PrimitiveComponent.getAllPins() method
@@ -875,6 +274,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('pinCount:', pins.length);
 ```
 
+
 ### getstate_addintobom
 
 # ISCH\_PrimitiveComponent.getState\_AddIntoBom() method
@@ -909,6 +309,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('addIntoBom:', addIntoBom);
 ```
+
 
 ### getstate_addintopcb
 
@@ -945,6 +346,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('addIntoPcb:', addIntoPcb);
 ```
 
+
 ### getstate_component
 
 # ISCH\_PrimitiveComponent.getState\_Component() method
@@ -954,13 +356,12 @@ Get the property state: associate library device
 ## Signature
 
 ```typescript
-function getState_Component():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Component(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library device
 
@@ -980,6 +381,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('component:', JSON.stringify(component));
 ```
+
 
 ### getstate_componenttype
 
@@ -1016,6 +418,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('componentType:', componentType);
 ```
 
+
 ### getstate_designator
 
 # ISCH\_PrimitiveComponent.getState\_Designator() method
@@ -1051,6 +454,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('designator:', designator);
 ```
 
+
 ### getstate_footprint
 
 # ISCH\_PrimitiveComponent.getState\_Footprint() method
@@ -1060,13 +464,12 @@ Get the property state: associate library footprint
 ## Signature
 
 ```typescript
-function getState_Footprint():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Footprint(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library footprint
 
@@ -1086,6 +489,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('footprint:', JSON.stringify(footprint));
 ```
+
 
 ### getstate_manufacturer
 
@@ -1122,6 +526,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('manufacturer:', manufacturer);
 ```
 
+
 ### getstate_manufacturerid
 
 # ISCH\_PrimitiveComponent.getState\_ManufacturerId() method
@@ -1156,6 +561,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('manufacturerId:', manufacturerId);
 ```
+
 
 ### getstate_mirror
 
@@ -1192,6 +598,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('mirror:', mirror);
 ```
 
+
 ### getstate_name
 
 # ISCH\_PrimitiveComponent.getState\_Name() method
@@ -1226,6 +633,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('name:', name);
 ```
+
 
 ### getstate_net
 
@@ -1262,6 +670,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('net:', net);
 ```
 
+
 ### getstate_otherproperty
 
 # ISCH\_PrimitiveComponent.getState\_OtherProperty() method
@@ -1297,6 +706,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('otherProperty:', JSON.stringify(otherProperty));
 ```
 
+
 ### getstate_primitiveid
 
 # ISCH\_PrimitiveComponent.getState\_PrimitiveId() method
@@ -1330,6 +740,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('compId:', compId);
 ```
+
 
 ### getstate_primitivetype
 
@@ -1366,6 +777,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('primitiveType:', primitiveType);
 ```
 
+
 ### getstate_rotation
 
 # ISCH\_PrimitiveComponent.getState\_Rotation() method
@@ -1400,6 +812,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('rotation:', rotation);
 ```
+
 
 ### getstate_subpartname
 
@@ -1436,6 +849,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('subPartName:', subPartName);
 ```
 
+
 ### getstate_supplier
 
 # ISCH\_PrimitiveComponent.getState\_Supplier() method
@@ -1470,6 +884,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('supplier:', supplier);
 ```
+
 
 ### getstate_supplierid
 
@@ -1506,6 +921,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('supplierId:', supplierId);
 ```
 
+
 ### getstate_symbol
 
 # ISCH\_PrimitiveComponent.getState\_Symbol() method
@@ -1515,13 +931,12 @@ Get the property state: associate library symbol
 ## Signature
 
 ```typescript
-function getState_Symbol():
-	{ libraryUuid: string; uuid: string; name?: undefined | string } | undefined;
+function getState_Symbol(): { libraryUuid: string; uuid: string; name?: string } | undefined;
 ```
 
 ## Returns
 
-{ libraryUuid: string; uuid: string; name?: undefined \| string } \| undefined
+{ libraryUuid: string; uuid: string; name?: string } \| undefined
 
 Associate library symbol
 
@@ -1541,6 +956,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('symbol:', JSON.stringify(symbol));
 ```
+
 
 ### getstate_uniqueid
 
@@ -1577,6 +993,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('uniqueId:', uniqueId);
 ```
 
+
 ### getstate_x
 
 # ISCH\_PrimitiveComponent.getState\_X() method
@@ -1612,6 +1029,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('x:', x);
 ```
 
+
 ### getstate_y
 
 # ISCH\_PrimitiveComponent.getState\_Y() method
@@ -1646,6 +1064,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 
 console.log('y:', y);
 ```
+
 
 ### isasync
 
@@ -1686,6 +1105,7 @@ await eda.sch_PrimitiveComponent.delete([compId]);
 console.log('isAsync on create:', isAsyncOnCreate);
 console.log('isAsync after toSync:', isAsyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -1731,6 +1151,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(compId);
 console.log('designator:', before, '→', refetched.getState_Designator());
 ```
 
+
 ### setstate_addintobom
 
 # ISCH\_PrimitiveComponent.setState\_AddIntoBom() method
@@ -1747,33 +1168,9 @@ function setState_AddIntoBom(addIntoBom: boolean | undefined): ISCH_PrimitiveCom
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-addIntoBom
-
-</td><td>
-
-boolean \| undefined
-
-</td><td>
-
-Whether Add to BOM
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|addIntoBom|boolean \| undefined|Whether Add to BOM|
 
 ## Returns
 
@@ -1804,6 +1201,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('addIntoBom:', before, '→', refetched.getState_AddIntoBom());
 ```
 
+
 ### setstate_addintopcb
 
 # ISCH\_PrimitiveComponent.setState\_AddIntoPcb() method
@@ -1820,33 +1218,9 @@ function setState_AddIntoPcb(addIntoPcb: boolean | undefined): ISCH_PrimitiveCom
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-addIntoPcb
-
-</td><td>
-
-boolean \| undefined
-
-</td><td>
-
-Whether Transfer to PCB
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|addIntoPcb|boolean \| undefined|Whether Transfer to PCB|
 
 ## Returns
 
@@ -1877,6 +1251,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('addIntoPcb:', before, '→', refetched.getState_AddIntoPcb());
 ```
 
+
 ### setstate_designator
 
 # ISCH\_PrimitiveComponent.setState\_Designator() method
@@ -1893,33 +1268,9 @@ function setState_Designator(designator: string | undefined): ISCH_PrimitiveComp
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-designator
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Designator
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|designator|string \| undefined|Designator|
 
 ## Returns
 
@@ -1950,6 +1301,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('designator:', before, '→', refetched.getState_Designator());
 ```
 
+
 ### setstate_manufacturer
 
 # ISCH\_PrimitiveComponent.setState\_Manufacturer() method
@@ -1966,33 +1318,9 @@ function setState_Manufacturer(manufacturer: string | undefined): ISCH_Primitive
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-manufacturer
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Manufacturer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|manufacturer|string \| undefined|Manufacturer|
 
 ## Returns
 
@@ -2023,6 +1351,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('manufacturer:', before, '→', refetched.getState_Manufacturer());
 ```
 
+
 ### setstate_manufacturerid
 
 # ISCH\_PrimitiveComponent.setState\_ManufacturerId() method
@@ -2039,33 +1368,9 @@ function setState_ManufacturerId(manufacturerId: string | undefined): ISCH_Primi
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-manufacturerId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Manufacturer ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|manufacturerId|string \| undefined|Manufacturer ID|
 
 ## Returns
 
@@ -2096,6 +1401,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('manufacturerId:', before, '→', refetched.getState_ManufacturerId());
 ```
 
+
 ### setstate_mirror
 
 # ISCH\_PrimitiveComponent.setState\_Mirror() method
@@ -2112,33 +1418,9 @@ function setState_Mirror(mirror: boolean): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|mirror|boolean|Whether it is mirrored|
 
 ## Returns
 
@@ -2169,6 +1451,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('mirror:', before, '→', refetched.getState_Mirror());
 ```
 
+
 ### setstate_name
 
 # ISCH\_PrimitiveComponent.setState\_Name() method
@@ -2185,33 +1468,9 @@ function setState_Name(name: string | undefined): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-name
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|name|string \| undefined|Name|
 
 ## Returns
 
@@ -2242,6 +1501,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('name:', before, '→', refetched.getState_Name());
 ```
 
+
 ### setstate_net
 
 # ISCH\_PrimitiveComponent.setState\_Net() method
@@ -2258,33 +1518,9 @@ function setState_Net(net: string | undefined): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string \| undefined|Net name|
 
 ## Returns
 
@@ -2315,6 +1551,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('net:', before, '→', refetched.getState_Net());
 ```
 
+
 ### setstate_otherproperty
 
 # ISCH\_PrimitiveComponent.setState\_OtherProperty() method
@@ -2333,33 +1570,9 @@ function setState_OtherProperty(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-otherProperty
-
-</td><td>
-
-Record&lt;string, string \| number \| boolean&gt;
-
-</td><td>
-
-Other parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|otherProperty|Record&lt;string, string \| number \| boolean&gt;|Other parameters|
 
 ## Returns
 
@@ -2390,6 +1603,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('otherProperty:', JSON.stringify(before), '→', JSON.stringify(refetched.getState_OtherProperty()));
 ```
 
+
 ### setstate_rotation
 
 # ISCH\_PrimitiveComponent.setState\_Rotation() method
@@ -2406,33 +1620,9 @@ function setState_Rotation(rotation: number): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -2463,6 +1653,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_supplier
 
 # ISCH\_PrimitiveComponent.setState\_Supplier() method
@@ -2479,33 +1670,9 @@ function setState_Supplier(supplier: string | undefined): ISCH_PrimitiveComponen
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-supplier
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Supplier
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|supplier|string \| undefined|Supplier|
 
 ## Returns
 
@@ -2536,6 +1703,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('supplier:', before, '→', refetched.getState_Supplier());
 ```
 
+
 ### setstate_supplierid
 
 # ISCH\_PrimitiveComponent.setState\_SupplierId() method
@@ -2552,33 +1720,9 @@ function setState_SupplierId(supplierId: string | undefined): ISCH_PrimitiveComp
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-supplierId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Supplier ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|supplierId|string \| undefined|Supplier ID|
 
 ## Returns
 
@@ -2609,6 +1753,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('supplierId:', before, '→', refetched.getState_SupplierId());
 ```
 
+
 ### setstate_uniqueid
 
 # ISCH\_PrimitiveComponent.setState\_UniqueId() method
@@ -2625,33 +1770,9 @@ function setState_UniqueId(uniqueId: string | undefined): ISCH_PrimitiveComponen
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uniqueId
-
-</td><td>
-
-string \| undefined
-
-</td><td>
-
-Unique ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uniqueId|string \| undefined|Unique ID|
 
 ## Returns
 
@@ -2682,6 +1803,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('uniqueId:', before, '→', refetched.getState_UniqueId());
 ```
 
+
 ### setstate_x
 
 # ISCH\_PrimitiveComponent.setState\_X() method
@@ -2698,33 +1820,9 @@ function setState_X(x: number): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -2754,6 +1852,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('x:', x, '→', refetched.getState_X());
 ```
 
+
 ### setstate_y
 
 # ISCH\_PrimitiveComponent.setState\_Y() method
@@ -2770,33 +1869,9 @@ function setState_Y(y: number): ISCH_PrimitiveComponent;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -2825,6 +1900,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 
 console.log('y:', y, '+200 →', refetched.getState_Y());
 ```
+
 
 ### toasync
 
@@ -2868,6 +1944,7 @@ const refetched = await eda.sch_PrimitiveComponent.get(comp.getState_PrimitiveId
 console.log('isAsync:', comp.isAsync());
 console.log('designator: C? →', refetched.getState_Designator());
 ```
+
 
 ### tosync
 

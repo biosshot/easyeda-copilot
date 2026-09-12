@@ -10,86 +10,14 @@ class LIB_3DModel
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(modelUuid, libraryUuid, targetLibraryUuid, targetClassification, newModelName)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy 3D model
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, modelFile, classification, unit)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create 3D model
-
-</td></tr>
-<tr><td>
-
-[delete(modelUuid, libraryUuid)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete 3D model
-
-</td></tr>
-<tr><td>
-
-[get(modelUuid, libraryUuid)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the 3D model
-
-</td></tr>
-<tr><td>
-
-[modify(modelUuid, libraryUuid, modelName, classification, description)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify 3D model
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_3DModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search 3D model
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(modelUuid, libraryUuid, targetLibraryUuid, targetClassification, newModelName)](./LIB_3DModel.md)||**_(BETA)_** Copy 3D model|
+|[create(libraryUuid, modelFile, classification, unit)](./LIB_3DModel.md)||**_(BETA)_** Create 3D model|
+|[delete(modelUuid, libraryUuid)](./LIB_3DModel.md)||**_(BETA)_** Delete 3D model|
+|[get(modelUuid, libraryUuid)](./LIB_3DModel.md)||**_(BETA)_** Get all properties of the 3D model|
+|[modify(modelUuid, libraryUuid, modelName, classification, description)](./LIB_3DModel.md)||**_(BETA)_** Modify 3D model|
+|[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_3DModel.md)||**_(BETA)_** Search 3D model|
 
 ---
 
@@ -117,85 +45,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-modelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newModelName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New 3D model name. If a 3D model with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|modelUuid|string|3D model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newModelName|string|_(Optional)_ New 3D model name. If a 3D model with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -230,6 +86,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_3DModel.create() method
@@ -256,72 +113,12 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-modelFile
-
-</td><td>
-
-Blob
-
-</td><td>
-
-3D model file data
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.CENTIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.METER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md)
-
-</td><td>
-
-_(Optional)_ Unit
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|modelFile|Blob|3D model file data|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|unit|[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.CENTIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.METER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md)|_(Optional)_ Unit|
 
 ## Returns
 
@@ -362,6 +159,7 @@ console.log('libraryUuid:', libraryUuid);
 console.log('created:', modelUuids ? modelUuids.length : 0);
 ```
 
+
 ### delete
 
 # LIB\_3DModel.delete() method
@@ -378,46 +176,10 @@ function delete(modelUuid: string, libraryUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-modelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|modelUuid|string|3D model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -449,6 +211,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_3DModel.get() method
@@ -465,46 +228,10 @@ function get(modelUuid: string, libraryUuid?: string): Promise<ILIB_3DModelItem 
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-modelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|modelUuid|string|3D model UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -534,85 +261,13 @@ function modify(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-modelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-modelName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 3D model name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|modelUuid|string|3D model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|modelName|string|_(Optional)_ 3D model name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
 
 ## Returns
 
@@ -658,6 +313,7 @@ console.log('modified:', modified);
 console.log('newName:', modifiedName);
 ```
 
+
 ### search
 
 # LIB\_3DModel.search() method
@@ -680,85 +336,13 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 

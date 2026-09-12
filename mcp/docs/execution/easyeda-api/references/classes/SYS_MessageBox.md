@@ -18,42 +18,10 @@ Generate message boxes
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[showConfirmationMessage(content, title, mainButtonTitle, buttonTitle, callbackFn)](./SYS_MessageBox.md)
-
-</td><td>
-
-</td><td>
-
-Show a confirmation box
-
-</td></tr>
-<tr><td>
-
-[showInformationMessage(content, title, buttonTitle)](./SYS_MessageBox.md)
-
-</td><td>
-
-</td><td>
-
-Show a message box
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[showConfirmationMessage(content, title, mainButtonTitle, buttonTitle, callbackFn)](./SYS_MessageBox.md)||Show a confirmation box|
+|[showInformationMessage(content, title, buttonTitle)](./SYS_MessageBox.md)||Show a message box|
 
 ---
 
@@ -83,85 +51,13 @@ function showConfirmationMessage(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Message text. Line breaks can be used with `\n`
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Confirmation box title
-
-</td></tr>
-<tr><td>
-
-mainButtonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary button title
-
-</td></tr>
-<tr><td>
-
-buttonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary button title
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(mainButtonClicked: boolean) =&gt; void
-
-</td><td>
-
-_(Optional)_ Callback function. To call a function inside the extension, prefix the function name with the extension's unique ID, separated by a Western period `.`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|string|Message text. Line breaks can be used with `\n`|
+|title|string|_(Optional)_ Confirmation box title|
+|mainButtonTitle|string|_(Optional)_ Primary button title|
+|buttonTitle|string|_(Optional)_ Primary button title|
+|callbackFn|(mainButtonClicked: boolean) =&gt; void|_(Optional)_ Callback function. To call a function inside the extension, prefix the function name with the extension's unique ID, separated by a Western period `.`|
 
 ## Returns
 
@@ -194,6 +90,7 @@ eda.sys_MessageBox.showConfirmationMessage(
 console.log('已弹出确认窗口');
 ```
 
+
 ### showinformationmessage
 
 # SYS\_MessageBox.showInformationMessage() method
@@ -212,59 +109,11 @@ function showInformationMessage(content: string, title?: string, buttonTitle?: s
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Message text. Line breaks can be used with `\n`
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Message box title
-
-</td></tr>
-<tr><td>
-
-buttonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Button title. If empty, the button is not displayed
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|string|Message text. Line breaks can be used with `\n`|
+|title|string|_(Optional)_ Message box title|
+|buttonTitle|string|_(Optional)_ Button title. If empty, the button is not displayed|
 
 ## Returns
 

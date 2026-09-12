@@ -10,99 +10,13 @@ interface ISCH_WireInfo
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[globalNetName](./ISCH_WireInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Global net name
-
-</td></tr>
-<tr><td>
-
-[id](./ISCH_WireInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-ID
-
-</td></tr>
-<tr><td>
-
-[name](./ISCH_WireInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Wire name
-
-</td></tr>
-<tr><td>
-
-[pageName](./ISCH_WireInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet name
-
-</td></tr>
-<tr><td>
-
-[pageUuid](./ISCH_WireInfo.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[globalNetName](./ISCH_WireInfo.md)||string|Global net name|
+|[id](./ISCH_WireInfo.md)||string|ID|
+|[name](./ISCH_WireInfo.md)||string|Wire name|
+|[pageName](./ISCH_WireInfo.md)||string|Schematic sheet name|
+|[pageUuid](./ISCH_WireInfo.md)||string|Schematic sheet UUID|
 
 ---
 

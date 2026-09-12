@@ -17,71 +17,15 @@ For a device pin primitive, only the `pinNumber` and `noConnected` properties ca
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[primitiveType](./ISCH_PrimitiveComponentPin.md)
-
-</td><td>
-
-`protected`
-
-`readonly`
-
-</td><td>
-
-[ESCH\_PrimitiveType.COMPONENT\_PIN](../enums/ESCH_PrimitiveType.md)
-
-</td><td>
-
-图元类型
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[primitiveType](./ISCH_PrimitiveComponentPin.md)|`protected` `readonly`|[ESCH\_PrimitiveType.COMPONENT\_PIN](../enums/ESCH_PrimitiveType.md)|图元类型|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveComponentPin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveComponentPin.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
 
 ---
 

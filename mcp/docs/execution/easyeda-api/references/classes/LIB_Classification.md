@@ -10,108 +10,16 @@ class LIB_Classification
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createPrimary(libraryUuid, libraryType, primaryClassificationName)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a primary classification
-
-</td></tr>
-<tr><td>
-
-[createSecondary(libraryUuid, libraryType, primaryClassificationUuid, secondaryClassificationName)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a secondary classification
-
-</td></tr>
-<tr><td>
-
-[deleteByIndex(classificationIndex)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the classification at the specified index
-
-</td></tr>
-<tr><td>
-
-[deleteByUuid(libraryUuid, classificationUuid)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the classification with the specified UUID
-
-</td></tr>
-<tr><td>
-
-[getAllClassificationTree(libraryUuid, libraryType)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the tree composed of all classification information
-
-</td></tr>
-<tr><td>
-
-[getIndexByName(libraryUuid, libraryType, primaryClassificationName, secondaryClassificationName)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the classification index of the classification with the specified name
-
-</td></tr>
-<tr><td>
-
-[getNameByIndex(classificationIndex)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the name of the classification at the specified index
-
-</td></tr>
-<tr><td>
-
-[getNameByUuid(libraryUuid, libraryType, primaryClassificationUuid, secondaryClassificationUuid)](./LIB_Classification.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the name of the classification with the specified UUID
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createPrimary(libraryUuid, libraryType, primaryClassificationName)](./LIB_Classification.md)||**_(BETA)_** Create a primary classification|
+|[createSecondary(libraryUuid, libraryType, primaryClassificationUuid, secondaryClassificationName)](./LIB_Classification.md)||**_(BETA)_** Create a secondary classification|
+|[deleteByIndex(classificationIndex)](./LIB_Classification.md)||**_(BETA)_** Delete the classification at the specified index|
+|[deleteByUuid(libraryUuid, classificationUuid)](./LIB_Classification.md)||**_(BETA)_** Delete the classification with the specified UUID|
+|[getAllClassificationTree(libraryUuid, libraryType)](./LIB_Classification.md)||**_(BETA)_** Get the tree composed of all classification information|
+|[getIndexByName(libraryUuid, libraryType, primaryClassificationName, secondaryClassificationName)](./LIB_Classification.md)||**_(BETA)_** Get the classification index of the classification with the specified name|
+|[getNameByIndex(classificationIndex)](./LIB_Classification.md)||**_(BETA)_** Get the name of the classification at the specified index|
+|[getNameByUuid(libraryUuid, libraryType, primaryClassificationUuid, secondaryClassificationUuid)](./LIB_Classification.md)||**_(BETA)_** Get the name of the classification with the specified UUID|
 
 ---
 
@@ -141,59 +49,11 @@ function createPrimary(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-primaryClassificationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Primary classification name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|libraryType|[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|primaryClassificationName|string|Primary classification name|
 
 ## Returns
 
@@ -217,6 +77,7 @@ console.log('libraryUuid:', libraryUuid);
 console.log('name:', name);
 console.log('primaryClassificationUuid:', index.primaryClassificationUuid);
 ```
+
 
 ### createsecondary
 
@@ -243,72 +104,12 @@ function createSecondary(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-primaryClassificationUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Primary classification UUID
-
-</td></tr>
-<tr><td>
-
-secondaryClassificationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Secondary classification name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|libraryType|[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|primaryClassificationUuid|string|Primary classification UUID|
+|secondaryClassificationName|string|Secondary classification name|
 
 ## Returns
 
@@ -342,6 +143,7 @@ console.log('secondaryName:', secondaryName);
 console.log('secondaryClassificationUuid:', secondaryIndex.secondaryClassificationUuid);
 ```
 
+
 ### deletebyindex
 
 # LIB\_Classification.deleteByIndex() method
@@ -362,33 +164,9 @@ function deleteByIndex(classificationIndex: ILIB_ClassificationIndex): Promise<b
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-classificationIndex
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md)
-
-</td><td>
-
-Classification index
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|classificationIndex|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md)|Classification index|
 
 ## Returns
 
@@ -415,6 +193,7 @@ console.log('name:', name);
 console.log('deleted:', deleted);
 ```
 
+
 ### deletebyuuid
 
 # LIB\_Classification.deleteByUuid() method
@@ -435,44 +214,10 @@ function deleteByUuid(libraryUuid: string, classificationUuid: string): Promise<
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-classificationUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|classificationUuid|string||
 
 ## Returns
 
@@ -502,6 +247,7 @@ console.log('name:', name);
 console.log('deleted:', deleted);
 ```
 
+
 ### getallclassificationtree
 
 # LIB\_Classification.getAllClassificationTree() method
@@ -521,56 +267,24 @@ function getAllClassificationTree(
 	libraryUuid: string,
 	libraryType: ELIB_LibraryType,
 ): Promise<
-	Array<{ name: string; uuid: string; children?: undefined | { name: string; uuid: string }[] }>
+	Array<{
+		name: string;
+		uuid: string;
+		children?: Array<{ name: string; uuid: string }> | undefined;
+	}>
 >;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|libraryType|[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
 
 ## Returns
 
-Promise&lt;Array&lt;{ name: string; uuid: string; children?: undefined \| { name: string; uuid: string }\[\] }&gt;&gt;
+Promise&lt;Array&lt;{ name: string; uuid: string; children?: Array&lt;{ name: string; uuid: string }&gt; \| undefined }&gt;&gt;
 
 Tree structure data composed of classification information
 
@@ -597,6 +311,7 @@ tree.forEach((node, i) => {
 });
 ```
 
+
 ### getindexbyname
 
 # LIB\_Classification.getIndexByName() method
@@ -622,72 +337,12 @@ function getIndexByName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-primaryClassificationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Primary classification name
-
-</td></tr>
-<tr><td>
-
-secondaryClassificationName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Secondary classification name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|libraryType|[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|primaryClassificationName|string|Primary classification name|
+|secondaryClassificationName|string|_(Optional)_ Secondary classification name|
 
 ## Returns
 
@@ -735,6 +390,7 @@ console.log('primaryOnly.primaryClassificationUuid:', primaryOnly.primaryClassif
 console.log('withSecondary.secondaryClassificationUuid:', withSecondary.secondaryClassificationUuid);
 ```
 
+
 ### getnamebyindex
 
 # LIB\_Classification.getNameByIndex() method
@@ -753,44 +409,20 @@ Get the name of the classification at the specified index
 function getNameByIndex(
 	classificationIndex: ILIB_ClassificationIndex,
 ): Promise<
-	| { primaryClassificationName: string; secondaryClassificationName?: undefined | string }
+	| { primaryClassificationName: string; secondaryClassificationName?: string | undefined }
 	| undefined
 >;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-classificationIndex
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md)
-
-</td><td>
-
-Classification index
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|classificationIndex|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md)|Classification index|
 
 ## Returns
 
-Promise&lt;{ primaryClassificationName: string; secondaryClassificationName?: undefined \| string } \| undefined&gt;
+Promise&lt;{ primaryClassificationName: string; secondaryClassificationName?: string \| undefined } \| undefined&gt;
 
 Name of the two-level classification
 
@@ -823,6 +455,7 @@ console.log('primaryNames:', primaryNames);
 console.log('secondaryNames:', secondaryNames);
 ```
 
+
 ### getnamebyuuid
 
 # LIB\_Classification.getNameByUuid() method
@@ -844,83 +477,23 @@ function getNameByUuid(
 	primaryClassificationUuid: string,
 	secondaryClassificationUuid?: string,
 ): Promise<
-	| { primaryClassificationName: string; secondaryClassificationName?: undefined | string }
+	| { primaryClassificationName: string; secondaryClassificationName?: string | undefined }
 	| undefined
 >;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-primaryClassificationUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Primary classification UUID
-
-</td></tr>
-<tr><td>
-
-secondaryClassificationUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Secondary classification UUID. If not specified, only the primary classification information is obtained
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID|
+|libraryType|[ELIB\_LibraryType](../enums/ELIB_LibraryType.md)|Library type|
+|primaryClassificationUuid|string|Primary classification UUID|
+|secondaryClassificationUuid|string|_(Optional)_ Secondary classification UUID. If not specified, only the primary classification information is obtained|
 
 ## Returns
 
-Promise&lt;{ primaryClassificationName: string; secondaryClassificationName?: undefined \| string } \| undefined&gt;
+Promise&lt;{ primaryClassificationName: string; secondaryClassificationName?: string \| undefined } \| undefined&gt;
 
 Name of the two-level classification
 

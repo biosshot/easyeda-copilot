@@ -10,53 +10,11 @@ class DMT_Team
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getAllInvolvedTeamInfo()](./DMT_Team.md)
-
-</td><td>
-
-</td><td>
-
-Get the detailed properties of all involved teams
-
-</td></tr>
-<tr><td>
-
-[getAllTeamsInfo()](./DMT_Team.md)
-
-</td><td>
-
-</td><td>
-
-Get the detailed properties of all direct teams
-
-</td></tr>
-<tr><td>
-
-[getCurrentTeamInfo()](./DMT_Team.md)
-
-</td><td>
-
-</td><td>
-
-Get the detailed properties of the current team
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getAllInvolvedTeamInfo()](./DMT_Team.md)||Get the detailed properties of all involved teams|
+|[getAllTeamsInfo()](./DMT_Team.md)||Get the detailed properties of all direct teams|
+|[getCurrentTeamInfo()](./DMT_Team.md)||Get the detailed properties of the current team|
 
 ---
 
@@ -102,6 +60,7 @@ teams.forEach((team, i) => {
 });
 ```
 
+
 ### getallteamsinfo
 
 # DMT\_Team.getAllTeamsInfo() method
@@ -136,6 +95,7 @@ teams.forEach((team, i) => {
 	console.log(`团队${i + 1}：`, team.name, 'uuid:', team.uuid, '身份 ID：', team.identity);
 });
 ```
+
 
 ### getcurrentteaminfo
 

@@ -10,69 +10,11 @@ interface RadioItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[disabled?](./RadioItem.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether the option is disabled
-
-</td></tr>
-<tr><td>
-
-[text](./RadioItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Option display text (required)
-
-</td></tr>
-<tr><td>
-
-[value](./RadioItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Option value (required)
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[disabled?](./RadioItem.md)||boolean|_(Optional)_ Whether the option is disabled|
+|[text](./RadioItem.md)||string|Option display text (required)|
+|[value](./RadioItem.md)||string|Option value (required)|
 
 ---
 

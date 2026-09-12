@@ -10,86 +10,14 @@ class DMT_Project
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createProject(projectFriendlyName, projectName, teamUuid, folderUuid, description, collaborationMode)](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Project
-
-</td></tr>
-<tr><td>
-
-[getAllProjectsUuid(teamUuid, folderUuid, workspaceUuid)](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUIDs of all projects
-
-</td></tr>
-<tr><td>
-
-[getCurrentProjectInfo()](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Current project
-
-</td></tr>
-<tr><td>
-
-[getProjectInfo(projectUuid)](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-Get Project property
-
-</td></tr>
-<tr><td>
-
-[moveProjectToFolder(projectUuid, folderUuid)](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-Move a project to a folder
-
-</td></tr>
-<tr><td>
-
-[openProject(projectUuid)](./DMT_Project.md)
-
-</td><td>
-
-</td><td>
-
-Open project
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createProject(projectFriendlyName, projectName, teamUuid, folderUuid, description, collaborationMode)](./DMT_Project.md)||**_(BETA)_** Create Project|
+|[getAllProjectsUuid(teamUuid, folderUuid, workspaceUuid)](./DMT_Project.md)||Get the UUIDs of all projects|
+|[getCurrentProjectInfo()](./DMT_Project.md)||Get detailed properties of Current project|
+|[getProjectInfo(projectUuid)](./DMT_Project.md)||Get Project property|
+|[moveProjectToFolder(projectUuid, folderUuid)](./DMT_Project.md)||Move a project to a folder|
+|[openProject(projectUuid)](./DMT_Project.md)||Open project|
 
 ---
 
@@ -118,98 +46,14 @@ function createProject(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectFriendlyName
-
-</td><td>
-
-string
-
-</td><td>
-
-Project friendly name
-
-</td></tr>
-<tr><td>
-
-projectName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Project name, which cannot be duplicated. Only letters `a-zA-Z`<!-- -->, digits `0-9`<!-- -->, and hyphens `-` are supported. If not specified, it is automatically generated based on the project friendly name
-
-</td></tr>
-<tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Team UUID. If not specified, it defaults to personal. In an environment where personal projects do not exist, a team UUID must be specified
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Folder UUID. If not specified, it is the root folder
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Project description
-
-</td></tr>
-<tr><td>
-
-collaborationMode
-
-</td><td>
-
-[EDMT\_ProjectCollaborationMode](../enums/EDMT_ProjectCollaborationMode.md)
-
-</td><td>
-
-_(Optional)_ Project collaboration mode. If the team permission does not require the project to set a collaboration mode, this parameter will be ignored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectFriendlyName|string|Project friendly name|
+|projectName|string|_(Optional)_ Project name, which cannot be duplicated. Only letters `a-zA-Z`<!-- -->, digits `0-9`<!-- -->, and hyphens `-` are supported. If not specified, it is automatically generated based on the project friendly name|
+|teamUuid|string|_(Optional)_ Team UUID. If not specified, it defaults to personal. In an environment where personal projects do not exist, a team UUID must be specified|
+|folderUuid|string|_(Optional)_ Folder UUID. If not specified, it is the root folder|
+|description|string|_(Optional)_ Project description|
+|collaborationMode|[EDMT\_ProjectCollaborationMode](../enums/EDMT_ProjectCollaborationMode.md)|_(Optional)_ Project collaboration mode. If the team permission does not require the project to set a collaboration mode, this parameter will be ignored|
 
 ## Returns
 
@@ -240,6 +84,7 @@ console.log('friendlyName:', brief?.friendlyName);
 console.log('folderUuid:', folderLabel);
 ```
 
+
 ### getallprojectsuuid
 
 # DMT\_Project.getAllProjectsUuid() method
@@ -258,59 +103,11 @@ function getAllProjectsUuid(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-teamUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Team UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Folder UUID. If not specified, it defaults to the root folder of the team
-
-</td></tr>
-<tr><td>
-
-workspaceUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Workspace UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|teamUuid|string|_(Optional)_ Team UUID|
+|folderUuid|string|_(Optional)_ Folder UUID. If not specified, it defaults to the root folder of the team|
+|workspaceUuid|string|_(Optional)_ Workspace UUID|
 
 ## Returns
 
@@ -341,6 +138,7 @@ const projectUuids = await eda.dmt_Project.getAllProjectsUuid(teamUuid);
 console.log('projectCount:', projectUuids.length);
 console.log('projectUuids:', projectUuids.join(', '));
 ```
+
 
 ### getcurrentprojectinfo
 
@@ -378,33 +176,9 @@ function getProjectInfo(projectUuid: string): Promise<IDMT_BriefProjectItem | un
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Project UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectUuid|string|Project UUID|
 
 ## Returns
 
@@ -430,46 +204,10 @@ function moveProjectToFolder(projectUuid: string, folderUuid?: string): Promise<
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Project UUID
-
-</td></tr>
-<tr><td>
-
-folderUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Folder UUID, which can only be a folder under the team or personal space where the current project is located. If it is `undefined`<!-- -->, it is moved to the root folder of the current team
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectUuid|string|Project UUID|
+|folderUuid|string|_(Optional)_ Folder UUID, which can only be a folder under the team or personal space where the current project is located. If it is `undefined`<!-- -->, it is moved to the root folder of the current team|
 
 ## Returns
 
@@ -507,6 +245,7 @@ console.log('folderChanged:', folderChanged);
 console.log('restored:', restored);
 ```
 
+
 ### openproject
 
 # DMT\_Project.openProject() method
@@ -521,33 +260,9 @@ function openProject(projectUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-projectUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Project UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|projectUuid|string|Project UUID|
 
 ## Returns
 

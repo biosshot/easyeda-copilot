@@ -11,97 +11,15 @@ class SCH_PrimitiveText implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(x, y, content, rotation, textColor, fontName, fontSize, bold, italic, underLine, alignMode)](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Text
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Text
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Text
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Text
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Text
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Text primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Text
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(x, y, content, rotation, textColor, fontName, fontSize, bold, italic, underLine, alignMode)](./SCH_PrimitiveText.md)||**_(BETA)_** Create Text|
+|[delete(primitiveIds)](./SCH_PrimitiveText.md)||**_(BETA)_** Delete Text|
+|[get(primitiveIds)](./SCH_PrimitiveText.md)||**_(BETA)_** Get Text|
+|[get(primitiveIds)](./SCH_PrimitiveText.md)||**_(BETA)_** Get Text|
+|[getAll()](./SCH_PrimitiveText.md)||**_(BETA)_** Get all Text|
+|[getAllPrimitiveId()](./SCH_PrimitiveText.md)||**_(BETA)_** Get all Text primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitiveText.md)||**_(BETA)_** Modify Text|
 
 ---
 
@@ -135,163 +53,19 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Text content
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle. Options: `0` `90` `180` `270`
-
-</td></tr>
-<tr><td>
-
-textColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Text color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fontName
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Font name, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-fontSize
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-_(Optional)_ Font size. `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-bold
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is bold
-
-</td></tr>
-<tr><td>
-
-italic
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is italic
-
-</td></tr>
-<tr><td>
-
-underLine
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is underlined
-
-</td></tr>
-<tr><td>
-
-alignMode
-
-</td><td>
-
-[ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md)
-
-</td><td>
-
-_(Optional)_ Alignment mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|content|string|Text content|
+|rotation|number|_(Optional)_ Rotation angle. Options: `0` `90` `180` `270`|
+|textColor|string \| null|_(Optional)_ Text color, `null` indicates the default|
+|fontName|string \| null|_(Optional)_ Font name, `null` indicates the default|
+|fontSize|number \| null|_(Optional)_ Font size. `null` indicates the default|
+|bold|boolean|_(Optional)_ Whether it is bold|
+|italic|boolean|_(Optional)_ Whether it is italic|
+|underLine|boolean|_(Optional)_ Whether it is underlined|
+|alignMode|[ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md)|_(Optional)_ Alignment mode|
 
 ## Returns
 
@@ -336,6 +110,7 @@ console.log('underLine:', text.getState_UnderLine());
 console.log('alignMode:', text.getState_AlignMode());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveText.delete() method
@@ -352,33 +127,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveText | Array<string> | Arra
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveText](./ISCH_PrimitiveText.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveText](./ISCH_PrimitiveText.md)<!-- -->&gt;
-
-</td><td>
-
-Text primitive ID or Text primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveText](./ISCH_PrimitiveText.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveText](./ISCH_PrimitiveText.md)<!-- -->&gt;|Text primitive ID or Text primitive object|
 
 ## Returns
 
@@ -410,6 +161,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveText.get() method
@@ -426,33 +178,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveText | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Text primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Text primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -487,6 +215,7 @@ console.log('textB content:', arr[1].getState_Content());
 console.log('textB color:', arr[1].getState_TextColor());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveText.get() method
@@ -503,33 +232,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveText>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Text primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Text primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -582,6 +287,7 @@ console.log('marker content:', all.find(t => t.getState_PrimitiveId() === textId
 console.log('marker color:', all.find(t => t.getState_PrimitiveId() === textId).getState_TextColor());
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveText.getAllPrimitiveId() method
@@ -621,6 +327,7 @@ console.log('total text ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(textId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveText.modify() method
@@ -635,73 +342,27 @@ Modify Text
 function modify(
 	primitiveId: string | ISCH_PrimitiveText,
 	property: {
-		x?: undefined | number;
-		y?: undefined | number;
-		content?: undefined | string;
-		rotation?: undefined | number;
-		textColor?: undefined | null | string;
-		fontName?: undefined | null | string;
-		fontSize?: undefined | null | number;
-		bold?: undefined | false | true;
-		italic?: undefined | false | true;
-		underLine?: undefined | false | true;
-		alignMode?:
-			| undefined
-			| ESCH_PrimitiveTextAlignMode.LEFT_TOP
-			| ESCH_PrimitiveTextAlignMode.LEFT_MIDDLE
-			| ESCH_PrimitiveTextAlignMode.LEFT_BOTTOM
-			| ESCH_PrimitiveTextAlignMode.CENTER_TOP
-			| ESCH_PrimitiveTextAlignMode.CENTER
-			| ESCH_PrimitiveTextAlignMode.CENTER_BOTTOM
-			| ESCH_PrimitiveTextAlignMode.RIGHT_TOP
-			| ESCH_PrimitiveTextAlignMode.RIGHT_MIDDLE
-			| ESCH_PrimitiveTextAlignMode.RIGHT_BOTTOM;
+		x?: number;
+		y?: number;
+		content?: string;
+		rotation?: number;
+		textColor?: string | null;
+		fontName?: string | null;
+		fontSize?: number | null;
+		bold?: boolean;
+		italic?: boolean;
+		underLine?: boolean;
+		alignMode?: ESCH_PrimitiveTextAlignMode;
 	},
 ): Promise<ISCH_PrimitiveText | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveText](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ x?: undefined \| number; y?: undefined \| number; content?: undefined \| string; rotation?: undefined \| number; textColor?: undefined \| null \| string; fontName?: undefined \| null \| string; fontSize?: undefined \| null \| number; bold?: undefined \| false \| true; italic?: undefined \| false \| true; underLine?: undefined \| false \| true; alignMode?: undefined \| [ESCH\_PrimitiveTextAlignMode.LEFT\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.LEFT\_MIDDLE](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.LEFT\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_MIDDLE](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md) }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveText](./ISCH_PrimitiveText.md)|Primitive ID|
+|property|{ x?: number; y?: number; content?: string; rotation?: number; textColor?: string \| null; fontName?: string \| null; fontSize?: number \| null; bold?: boolean; italic?: boolean; underLine?: boolean; alignMode?: [ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md) }|Modify Parameter|
 
 ## Returns
 

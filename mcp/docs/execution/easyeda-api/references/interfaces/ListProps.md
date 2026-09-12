@@ -10,129 +10,16 @@ interface ListProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[border?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to show the border
-
-</td></tr>
-<tr><td>
-
-[expandEnable?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether nested child items are allowed to expand
-
-</td></tr>
-<tr><td>
-
-[itemHeight?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ List item height (pixels)
-
-</td></tr>
-<tr><td>
-
-[list](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-[ListChildren](./ListChildren.md)<!-- -->\[\]
-
-</td><td>
-
-List data ( required)
-
-</td></tr>
-<tr><td>
-
-[onItemClick?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-(id: string, item: [ListChildren](./ListChildren.md)<!-- -->) =&gt; void
-
-</td><td>
-
-_(Optional)_ 点击列表项时触发，参数为 id 与列表项
-
-</td></tr>
-<tr><td>
-
-[onItemContextmenu?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-(id: string) =&gt; void
-
-</td><td>
-
-_(Optional)_ 右键点击列表项时触发，参数为 id
-
-</td></tr>
-<tr><td>
-
-[onItemDblclick?](./ListProps.md)
-
-</td><td>
-
-</td><td>
-
-(id: string) =&gt; void
-
-</td><td>
-
-_(Optional)_ 双击列表项时触发，参数为 id
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[border?](./ListProps.md)||boolean|_(Optional)_ Whether to show the border|
+|[expandEnable?](./ListProps.md)||boolean|_(Optional)_ Whether nested child items are allowed to expand|
+|[itemHeight?](./ListProps.md)||number|_(Optional)_ List item height (pixels)|
+|[list](./ListProps.md)||[ListChildren](./ListChildren.md)<!-- -->\[\]|List data ( required)|
+|[maxHeight?](./ListProps.md)||number|_(Optional)_ 列表最大高度（像素）。提供时列表视口高度取 min(内容高度, 该值)，用于如下拉菜单等父容器无定值高度的场景，使虚拟列表可正常滚动|
+|[onItemClick?](./ListProps.md)||(id: string, item: [ListChildren](./ListChildren.md)<!-- -->) =&gt; void|_(Optional)_ 点击列表项时触发，参数为 id 与列表项|
+|[onItemContextmenu?](./ListProps.md)||(id: string) =&gt; void|_(Optional)_ 右键点击列表项时触发，参数为 id|
+|[onItemDblclick?](./ListProps.md)||(id: string) =&gt; void|_(Optional)_ 双击列表项时触发，参数为 id|
 
 ---
 
@@ -184,6 +71,18 @@ List data ( required)
 
 ```typescript
 list: ListChildren[];
+```
+
+### maxheight
+
+# ListProps.maxHeight property
+
+列表最大高度（像素）。提供时列表视口高度取 min(内容高度, 该值)，用于如下拉菜单等父容器无定值高度的场景，使虚拟列表可正常滚动
+
+## Signature
+
+```typescript
+maxHeight?: number;
 ```
 
 ### onitemclick

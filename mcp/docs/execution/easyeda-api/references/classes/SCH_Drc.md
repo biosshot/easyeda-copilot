@@ -14,42 +14,10 @@ Check and set DRC rules
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[check(strict, userInterface, includeVerboseError)](./SCH_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Check DRC
-
-</td></tr>
-<tr><td>
-
-[check(strict, userInterface, includeVerboseError)](./SCH_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Check DRC
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[check(strict, userInterface, includeVerboseError)](./SCH_Drc.md)||**_(BETA)_** Check DRC|
+|[check(strict, userInterface, includeVerboseError)](./SCH_Drc.md)||**_(BETA)_** Check DRC|
 
 ---
 
@@ -75,59 +43,11 @@ function check(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-strict
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether strict checking is enabled. The current schematic is uniformly in strict checking mode
-
-</td></tr>
-<tr><td>
-
-userInterface
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to show the UI (open the bottom DRC window)
-
-</td></tr>
-<tr><td>
-
-includeVerboseError
-
-</td><td>
-
-false
-
-</td><td>
-
-Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|strict|boolean|Whether strict checking is enabled. The current schematic is uniformly in strict checking mode|
+|userInterface|boolean|Whether to show the UI (open the bottom DRC window)|
+|includeVerboseError|false|Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array|
 
 ## Returns
 
@@ -161,6 +81,7 @@ await new Promise(r => setTimeout(r, 1500));
 await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 ```
 
+
 ### check_1
 
 # SCH\_Drc.check() method
@@ -176,67 +97,19 @@ function check(
 	strict: boolean,
 	userInterface: boolean,
 	includeVerboseError: true,
-): Promise<Array<ISCH_DrcError>>;
+): Promise<Array<any>>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-strict
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether strict checking is enabled. The current schematic is uniformly in strict checking mode
-
-</td></tr>
-<tr><td>
-
-userInterface
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to show the UI (open the bottom DRC window)
-
-</td></tr>
-<tr><td>
-
-includeVerboseError
-
-</td><td>
-
-true
-
-</td><td>
-
-Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array. ADD since EDA v4.2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|strict|boolean|Whether strict checking is enabled. The current schematic is uniformly in strict checking mode|
+|userInterface|boolean|Whether to show the UI (open the bottom DRC window)|
+|includeVerboseError|true|Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array. ADD since EDA v4.2|
 
 ## Returns
 
-Promise&lt;Array&lt;[ISCH\_DrcError](../interfaces/ISCH_DrcError.md)<!-- -->&gt;&gt;
+Promise&lt;Array&lt;any&gt;&gt;
 
 Detailed results of the DRC check

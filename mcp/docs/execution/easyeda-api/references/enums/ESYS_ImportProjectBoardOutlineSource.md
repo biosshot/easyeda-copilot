@@ -10,42 +10,10 @@ enum ESYS_ImportProjectBoardOutlineSource
 
 ## Enumeration Members
 
-<table><thead><tr><th>
-
-Member
-
-</th><th>
-
-Value
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-FROM\_KEEPOUT\_LAYER
-
-</td><td>
-
-`'keepout'`
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-FROM\_MECHANICAL\_LAYER\_1
-
-</td><td>
-
-`'mechanical'`
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Member|Value|Description|
+|---|---|---|
+|FROM\_KEEPOUT\_LAYER|`'keepout'`||
+|FROM\_MECHANICAL\_LAYER\_1|`'mechanical'`||
 
 ## Remarks
 

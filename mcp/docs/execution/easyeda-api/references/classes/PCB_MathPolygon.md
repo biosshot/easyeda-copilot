@@ -10,108 +10,16 @@ class PCB_MathPolygon
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[calculateBBoxHeight(complexPolygon)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-计算多边形源数组的 BBox 高度
-
-</td></tr>
-<tr><td>
-
-[calculateHeight(complexPolygon)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Calculate complex polygon BBox height
-
-</td></tr>
-<tr><td>
-
-[calculateWidth(complexPolygon)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Calculate complex polygon BBox width
-
-</td></tr>
-<tr><td>
-
-[convertImageToComplexPolygon(imageBlob, imageWidth, imageHeight, tolerance, simplification, smoothing, despeckling, whiteAsBackgroundColor, inversion)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert Image to Complex polygon object
-
-</td></tr>
-<tr><td>
-
-[createComplexPolygon(complexPolygon)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Create Complex polygon
-
-</td></tr>
-<tr><td>
-
-[createPolygon(polygon)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Create Single polygon
-
-</td></tr>
-<tr><td>
-
-[discretize(polygon, options)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Discretize a single polygon into point data
-
-</td></tr>
-<tr><td>
-
-[splitPolygon(complexPolygons)](./PCB_MathPolygon.md)
-
-</td><td>
-
-</td><td>
-
-Split single polygon
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[calculateBBoxHeight(complexPolygon)](./PCB_MathPolygon.md)|||
+|[calculateHeight(complexPolygon)](./PCB_MathPolygon.md)||**_(BETA)_** Calculate complex polygon BBox height|
+|[calculateWidth(complexPolygon)](./PCB_MathPolygon.md)||**_(BETA)_** Calculate complex polygon BBox width|
+|[convertImageToComplexPolygon(imageBlob, imageWidth, imageHeight, tolerance, simplification, smoothing, despeckling, whiteAsBackgroundColor, inversion)](./PCB_MathPolygon.md)||**_(BETA)_** Convert Image to Complex polygon object|
+|[createComplexPolygon(complexPolygon)](./PCB_MathPolygon.md)||Create Complex polygon|
+|[createPolygon(polygon)](./PCB_MathPolygon.md)||Create Single polygon|
+|[discretize(polygon, options)](./PCB_MathPolygon.md)||**_(BETA)_** Discretize a single polygon into point data|
+|[splitPolygon(complexPolygons)](./PCB_MathPolygon.md)||Split single polygon|
 
 ---
 
@@ -120,8 +28,6 @@ Split single polygon
 ### calculatebboxheight
 
 # PCB\_MathPolygon.calculateBBoxHeight() method
-
-计算多边形源数组的 BBox 高度
 
 ## Signature
 
@@ -133,31 +39,9 @@ function calculateBBoxHeight(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt;
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt;||
 
 ## Returns
 
@@ -178,6 +62,7 @@ console.log('multiHeight:', eda.pcb_MathPolygon.calculateBBoxHeight([
 	['CIRCLE', 200, 200, 30],
 ]));
 ```
+
 
 ### calculateheight
 
@@ -201,33 +86,9 @@ function calculateHeight(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| [IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| [IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)|Complex polygon|
 
 ## Returns
 
@@ -252,6 +113,7 @@ const complexPolygon = eda.pcb_MathPolygon.createComplexPolygon([
 console.log('complexHeight:', eda.pcb_MathPolygon.calculateHeight(complexPolygon));
 ```
 
+
 ### calculatewidth
 
 # PCB\_MathPolygon.calculateWidth() method
@@ -274,33 +136,9 @@ function calculateWidth(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| [IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| [IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)|Complex polygon|
 
 ## Returns
 
@@ -324,6 +162,7 @@ const complexPolygon = eda.pcb_MathPolygon.createComplexPolygon([
 ]);
 console.log('complexWidth:', eda.pcb_MathPolygon.calculateWidth(complexPolygon));
 ```
+
 
 ### convertimagetocomplexpolygon
 
@@ -351,137 +190,17 @@ function convertImageToComplexPolygon(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-imageBlob
-
-</td><td>
-
-Blob
-
-</td><td>
-
-Image Blob file. You can use the  method to read a file from the file system
-
-</td></tr>
-<tr><td>
-
-imageWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Image width
-
-</td></tr>
-<tr><td>
-
-imageHeight
-
-</td><td>
-
-number
-
-</td><td>
-
-Image height
-
-</td></tr>
-<tr><td>
-
-tolerance
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Tolerance, value range `0`<!-- -->-`1`
-
-</td></tr>
-<tr><td>
-
-simplification
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Simplification, value range `0`<!-- -->-`1`
-
-</td></tr>
-<tr><td>
-
-smoothing
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Smoothing, value range `0`<!-- -->-`1.33`
-
-</td></tr>
-<tr><td>
-
-despeckling
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Despeckling, value range `0`<!-- -->-`5`
-
-</td></tr>
-<tr><td>
-
-whiteAsBackgroundColor
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to use white as the background color
-
-</td></tr>
-<tr><td>
-
-inversion
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is inverted
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|imageBlob|Blob|Image Blob file. You can use the method to read a file from the file system|
+|imageWidth|number|Image width|
+|imageHeight|number|Image height|
+|tolerance|number|_(Optional)_ Tolerance, value range `0`<!-- -->-`1`|
+|simplification|number|_(Optional)_ Simplification, value range `0`<!-- -->-`1`|
+|smoothing|number|_(Optional)_ Smoothing, value range `0`<!-- -->-`1.33`|
+|despeckling|number|_(Optional)_ Despeckling, value range `0`<!-- -->-`5`|
+|whiteAsBackgroundColor|boolean|_(Optional)_ Whether to use white as the background color|
+|inversion|boolean|_(Optional)_ Whether it is inverted|
 
 ## Returns
 
@@ -514,6 +233,7 @@ console.log('polygonCount:', sources.length);
 console.log('firstSource:', JSON.stringify(sources[0]).slice(0, 120));
 ```
 
+
 ### createcomplexpolygon
 
 # PCB\_MathPolygon.createComplexPolygon() method
@@ -534,33 +254,9 @@ function createComplexPolygon(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| Array&lt;[IPCB\_Polygon](./IPCB_Polygon.md)<!-- -->&gt;
-
-</td><td>
-
-Complex polygon data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md) \| Array&lt;[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)<!-- -->&gt; \| [IPCB\_Polygon](./IPCB_Polygon.md) \| Array&lt;[IPCB\_Polygon](./IPCB_Polygon.md)<!-- -->&gt;|Complex polygon data|
 
 ## Returns
 
@@ -585,6 +281,7 @@ sources.forEach((source, index) => {
 console.log('count:', sources.length);
 ```
 
+
 ### createpolygon
 
 # PCB\_MathPolygon.createPolygon() method
@@ -599,33 +296,9 @@ function createPolygon(polygon: TPCB_PolygonSourceArray): IPCB_Polygon | undefin
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)
-
-</td><td>
-
-Single polygon data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)|Single polygon data|
 
 ## Returns
 
@@ -647,6 +320,7 @@ console.log('rectSource:', JSON.stringify(rectPolygon.getSource()));
 console.log('circleSource:', JSON.stringify(circlePolygon.getSource()));
 ```
 
+
 ### discretize
 
 # PCB\_MathPolygon.discretize() method
@@ -661,55 +335,19 @@ Discretize a single polygon into point data
 function discretize(
 	polygon: IPCB_Polygon | TPCB_PolygonSourceArray,
 	options?: IPCB_DiscretizeOptions,
-): Promise<Array<IPCB_DiscretizedPoint>>;
+): Array<IPCB_DiscretizedPoint>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-polygon
-
-</td><td>
-
-[IPCB\_Polygon](./IPCB_Polygon.md) \| [TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)
-
-</td><td>
-
-Single polygon object
-
-</td></tr>
-<tr><td>
-
-options
-
-</td><td>
-
-[IPCB\_DiscretizeOptions](../interfaces/IPCB_DiscretizeOptions.md)
-
-</td><td>
-
-_(Optional)_ Discretization options
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|polygon|[IPCB\_Polygon](./IPCB_Polygon.md) \| [TPCB\_PolygonSourceArray](../types/TPCB_PolygonSourceArray.md)|Single polygon object|
+|options|[IPCB\_DiscretizeOptions](../interfaces/IPCB_DiscretizeOptions.md)|_(Optional)_ Discretization options|
 
 ## Returns
 
-Promise&lt;Array&lt;[IPCB\_DiscretizedPoint](../interfaces/IPCB_DiscretizedPoint.md)<!-- -->&gt;&gt;
+Array&lt;[IPCB\_DiscretizedPoint](../interfaces/IPCB_DiscretizedPoint.md)<!-- -->&gt;
 
 Discretized point data
 
@@ -731,33 +369,9 @@ function splitPolygon(...complexPolygons: Array<IPCB_ComplexPolygon>): Array<IPC
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygons
-
-</td><td>
-
-Array&lt;[IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)<!-- -->&gt;
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygons|Array&lt;[IPCB\_ComplexPolygon](./IPCB_ComplexPolygon.md)<!-- -->&gt;|Complex polygon|
 
 ## Returns
 

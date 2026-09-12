@@ -10,152 +10,20 @@ class SYS_PanelControl
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[closeBottomPanel()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Close the bottom panel
-
-</td></tr>
-<tr><td>
-
-[closeLeftPanel()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Close the left panel
-
-</td></tr>
-<tr><td>
-
-[closeRightPanel()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Close the right panel
-
-</td></tr>
-<tr><td>
-
-[isBottomPanelLocked()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the bottom panel is locked
-
-</td></tr>
-<tr><td>
-
-[isLeftPanelLocked()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the left panel is locked
-
-</td></tr>
-<tr><td>
-
-[isRightPanelLocked()](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the right panel is locked
-
-</td></tr>
-<tr><td>
-
-[openBottomPanel(tab)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Open the bottom panel
-
-</td></tr>
-<tr><td>
-
-[openLeftPanel(tab)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Open the left panel
-
-</td></tr>
-<tr><td>
-
-[openRightPanel(tab)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Open the right panel
-
-</td></tr>
-<tr><td>
-
-[toggleBottomPanelLockState(state)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Toggle the lock state of the bottom panel
-
-</td></tr>
-<tr><td>
-
-[toggleLeftPanelLockState(state)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Toggle the lock state of the left panel
-
-</td></tr>
-<tr><td>
-
-[toggleRightPanelLockState(state)](./SYS_PanelControl.md)
-
-</td><td>
-
-</td><td>
-
-Toggle the lock state of the right panel
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[closeBottomPanel()](./SYS_PanelControl.md)||Close the bottom panel|
+|[closeLeftPanel()](./SYS_PanelControl.md)||Close the left panel|
+|[closeRightPanel()](./SYS_PanelControl.md)||Close the right panel|
+|[isBottomPanelLocked()](./SYS_PanelControl.md)||Query whether the bottom panel is locked|
+|[isLeftPanelLocked()](./SYS_PanelControl.md)||Query whether the left panel is locked|
+|[isRightPanelLocked()](./SYS_PanelControl.md)||Query whether the right panel is locked|
+|[openBottomPanel(tab)](./SYS_PanelControl.md)||Open the bottom panel|
+|[openLeftPanel(tab)](./SYS_PanelControl.md)||Open the left panel|
+|[openRightPanel(tab)](./SYS_PanelControl.md)||Open the right panel|
+|[toggleBottomPanelLockState(state)](./SYS_PanelControl.md)||Toggle the lock state of the bottom panel|
+|[toggleLeftPanelLockState(state)](./SYS_PanelControl.md)||Toggle the lock state of the left panel|
+|[toggleRightPanelLockState(state)](./SYS_PanelControl.md)||Toggle the lock state of the right panel|
 
 ---
 
@@ -189,6 +57,7 @@ eda.sys_PanelControl.closeBottomPanel();
 console.log('底部面板已收起');
 ```
 
+
 ### closeleftpanel
 
 # SYS\_PanelControl.closeLeftPanel() method
@@ -216,6 +85,7 @@ console.log('左侧面板已展开');
 eda.sys_PanelControl.closeLeftPanel();
 console.log('左侧面板已收起');
 ```
+
 
 ### closerightpanel
 
@@ -245,6 +115,7 @@ eda.sys_PanelControl.closeRightPanel();
 console.log('右侧面板已收起');
 ```
 
+
 ### isbottompanellocked
 
 # SYS\_PanelControl.isBottomPanelLocked() method
@@ -272,6 +143,7 @@ const locked = await eda.sys_PanelControl.isBottomPanelLocked();
 // 2. 输出查询结果（true 表示已锁定，false 表示未锁定）
 console.log('底部面板锁定状态：', locked);
 ```
+
 
 ### isleftpanellocked
 
@@ -301,6 +173,7 @@ const locked = await eda.sys_PanelControl.isLeftPanelLocked();
 console.log('左侧面板锁定状态：', locked);
 ```
 
+
 ### isrightpanellocked
 
 # SYS\_PanelControl.isRightPanelLocked() method
@@ -329,6 +202,7 @@ const locked = await eda.sys_PanelControl.isRightPanelLocked();
 console.log('右侧面板锁定状态：', locked);
 ```
 
+
 ### openbottompanel
 
 # SYS\_PanelControl.openBottomPanel() method
@@ -343,33 +217,9 @@ function openBottomPanel(tab?: ESYS_BottomPanelTab): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tab
-
-</td><td>
-
-[ESYS\_BottomPanelTab](../enums/ESYS_BottomPanelTab.md)
-
-</td><td>
-
-_(Optional)_ Tab. If not specified, the tab will not be switched
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tab|[ESYS\_BottomPanelTab](../enums/ESYS_BottomPanelTab.md)|_(Optional)_ Tab. If not specified, the tab will not be switched|
 
 ## Returns
 
@@ -387,6 +237,7 @@ eda.sys_PanelControl.closeBottomPanel();
 console.log('底部面板已收起，界面还原');
 ```
 
+
 ### openleftpanel
 
 # SYS\_PanelControl.openLeftPanel() method
@@ -401,33 +252,9 @@ function openLeftPanel(tab?: ESYS_LeftPanelTab): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tab
-
-</td><td>
-
-[ESYS\_LeftPanelTab](../enums/ESYS_LeftPanelTab.md)
-
-</td><td>
-
-_(Optional)_ Tab. If not specified, the tab will not be switched
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tab|[ESYS\_LeftPanelTab](../enums/ESYS_LeftPanelTab.md)|_(Optional)_ Tab. If not specified, the tab will not be switched|
 
 ## Returns
 
@@ -445,6 +272,7 @@ eda.sys_PanelControl.closeLeftPanel();
 console.log('左侧面板已收起，界面还原');
 ```
 
+
 ### openrightpanel
 
 # SYS\_PanelControl.openRightPanel() method
@@ -459,33 +287,9 @@ function openRightPanel(tab?: ESYS_RightPanelTab): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tab
-
-</td><td>
-
-[ESYS\_RightPanelTab](../enums/ESYS_RightPanelTab.md)
-
-</td><td>
-
-_(Optional)_ Tab. If not specified, the tab will not be switched
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tab|[ESYS\_RightPanelTab](../enums/ESYS_RightPanelTab.md)|_(Optional)_ Tab. If not specified, the tab will not be switched|
 
 ## Returns
 
@@ -503,6 +307,7 @@ eda.sys_PanelControl.closeRightPanel();
 console.log('右侧面板已收起，界面还原');
 ```
 
+
 ### togglebottompanellockstate
 
 # SYS\_PanelControl.toggleBottomPanelLockState() method
@@ -517,33 +322,9 @@ function toggleBottomPanelLockState(state?: boolean): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-state
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to lock. If not specified, the current state is inverted
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|state|boolean|_(Optional)_ Whether to lock. If not specified, the current state is inverted|
 
 ## Returns
 
@@ -567,6 +348,7 @@ eda.sys_PanelControl.toggleBottomPanelLockState(before);
 console.log('已恢复原锁定状态：', before);
 ```
 
+
 ### toggleleftpanellockstate
 
 # SYS\_PanelControl.toggleLeftPanelLockState() method
@@ -581,33 +363,9 @@ function toggleLeftPanelLockState(state?: boolean): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-state
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to lock. If not specified, the current state is inverted
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|state|boolean|_(Optional)_ Whether to lock. If not specified, the current state is inverted|
 
 ## Returns
 
@@ -631,6 +389,7 @@ eda.sys_PanelControl.toggleLeftPanelLockState(before);
 console.log('已恢复原锁定状态：', before);
 ```
 
+
 ### togglerightpanellockstate
 
 # SYS\_PanelControl.toggleRightPanelLockState() method
@@ -645,33 +404,9 @@ function toggleRightPanelLockState(state?: boolean): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-state
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to lock. If not specified, the current state is inverted
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|state|boolean|_(Optional)_ Whether to lock. If not specified, the current state is inverted|
 
 ## Returns
 

@@ -11,86 +11,14 @@ class SCH_PrimitiveAttribute implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createNetLabel(x, y, net)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a net label
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Property
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Property
-
-</td></tr>
-<tr><td>
-
-[getAll(parentPrimitiveId)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Property
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId(parentPrimitiveId)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Property primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Property
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createNetLabel(x, y, net)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Create a net label|
+|[get(primitiveIds)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Get Property|
+|[get(primitiveIds)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Get Property|
+|[getAll(parentPrimitiveId)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Get all Property|
+|[getAllPrimitiveId(parentPrimitiveId)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Get all Property primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitiveAttribute.md)||**_(BETA)_** Modify Property|
 
 ---
 
@@ -116,59 +44,11 @@ function createNetLabel(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|net|string|Net name|
 
 ## Returns
 
@@ -196,33 +76,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveAttribute | undefined>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Property primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Property primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -257,6 +113,7 @@ console.log('array length:', arr.length);
 console.log('second key:', arr[1].getState_Key());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveAttribute.get() method
@@ -273,33 +130,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveAttribute
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Property primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Property primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -327,33 +160,9 @@ function getAll(parentPrimitiveId?: string): Promise<Array<ISCH_PrimitiveAttribu
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-parentPrimitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Parent primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|parentPrimitiveId|string|_(Optional)_ Parent primitive ID|
 
 ## Returns
 
@@ -390,6 +199,7 @@ console.log('keys:', keys.join(', '));
 console.log('page total attrs:', allAttrs.length);
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveAttribute.getAllPrimitiveId() method
@@ -406,33 +216,9 @@ function getAllPrimitiveId(parentPrimitiveId?: string): Promise<Array<string>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-parentPrimitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Parent primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|parentPrimitiveId|string|_(Optional)_ Parent primitive ID|
 
 ## Returns
 
@@ -468,6 +254,7 @@ console.log('page total attr ids:', allIds.length);
 console.log('component ids all in page list:', compAttrIds.every(id => allIds.includes(id)));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveAttribute.modify() method
@@ -482,78 +269,31 @@ Modify Property
 function modify(
 	primitiveId: string | ISCH_PrimitiveAttribute,
 	property: {
-		x?: undefined | null | number;
-		y?: undefined | null | number;
-		rotation?: undefined | null | number;
-		color?: undefined | null | string;
-		fontName?: undefined | null | string;
-		fontSize?: undefined | null | number;
-		bold?: undefined | null | false | true;
-		italic?: undefined | null | false | true;
-		underLine?: undefined | null | false | true;
-		alignMode?:
-			| undefined
-			| null
-			| ESCH_PrimitiveTextAlignMode.LEFT_TOP
-			| ESCH_PrimitiveTextAlignMode.LEFT_MIDDLE
-			| ESCH_PrimitiveTextAlignMode.LEFT_BOTTOM
-			| ESCH_PrimitiveTextAlignMode.CENTER_TOP
-			| ESCH_PrimitiveTextAlignMode.CENTER
-			| ESCH_PrimitiveTextAlignMode.CENTER_BOTTOM
-			| ESCH_PrimitiveTextAlignMode.RIGHT_TOP
-			| ESCH_PrimitiveTextAlignMode.RIGHT_MIDDLE
-			| ESCH_PrimitiveTextAlignMode.RIGHT_BOTTOM;
-		fillColor?: undefined | null | string;
-		key?: undefined | string;
-		value?: undefined | string;
-		keyVisible?: undefined | null | false | true;
-		valueVisible?: undefined | null | false | true;
+		x?: number | null;
+		y?: number | null;
+		rotation?: number | null;
+		color?: string | null;
+		fontName?: string | null;
+		fontSize?: number | null;
+		bold?: boolean | null;
+		italic?: boolean | null;
+		underLine?: boolean | null;
+		alignMode?: ESCH_PrimitiveTextAlignMode | null;
+		fillColor?: string | null;
+		key?: string;
+		value?: string;
+		keyVisible?: boolean | null;
+		valueVisible?: boolean | null;
 	},
 ): Promise<ISCH_PrimitiveAttribute | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveAttribute](./ISCH_PrimitiveAttribute.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ x?: undefined \| null \| number; y?: undefined \| null \| number; rotation?: undefined \| null \| number; color?: undefined \| null \| string; fontName?: undefined \| null \| string; fontSize?: undefined \| null \| number; bold?: undefined \| null \| false \| true; italic?: undefined \| null \| false \| true; underLine?: undefined \| null \| false \| true; alignMode?: undefined \| null \| [ESCH\_PrimitiveTextAlignMode.LEFT\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.LEFT\_MIDDLE](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.LEFT\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.CENTER\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_TOP](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_MIDDLE](../enums/ESCH_PrimitiveTextAlignMode.md) \| [ESCH\_PrimitiveTextAlignMode.RIGHT\_BOTTOM](../enums/ESCH_PrimitiveTextAlignMode.md)<!-- -->; fillColor?: undefined \| null \| string; key?: undefined \| string; value?: undefined \| string; keyVisible?: undefined \| null \| false \| true; valueVisible?: undefined \| null \| false \| true }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveAttribute](./ISCH_PrimitiveAttribute.md)|Primitive ID|
+|property|{ x?: number \| null; y?: number \| null; rotation?: number \| null; color?: string \| null; fontName?: string \| null; fontSize?: number \| null; bold?: boolean \| null; italic?: boolean \| null; underLine?: boolean \| null; alignMode?: [ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md) \| null; fillColor?: string \| null; key?: string; value?: string; keyVisible?: boolean \| null; valueVisible?: boolean \| null }|Modify Parameter|
 
 ## Returns
 

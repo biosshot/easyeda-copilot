@@ -10,69 +10,11 @@ interface ImageProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[onClick?](./ImageProps.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; void
-
-</td><td>
-
-_(Optional)_ 点击图片时触发
-
-</td></tr>
-<tr><td>
-
-[src](./ImageProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Image URL (required)
-
-</td></tr>
-<tr><td>
-
-[title?](./ImageProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Image title (alt/text)
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[onClick?](./ImageProps.md)||() =&gt; void|_(Optional)_ 点击图片时触发|
+|[src](./ImageProps.md)||string|Image URL (required)|
+|[title?](./ImageProps.md)||string|_(Optional)_ Image title (alt/text)|
 
 ---
 

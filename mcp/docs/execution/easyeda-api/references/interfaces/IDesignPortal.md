@@ -10,63 +10,11 @@ interface IDesignPortal<T extends keyof ComponentPropsMap = keyof ComponentProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createComponent](./IDesignPortal.md)
-
-</td><td>
-
-</td><td>
-
-(handle: string, type: T, props: [ComponentPropsMap](./ComponentPropsMap.md)<!-- -->\[T\], eventDispatcher: (ev: any) =&gt; void, parent?: string) =&gt; void
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[detachComponent](./IDesignPortal.md)
-
-</td><td>
-
-</td><td>
-
-(handle: string) =&gt; void
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[updateComponent](./IDesignPortal.md)
-
-</td><td>
-
-</td><td>
-
-(handle: string, type: T, props: [ComponentPropsMap](./ComponentPropsMap.md)<!-- -->\[T\], eventDispatcher: (ev: any) =&gt; void) =&gt; void
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[createComponent](./IDesignPortal.md)||(handle: string, type: T, props: [ComponentPropsMap](./ComponentPropsMap.md)<!-- -->\[T\], eventDispatcher: (ev: any) =&gt; void, parent?: string) =&gt; void||
+|[detachComponent](./IDesignPortal.md)||(handle: string) =&gt; void||
+|[updateComponent](./IDesignPortal.md)||(handle: string, type: T, props: [ComponentPropsMap](./ComponentPropsMap.md)<!-- -->\[T\], eventDispatcher: (ev: any) =&gt; void) =&gt; void||
 
 ---
 

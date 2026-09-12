@@ -10,75 +10,13 @@ class SYS_Log
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[add(message, type)](./SYS_Log.md)
-
-</td><td>
-
-</td><td>
-
-Add a log entry
-
-</td></tr>
-<tr><td>
-
-[clear()](./SYS_Log.md)
-
-</td><td>
-
-</td><td>
-
-Clear the log
-
-</td></tr>
-<tr><td>
-
-[export(types)](./SYS_Log.md)
-
-</td><td>
-
-</td><td>
-
-Export the log
-
-</td></tr>
-<tr><td>
-
-[find(message, types)](./SYS_Log.md)
-
-</td><td>
-
-</td><td>
-
-Find entries
-
-</td></tr>
-<tr><td>
-
-[sort(types)](./SYS_Log.md)
-
-</td><td>
-
-</td><td>
-
-Filter and get log entries
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[add(message, type)](./SYS_Log.md)||Add a log entry|
+|[clear()](./SYS_Log.md)||Clear the log|
+|[export(types)](./SYS_Log.md)||Export the log|
+|[find(message, types)](./SYS_Log.md)||Find entries|
+|[sort(types)](./SYS_Log.md)||Filter and get log entries|
 
 ---
 
@@ -98,46 +36,10 @@ function add(message: string, type?: ESYS_LogType): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-message
-
-</td><td>
-
-string
-
-</td><td>
-
-Log content
-
-</td></tr>
-<tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_LogType](../enums/ESYS_LogType.md)
-
-</td><td>
-
-_(Optional)_ Log type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|message|string|Log content|
+|type|[ESYS\_LogType](../enums/ESYS_LogType.md)|_(Optional)_ Log type|
 
 ## Returns
 
@@ -156,6 +58,7 @@ const found = await eda.sys_Log.find('嘉立创示例_');
 console.log('写入的日志条目数：', found.length);
 console.log('其中一条：', found[0].message, '（类型：', `${found[0].type}）`);
 ```
+
 
 ### clear
 
@@ -190,6 +93,7 @@ const after = await eda.sys_Log.sort();
 console.log('清空后的日志条目数：', after.length);
 ```
 
+
 ### export
 
 # SYS\_Log.export() method
@@ -204,33 +108,9 @@ function export(types?: ESYS_LogType | Array<ESYS_LogType>): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-types
-
-</td><td>
-
-[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Log type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|types|[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;|_(Optional)_ Log type|
 
 ## Returns
 
@@ -252,6 +132,7 @@ eda.sys_Log.export(['warn', 'error']);
 console.log('已导出 warn 和 error 类型的日志');
 ```
 
+
 ### find
 
 # SYS\_Log.find() method
@@ -268,15 +149,13 @@ function find(
 			| string
 			| {
 				text: string;
-				attr?:
-					| undefined
-					| {
-						id?: undefined | string;
-						path?: undefined | string;
-						sheet?: undefined | string;
-						pcbid?: undefined | string;
-						type?: undefined | string;
-					};
+				attr?: {
+					id?: string;
+					path?: string;
+					sheet?: string;
+					pcbid?: string;
+					type?: string;
+				};
 			}
 		>,
 	types?: ESYS_LogType | Array<ESYS_LogType>,
@@ -285,46 +164,10 @@ function find(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-message
-
-</td><td>
-
-string \| Array&lt;string \| { text: string; attr?: undefined \| { id?: undefined \| string; path?: undefined \| string; sheet?: undefined \| string; pcbid?: undefined \| string; type?: undefined \| string } }&gt;
-
-</td><td>
-
-Find content
-
-</td></tr>
-<tr><td>
-
-types
-
-</td><td>
-
-[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Array of log types. The search can be performed within the specified log types
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|message|string \| Array&lt;string \| { text: string; attr?: { id?: string; path?: string; sheet?: string; pcbid?: string; type?: string } }&gt;|Find content|
+|types|[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;|_(Optional)_ Array of log types. The search can be performed within the specified log types|
 
 ## Returns
 
@@ -353,6 +196,7 @@ console.log('error 类型匹配条目数：', errors.length);
 console.log('匹配内容：', errors.map(line => line.message).join('；'));
 ```
 
+
 ### sort
 
 # SYS\_Log.sort() method
@@ -367,33 +211,9 @@ function sort(types?: ESYS_LogType | Array<ESYS_LogType>): Promise<Array<ISYS_Lo
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-types
-
-</td><td>
-
-[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Array of log types. Multiple log types can be specified at the same time. If not specified, all types are used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|types|[ESYS\_LogType](../enums/ESYS_LogType.md) \| Array&lt;[ESYS\_LogType](../enums/ESYS_LogType.md)<!-- -->&gt;|_(Optional)_ Array of log types. Multiple log types can be specified at the same time. If not specified, all types are used|
 
 ## Returns
 

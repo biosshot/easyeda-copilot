@@ -14,64 +14,12 @@ Set Timer
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[clearIntervalTimer(id)](./SYS_Timer.md)
-
-</td><td>
-
-</td><td>
-
-Clear the specified interval timer
-
-</td></tr>
-<tr><td>
-
-[clearTimeoutTimer(id)](./SYS_Timer.md)
-
-</td><td>
-
-</td><td>
-
-Clear the specified timeout timer
-
-</td></tr>
-<tr><td>
-
-[setIntervalTimer(id, timeout, callFn, args)](./SYS_Timer.md)
-
-</td><td>
-
-</td><td>
-
-Set an interval timer
-
-</td></tr>
-<tr><td>
-
-[setTimeoutTimer(id, timeout, callFn, args)](./SYS_Timer.md)
-
-</td><td>
-
-</td><td>
-
-Set a timeout timer
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[clearIntervalTimer(id)](./SYS_Timer.md)||Clear the specified interval timer|
+|[clearTimeoutTimer(id)](./SYS_Timer.md)||Clear the specified timeout timer|
+|[setIntervalTimer(id, timeout, callFn, args)](./SYS_Timer.md)||Set an interval timer|
+|[setTimeoutTimer(id, timeout, callFn, args)](./SYS_Timer.md)||Set a timeout timer|
 
 ---
 
@@ -91,33 +39,9 @@ function clearIntervalTimer(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Timer ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Timer ID|
 
 ## Returns
 
@@ -149,6 +73,7 @@ console.log('清除前触发次数：', ticksAtClear, '，清除后新增：', t
 console.log('再次清除同一 ID：', again);
 ```
 
+
 ### cleartimeouttimer
 
 # SYS\_Timer.clearTimeoutTimer() method
@@ -163,33 +88,9 @@ function clearTimeoutTimer(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Timer ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Timer ID|
 
 ## Returns
 
@@ -218,6 +119,7 @@ console.log('再次清除同一 ID：', again);
 console.log('回调是否仍被触发：', fired);
 ```
 
+
 ### setintervaltimer
 
 # SYS\_Timer.setIntervalTimer() method
@@ -237,72 +139,12 @@ function setIntervalTimer(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Timer ID, used to locate and delete the timer
-
-</td></tr>
-<tr><td>
-
-timeout
-
-</td><td>
-
-number
-
-</td><td>
-
-Timer duration, unit ms
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(...args: any) =&gt; void
-
-</td><td>
-
-Function called by the timer
-
-</td></tr>
-<tr><td>
-
-args
-
-</td><td>
-
-any
-
-</td><td>
-
-Arguments passed to the timer callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Timer ID, used to locate and delete the timer|
+|timeout|number|Timer duration, unit ms|
+|callFn|(...args: any) =&gt; void|Function called by the timer|
+|args|any|Arguments passed to the timer callback function|
 
 ## Returns
 
@@ -336,6 +178,7 @@ console.log('清除结果：', cleared);
 console.log('运行期间触发次数：', ticksAtClear, '，清除后新增：', tickCount - ticksAtClear);
 ```
 
+
 ### settimeouttimer
 
 # SYS\_Timer.setTimeoutTimer() method
@@ -355,72 +198,12 @@ function setTimeoutTimer(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Timer ID
-
-</td></tr>
-<tr><td>
-
-timeout
-
-</td><td>
-
-number
-
-</td><td>
-
-Timer duration, unit ms
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(...args: any) =&gt; void
-
-</td><td>
-
-Function called by the timer
-
-</td></tr>
-<tr><td>
-
-args
-
-</td><td>
-
-any
-
-</td><td>
-
-Arguments passed to the timer callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Timer ID|
+|timeout|number|Timer duration, unit ms|
+|callFn|(...args: any) =&gt; void|Function called by the timer|
+|args|any|Arguments passed to the timer callback function|
 
 ## Returns
 

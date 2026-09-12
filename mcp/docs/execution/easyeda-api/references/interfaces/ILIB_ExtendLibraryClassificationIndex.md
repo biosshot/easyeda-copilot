@@ -18,84 +18,12 @@ Supports external libraries using a name or UUID as the unique ID index of the c
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[primaryClassificationName?](./ILIB_ExtendLibraryClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary classification name
-
-</td></tr>
-<tr><td>
-
-[primaryClassificationUuid?](./ILIB_ExtendLibraryClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary classification UUID
-
-</td></tr>
-<tr><td>
-
-[secondaryClassificationName?](./ILIB_ExtendLibraryClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Secondary classification name
-
-</td></tr>
-<tr><td>
-
-[secondaryClassificationUuid?](./ILIB_ExtendLibraryClassificationIndex.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Secondary classification UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[primaryClassificationName?](./ILIB_ExtendLibraryClassificationIndex.md)||string|_(Optional)_ Primary classification name|
+|[primaryClassificationUuid?](./ILIB_ExtendLibraryClassificationIndex.md)||string|_(Optional)_ Primary classification UUID|
+|[secondaryClassificationName?](./ILIB_ExtendLibraryClassificationIndex.md)||string|_(Optional)_ Secondary classification name|
+|[secondaryClassificationUuid?](./ILIB_ExtendLibraryClassificationIndex.md)||string|_(Optional)_ Secondary classification UUID|
 
 ---
 

@@ -14,152 +14,20 @@ For security, only limited window navigation and listening support is provided. 
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addEventListener(type, listener, options)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Add an event listener
-
-</td></tr>
-<tr><td>
-
-[getCurrentTheme()](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Get Current theme
-
-</td></tr>
-<tr><td>
-
-[getUrlAnchor()](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Get the URL anchor
-
-</td></tr>
-<tr><td>
-
-[getUrlParam(key)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Get URL parameter
-
-</td></tr>
-<tr><td>
-
-[getViewportSize()](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Get the current viewport size of the page
-
-</td></tr>
-<tr><td>
-
-[hideStartPageQuickStartItems(items)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Hide start page quick start items
-
-</td></tr>
-<tr><td>
-
-[hideStartPageSupportFloatBarItems()](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Hide the start page support information floating components
-
-</td></tr>
-<tr><td>
-
-[open(url, target)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Open a resource window
-
-</td></tr>
-<tr><td>
-
-[openUI(uiName, args)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Open UI window
-
-</td></tr>
-<tr><td>
-
-[removeEventListener(removableObject)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Remove Event listener
-
-</td></tr>
-<tr><td>
-
-[urlPushState(url)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Append new URL history stack information
-
-</td></tr>
-<tr><td>
-
-[urlReplaceState(url)](./SYS_Window.md)
-
-</td><td>
-
-</td><td>
-
-Modify the current URL history stack information
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addEventListener(type, listener, options)](./SYS_Window.md)||Add an event listener|
+|[getCurrentTheme()](./SYS_Window.md)||Get Current theme|
+|[getUrlAnchor()](./SYS_Window.md)||Get the URL anchor|
+|[getUrlParam(key)](./SYS_Window.md)||Get URL parameter|
+|[getViewportSize()](./SYS_Window.md)||Get the current viewport size of the page|
+|[hideStartPageQuickStartItems(items)](./SYS_Window.md)||Hide start page quick start items|
+|[hideStartPageSupportFloatBarItems()](./SYS_Window.md)||Hide the start page support information floating components|
+|[open(url, target)](./SYS_Window.md)||Open a resource window|
+|[openUI(uiName, args)](./SYS_Window.md)||Open UI window|
+|[removeEventListener(removableObject)](./SYS_Window.md)||Remove Event listener|
+|[urlPushState(url)](./SYS_Window.md)||Append new URL history stack information|
+|[urlReplaceState(url)](./SYS_Window.md)||Modify the current URL history stack information|
 
 ---
 
@@ -177,70 +45,17 @@ Add an event listener
 function addEventListener(
 	type: ESYS_WindowEventType,
 	listener: (ev: any) => any,
-	options?: {
-		capture?: undefined | false | true;
-		once?: undefined | false | true;
-		passive?: undefined | false | true;
-		signal?: undefined | AbortSignal;
-	},
+	options?: { capture?: boolean; once?: boolean; passive?: boolean; signal?: AbortSignal },
 ): ISYS_WindowEventListenerRemovableObject | undefined;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_WindowEventType](../enums/ESYS_WindowEventType.md)
-
-</td><td>
-
-Event type, current support `blur` `focus`
-
-</td></tr>
-<tr><td>
-
-listener
-
-</td><td>
-
-(ev: any) =&gt; any
-
-</td><td>
-
-Event listener callback
-
-</td></tr>
-<tr><td>
-
-options
-
-</td><td>
-
-\{ capture?: undefined \| false \| true; once?: undefined \| false \| true; passive?: undefined \| false \| true; signal?: undefined \| AbortSignal \}
-
-</td><td>
-
-_(Optional)_ Optional parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|[ESYS\_WindowEventType](../enums/ESYS_WindowEventType.md)|Event type, current support `blur` `focus`|
+|listener|(ev: any) =&gt; any|Event listener callback|
+|options|\{ capture?: boolean; once?: boolean; passive?: boolean; signal?: AbortSignal \}|_(Optional)_ Optional parameters|
 
 ## Returns
 
@@ -266,6 +81,7 @@ window.dispatchEvent(new Event('focus'));
 eda.sys_Window.removeEventListener(removable);
 console.log('监听已注销');
 ```
+
 
 ### getcurrenttheme
 
@@ -298,6 +114,7 @@ const theme = await eda.sys_Window.getCurrentTheme();
 // 2. 展示结果
 console.log('当前主题：', theme === 'light' ? '浅色（light）' : '深色（dark）');
 ```
+
 
 ### geturlanchor
 
@@ -335,6 +152,7 @@ eda.sys_Window.urlReplaceState(originalHref);
 console.log('地址已还原');
 ```
 
+
 ### geturlparam
 
 # SYS\_Window.getUrlParam() method
@@ -349,33 +167,9 @@ function getUrlParam(key: string): string | null;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Parameter name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Parameter name|
 
 ## Returns
 
@@ -402,6 +196,7 @@ console.log('不存在的参数返回：', eda.sys_Window.getUrlParam('嘉立创
 eda.sys_Window.urlReplaceState(originalHref);
 console.log('地址已还原');
 ```
+
 
 ### getviewportsize
 
@@ -435,6 +230,7 @@ const size = eda.sys_Window.getViewportSize();
 console.log('视口宽：', size.width, 'px，视口高：', size.height, 'px');
 ```
 
+
 ### hidestartpagequickstartitems
 
 # SYS\_Window.hideStartPageQuickStartItems() method
@@ -449,33 +245,9 @@ function hideStartPageQuickStartItems(items: Array<ESYS_StartPageQuickStartItem>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-items
-
-</td><td>
-
-Array&lt;[ESYS\_StartPageQuickStartItem](../enums/ESYS_StartPageQuickStartItem.md)<!-- -->&gt;
-
-</td><td>
-
-Array of quick start items to hide
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|items|Array&lt;[ESYS\_StartPageQuickStartItem](../enums/ESYS_StartPageQuickStartItem.md)<!-- -->&gt;|Array of quick start items to hide|
 
 ## Returns
 
@@ -531,46 +303,10 @@ function open(url: string, target?: ESYS_WindowOpenTarget): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-url
-
-</td><td>
-
-string
-
-</td><td>
-
-URL or path of the resource to load
-
-</td></tr>
-<tr><td>
-
-target
-
-</td><td>
-
-[ESYS\_WindowOpenTarget](../enums/ESYS_WindowOpenTarget.md)
-
-</td><td>
-
-_(Optional)_ Context target
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|url|string|URL or path of the resource to load|
+|target|[ESYS\_WindowOpenTarget](../enums/ESYS_WindowOpenTarget.md)|_(Optional)_ Context target|
 
 ## Returns
 
@@ -586,6 +322,7 @@ eda.sys_Window.open('https://example.com/', '_blank');
 console.log('已在新标签页打开资源窗口');
 ```
 
+
 ### openui
 
 # SYS\_Window.openUI() method
@@ -595,51 +332,15 @@ Open UI window
 ## Signature
 
 ```typescript
-function openUI(uiName: string, args?: Record<string, any>): Promise<void>;
+function openUI(uiName: string, args?: { [key: string]: any }): Promise<void>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uiName
-
-</td><td>
-
-string
-
-</td><td>
-
-UI name
-
-</td></tr>
-<tr><td>
-
-args
-
-</td><td>
-
-Record&lt;string, any&gt;
-
-</td><td>
-
-_(Optional)_ Optional parameter object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uiName|string|UI name|
+|args|\{ \[key: string\]: any \}|_(Optional)_ Optional parameter object|
 
 ## Returns
 
@@ -659,6 +360,7 @@ await eda.sys_Window.openUI('嘉立创示例_UI窗口');
 console.log('openUI 调用完成');
 ```
 
+
 ### removeeventlistener
 
 # SYS\_Window.removeEventListener() method
@@ -673,33 +375,9 @@ function removeEventListener(removableObject: ISYS_WindowEventListenerRemovableO
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-removableObject
-
-</td><td>
-
-[ISYS\_WindowEventListenerRemovableObject](../interfaces/ISYS_WindowEventListenerRemovableObject.md)
-
-</td><td>
-
-Window event listener can remove object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|removableObject|[ISYS\_WindowEventListenerRemovableObject](../interfaces/ISYS_WindowEventListenerRemovableObject.md)|Window event listener can remove object|
 
 ## Returns
 
@@ -723,6 +401,7 @@ window.dispatchEvent(new Event('blur'));
 console.log('移除后回调触发次数：', fired);
 ```
 
+
 ### urlpushstate
 
 # SYS\_Window.urlPushState() method
@@ -737,33 +416,9 @@ function urlPushState(url: string): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-url
-
-</td><td>
-
-string
-
-</td><td>
-
-URL
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|url|string|URL|
 
 ## Returns
 
@@ -786,6 +441,7 @@ eda.sys_Window.urlReplaceState(originalHref);
 console.log('地址已还原');
 ```
 
+
 ### urlreplacestate
 
 # SYS\_Window.urlReplaceState() method
@@ -800,33 +456,9 @@ function urlReplaceState(url: string): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-url
-
-</td><td>
-
-string
-
-</td><td>
-
-URL
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|url|string|URL|
 
 ## Returns
 

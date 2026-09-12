@@ -13,339 +13,37 @@ class ISCH_PrimitiveText implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_AlignMode()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: alignment mode
-
-</td></tr>
-<tr><td>
-
-[getState\_Bold()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is bold
-
-</td></tr>
-<tr><td>
-
-[getState\_Content()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: text content
-
-</td></tr>
-<tr><td>
-
-[getState\_FontName()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: font name
-
-</td></tr>
-<tr><td>
-
-[getState\_FontSize()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: font size
-
-</td></tr>
-<tr><td>
-
-[getState\_Italic()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is italic
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_TextColor()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: text color
-
-</td></tr>
-<tr><td>
-
-[getState\_UnderLine()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is underlined
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_AlignMode(alignMode)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: alignment mode
-
-</td></tr>
-<tr><td>
-
-[setState\_Bold(bold)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is bold
-
-</td></tr>
-<tr><td>
-
-[setState\_Content(content)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: text content
-
-</td></tr>
-<tr><td>
-
-[setState\_FontName(fontName)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: font name
-
-</td></tr>
-<tr><td>
-
-[setState\_FontSize(fontSize)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: font size
-
-</td></tr>
-<tr><td>
-
-[setState\_Italic(italic)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is italic
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_TextColor(textColor)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: text color
-
-</td></tr>
-<tr><td>
-
-[setState\_UnderLine(underLine)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is underlined
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveText.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveText.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_AlignMode()](./ISCH_PrimitiveText.md)||Get the property state: alignment mode|
+|[getState\_Bold()](./ISCH_PrimitiveText.md)||Get the property state: whether it is bold|
+|[getState\_Content()](./ISCH_PrimitiveText.md)||Get the property state: text content|
+|[getState\_FontName()](./ISCH_PrimitiveText.md)||Get the property state: font name|
+|[getState\_FontSize()](./ISCH_PrimitiveText.md)||Get the property state: font size|
+|[getState\_Italic()](./ISCH_PrimitiveText.md)||Get the property state: whether it is italic|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveText.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveText.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./ISCH_PrimitiveText.md)||Get the property state: rotation angle|
+|[getState\_TextColor()](./ISCH_PrimitiveText.md)||Get the property state: text color|
+|[getState\_UnderLine()](./ISCH_PrimitiveText.md)||Get the property state: whether it is underlined|
+|[getState\_X()](./ISCH_PrimitiveText.md)||Get the property state: X coordinate|
+|[getState\_Y()](./ISCH_PrimitiveText.md)||Get the property state: Y coordinate|
+|[isAsync()](./ISCH_PrimitiveText.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveText.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_AlignMode(alignMode)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: alignment mode|
+|[setState\_Bold(bold)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: whether it is bold|
+|[setState\_Content(content)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: text content|
+|[setState\_FontName(fontName)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: font name|
+|[setState\_FontSize(fontSize)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: font size|
+|[setState\_Italic(italic)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: whether it is italic|
+|[setState\_Rotation(rotation)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_TextColor(textColor)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: text color|
+|[setState\_UnderLine(underLine)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: whether it is underlined|
+|[setState\_X(x)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./ISCH_PrimitiveText.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./ISCH_PrimitiveText.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveText.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -396,6 +94,7 @@ console.log('content:', '嘉立创示例_初版', '→', refetched.getState_Cont
 console.log('textColor:', '#FF0000', '→', refetched.getState_TextColor());
 ```
 
+
 ### getstate_alignmode
 
 # ISCH\_PrimitiveText.getState\_AlignMode() method
@@ -428,6 +127,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('alignMode:', alignMode);
 ```
+
 
 ### getstate_bold
 
@@ -462,6 +162,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('bold:', bold);
 ```
 
+
 ### getstate_content
 
 # ISCH\_PrimitiveText.getState\_Content() method
@@ -494,6 +195,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('content:', content);
 ```
+
 
 ### getstate_fontname
 
@@ -528,6 +230,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('fontName:', fontName);
 ```
 
+
 ### getstate_fontsize
 
 # ISCH\_PrimitiveText.getState\_FontSize() method
@@ -561,6 +264,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('fontSize:', fontSize);
 ```
 
+
 ### getstate_italic
 
 # ISCH\_PrimitiveText.getState\_Italic() method
@@ -593,6 +297,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('italic:', italic);
 ```
+
 
 ### getstate_primitiveid
 
@@ -631,6 +336,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetched content:', refetched.getState_Content());
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveText.getState\_PrimitiveType() method
@@ -663,6 +369,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -697,6 +404,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_textcolor
 
 # ISCH\_PrimitiveText.getState\_TextColor() method
@@ -729,6 +437,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('textColor:', textColor);
 ```
+
 
 ### getstate_underline
 
@@ -763,6 +472,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('underLine:', underLine);
 ```
 
+
 ### getstate_x
 
 # ISCH\_PrimitiveText.getState\_X() method
@@ -796,6 +506,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('x:', x);
 ```
 
+
 ### getstate_y
 
 # ISCH\_PrimitiveText.getState\_Y() method
@@ -828,6 +539,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 
 console.log('y:', y);
 ```
+
 
 ### isasync
 
@@ -864,6 +576,7 @@ await eda.sch_PrimitiveText.delete([text.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -908,6 +621,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('content after reset:', refetched.getState_Content());
 ```
 
+
 ### setstate_alignmode
 
 # ISCH\_PrimitiveText.setState\_AlignMode() method
@@ -924,33 +638,9 @@ function setState_AlignMode(alignMode: ESCH_PrimitiveTextAlignMode): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-alignMode
-
-</td><td>
-
-[ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md)
-
-</td><td>
-
-Alignment mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|alignMode|[ESCH\_PrimitiveTextAlignMode](../enums/ESCH_PrimitiveTextAlignMode.md)|Alignment mode|
 
 ## Returns
 
@@ -979,6 +669,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('alignMode:', 1, '→', refetched.getState_AlignMode());
 ```
 
+
 ### setstate_bold
 
 # ISCH\_PrimitiveText.setState\_Bold() method
@@ -995,33 +686,9 @@ function setState_Bold(bold: boolean): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-bold
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is bold
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|bold|boolean|Whether it is bold|
 
 ## Returns
 
@@ -1050,6 +717,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('bold:', false, '→', refetched.getState_Bold());
 ```
 
+
 ### setstate_content
 
 # ISCH\_PrimitiveText.setState\_Content() method
@@ -1066,33 +734,9 @@ function setState_Content(content: string): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Text content
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|string|Text content|
 
 ## Returns
 
@@ -1121,6 +765,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('content:', '嘉立创示例_初版', '→', refetched.getState_Content());
 ```
 
+
 ### setstate_fontname
 
 # ISCH\_PrimitiveText.setState\_FontName() method
@@ -1137,33 +782,9 @@ function setState_FontName(fontName: string | null): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontName
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Font name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontName|string \| null|Font name|
 
 ## Returns
 
@@ -1192,6 +813,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('fontName:', text.getState_FontName(), '→', refetched.getState_FontName());
 ```
 
+
 ### setstate_fontsize
 
 # ISCH\_PrimitiveText.setState\_FontSize() method
@@ -1208,33 +830,9 @@ function setState_FontSize(fontSize: number | null): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontSize
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Font size
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontSize|number \| null|Font size|
 
 ## Returns
 
@@ -1263,6 +861,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('fontSize:', text.getState_FontSize(), '→', refetched.getState_FontSize());
 ```
 
+
 ### setstate_italic
 
 # ISCH\_PrimitiveText.setState\_Italic() method
@@ -1279,33 +878,9 @@ function setState_Italic(italic: boolean): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-italic
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is italic
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|italic|boolean|Whether it is italic|
 
 ## Returns
 
@@ -1334,6 +909,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('italic:', false, '→', refetched.getState_Italic());
 ```
 
+
 ### setstate_rotation
 
 # ISCH\_PrimitiveText.setState\_Rotation() method
@@ -1350,33 +926,9 @@ function setState_Rotation(rotation: number): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -1405,6 +957,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('rotation:', 0, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_textcolor
 
 # ISCH\_PrimitiveText.setState\_TextColor() method
@@ -1421,33 +974,9 @@ function setState_TextColor(textColor: string | null): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-textColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Text color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|textColor|string \| null|Text color|
 
 ## Returns
 
@@ -1476,6 +1005,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('textColor:', '#000000', '→', refetched.getState_TextColor());
 ```
 
+
 ### setstate_underline
 
 # ISCH\_PrimitiveText.setState\_UnderLine() method
@@ -1492,33 +1022,9 @@ function setState_UnderLine(underLine: boolean): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-underLine
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is underlined
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|underLine|boolean|Whether it is underlined|
 
 ## Returns
 
@@ -1547,6 +1053,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('underLine:', false, '→', refetched.getState_UnderLine());
 ```
 
+
 ### setstate_x
 
 # ISCH\_PrimitiveText.setState\_X() method
@@ -1563,33 +1070,9 @@ function setState_X(x: number): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -1618,6 +1101,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('x:', x, '→', refetched.getState_X());
 ```
 
+
 ### setstate_y
 
 # ISCH\_PrimitiveText.setState\_Y() method
@@ -1634,33 +1118,9 @@ function setState_Y(y: number): ISCH_PrimitiveText;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -1688,6 +1148,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 
 console.log('y:', y, '→', refetched.getState_Y());
 ```
+
 
 ### toasync
 
@@ -1728,6 +1189,7 @@ const refetched = await eda.sch_PrimitiveText.get(text.getState_PrimitiveId());
 console.log('isAsync after toAsync:', text.isAsync());
 console.log('content:', '嘉立创示例_文本', '→', refetched.getState_Content());
 ```
+
 
 ### tosync
 

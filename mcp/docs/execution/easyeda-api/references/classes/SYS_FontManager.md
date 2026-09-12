@@ -14,53 +14,11 @@ Configure the list of system fonts that EasyEDA Pro is allowed to use
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addFont(fontName)](./SYS_FontManager.md)
-
-</td><td>
-
-</td><td>
-
-Add Font to font list
-
-</td></tr>
-<tr><td>
-
-[deleteFont(fontName)](./SYS_FontManager.md)
-
-</td><td>
-
-</td><td>
-
-Delete the specified font from the font list
-
-</td></tr>
-<tr><td>
-
-[getFontsList()](./SYS_FontManager.md)
-
-</td><td>
-
-</td><td>
-
-Get the currently configured font list
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addFont(fontName)](./SYS_FontManager.md)||Add Font to font list|
+|[deleteFont(fontName)](./SYS_FontManager.md)||Delete the specified font from the font list|
+|[getFontsList()](./SYS_FontManager.md)||Get the currently configured font list|
 
 ---
 
@@ -80,33 +38,9 @@ function addFont(fontName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontName
-
-</td><td>
-
-string
-
-</td><td>
-
-Font name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontName|string|Font name|
 
 ## Returns
 
@@ -130,6 +64,7 @@ console.log('添加结果：', added);
 console.log('已进入字体列表：', fonts.includes('嘉立创示例_测试字体'));
 ```
 
+
 ### deletefont
 
 # SYS\_FontManager.deleteFont() method
@@ -144,33 +79,9 @@ function deleteFont(fontName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontName
-
-</td><td>
-
-string
-
-</td><td>
-
-Font name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontName|string|Font name|
 
 ## Returns
 
@@ -193,6 +104,7 @@ const fonts = await eda.sys_FontManager.getFontsList();
 console.log('删除结果：', deleted);
 console.log('已不在字体列表：', !fonts.includes('嘉立创示例_测试字体'));
 ```
+
 
 ### getfontslist
 

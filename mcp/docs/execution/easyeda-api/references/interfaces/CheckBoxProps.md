@@ -10,114 +10,15 @@ interface CheckBoxProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[checked?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Select
-
-</td></tr>
-<tr><td>
-
-[disabled?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Disable
-
-</td></tr>
-<tr><td>
-
-[name?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Checkbox name (the form `name` attribute)
-
-</td></tr>
-<tr><td>
-
-[onChange?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-(checked: boolean) =&gt; void
-
-</td><td>
-
-_(Optional)_ 选中状态变化时触发，参数为最新选中值
-
-</td></tr>
-<tr><td>
-
-[onlyChangeByBox?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether the state can only be changed by clicking the checkbox itself
-
-</td></tr>
-<tr><td>
-
-[text?](./CheckBoxProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text displayed next to the checkbox
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[checked?](./CheckBoxProps.md)||boolean|_(Optional)_ Whether Select|
+|[disabled?](./CheckBoxProps.md)||boolean|_(Optional)_ Whether Disable|
+|[indeterminate?](./CheckBoxProps.md)||boolean|_(Optional)_ 半选状态（全选/半选三态）|
+|[name?](./CheckBoxProps.md)||string|_(Optional)_ Checkbox name (the form `name` attribute)|
+|[onChange?](./CheckBoxProps.md)||(checked: boolean) =&gt; void|_(Optional)_ 选中状态变化时触发，参数为最新选中值|
+|[onlyChangeByBox?](./CheckBoxProps.md)||boolean|_(Optional)_ Whether the state can only be changed by clicking the checkbox itself|
+|[text?](./CheckBoxProps.md)||string|_(Optional)_ Text displayed next to the checkbox|
 
 ---
 
@@ -145,6 +46,18 @@ Whether Disable
 
 ```typescript
 disabled?: boolean;
+```
+
+### indeterminate
+
+# CheckBoxProps.indeterminate property
+
+半选状态（全选/半选三态）
+
+## Signature
+
+```typescript
+indeterminate?: boolean;
 ```
 
 ### name

@@ -10,54 +10,10 @@ interface IPCB_PadPairMinWireLengthItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[minWireLength](./IPCB_PadPairMinWireLengthItem.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Minimum wire length
-
-</td></tr>
-<tr><td>
-
-[padPair](./IPCB_PadPairMinWireLengthItem.md)
-
-</td><td>
-
-</td><td>
-
-\[string, string\]
-
-</td><td>
-
-Pad for array
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[minWireLength](./IPCB_PadPairMinWireLengthItem.md)||number|Minimum wire length|
+|[padPair](./IPCB_PadPairMinWireLengthItem.md)||\[string, string\]|Pad for array|
 
 ---
 

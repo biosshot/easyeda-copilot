@@ -14,97 +14,15 @@ Get or operate the selected elements
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[clearSelected()](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Clear the selection
-
-</td></tr>
-<tr><td>
-
-[doCrossProbeSelect(components, pins, nets, highlight, select)](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Perform cross-probe selection
-
-</td></tr>
-<tr><td>
-
-[doSelectPrimitives(primitiveIds)](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Select primitives using primitive IDs
-
-</td></tr>
-<tr><td>
-
-[getAllSelectedPrimitives\_PrimitiveId()](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query the primitive IDs of all selected primitives
-
-</td></tr>
-<tr><td>
-
-[getAllSelectedPrimitives()](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query the primitive objects of all selected primitives
-
-</td></tr>
-<tr><td>
-
-[getCurrentMousePosition()](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current the mouse position on the canvas
-
-</td></tr>
-<tr><td>
-
-[getSelectedPrimitives()](./PCB_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query all parameters of the selected primitives
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[clearSelected()](./PCB_SelectControl.md)||**_(BETA)_** Clear the selection|
+|[doCrossProbeSelect(components, pins, nets, highlight, select)](./PCB_SelectControl.md)||**_(BETA)_** Perform cross-probe selection|
+|[doSelectPrimitives(primitiveIds)](./PCB_SelectControl.md)||**_(BETA)_** Select primitives using primitive IDs|
+|[getAllSelectedPrimitives\_PrimitiveId()](./PCB_SelectControl.md)||**_(BETA)_** Query the primitive IDs of all selected primitives|
+|[getAllSelectedPrimitives()](./PCB_SelectControl.md)||**_(BETA)_** Query the primitive objects of all selected primitives|
+|[getCurrentMousePosition()](./PCB_SelectControl.md)||**_(BETA)_** Get Current the mouse position on the canvas|
+|[getSelectedPrimitives()](./PCB_SelectControl.md)||**_(BETA)_** Query all parameters of the selected primitives|
 
 ---
 
@@ -154,6 +72,7 @@ console.log('清除后选中数量：', afterIds.length);
 await eda.pcb_PrimitivePad.delete([padId]);
 ```
 
+
 ### docrossprobeselect
 
 # PCB\_SelectControl.doCrossProbeSelect() method
@@ -176,85 +95,13 @@ function doCrossProbeSelect(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-components
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Device designator
-
-</td></tr>
-<tr><td>
-
-pins
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Device designator \_ pin number, format is \['U1\_1', 'U1\_2'\]
-
-</td></tr>
-<tr><td>
-
-nets
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-highlight
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to highlight
-
-</td></tr>
-<tr><td>
-
-select
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether the operation is successful
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|components|Array&lt;string&gt;|_(Optional)_ Device designator|
+|pins|Array&lt;string&gt;|_(Optional)_ Device designator \_ pin number, format is \['U1\_1', 'U1\_2'\]|
+|nets|Array&lt;string&gt;|_(Optional)_ Net name|
+|highlight|boolean|_(Optional)_ Whether to highlight|
+|select|boolean|_(Optional)_ Whether the operation is successful|
 
 ## Returns
 
@@ -282,6 +129,7 @@ await eda.pcb_SelectControl.clearSelected();
 await eda.pcb_PrimitivePad.delete(padIds);
 ```
 
+
 ### doselectprimitives
 
 # PCB\_SelectControl.doSelectPrimitives() method
@@ -298,33 +146,9 @@ function doSelectPrimitives(primitiveIds: string | Array<string>): Promise<boole
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| Array&lt;string&gt;|Primitive ID|
 
 ## Returns
 
@@ -352,6 +176,7 @@ console.log('包含测试焊盘：', selectedIds.includes(padId));
 await eda.pcb_SelectControl.clearSelected();
 await eda.pcb_PrimitivePad.delete([padId]);
 ```
+
 
 ### getallselectedprimitives
 
@@ -395,6 +220,7 @@ await eda.pcb_SelectControl.clearSelected();
 await eda.pcb_PrimitivePad.delete([padId]);
 ```
 
+
 ### getallselectedprimitives_primitiveid
 
 # PCB\_SelectControl.getAllSelectedPrimitives\_PrimitiveId() method
@@ -434,6 +260,7 @@ await eda.pcb_SelectControl.clearSelected();
 await eda.pcb_PrimitivePad.delete(padIds);
 ```
 
+
 ### getcurrentmouseposition
 
 # PCB\_SelectControl.getCurrentMousePosition() method
@@ -469,6 +296,7 @@ else {
 	console.log('鼠标当前不在画布上');
 }
 ```
+
 
 ### getselectedprimitives
 

@@ -14,86 +14,14 @@ APIs that can perform extension user configuration storage and browser local sto
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[clearExtensionAllUserConfigs()](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Clear all user configurations of the extension
-
-</td></tr>
-<tr><td>
-
-[deleteExtensionUserConfig(key)](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Delete Extension user configuration
-
-</td></tr>
-<tr><td>
-
-[getExtensionAllUserConfigs()](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Get all user configurations of the extension
-
-</td></tr>
-<tr><td>
-
-[getExtensionUserConfig(key)](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Get Extension user configuration
-
-</td></tr>
-<tr><td>
-
-[setExtensionAllUserConfigs(configs)](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Set all user configurations of the extension
-
-</td></tr>
-<tr><td>
-
-[setExtensionUserConfig(key, value)](./SYS_Storage.md)
-
-</td><td>
-
-</td><td>
-
-Set Extension user configuration
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[clearExtensionAllUserConfigs()](./SYS_Storage.md)||Clear all user configurations of the extension|
+|[deleteExtensionUserConfig(key)](./SYS_Storage.md)||Delete Extension user configuration|
+|[getExtensionAllUserConfigs()](./SYS_Storage.md)||Get all user configurations of the extension|
+|[getExtensionUserConfig(key)](./SYS_Storage.md)||Get Extension user configuration|
+|[setExtensionAllUserConfigs(configs)](./SYS_Storage.md)||Set all user configurations of the extension|
+|[setExtensionUserConfig(key, value)](./SYS_Storage.md)||Set Extension user configuration|
 
 ---
 
@@ -146,6 +74,7 @@ console.log('清空后配置条数：', Object.keys(after).length);
 console.log('恢复备份结果：', restored);
 ```
 
+
 ### deleteextensionuserconfig
 
 # SYS\_Storage.deleteExtensionUserConfig() method
@@ -160,33 +89,9 @@ function deleteExtensionUserConfig(key: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration item
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Configuration item|
 
 ## Returns
 
@@ -214,6 +119,7 @@ console.log('删除结果：', deleted);
 console.log('删除后再读取：', after);
 ```
 
+
 ### getextensionalluserconfigs
 
 # SYS\_Storage.getExtensionAllUserConfigs() method
@@ -223,12 +129,12 @@ Get all user configurations of the extension
 ## Signature
 
 ```typescript
-function getExtensionAllUserConfigs(): Record<string, any>;
+function getExtensionAllUserConfigs(): { [key: string]: any };
 ```
 
 ## Returns
 
-Record&lt;string, any&gt;
+\{ \[key: string\]: any \}
 
 All user configuration information of the extension
 
@@ -255,6 +161,7 @@ console.log('演示配置单位：', configs['嘉立创示例_单位']);
 console.log('演示配置自动保存：', configs['嘉立创示例_自动保存']);
 ```
 
+
 ### getextensionuserconfig
 
 # SYS\_Storage.getExtensionUserConfig() method
@@ -269,33 +176,9 @@ function getExtensionUserConfig(key: string): any | undefined;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration item
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Configuration item|
 
 ## Returns
 
@@ -326,6 +209,7 @@ console.log('读取到的值：', value);
 console.log('不存在的 key 返回：', missing);
 ```
 
+
 ### setextensionalluserconfigs
 
 # SYS\_Storage.setExtensionAllUserConfigs() method
@@ -335,38 +219,14 @@ Set all user configurations of the extension
 ## Signature
 
 ```typescript
-function setExtensionAllUserConfigs(configs: Record<string, any>): Promise<boolean>;
+function setExtensionAllUserConfigs(configs: { [key: string]: any }): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configs
-
-</td><td>
-
-Record&lt;string, any&gt;
-
-</td><td>
-
-All user configurations of the extension
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|configs|\{ \[key: string\]: any \}|All user configurations of the extension|
 
 ## Returns
 
@@ -400,6 +260,7 @@ console.log('恢复备份结果：', restored);
 console.log('备份配置条数：', Object.keys(backup).length);
 ```
 
+
 ### setextensionuserconfig
 
 # SYS\_Storage.setExtensionUserConfig() method
@@ -414,46 +275,10 @@ function setExtensionUserConfig(key: string, value: any): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration item
-
-</td></tr>
-<tr><td>
-
-value
-
-</td><td>
-
-any
-
-</td><td>
-
-Value
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Configuration item|
+|value|any|Value|
 
 ## Returns
 

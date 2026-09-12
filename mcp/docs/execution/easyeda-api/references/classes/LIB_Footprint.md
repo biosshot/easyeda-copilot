@@ -10,130 +10,18 @@ class LIB_Footprint
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(footprintUuid, libraryUuid, targetLibraryUuid, targetClassification, newFootprintName)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Footprint
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, footprintName, classification, description)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Footprint
-
-</td></tr>
-<tr><td>
-
-[delete(footprintUuid, libraryUuid)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Footprint
-
-</td></tr>
-<tr><td>
-
-[get(footprintUuid, libraryUuid)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the footprint
-
-</td></tr>
-<tr><td>
-
-[getRenderImage(source)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the footprint render image
-
-</td></tr>
-<tr><td>
-
-[modify(footprintUuid, libraryUuid, footprintName, classification, description)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Footprint
-
-</td></tr>
-<tr><td>
-
-[openInEditor(footprintUuid, libraryUuid, splitScreenId)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open in the editor document
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search footprint
-
-</td></tr>
-<tr><td>
-
-[searchByProperties(properties, libraryUuid)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search footprints precisely by properties
-
-</td></tr>
-<tr><td>
-
-[updateDocumentSource(footprintUuid, libraryUuid, documentSource)](./LIB_Footprint.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Update the document source code of the footprint
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(footprintUuid, libraryUuid, targetLibraryUuid, targetClassification, newFootprintName)](./LIB_Footprint.md)||**_(BETA)_** Copy Footprint|
+|[create(libraryUuid, footprintName, classification, description, otherProperty)](./LIB_Footprint.md)||**_(BETA)_** Create Footprint|
+|[delete(footprintUuid, libraryUuid)](./LIB_Footprint.md)||**_(BETA)_** Delete Footprint|
+|[get(footprintUuid, libraryUuid)](./LIB_Footprint.md)||**_(BETA)_** Get all properties of the footprint|
+|[getRenderImage(source)](./LIB_Footprint.md)||**_(BETA)_** Get the footprint render image|
+|[modify(footprintUuid, libraryUuid, footprintName, classification, description, otherProperty)](./LIB_Footprint.md)||**_(BETA)_** Modify Footprint|
+|[openInEditor(footprintUuid, libraryUuid, splitScreenId)](./LIB_Footprint.md)||**_(BETA)_** Open in the editor document|
+|[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_Footprint.md)||**_(BETA)_** Search footprint|
+|[searchByProperties(properties, libraryUuid)](./LIB_Footprint.md)||**_(BETA)_** Search footprints precisely by properties|
+|[updateDocumentSource(footprintUuid, libraryUuid, documentSource)](./LIB_Footprint.md)||**_(BETA)_** Update the document source code of the footprint|
 
 ---
 
@@ -161,85 +49,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newFootprintName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New footprint name. If a footprint with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newFootprintName|string|_(Optional)_ New footprint name. If a footprint with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -273,6 +89,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_Footprint.create() method
@@ -289,77 +106,19 @@ function create(
 	footprintName: string,
 	classification?: ILIB_ClassificationIndex | Array<string>,
 	description?: string,
+	otherProperty?: Record<string, boolean | number | string | undefined>,
 ): Promise<string | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-footprintName
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|footprintName|string|Footprint name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|description|string|_(Optional)_ Description|
+|otherProperty|Record&lt;string, boolean \| number \| string \| undefined&gt;|_(Optional)_ 其它属性|
 
 ## Returns
 
@@ -383,6 +142,7 @@ console.log('footprintUuid:', footprintUuid);
 console.log('footprintName:', footprintName);
 ```
 
+
 ### delete
 
 # LIB\_Footprint.delete() method
@@ -399,46 +159,10 @@ function delete(footprintUuid: string, libraryUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -464,6 +188,7 @@ console.log('footprintUuid:', footprintUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_Footprint.get() method
@@ -480,46 +205,10 @@ function get(footprintUuid: string, libraryUuid?: string): Promise<ILIB_Footprin
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -546,31 +235,9 @@ function getRenderImage(source: {
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-source
-
-</td><td>
-
-\{ footprintUuid: string; libraryUuid: string \}
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|source|\{ footprintUuid: string; libraryUuid: string \}||
 
 ## Returns
 
@@ -596,6 +263,7 @@ console.log('imageSize:', blob.size);
 console.log('imageType:', blob.type);
 ```
 
+
 ### modify
 
 # LIB\_Footprint.modify() method
@@ -613,90 +281,20 @@ function modify(
 	footprintName?: string,
 	classification?: ILIB_ClassificationIndex | Array<string> | null,
 	description?: string | null,
+	otherProperty?: Record<string, boolean | number | string | undefined | null>,
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-footprintName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Footprint name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|footprintName|string|_(Optional)_ Footprint name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
+|otherProperty|Record&lt;string, boolean \| number \| string \| undefined \| null&gt;|_(Optional)_ 其它属性，如希望清除某些属性，则将其的值设置为 `null`|
 
 ## Returns
 
@@ -731,6 +329,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### openineditor
 
 # LIB\_Footprint.openInEditor() method
@@ -751,59 +350,11 @@ function openInEditor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|splitScreenId|string|_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)|
 
 ## Returns
 
@@ -832,6 +383,7 @@ console.log('footprintUuid:', footprintUuid);
 console.log('tabId:', tabId);
 ```
 
+
 ### search
 
 # LIB\_Footprint.search() method
@@ -854,85 +406,13 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 
@@ -953,6 +433,7 @@ results.forEach((item, i) => {
 });
 ```
 
+
 ### searchbyproperties
 
 # LIB\_Footprint.searchByProperties() method
@@ -972,46 +453,10 @@ function searchByProperties(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-properties
-
-</td><td>
-
-[ILIB\_FootprintPropertiesForSearch](../interfaces/ILIB_FootprintPropertiesForSearch.md)
-
-</td><td>
-
-Property
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|properties|[ILIB\_FootprintPropertiesForSearch](../interfaces/ILIB_FootprintPropertiesForSearch.md)|Property|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -1041,6 +486,7 @@ results.forEach((item, i) => {
 });
 ```
 
+
 ### updatedocumentsource
 
 # LIB\_Footprint.updateDocumentSource() method
@@ -1061,59 +507,11 @@ function updateDocumentSource(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprintUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Footprint UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-documentSource
-
-</td><td>
-
-string
-
-</td><td>
-
-Document source code
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprintUuid|string|Footprint UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|documentSource|string|Document source code|
 
 ## Returns
 

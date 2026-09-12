@@ -13,306 +13,34 @@ class IPCB_PrimitiveVia implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getAdjacentPrimitives()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Adjacent primitive objects
-
-</td></tr>
-<tr><td>
-
-[getState\_DesignRuleBlindViaName()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: blind/buried via design rule item name
-
-</td></tr>
-<tr><td>
-
-[getState\_Diameter()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: outer diameter
-
-</td></tr>
-<tr><td>
-
-[getState\_HoleDiameter()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: hole diameter
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_SolderMaskExpansion()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: solder mask / paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[getState\_ViaType()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: via type
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_DesignRuleBlindViaName(designRuleBlindViaName)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: blind/buried via design rule item name
-
-</td></tr>
-<tr><td>
-
-[setState\_Diameter(diameter)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: outer diameter
-
-</td></tr>
-<tr><td>
-
-[setState\_HoleDiameter(holeDiameter)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: hole diameter
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_SolderMaskExpansion(solderMaskExpansion)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: solder mask / paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[setState\_ViaType(viaType)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: via type
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveVia.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveVia.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getAdjacentPrimitives()](./IPCB_PrimitiveVia.md)||**_(BETA)_** Get Adjacent primitive objects|
+|[getState\_DesignRuleBlindViaName()](./IPCB_PrimitiveVia.md)||Get the property state: blind/buried via design rule item name|
+|[getState\_Diameter()](./IPCB_PrimitiveVia.md)||Get the property state: outer diameter|
+|[getState\_HoleDiameter()](./IPCB_PrimitiveVia.md)||Get the property state: hole diameter|
+|[getState\_Net()](./IPCB_PrimitiveVia.md)||Get the property state: net name|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveVia.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveVia.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveVia.md)||Get the property state: primitive type|
+|[getState\_SolderMaskExpansion()](./IPCB_PrimitiveVia.md)||Get the property state: solder mask / paste mask expansion|
+|[getState\_ViaType()](./IPCB_PrimitiveVia.md)||Get the property state: via type|
+|[getState\_X()](./IPCB_PrimitiveVia.md)||Get the property state: X coordinate|
+|[getState\_Y()](./IPCB_PrimitiveVia.md)||Get the property state: Y coordinate|
+|[isAsync()](./IPCB_PrimitiveVia.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveVia.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_DesignRuleBlindViaName(designRuleBlindViaName)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: blind/buried via design rule item name|
+|[setState\_Diameter(diameter)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: outer diameter|
+|[setState\_HoleDiameter(holeDiameter)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: hole diameter|
+|[setState\_Net(net)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: net name|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_SolderMaskExpansion(solderMaskExpansion)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: solder mask / paste mask expansion|
+|[setState\_ViaType(viaType)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: via type|
+|[setState\_X(x)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./IPCB_PrimitiveVia.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./IPCB_PrimitiveVia.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveVia.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -359,6 +87,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('diameter:', 40, '→', ref.getState_Diameter());
 console.log('net:', '', '→', ref.getState_Net());
 ```
+
 
 ### getadjacentprimitives
 
@@ -408,6 +137,7 @@ adjacent.forEach((p, i) => {
 });
 ```
 
+
 ### getstate_designruleblindvianame
 
 # IPCB\_PrimitiveVia.getState\_DesignRuleBlindViaName() method
@@ -448,6 +178,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('designRuleBlindViaName:', before, '→', after);
 ```
 
+
 ### getstate_diameter
 
 # IPCB\_PrimitiveVia.getState\_Diameter() method
@@ -481,6 +212,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 
 console.log('diameter:', diameter);
 ```
+
 
 ### getstate_holediameter
 
@@ -516,6 +248,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('holeDiameter:', holeDiameter);
 ```
 
+
 ### getstate_net
 
 # IPCB\_PrimitiveVia.getState\_Net() method
@@ -549,6 +282,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 
 console.log('net:', net);
 ```
+
 
 ### getstate_primitiveid
 
@@ -588,6 +322,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetched type:', refetched.getState_PrimitiveType());
 ```
 
+
 ### getstate_primitivelock
 
 # IPCB\_PrimitiveVia.getState\_PrimitiveLock() method
@@ -625,6 +360,7 @@ console.log('normalLock:', normalLock);
 console.log('lockedLock:', lockedLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveVia.getState\_PrimitiveType() method
@@ -658,6 +394,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_soldermaskexpansion
 
@@ -701,6 +438,7 @@ console.log('plainExpansion:', plainExpansion);
 console.log('customizedExpansion:', customizedExpansion);
 ```
 
+
 ### getstate_viatype
 
 # IPCB\_PrimitiveVia.getState\_ViaType() method
@@ -740,6 +478,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId(), suture.getState_P
 console.log('viaType:', before, '→', sutureType);
 ```
 
+
 ### getstate_x
 
 # IPCB\_PrimitiveVia.getState\_X() method
@@ -774,6 +513,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('x:', viaX);
 ```
 
+
 ### getstate_y
 
 # IPCB\_PrimitiveVia.getState\_Y() method
@@ -807,6 +547,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 
 console.log('y:', viaY);
 ```
+
 
 ### isasync
 
@@ -848,6 +589,7 @@ console.log('afterToSync:', afterToSync);
 console.log('afterToAsync:', afterToAsync);
 ```
 
+
 ### reset
 
 # IPCB\_PrimitiveVia.reset() method
@@ -888,6 +630,7 @@ const refetched = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('diameter after reset:', refetched.getState_Diameter());
 ```
 
+
 ### setstate_designruleblindvianame
 
 # IPCB\_PrimitiveVia.setState\_DesignRuleBlindViaName() method
@@ -904,33 +647,9 @@ function setState_DesignRuleBlindViaName(designRuleBlindViaName: string | null):
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-designRuleBlindViaName
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Blind/buried via design rule item name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|designRuleBlindViaName|string \| null|Blind/buried via design rule item name|
 
 ## Returns
 
@@ -958,6 +677,7 @@ const after = via.getState_DesignRuleBlindViaName();
 console.log('designRuleBlindViaName:', before, '→', after);
 ```
 
+
 ### setstate_diameter
 
 # IPCB\_PrimitiveVia.setState\_Diameter() method
@@ -974,33 +694,9 @@ function setState_Diameter(diameter: number): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-diameter
-
-</td><td>
-
-number
-
-</td><td>
-
-Outer diameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|diameter|number|Outer diameter|
 
 ## Returns
 
@@ -1027,6 +723,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('diameter:', before, '→', ref.getState_Diameter());
 ```
 
+
 ### setstate_holediameter
 
 # IPCB\_PrimitiveVia.setState\_HoleDiameter() method
@@ -1043,33 +740,9 @@ function setState_HoleDiameter(holeDiameter: number): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-holeDiameter
-
-</td><td>
-
-number
-
-</td><td>
-
-Hole diameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|holeDiameter|number|Hole diameter|
 
 ## Returns
 
@@ -1096,6 +769,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('holeDiameter:', before, '→', ref.getState_HoleDiameter());
 ```
 
+
 ### setstate_net
 
 # IPCB\_PrimitiveVia.setState\_Net() method
@@ -1112,33 +786,9 @@ function setState_Net(net: string): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -1165,6 +815,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('net:', before, '→', ref.getState_Net());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveVia.setState\_PrimitiveLock() method
@@ -1181,33 +832,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1234,6 +861,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('primitiveLock:', before, '→', ref.getState_PrimitiveLock());
 ```
 
+
 ### setstate_soldermaskexpansion
 
 # IPCB\_PrimitiveVia.setState\_SolderMaskExpansion() method
@@ -1252,33 +880,9 @@ function setState_SolderMaskExpansion(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-solderMaskExpansion
-
-</td><td>
-
-[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null
-
-</td><td>
-
-Solder mask / paste mask expansion
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|solderMaskExpansion|[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null|Solder mask / paste mask expansion|
 
 ## Returns
 
@@ -1305,6 +909,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('expansion:', before, '→', ref.getState_SolderMaskExpansion());
 ```
 
+
 ### setstate_viatype
 
 # IPCB\_PrimitiveVia.setState\_ViaType() method
@@ -1321,33 +926,9 @@ function setState_ViaType(viaType: EPCB_PrimitiveViaType): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-viaType
-
-</td><td>
-
-[EPCB\_PrimitiveViaType](../enums/EPCB_PrimitiveViaType.md)
-
-</td><td>
-
-Via type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|viaType|[EPCB\_PrimitiveViaType](../enums/EPCB_PrimitiveViaType.md)|Via type|
 
 ## Returns
 
@@ -1374,6 +955,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('viaType:', before, '→', ref.getState_ViaType());
 ```
 
+
 ### setstate_x
 
 # IPCB\_PrimitiveVia.setState\_X() method
@@ -1390,33 +972,9 @@ function setState_X(x: number): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -1442,6 +1000,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('x:', x, '→', ref.getState_X());
 ```
 
+
 ### setstate_y
 
 # IPCB\_PrimitiveVia.setState\_Y() method
@@ -1458,33 +1017,9 @@ function setState_Y(y: number): IPCB_PrimitiveVia;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -1509,6 +1044,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 
 console.log('y:', 3000, '→', ref.getState_Y());
 ```
+
 
 ### toasync
 
@@ -1548,6 +1084,7 @@ const ref = await eda.pcb_PrimitiveVia.get(via.getState_PrimitiveId());
 console.log('isAsync:', asyncVia.isAsync());
 console.log('x:', x, '→', ref.getState_X());
 ```
+
 
 ### tosync
 

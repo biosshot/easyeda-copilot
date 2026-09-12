@@ -14,53 +14,11 @@ Interact with the WebSocket server
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[close(id, code, reason, extensionUuid)](./SYS_WebSocket.md)
-
-</td><td>
-
-</td><td>
-
-Close the WebSocket connection
-
-</td></tr>
-<tr><td>
-
-[register(id, serviceUri, receiveMessageCallFn, connectedCallFn, protocols)](./SYS_WebSocket.md)
-
-</td><td>
-
-</td><td>
-
-Register a WebSocket connection
-
-</td></tr>
-<tr><td>
-
-[send(id, data, extensionUuid)](./SYS_WebSocket.md)
-
-</td><td>
-
-</td><td>
-
-Send data to the WebSocket server
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[close(id, code, reason, extensionUuid)](./SYS_WebSocket.md)||Close the WebSocket connection|
+|[register(id, serviceUri, receiveMessageCallFn, connectedCallFn, protocols)](./SYS_WebSocket.md)||Register a WebSocket connection|
+|[send(id, data, extensionUuid)](./SYS_WebSocket.md)||Send data to the WebSocket server|
 
 ---
 
@@ -80,72 +38,12 @@ function close(id: string, code?: number, reason?: string, extensionUuid?: strin
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Custom WebSocket ID
-
-</td></tr>
-<tr><td>
-
-code
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Numeric status code, corresponding to the codes allowed in [WebSocket.CloseEvent](https://developer.mozilla.org/docs/Web/API/CloseEvent/code)
-
-</td></tr>
-<tr><td>
-
-reason
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ A human-readable string explaining why the connection was closed
-
-</td></tr>
-<tr><td>
-
-extensionUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Extension UUID. Generally it does not need to be specified. It only needs to be specified as another extension's UUID when you need to operate on a WebSocket connection established by another extension
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Custom WebSocket ID|
+|code|number|_(Optional)_ Numeric status code, corresponding to the codes allowed in [WebSocket.CloseEvent](https://developer.mozilla.org/docs/Web/API/CloseEvent/code)|
+|reason|string|_(Optional)_ A human-readable string explaining why the connection was closed|
+|extensionUuid|string|_(Optional)_ Extension UUID. Generally it does not need to be specified. It only needs to be specified as another extension's UUID when you need to operate on a WebSocket connection established by another extension|
 
 ## Returns
 
@@ -171,6 +69,7 @@ eda.sys_WebSocket.close('嘉立创示例_关闭', 1000, '演示完毕');
 console.log('已关闭连接（code 1000）');
 ```
 
+
 ### register
 
 # SYS\_WebSocket.register() method
@@ -191,85 +90,13 @@ function register(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Custom WebSocket ID
-
-</td></tr>
-<tr><td>
-
-serviceUri
-
-</td><td>
-
-string
-
-</td><td>
-
-WebSocket service URI
-
-</td></tr>
-<tr><td>
-
-receiveMessageCallFn
-
-</td><td>
-
-(event: MessageEvent&lt;any&gt;) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-_(Optional)_ Callback function when a message is received
-
-</td></tr>
-<tr><td>
-
-connectedCallFn
-
-</td><td>
-
-() =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-_(Optional)_ Callback function when the connection is established
-
-</td></tr>
-<tr><td>
-
-protocols
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Sub-protocols
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Custom WebSocket ID|
+|serviceUri|string|WebSocket service URI|
+|receiveMessageCallFn|(event: MessageEvent&lt;any&gt;) =&gt; void \| Promise&lt;void&gt;|_(Optional)_ Callback function when a message is received|
+|connectedCallFn|() =&gt; void \| Promise&lt;void&gt;|_(Optional)_ Callback function when the connection is established|
+|protocols|string \| Array&lt;string&gt;|_(Optional)_ Sub-protocols|
 
 ## Returns
 
@@ -300,6 +127,7 @@ eda.sys_WebSocket.close('嘉立创示例_注册');
 console.log('已关闭连接');
 ```
 
+
 ### send
 
 # SYS\_WebSocket.send() method
@@ -314,59 +142,11 @@ function send(id: string, data: string | Blob | BufferSource, extensionUuid?: st
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Custom WebSocket ID
-
-</td></tr>
-<tr><td>
-
-data
-
-</td><td>
-
-string \| Blob \| BufferSource
-
-</td><td>
-
-Data to send
-
-</td></tr>
-<tr><td>
-
-extensionUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Extension UUID. Generally it does not need to be specified. It only needs to be specified as another extension's UUID when you need to operate on a WebSocket connection established by another extension
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Custom WebSocket ID|
+|data|string \| Blob \| BufferSource|Data to send|
+|extensionUuid|string|_(Optional)_ Extension UUID. Generally it does not need to be specified. It only needs to be specified as another extension's UUID when you need to operate on a WebSocket connection established by another extension|
 
 ## Returns
 

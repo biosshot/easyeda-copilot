@@ -10,258 +10,29 @@ interface ComponentPropsMap
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[Board](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[BoardProps](./BoardProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Button](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[ButtonProps](./ButtonProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[CheckBox](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[CheckBoxProps](./CheckBoxProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Dialog](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[DialogProps](./DialogProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Flex](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[FlexProps](./FlexProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[FlexItem](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[FlexItemProps](./FlexItemProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Grid](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[GridProps](./GridProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[GridItem](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[GridItemProps](./GridItemProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Image](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[ImageProps](./ImageProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Input](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[InputProps](./InputProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[List](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[ListProps](./ListProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Modal](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[ModalProps](./ModalProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[RadioGroup](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[RadioGroupProps](./RadioGroupProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Scroller](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[ScrollerProps](./ScrollerProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Select](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[SelectProps](./SelectProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Slot](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[SlotProps](./SlotProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[Text](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[TextProps](./TextProps.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-[TextArea](./ComponentPropsMap.md)
-
-</td><td>
-
-</td><td>
-
-[TextAreaProps](./TextAreaProps.md)
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[Board](./ComponentPropsMap.md)||[BoardProps](./BoardProps.md)||
+|[Button](./ComponentPropsMap.md)||[ButtonProps](./ButtonProps.md)||
+|[CheckBox](./ComponentPropsMap.md)||[CheckBoxProps](./CheckBoxProps.md)||
+|[ColorPicker](./ComponentPropsMap.md)||[ColorPickerProps](./ColorPickerProps.md)||
+|[Dialog](./ComponentPropsMap.md)||[DialogProps](./DialogProps.md)||
+|[Flex](./ComponentPropsMap.md)||[FlexProps](./FlexProps.md)||
+|[FlexItem](./ComponentPropsMap.md)||[FlexItemProps](./FlexItemProps.md)||
+|[Grid](./ComponentPropsMap.md)||[GridProps](./GridProps.md)||
+|[GridItem](./ComponentPropsMap.md)||[GridItemProps](./GridItemProps.md)||
+|[Image](./ComponentPropsMap.md)||[ImageProps](./ImageProps.md)||
+|[Input](./ComponentPropsMap.md)||[InputProps](./InputProps.md)||
+|[List](./ComponentPropsMap.md)||[ListProps](./ListProps.md)||
+|[Modal](./ComponentPropsMap.md)||[ModalProps](./ModalProps.md)||
+|[RadioGroup](./ComponentPropsMap.md)||[RadioGroupProps](./RadioGroupProps.md)||
+|[RichTable](./ComponentPropsMap.md)||[RichTableProps](./RichTableProps.md)||
+|[Scroller](./ComponentPropsMap.md)||[ScrollerProps](./ScrollerProps.md)||
+|[Select](./ComponentPropsMap.md)||[SelectProps](./SelectProps.md)||
+|[Slider](./ComponentPropsMap.md)||[SliderProps](./SliderProps.md)||
+|[Slot](./ComponentPropsMap.md)||[SlotProps](./SlotProps.md)||
+|[Text](./ComponentPropsMap.md)||[TextProps](./TextProps.md)||
+|[TextArea](./ComponentPropsMap.md)||[TextAreaProps](./TextAreaProps.md)||
 
 ---
 
@@ -295,6 +66,16 @@ Button: ButtonProps;
 
 ```typescript
 CheckBox: CheckBoxProps;
+```
+
+### colorpicker
+
+# ComponentPropsMap.ColorPicker property
+
+## Signature
+
+```typescript
+ColorPicker: ColorPickerProps;
 ```
 
 ### dialog
@@ -397,6 +178,16 @@ Modal: ModalProps;
 RadioGroup: RadioGroupProps;
 ```
 
+### richtable
+
+# ComponentPropsMap.RichTable property
+
+## Signature
+
+```typescript
+RichTable: RichTableProps;
+```
+
 ### scroller
 
 # ComponentPropsMap.Scroller property
@@ -415,6 +206,16 @@ Scroller: ScrollerProps;
 
 ```typescript
 Select: SelectProps;
+```
+
+### slider
+
+# ComponentPropsMap.Slider property
+
+## Signature
+
+```typescript
+Slider: SliderProps;
 ```
 
 ### slot

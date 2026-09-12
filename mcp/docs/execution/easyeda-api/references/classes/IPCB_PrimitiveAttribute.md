@@ -11,488 +11,54 @@ class IPCB_PrimitiveAttribute implements IPCB_Primitive
 
 ## Constructors
 
-<table><thead><tr><th>
-
-Constructor
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[(constructor)(layer, x, y, key, value, keyVisible, valueVisible, fontFamily, fontSize, lineWidth, alignMode, rotation, reverse, expansion, mirror, primitiveLock, primitiveId, parentPrimitiveId)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Constructs a new instance of the `IPCB_PrimitiveAttribute` class
-
-</td></tr>
-</tbody></table>
+|Constructor|Modifiers|Description|
+|---|---|---|
+|[(constructor)(layer, x, y, key, value, keyVisible, valueVisible, fontFamily, fontSize, lineWidth, alignMode, rotation, reverse, expansion, mirror, primitiveLock, primitiveId, parentPrimitiveId)](./IPCB_PrimitiveAttribute.md)||Constructs a new instance of the `IPCB_PrimitiveAttribute` class|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_AlignMode()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: alignment mode
-
-</td></tr>
-<tr><td>
-
-[getState\_Expansion()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: inverted expansion
-
-</td></tr>
-<tr><td>
-
-[getState\_FontFamily()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: font
-
-</td></tr>
-<tr><td>
-
-[getState\_FontSize()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: font size
-
-</td></tr>
-<tr><td>
-
-[getState\_Key()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Key
-
-</td></tr>
-<tr><td>
-
-[getState\_KeyVisible()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Key whether it is visible
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Mirror()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[getState\_ParentPrimitiveId()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associated parent primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Reverse()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is inverted
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_Value()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Value
-
-</td></tr>
-<tr><td>
-
-[getState\_ValueVisible()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Value whether it is visible
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_AlignMode(alignMode)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: alignment mode
-
-</td></tr>
-<tr><td>
-
-[setState\_Expansion(expansion)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: inverted expansion
-
-</td></tr>
-<tr><td>
-
-[setState\_FontFamily(fontFamily)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: font
-
-</td></tr>
-<tr><td>
-
-[setState\_FontSize(fontSize)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: font size
-
-</td></tr>
-<tr><td>
-
-[setState\_Key(key)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Key
-
-</td></tr>
-<tr><td>
-
-[setState\_KeyVisible(keyVisible)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Key whether it is visible
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Mirror(mirror)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Reverse(reverse)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is inverted
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_Value(value)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Value
-
-</td></tr>
-<tr><td>
-
-[setState\_ValueVisible(valueVisible)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Value whether it is visible
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveAttribute.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_AlignMode()](./IPCB_PrimitiveAttribute.md)||Get the property state: alignment mode|
+|[getState\_Expansion()](./IPCB_PrimitiveAttribute.md)||Get the property state: inverted expansion|
+|[getState\_FontFamily()](./IPCB_PrimitiveAttribute.md)||Get the property state: font|
+|[getState\_FontSize()](./IPCB_PrimitiveAttribute.md)||Get the property state: font size|
+|[getState\_Key()](./IPCB_PrimitiveAttribute.md)||Get the property state: Key|
+|[getState\_KeyVisible()](./IPCB_PrimitiveAttribute.md)||Get the property state: Key whether it is visible|
+|[getState\_Layer()](./IPCB_PrimitiveAttribute.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitiveAttribute.md)||Get the property state: Line width|
+|[getState\_Mirror()](./IPCB_PrimitiveAttribute.md)||Get the property state: whether it is mirrored|
+|[getState\_ParentPrimitiveId()](./IPCB_PrimitiveAttribute.md)||Get the property state: associated parent primitive ID|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveAttribute.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveAttribute.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveAttribute.md)||Get the property state: primitive type|
+|[getState\_Reverse()](./IPCB_PrimitiveAttribute.md)||Get the property state: whether it is inverted|
+|[getState\_Rotation()](./IPCB_PrimitiveAttribute.md)||Get the property state: rotation angle|
+|[getState\_Value()](./IPCB_PrimitiveAttribute.md)||Get the property state: Value|
+|[getState\_ValueVisible()](./IPCB_PrimitiveAttribute.md)||Get the property state: Value whether it is visible|
+|[getState\_X()](./IPCB_PrimitiveAttribute.md)||Get the property state: X coordinate|
+|[getState\_Y()](./IPCB_PrimitiveAttribute.md)||Get the property state: Y coordinate|
+|[isAsync()](./IPCB_PrimitiveAttribute.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_AlignMode(alignMode)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: alignment mode|
+|[setState\_Expansion(expansion)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: inverted expansion|
+|[setState\_FontFamily(fontFamily)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: font|
+|[setState\_FontSize(fontSize)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: font size|
+|[setState\_Key(key)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Key|
+|[setState\_KeyVisible(keyVisible)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Key whether it is visible|
+|[setState\_Layer(layer)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Mirror(mirror)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: whether it is mirrored|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Reverse(reverse)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: whether it is inverted|
+|[setState\_Rotation(rotation)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_Value(value)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Value|
+|[setState\_ValueVisible(valueVisible)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Value whether it is visible|
+|[setState\_X(x)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./IPCB_PrimitiveAttribute.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./IPCB_PrimitiveAttribute.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveAttribute.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -531,219 +97,26 @@ function constructor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-value
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-keyVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-valueVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-fontFamily
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-fontSize
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-alignMode
-
-</td><td>
-
-[EPCB\_PrimitiveStringAlignMode](../enums/EPCB_PrimitiveStringAlignMode.md)
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-reverse
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-expansion
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-primitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-parentPrimitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-</td></tr>
-</tbody></table>
-
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)||
+|x|number \| null||
+|y|number \| null||
+|key|string||
+|value|string||
+|keyVisible|boolean||
+|valueVisible|boolean||
+|fontFamily|string||
+|fontSize|number||
+|lineWidth|number||
+|alignMode|[EPCB\_PrimitiveStringAlignMode](../enums/EPCB_PrimitiveStringAlignMode.md)||
+|rotation|number||
+|reverse|boolean||
+|expansion|number||
+|mirror|boolean||
+|primitiveLock|boolean||
+|primitiveId|string||
+|parentPrimitiveId|string||
 
 ---
 
@@ -800,6 +173,7 @@ console.log('fontSize:', fontSizeBefore, '→', refetched.getState_FontSize());
 console.log('rotation:', rotationBefore, '→', refetched.getState_Rotation());
 ```
 
+
 ### getstate_alignmode
 
 # IPCB\_PrimitiveAttribute.getState\_AlignMode() method
@@ -839,6 +213,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('alignMode:', alignMode);
 ```
+
 
 ### getstate_expansion
 
@@ -880,6 +255,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('expansion:', expansion);
 ```
 
+
 ### getstate_fontfamily
 
 # IPCB\_PrimitiveAttribute.getState\_FontFamily() method
@@ -919,6 +295,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('fontFamily:', fontFamily);
 ```
+
 
 ### getstate_fontsize
 
@@ -960,6 +337,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('fontSize:', fontSize);
 ```
 
+
 ### getstate_key
 
 # IPCB\_PrimitiveAttribute.getState\_Key() method
@@ -998,6 +376,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('keys:', keys.join(', '));
 ```
+
 
 ### getstate_keyvisible
 
@@ -1039,6 +418,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('keyVisible:', keyVisible);
 ```
 
+
 ### getstate_layer
 
 # IPCB\_PrimitiveAttribute.getState\_Layer() method
@@ -1078,6 +458,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('layer:', layer);
 ```
+
 
 ### getstate_linewidth
 
@@ -1119,6 +500,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('lineWidth:', lineWidth);
 ```
 
+
 ### getstate_mirror
 
 # IPCB\_PrimitiveAttribute.getState\_Mirror() method
@@ -1158,6 +540,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('mirror:', mirror);
 ```
+
 
 ### getstate_parentprimitiveid
 
@@ -1200,6 +583,7 @@ console.log('parentPrimitiveId:', parentPrimitiveId);
 console.log('belongs to component:', parentPrimitiveId === compId);
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveAttribute.getState\_PrimitiveId() method
@@ -1239,6 +623,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -1280,6 +665,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveAttribute.getState\_PrimitiveType() method
@@ -1319,6 +705,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_reverse
 
@@ -1360,6 +747,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('reverse:', reverse);
 ```
 
+
 ### getstate_rotation
 
 # IPCB\_PrimitiveAttribute.getState\_Rotation() method
@@ -1399,6 +787,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('rotation:', rotation);
 ```
+
 
 ### getstate_value
 
@@ -1440,6 +829,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('value:', value);
 ```
 
+
 ### getstate_valuevisible
 
 # IPCB\_PrimitiveAttribute.getState\_ValueVisible() method
@@ -1479,6 +869,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('valueVisible:', valueVisible);
 ```
+
 
 ### getstate_x
 
@@ -1520,6 +911,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('x:', x);
 ```
 
+
 ### getstate_y
 
 # IPCB\_PrimitiveAttribute.getState\_Y() method
@@ -1560,6 +952,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 console.log('y:', y);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveAttribute.isAsync() method
@@ -1599,6 +992,7 @@ await eda.pcb_PrimitiveComponent.delete([compId]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -1648,6 +1042,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('value:', original, '→', refetched.getState_Value(), '(修改已丢弃)');
 ```
 
+
 ### setstate_alignmode
 
 # IPCB\_PrimitiveAttribute.setState\_AlignMode() method
@@ -1664,33 +1059,9 @@ function setState_AlignMode(alignMode: EPCB_PrimitiveStringAlignMode): IPCB_Prim
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-alignMode
-
-</td><td>
-
-[EPCB\_PrimitiveStringAlignMode](../enums/EPCB_PrimitiveStringAlignMode.md)
-
-</td><td>
-
-Alignment mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|alignMode|[EPCB\_PrimitiveStringAlignMode](../enums/EPCB_PrimitiveStringAlignMode.md)|Alignment mode|
 
 ## Returns
 
@@ -1726,6 +1097,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('alignMode:', before, '→', refetched.getState_AlignMode());
 ```
 
+
 ### setstate_expansion
 
 # IPCB\_PrimitiveAttribute.setState\_Expansion() method
@@ -1742,33 +1114,9 @@ function setState_Expansion(expansion: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-expansion
-
-</td><td>
-
-number
-
-</td><td>
-
-Inverted expansion
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|expansion|number|Inverted expansion|
 
 ## Returns
 
@@ -1804,6 +1152,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('expansion:', before, '→', refetched.getState_Expansion());
 ```
 
+
 ### setstate_fontfamily
 
 # IPCB\_PrimitiveAttribute.setState\_FontFamily() method
@@ -1820,33 +1169,9 @@ function setState_FontFamily(fontFamily: string): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontFamily
-
-</td><td>
-
-string
-
-</td><td>
-
-Font
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontFamily|string|Font|
 
 ## Returns
 
@@ -1882,6 +1207,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('fontFamily:', before, '→', refetched.getState_FontFamily());
 ```
 
+
 ### setstate_fontsize
 
 # IPCB\_PrimitiveAttribute.setState\_FontSize() method
@@ -1898,33 +1224,9 @@ function setState_FontSize(fontSize: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fontSize
-
-</td><td>
-
-number
-
-</td><td>
-
-Font size
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fontSize|number|Font size|
 
 ## Returns
 
@@ -1960,6 +1262,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('fontSize:', before, '→', refetched.getState_FontSize());
 ```
 
+
 ### setstate_key
 
 # IPCB\_PrimitiveAttribute.setState\_Key() method
@@ -1976,33 +1279,9 @@ function setState_Key(key: string): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Key
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Key|
 
 ## Returns
 
@@ -2038,6 +1317,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('key:', before, '→', refetched.getState_Key());
 ```
 
+
 ### setstate_keyvisible
 
 # IPCB\_PrimitiveAttribute.setState\_KeyVisible() method
@@ -2054,33 +1334,9 @@ function setState_KeyVisible(keyVisible: boolean): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-keyVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Key whether it is visible
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|keyVisible|boolean|Key whether it is visible|
 
 ## Returns
 
@@ -2116,6 +1372,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('keyVisible:', before, '→', refetched.getState_KeyVisible());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveAttribute.setState\_Layer() method
@@ -2132,33 +1389,9 @@ function setState_Layer(layer: TPCB_LayersOfImage): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)|Layer|
 
 ## Returns
 
@@ -2194,6 +1427,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitiveAttribute.setState\_LineWidth() method
@@ -2210,33 +1444,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -2272,6 +1482,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('lineWidth:', before, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_mirror
 
 # IPCB\_PrimitiveAttribute.setState\_Mirror() method
@@ -2288,33 +1499,9 @@ function setState_Mirror(mirror: boolean): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|mirror|boolean|Whether it is mirrored|
 
 ## Returns
 
@@ -2350,6 +1537,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('mirror:', before, '→', refetched.getState_Mirror());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveAttribute.setState\_PrimitiveLock() method
@@ -2366,33 +1554,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveAttribute
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -2428,6 +1592,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
 
+
 ### setstate_reverse
 
 # IPCB\_PrimitiveAttribute.setState\_Reverse() method
@@ -2444,33 +1609,9 @@ function setState_Reverse(reverse: boolean): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-reverse
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is inverted
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|reverse|boolean|Whether it is inverted|
 
 ## Returns
 
@@ -2511,6 +1652,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('reverse:', before, '→', refetched.getState_Reverse());
 ```
 
+
 ### setstate_rotation
 
 # IPCB\_PrimitiveAttribute.setState\_Rotation() method
@@ -2527,33 +1669,9 @@ function setState_Rotation(rotation: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -2589,6 +1707,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_value
 
 # IPCB\_PrimitiveAttribute.setState\_Value() method
@@ -2605,33 +1724,9 @@ function setState_Value(value: string): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-value
-
-</td><td>
-
-string
-
-</td><td>
-
-Value
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|value|string|Value|
 
 ## Returns
 
@@ -2667,6 +1762,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('value:', before, '→', refetched.getState_Value());
 ```
 
+
 ### setstate_valuevisible
 
 # IPCB\_PrimitiveAttribute.setState\_ValueVisible() method
@@ -2683,33 +1779,9 @@ function setState_ValueVisible(valueVisible: boolean): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-valueVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Value whether it is visible
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|valueVisible|boolean|Value whether it is visible|
 
 ## Returns
 
@@ -2745,6 +1817,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('valueVisible:', before, '→', refetched.getState_ValueVisible());
 ```
 
+
 ### setstate_x
 
 # IPCB\_PrimitiveAttribute.setState\_X() method
@@ -2761,33 +1834,9 @@ function setState_X(x: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -2823,6 +1872,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('x:', before, '→', refetched.getState_X());
 ```
 
+
 ### setstate_y
 
 # IPCB\_PrimitiveAttribute.setState\_Y() method
@@ -2839,33 +1889,9 @@ function setState_Y(y: number): IPCB_PrimitiveAttribute;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -2900,6 +1926,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 
 console.log('y:', before, '→', refetched.getState_Y());
 ```
+
 
 ### toasync
 
@@ -2946,6 +1973,7 @@ const refetched = await eda.pcb_PrimitiveAttribute.get(designator.getState_Primi
 console.log('isAsync:', asyncAttr.isAsync());
 console.log('fontSize:', refetched.getState_FontSize());
 ```
+
 
 ### tosync
 

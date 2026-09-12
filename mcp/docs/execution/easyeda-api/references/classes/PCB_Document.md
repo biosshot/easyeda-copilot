@@ -14,323 +14,32 @@ Operations performed on the design document as a whole
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[autoLayout()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Auto layout
-
-</td></tr>
-<tr><td>
-
-[autoRouting(props)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Auto routing
-
-</td></tr>
-<tr><td>
-
-[clearRouting(type)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Clear routing
-
-</td></tr>
-<tr><td>
-
-[convertCanvasOriginToDataOrigin(x, y)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Input a canvas coordinate and return the data coordinate corresponding to that coordinate
-
-</td></tr>
-<tr><td>
-
-[convertDataOriginToCanvasOrigin(x, y)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Input a data coordinate and return the canvas coordinate corresponding to that coordinate
-
-</td></tr>
-<tr><td>
-
-[getCalculatingRatlineStatus()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Get the current ratline calculation function status
-
-</td></tr>
-<tr><td>
-
-[getCanvasOrigin()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Get the offset coordinate of the canvas origin relative to the data origin
-
-</td></tr>
-<tr><td>
-
-[getCanvasUpdateCalculationStatus()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query the current canvas update calculation status
-
-</td></tr>
-<tr><td>
-
-[getCurrentFilterConfiguration()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current canvas filter configuration
-
-</td></tr>
-<tr><td>
-
-[getPrimitiveAtPoint(x, y)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The primitive at the coordinate point
-
-</td></tr>
-<tr><td>
-
-[getPrimitivesInRegion(left, right, top, bottom, leftToRight)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get All primitives in the region
-
-</td></tr>
-<tr><td>
-
-[importAutoLayoutJsonFile(autoLayoutFile)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Import auto layout file (JSON)
-
-</td></tr>
-<tr><td>
-
-[importAutoRouteJsonFile(autoRouteFile)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Import auto routing file (JSON)
-
-</td></tr>
-<tr><td>
-
-[importAutoRouteSesFile(autoRouteFile)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Import auto routing file (SES)
-
-</td></tr>
-<tr><td>
-
-[importChanges(uuid)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Import changes from the schematic
-
-</td></tr>
-<tr><td>
-
-[navigateToCoordinates(x, y)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Locate to canvas coordinate
-
-</td></tr>
-<tr><td>
-
-[navigateToRegion(left, right, top, bottom)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Locate to canvas region
-
-</td></tr>
-<tr><td>
-
-[save()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Save Document
-
-</td></tr>
-<tr><td>
-
-[setCanvasOrigin(offsetX, offsetY)](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Set the offset coordinate of the canvas origin relative to the data origin
-
-</td></tr>
-<tr><td>
-
-[startCalculatingRatline()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Start the ratline calculation function
-
-</td></tr>
-<tr><td>
-
-[startCanvasUpdateCalculation()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Start canvas update calculation
-
-</td></tr>
-<tr><td>
-
-[stopCalculatingRatline()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-Stop the ratline calculation function
-
-</td></tr>
-<tr><td>
-
-[stopCanvasUpdateCalculation()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Stop canvas update calculation
-
-</td></tr>
-<tr><td>
-
-[triggerCanvasUpdateCalculation()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Trigger a canvas update calculation
-
-</td></tr>
-<tr><td>
-
-[zoomToBoardOutline()](./PCB_Document.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Zoom to the board outline (fit the board outline)
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[autoRouting(props)](./PCB_Document.md)||**_(BETA)_** Auto routing|
+|[clearRouting(type)](./PCB_Document.md)||**_(BETA)_** Clear routing|
+|[convertCanvasOriginToDataOrigin(x, y)](./PCB_Document.md)||Input a canvas coordinate and return the data coordinate corresponding to that coordinate|
+|[convertDataOriginToCanvasOrigin(x, y)](./PCB_Document.md)||Input a data coordinate and return the canvas coordinate corresponding to that coordinate|
+|[getCalculatingRatlineStatus()](./PCB_Document.md)||Get the current ratline calculation function status|
+|[getCanvasOrigin()](./PCB_Document.md)||Get the offset coordinate of the canvas origin relative to the data origin|
+|[getCurrentFilterConfiguration()](./PCB_Document.md)||**_(BETA)_** Get Current canvas filter configuration|
+|[getPrimitiveAtPoint(x, y)](./PCB_Document.md)||**_(BETA)_** Get The primitive at the coordinate point|
+|[getPrimitivesInRegion(left, right, top, bottom, leftToRight)](./PCB_Document.md)||**_(BETA)_** Get All primitives in the region|
+|[importAutoLayoutJsonFile(autoLayoutFile)](./PCB_Document.md)||**_(BETA)_** Import auto layout file (JSON)|
+|[importAutoRouteJsonFile(autoRouteFile)](./PCB_Document.md)||**_(BETA)_** Import auto routing file (JSON)|
+|[importAutoRouteSesFile(autoRouteFile)](./PCB_Document.md)||**_(BETA)_** Import auto routing file (SES)|
+|[importChanges(uuid)](./PCB_Document.md)||Import changes from the schematic|
+|[navigateToCoordinates(x, y)](./PCB_Document.md)||Locate to canvas coordinate|
+|[navigateToRegion(left, right, top, bottom)](./PCB_Document.md)||**_(BETA)_** Locate to canvas region|
+|[save()](./PCB_Document.md)||Save Document|
+|[setCanvasOrigin(offsetX, offsetY)](./PCB_Document.md)||Set the offset coordinate of the canvas origin relative to the data origin|
+|[startCalculatingRatline()](./PCB_Document.md)||Start the ratline calculation function|
+|[stopCalculatingRatline()](./PCB_Document.md)||Stop the ratline calculation function|
+|[zoomToBoardOutline()](./PCB_Document.md)||**_(BETA)_** Zoom to the board outline (fit the board outline)|
 
 ---
 
 ## 方法详情
-
-### autolayout
-
-# PCB\_Document.autoLayout() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Auto layout
-
-## Signature
-
-```typescript
-function autoLayout(): Promise<IPCB_AutoLayoutResult>;
-```
-
-## Returns
-
-Promise&lt;[IPCB\_AutoLayoutResult](../interfaces/IPCB_AutoLayoutResult.md)<!-- -->&gt;
-
-Auto layout result
-
-## Remarks
-
-ADD since EDA v3.2.162
 
 ### autorouting
 
@@ -348,33 +57,9 @@ function autoRouting(props?: IPCB_AutoRoutingProps): Promise<IPCB_AutoRoutingRes
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-props
-
-</td><td>
-
-[IPCB\_AutoRoutingProps](../interfaces/IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-_(Optional)_ Auto routing parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|props|[IPCB\_AutoRoutingProps](../interfaces/IPCB_AutoRoutingProps.md)|_(Optional)_ Auto routing parameter|
 
 ## Returns
 
@@ -384,7 +69,7 @@ Auto routing result
 
 ## Remarks
 
-If no parameters are passed in, auto routing will be performed for all unrouted nets ADD since EDA v3.2.162
+If no parameters are passed in, auto routing will be performed for all unrouted nets
 
 ## Example
 
@@ -418,33 +103,9 @@ function clearRouting(type?: 'all' | 'net' | 'connection'): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-'all' \| 'net' \| 'connection'
-
-</td><td>
-
-_(Optional)_ Clear type. If you need to specify a clear type, select the specified primitive in advance
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|'all' \| 'net' \| 'connection'|_(Optional)_ Clear type. If you need to specify a clear type, select the specified primitive in advance|
 
 ## Returns
 
@@ -464,42 +125,10 @@ function convertCanvasOriginToDataOrigin(x: number, y: number): Promise<{ x: num
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number||
+|y|number||
 
 ## Returns
 
@@ -533,6 +162,7 @@ console.log('after:', JSON.stringify(after));
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### convertdataorigintocanvasorigin
 
 # PCB\_Document.convertDataOriginToCanvasOrigin() method
@@ -547,46 +177,10 @@ function convertDataOriginToCanvasOrigin(x: number, y: number): Promise<{ x: num
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-Data origin X
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Data origin Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|Data origin X|
+|y|number|Data origin Y|
 
 ## Returns
 
@@ -620,27 +214,22 @@ console.log('after:', JSON.stringify(after));
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### getcalculatingratlinestatus
 
 # PCB\_Document.getCalculatingRatlineStatus() method
-
-> Warning: This API is now obsolete.
->
-> since EDA v4.2
 
 Get the current ratline calculation function status
 
 ## Signature
 
 ```typescript
-function getCalculatingRatlineStatus(): Promise<
-	EPCB_DocumentRatlineCalculatingActiveStatus | undefined
->;
+function getCalculatingRatlineStatus(): Promise<EPCB_DocumentRatlineCalculatingActiveStatus>;
 ```
 
 ## Returns
 
-Promise&lt;[EPCB\_DocumentRatlineCalculatingActiveStatus](../enums/EPCB_DocumentRatlineCalculatingActiveStatus.md) \| undefined&gt;
+Promise&lt;[EPCB\_DocumentRatlineCalculatingActiveStatus](../enums/EPCB_DocumentRatlineCalculatingActiveStatus.md)<!-- -->&gt;
 
 Function state
 
@@ -672,32 +261,6 @@ If the returned data is `{ canvasOriginOffsetX: 100, canvasOriginOffsetY: 200 }`
 
 The units here are data-level units, which are equivalent to mil on the canvas level in span
 
-### getcanvasupdatecalculationstatus
-
-# PCB\_Document.getCanvasUpdateCalculationStatus() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Query the current canvas update calculation status
-
-## Signature
-
-```typescript
-function getCanvasUpdateCalculationStatus(): Promise<
-	EPCB_DocumentCanvasUpdateCalculationActiveStatus | undefined
->;
-```
-
-## Returns
-
-Promise&lt;[EPCB\_DocumentCanvasUpdateCalculationActiveStatus](../enums/EPCB_DocumentCanvasUpdateCalculationActiveStatus.md) \| undefined&gt;
-
-Canvas update calculation function status
-
-## Remarks
-
-Canvas update calculation includes canvas render updates, property panel updates, etc. ADD since EDA v4.2
-
 ### getcurrentfilterconfiguration
 
 # PCB\_Document.getCurrentFilterConfiguration() method
@@ -709,12 +272,12 @@ Get Current canvas filter configuration
 ## Signature
 
 ```typescript
-function getCurrentFilterConfiguration(): Promise<Record<string, any> | undefined>;
+function getCurrentFilterConfiguration(): Promise<{ [key: string]: any } | undefined>;
 ```
 
 ## Returns
 
-Promise&lt;Record&lt;string, any&gt; \| undefined&gt;
+Promise&lt;{ \[key: string\]: any } \| undefined&gt;
 
 Current canvas filter configuration; `undefined` indicates that the retrieval failed
 
@@ -734,46 +297,10 @@ function getPrimitiveAtPoint(x: number, y: number): Promise<IPCB_Primitive | und
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-Coordinate point X
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Coordinate point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|Coordinate point X|
+|y|number|Coordinate point Y|
 
 ## Returns
 
@@ -811,6 +338,7 @@ await eda.pcb_PrimitivePad.delete([padId]);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### getprimitivesinregion
 
 # PCB\_Document.getPrimitivesInRegion() method
@@ -833,85 +361,13 @@ function getPrimitivesInRegion(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-left
-
-</td><td>
-
-number
-
-</td><td>
-
-First X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-right
-
-</td><td>
-
-number
-
-</td><td>
-
-Second X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-top
-
-</td><td>
-
-number
-
-</td><td>
-
-First Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-bottom
-
-</td><td>
-
-number
-
-</td><td>
-
-Second Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-leftToRight
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to only get primitives that are fully enclosed by the box selection. If `false`<!-- -->, primitives touched by the selection are also obtained
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|left|number|First X coordinate of the rectangle|
+|right|number|Second X coordinate of the rectangle|
+|top|number|First Y coordinate of the rectangle|
+|bottom|number|Second Y coordinate of the rectangle|
+|leftToRight|boolean|_(Optional)_ Whether to only get primitives that are fully enclosed by the box selection. If `false`<!-- -->, primitives touched by the selection are also obtained|
 
 ## Returns
 
@@ -945,6 +401,7 @@ await eda.pcb_PrimitivePad.delete([padA.getState_PrimitiveId(), padB.getState_Pr
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### importautolayoutjsonfile
 
 # PCB\_Document.importAutoLayoutJsonFile() method
@@ -961,33 +418,9 @@ function importAutoLayoutJsonFile(autoLayoutFile: File): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-autoLayoutFile
-
-</td><td>
-
-File
-
-</td><td>
-
-The JSON file to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|autoLayoutFile|File|The JSON file to import|
 
 ## Returns
 
@@ -1019,6 +452,7 @@ console.log('imported:', imported);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### importautoroutejsonfile
 
 # PCB\_Document.importAutoRouteJsonFile() method
@@ -1035,33 +469,9 @@ function importAutoRouteJsonFile(autoRouteFile: File): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-autoRouteFile
-
-</td><td>
-
-File
-
-</td><td>
-
-The JSON file to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|autoRouteFile|File|The JSON file to import|
 
 ## Returns
 
@@ -1093,6 +503,7 @@ console.log('imported:', imported);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### importautoroutesesfile
 
 # PCB\_Document.importAutoRouteSesFile() method
@@ -1109,33 +520,9 @@ function importAutoRouteSesFile(autoRouteFile: File): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-autoRouteFile
-
-</td><td>
-
-File
-
-</td><td>
-
-The SES file to import
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|autoRouteFile|File|The SES file to import|
 
 ## Returns
 
@@ -1161,33 +548,9 @@ function importChanges(uuid?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-uuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Schematic UUID. By default, the schematic associated with the same Board is used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|uuid|string|_(Optional)_ Schematic UUID. By default, the schematic associated with the same Board is used|
 
 ## Returns
 
@@ -1222,6 +585,7 @@ await eda.dmt_Pcb.deletePcb(pcbUuid);
 await eda.dmt_Schematic.deleteSchematic(schUuid);
 ```
 
+
 ### navigatetocoordinates
 
 # PCB\_Document.navigateToCoordinates() method
@@ -1236,46 +600,10 @@ function navigateToCoordinates(x: number, y: number): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -1308,6 +636,7 @@ console.log('navigated:', navigated);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### navigatetoregion
 
 # PCB\_Document.navigateToRegion() method
@@ -1329,72 +658,12 @@ function navigateToRegion(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-left
-
-</td><td>
-
-number
-
-</td><td>
-
-First X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-right
-
-</td><td>
-
-number
-
-</td><td>
-
-Second X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-top
-
-</td><td>
-
-number
-
-</td><td>
-
-First Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-bottom
-
-</td><td>
-
-number
-
-</td><td>
-
-Second Y coordinate of the rectangle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|left|number|First X coordinate of the rectangle|
+|right|number|Second X coordinate of the rectangle|
+|top|number|First Y coordinate of the rectangle|
+|bottom|number|Second Y coordinate of the rectangle|
 
 ## Returns
 
@@ -1428,6 +697,7 @@ console.log('navigated:', navigated);
 // 3. 清理测试 PCB
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
+
 
 ### save
 
@@ -1464,6 +734,7 @@ console.log('saved:', saved);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### setcanvasorigin
 
 # PCB\_Document.setCanvasOrigin() method
@@ -1478,46 +749,10 @@ function setCanvasOrigin(offsetX: number, offsetY: number): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-offsetX
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate offset of the canvas origin relative to the data origin
-
-</td></tr>
-<tr><td>
-
-offsetY
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate offset of the canvas origin relative to the data origin
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|offsetX|number|X coordinate offset of the canvas origin relative to the data origin|
+|offsetY|number|Y coordinate offset of the canvas origin relative to the data origin|
 
 ## Returns
 
@@ -1556,13 +791,10 @@ console.log('origin:', JSON.stringify(origin));
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
+
 ### startcalculatingratline
 
 # PCB\_Document.startCalculatingRatline() method
-
-> Warning: This API is now obsolete.
->
-> since EDA v4.2
 
 Start the ratline calculation function
 
@@ -1599,39 +831,10 @@ console.log('started:', started);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
-### startcanvasupdatecalculation
-
-# PCB\_Document.startCanvasUpdateCalculation() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Start canvas update calculation
-
-## Signature
-
-```typescript
-function startCanvasUpdateCalculation(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the operation is successful
-
-## Remarks
-
-Canvas update calculation includes canvas render updates, property panel updates, etc.
-
-If you do not understand the meaning of this switch, do not call this API for any operation ADD since EDA v4.2
 
 ### stopcalculatingratline
 
 # PCB\_Document.stopCalculatingRatline() method
-
-> Warning: This API is now obsolete.
->
-> since EDA v4.2
 
 Stop the ratline calculation function
 
@@ -1664,57 +867,6 @@ console.log('stopped:', stopped);
 await eda.dmt_Pcb.deletePcb(pcbUuid);
 ```
 
-### stopcanvasupdatecalculation
-
-# PCB\_Document.stopCanvasUpdateCalculation() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Stop canvas update calculation
-
-## Signature
-
-```typescript
-function stopCanvasUpdateCalculation(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the operation is successful
-
-## Remarks
-
-Canvas update calculation includes canvas render updates, property panel updates, etc.
-
-If you do not understand the meaning of this switch, do not call this API for any operation ADD since EDA v4.2
-
-### triggercanvasupdatecalculation
-
-# PCB\_Document.triggerCanvasUpdateCalculation() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Trigger a canvas update calculation
-
-## Signature
-
-```typescript
-function triggerCanvasUpdateCalculation(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the operation is successful
-
-## Remarks
-
-Canvas update calculation includes canvas render updates, property panel updates, etc.
-
-If you do not understand the meaning of this switch, do not call this API for any operation ADD since EDA v4.2
 
 ### zoomtoboardoutline
 

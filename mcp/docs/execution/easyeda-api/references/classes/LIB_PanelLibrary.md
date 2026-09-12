@@ -10,97 +10,15 @@ class LIB_PanelLibrary
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(panelLibraryUuid, libraryUuid, targetLibraryUuid, targetClassification, newPanelLibraryName)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Panel library
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, panelLibraryName, classification, description)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Panel library
-
-</td></tr>
-<tr><td>
-
-[delete(panelLibraryUuid, libraryUuid)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Panel library
-
-</td></tr>
-<tr><td>
-
-[get(panelLibraryUuid, libraryUuid)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the panel library
-
-</td></tr>
-<tr><td>
-
-[modify(panelLibraryUuid, libraryUuid, panelLibraryName, classification, description)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Panel library
-
-</td></tr>
-<tr><td>
-
-[openInEditor(panelLibraryUuid, libraryUuid, splitScreenId)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open in the editor document
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_PanelLibrary.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search panel library
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(panelLibraryUuid, libraryUuid, targetLibraryUuid, targetClassification, newPanelLibraryName)](./LIB_PanelLibrary.md)||**_(BETA)_** Copy Panel library|
+|[create(libraryUuid, panelLibraryName, classification, description)](./LIB_PanelLibrary.md)||**_(BETA)_** Create Panel library|
+|[delete(panelLibraryUuid, libraryUuid)](./LIB_PanelLibrary.md)||**_(BETA)_** Delete Panel library|
+|[get(panelLibraryUuid, libraryUuid)](./LIB_PanelLibrary.md)||**_(BETA)_** Get all properties of the panel library|
+|[modify(panelLibraryUuid, libraryUuid, panelLibraryName, classification, description)](./LIB_PanelLibrary.md)||**_(BETA)_** Modify Panel library|
+|[openInEditor(panelLibraryUuid, libraryUuid, splitScreenId)](./LIB_PanelLibrary.md)||**_(BETA)_** Open in the editor document|
+|[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_PanelLibrary.md)||**_(BETA)_** Search panel library|
 
 ---
 
@@ -128,85 +46,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newPanelLibraryName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New panel library name. If a panel library with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string|Panel library UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newPanelLibraryName|string|_(Optional)_ New panel library name. If a panel library with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -240,6 +86,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_PanelLibrary.create() method
@@ -261,72 +108,12 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-panelLibraryName
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|panelLibraryName|string|Panel library name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|description|string|_(Optional)_ Description|
 
 ## Returns
 
@@ -350,6 +137,7 @@ console.log('panelLibraryUuid:', panelLibraryUuid);
 console.log('panelLibraryName:', panelLibraryName);
 ```
 
+
 ### delete
 
 # LIB\_PanelLibrary.delete() method
@@ -366,46 +154,10 @@ function delete(panelLibraryUuid: string, libraryUuid: string): Promise<boolean>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string|Panel library UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -431,6 +183,7 @@ console.log('panelLibraryUuid:', panelLibraryUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_PanelLibrary.get() method
@@ -450,46 +203,10 @@ function get(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string|Panel library UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -519,85 +236,13 @@ function modify(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-panelLibraryName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Panel library name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string|Panel library UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|panelLibraryName|string|_(Optional)_ Panel library name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
 
 ## Returns
 
@@ -632,6 +277,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### openineditor
 
 # LIB\_PanelLibrary.openInEditor() method
@@ -652,59 +298,11 @@ function openInEditor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-panelLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Panel library UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|panelLibraryUuid|string|Panel library UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|splitScreenId|string|_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)|
 
 ## Returns
 
@@ -733,6 +331,7 @@ console.log('panelLibraryUuid:', panelLibraryUuid);
 console.log('tabId:', tabId);
 ```
 
+
 ### search
 
 # LIB\_PanelLibrary.search() method
@@ -755,85 +354,13 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 

@@ -79,10 +79,10 @@ The tool does not automatically save/reopen the editor, run DRC, or restore on f
 
 Read the needed references, not the entire catalog:
 
-1. Search the [class/type index](easyeda-api/references/_index.md) or [method index](easyeda-api/references/_quick-reference.md).
+1. Search the [class/type index](easyeda-api/references/_index.md), then open only the relevant reference file.
 2. Open the matching class and required property types for argument order, units, return values and commit semantics.
 3. If availability is uncertain, perform a focused read such as `typeof eda.pcb_PrimitiveComponent.modify`.
-4. For document source structure, use the [file format reference](easyeda-api/format/index.md). For extension APIs that depend on package resources, see [configuration fields](easyeda-api/guide/extension-json.md), [iframe support](easyeda-api/guide/inline-frame.md) and [localization](easyeda-api/guide/i18n.md).
+4. For document source structure, see the [format reference](easyeda-api/format/index.md); for scoped edits, see [File Source](file-source.md).
 5. Use the [official EasyEDA API documentation](https://prodocs.easyeda.com/en/api/guide/) when the local snapshot is insufficient.
 
 Use available named constants rather than invented numeric enums. Run API code through `execute_js`. Adapt reference examples to the verified document and requested scope; do not copy demonstration setup or cleanup into a real PCB edit.

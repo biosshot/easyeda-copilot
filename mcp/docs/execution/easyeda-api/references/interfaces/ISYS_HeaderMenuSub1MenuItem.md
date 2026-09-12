@@ -10,99 +10,13 @@ interface ISYS_HeaderMenuSub1MenuItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[icon?](./ISYS_HeaderMenuSub1MenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Menu item icon
-
-</td></tr>
-<tr><td>
-
-[id](./ISYS_HeaderMenuSub1MenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Menu item ID, cannot be repeated
-
-</td></tr>
-<tr><td>
-
-[menuItems?](./ISYS_HeaderMenuSub1MenuItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[ISYS\_HeaderMenuSub2MenuItem](./ISYS_HeaderMenuSub2MenuItem.md) \| null&gt;
-
-</td><td>
-
-_(Optional)_ Sub-menu item
-
-</td></tr>
-<tr><td>
-
-[registerFn?](./ISYS_HeaderMenuSub1MenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Registration method name (the method needs to be exported in the extension entry file)
-
-</td></tr>
-<tr><td>
-
-[title](./ISYS_HeaderMenuSub1MenuItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Menu item title
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[icon?](./ISYS_HeaderMenuSub1MenuItem.md)||string|_(Optional)_ Menu item icon|
+|[id](./ISYS_HeaderMenuSub1MenuItem.md)||string|Menu item ID, cannot be repeated|
+|[menuItems?](./ISYS_HeaderMenuSub1MenuItem.md)||Array&lt;[ISYS\_HeaderMenuSub2MenuItem](./ISYS_HeaderMenuSub2MenuItem.md) \| null&gt;|_(Optional)_ Sub-menu item|
+|[registerFn?](./ISYS_HeaderMenuSub1MenuItem.md)||string|_(Optional)_ Registration method name (the method needs to be exported in the extension entry file)|
+|[title](./ISYS_HeaderMenuSub1MenuItem.md)||string|Menu item title|
 
 ---
 

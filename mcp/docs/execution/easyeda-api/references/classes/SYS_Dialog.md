@@ -14,86 +14,14 @@ Generate dialog windows
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[createDesignPortal()](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-Create a communication entry for a componentized popup window
-
-</td></tr>
-<tr><td>
-
-[showConfirmationMessage(content, title, mainButtonTitle, buttonTitle, callbackFn)](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-Show a confirmation dialog
-
-</td></tr>
-<tr><td>
-
-[showInformationMessage(content, title, buttonTitle)](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-Show an information dialog
-
-</td></tr>
-<tr><td>
-
-[showInputDialog(beforeContent, afterContent, title, type, value, otherProperty, callbackFn)](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Show an input dialog
-
-</td></tr>
-<tr><td>
-
-[showSelectDialog(options, beforeContent, afterContent, title, defaultOption, multiple, callbackFn)](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Show a select dialog
-
-</td></tr>
-<tr><td>
-
-[showSelectDialog(options, beforeContent, afterContent, title, defaultOption, multiple, callbackFn)](./SYS_Dialog.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Show a multi-select dialog
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[createDesignPortal()](./SYS_Dialog.md)||Create a communication entry for a componentized popup window|
+|[showConfirmationMessage(content, title, mainButtonTitle, buttonTitle, callbackFn)](./SYS_Dialog.md)||Show a confirmation dialog|
+|[showInformationMessage(content, title, buttonTitle)](./SYS_Dialog.md)||Show an information dialog|
+|[showInputDialog(beforeContent, afterContent, title, type, value, otherProperty, callbackFn)](./SYS_Dialog.md)||**_(BETA)_** Show an input dialog|
+|[showSelectDialog(options, beforeContent, afterContent, title, defaultOption, multiple, callbackFn)](./SYS_Dialog.md)||**_(BETA)_** Show a select dialog|
+|[showSelectDialog(options, beforeContent, afterContent, title, defaultOption, multiple, callbackFn)](./SYS_Dialog.md)||**_(BETA)_** Show a multi-select dialog|
 
 ---
 
@@ -141,85 +69,13 @@ function showConfirmationMessage(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Message text. Line breaks can be used with `\n`
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Popup window title
-
-</td></tr>
-<tr><td>
-
-mainButtonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary button title
-
-</td></tr>
-<tr><td>
-
-buttonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Primary button title
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(mainButtonClicked: boolean) =&gt; void
-
-</td><td>
-
-_(Optional)_ Callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|string|Message text. Line breaks can be used with `\n`|
+|title|string|_(Optional)_ Popup window title|
+|mainButtonTitle|string|_(Optional)_ Primary button title|
+|buttonTitle|string|_(Optional)_ Primary button title|
+|callbackFn|(mainButtonClicked: boolean) =&gt; void|_(Optional)_ Callback function|
 
 ## Returns
 
@@ -252,6 +108,7 @@ eda.sys_Dialog.showConfirmationMessage(
 console.log('已弹出确认窗口');
 ```
 
+
 ### showinformationmessage
 
 # SYS\_Dialog.showInformationMessage() method
@@ -266,59 +123,11 @@ function showInformationMessage(content: string, title?: string, buttonTitle?: s
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-content
-
-</td><td>
-
-string
-
-</td><td>
-
-Message text. Line breaks can be used with `\n`
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Popup window title
-
-</td></tr>
-<tr><td>
-
-buttonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Button title. If empty, the button is not displayed
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|content|string|Message text. Line breaks can be used with `\n`|
+|title|string|_(Optional)_ Popup window title|
+|buttonTitle|string|_(Optional)_ Button title. If empty, the button is not displayed|
 
 ## Returns
 
@@ -337,6 +146,7 @@ eda.sys_Dialog.showInformationMessage('DRC 检查完成\n 共检查 128 个图�
 // 2. 窗口立即弹出；本方法无返回值，也不阻塞后续代码
 console.log('已弹出消息窗口');
 ```
+
 
 ### showinputdialog
 
@@ -368,15 +178,15 @@ function showInputDialog(
 		| 'week',
 	value?: string | number,
 	otherProperty?: {
-		max?: undefined | number;
-		maxlength?: undefined | number;
-		min?: undefined | number;
-		minlength?: undefined | number;
-		multiple?: undefined | false | true;
-		pattern?: undefined | RegExp;
-		placeholder?: undefined | string;
-		readonly?: undefined | false | true;
-		step?: undefined | number;
+		max?: number;
+		maxlength?: number;
+		min?: number;
+		minlength?: number;
+		multiple?: boolean;
+		pattern?: RegExp;
+		placeholder?: string;
+		readonly?: boolean;
+		step?: number;
 	},
 	callbackFn?: (value: any) => void,
 ): void;
@@ -384,111 +194,15 @@ function showInputDialog(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-beforeContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text above the input box
-
-</td></tr>
-<tr><td>
-
-afterContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text below the input box
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Popup window title
-
-</td></tr>
-<tr><td>
-
-type
-
-</td><td>
-
-'color' \| 'date' \| 'datetime-local' \| 'email' \| 'mouth' \| 'number' \| 'password' \| 'tel' \| 'text' \| 'time' \| 'url' \| 'week'
-
-</td><td>
-
-_(Optional)_ Input box type
-
-</td></tr>
-<tr><td>
-
-value
-
-</td><td>
-
-string \| number
-
-</td><td>
-
-_(Optional)_ Default value of the input box
-
-</td></tr>
-<tr><td>
-
-otherProperty
-
-</td><td>
-
-\{ max?: undefined \| number; maxlength?: undefined \| number; min?: undefined \| number; minlength?: undefined \| number; multiple?: undefined \| false \| true; pattern?: undefined \| RegExp; placeholder?: undefined \| string; readonly?: undefined \| false \| true; step?: undefined \| number \}
-
-</td><td>
-
-_(Optional)_ Other parameters. Refer to [The HTML Input element](https://developer.mozilla.org/docs/Web/HTML/Element/input#attributes)
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(value: any) =&gt; void
-
-</td><td>
-
-_(Optional)_ Callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|beforeContent|string|_(Optional)_ Text above the input box|
+|afterContent|string|_(Optional)_ Text below the input box|
+|title|string|_(Optional)_ Popup window title|
+|type|'color' \| 'date' \| 'datetime-local' \| 'email' \| 'mouth' \| 'number' \| 'password' \| 'tel' \| 'text' \| 'time' \| 'url' \| 'week'|_(Optional)_ Input box type|
+|value|string \| number|_(Optional)_ Default value of the input box|
+|otherProperty|\{ max?: number; maxlength?: number; min?: number; minlength?: number; multiple?: boolean; pattern?: RegExp; placeholder?: string; readonly?: boolean; step?: number \}|_(Optional)_ Other parameters. Refer to [The HTML Input element](https://developer.mozilla.org/docs/Web/HTML/Element/input#attributes)|
+|callbackFn|(value: any) =&gt; void|_(Optional)_ Callback function|
 
 ## Returns
 
@@ -516,6 +230,7 @@ eda.sys_Dialog.showInputDialog(
 console.log('已弹出输入窗口');
 ```
 
+
 ### showselectdialog
 
 # SYS\_Dialog.showSelectDialog() method
@@ -540,111 +255,15 @@ function showSelectDialog(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-options
-
-</td><td>
-
-Array&lt;string&gt; \| Array&lt;{ value: string; displayContent: string }&gt;
-
-</td><td>
-
-Option list, which can be an array of strings or an array of objects. When `defaultOption` is not specified, the default value is the first item of the list. If it is an array of strings, the value and display content of the option remain the same. If it is an array of objects, `value` represents the value of the option, and `displayContent` represents the display content of the option
-
-</td></tr>
-<tr><td>
-
-beforeContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text above the select box
-
-</td></tr>
-<tr><td>
-
-afterContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text below the select box
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Select box title
-
-</td></tr>
-<tr><td>
-
-defaultOption
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Default option, using the option value as the matching parameter. If the `multiple` parameter is `true`<!-- -->, an array of strings needs to be passed here
-
-</td></tr>
-<tr><td>
-
-multiple
-
-</td><td>
-
-false
-
-</td><td>
-
-_(Optional)_ Whether multiple selection is supported. By default, it is a single-select box
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(value: string) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-_(Optional)_ Callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|options|Array&lt;string&gt; \| Array&lt;{ value: string; displayContent: string }&gt;|Option list, which can be an array of strings or an array of objects. When `defaultOption` is not specified, the default value is the first item of the list. If it is an array of strings, the value and display content of the option remain the same. If it is an array of objects, `value` represents the value of the option, and `displayContent` represents the display content of the option|
+|beforeContent|string|_(Optional)_ Text above the select box|
+|afterContent|string|_(Optional)_ Text below the select box|
+|title|string|_(Optional)_ Select box title|
+|defaultOption|string|_(Optional)_ Default option, using the option value as the matching parameter. If the `multiple` parameter is `true`<!-- -->, an array of strings needs to be passed here|
+|multiple|false|_(Optional)_ Whether multiple selection is supported. By default, it is a single-select box|
+|callbackFn|(value: string) =&gt; void \| Promise&lt;void&gt;|_(Optional)_ Callback function|
 
 ## Returns
 
@@ -688,6 +307,7 @@ eda.sys_Dialog.showSelectDialog(
 console.log('已弹出选择窗口（单选 + 多选）');
 ```
 
+
 ### showselectdialog_1
 
 # SYS\_Dialog.showSelectDialog() method
@@ -712,111 +332,15 @@ function showSelectDialog(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-options
-
-</td><td>
-
-Array&lt;string&gt; \| Array&lt;{ value: string; displayContent: string }&gt;
-
-</td><td>
-
-Option list, which can be an array of strings or an array of objects. When `defaultOption` is not specified, the default value is the first item of the list. If it is an array of strings, the value and display content of the option remain the same. If it is an array of objects, `value` represents the value of the option, and `displayContent` represents the display content of the option
-
-</td></tr>
-<tr><td>
-
-beforeContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text above the multi-select box
-
-</td></tr>
-<tr><td>
-
-afterContent
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Text below the multi-select box
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Multi-select box title
-
-</td></tr>
-<tr><td>
-
-defaultOption
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Default option array, using the option values as matching parameters
-
-</td></tr>
-<tr><td>
-
-multiple
-
-</td><td>
-
-true
-
-</td><td>
-
-_(Optional)_ Whether multiple selection is supported
-
-</td></tr>
-<tr><td>
-
-callbackFn
-
-</td><td>
-
-(value: Array&lt;string&gt;) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-_(Optional)_ Callback function
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|options|Array&lt;string&gt; \| Array&lt;{ value: string; displayContent: string }&gt;|Option list, which can be an array of strings or an array of objects. When `defaultOption` is not specified, the default value is the first item of the list. If it is an array of strings, the value and display content of the option remain the same. If it is an array of objects, `value` represents the value of the option, and `displayContent` represents the display content of the option|
+|beforeContent|string|_(Optional)_ Text above the multi-select box|
+|afterContent|string|_(Optional)_ Text below the multi-select box|
+|title|string|_(Optional)_ Multi-select box title|
+|defaultOption|Array&lt;string&gt;|_(Optional)_ Default option array, using the option values as matching parameters|
+|multiple|true|_(Optional)_ Whether multiple selection is supported|
+|callbackFn|(value: Array&lt;string&gt;) =&gt; void \| Promise&lt;void&gt;|_(Optional)_ Callback function|
 
 ## Returns
 

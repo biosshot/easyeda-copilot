@@ -14,97 +14,15 @@ Operations related to board management in the currently open project
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copyBoard(sourceBoardName)](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Copy Board
-
-</td></tr>
-<tr><td>
-
-[createBoard(schematicUuid, pcbUuid)](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Board
-
-</td></tr>
-<tr><td>
-
-[deleteBoard(boardName)](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Delete Board
-
-</td></tr>
-<tr><td>
-
-[getAllBoardsInfo()](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Get all in the project board detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getBoardInfo(boardName)](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Board
-
-</td></tr>
-<tr><td>
-
-[getCurrentBoardInfo()](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Get detailed properties of Current board
-
-</td></tr>
-<tr><td>
-
-[modifyBoardName(originalBoardName, boardName)](./DMT_Board.md)
-
-</td><td>
-
-</td><td>
-
-Modify Board name
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copyBoard(sourceBoardName)](./DMT_Board.md)||Copy Board|
+|[createBoard(schematicUuid, pcbUuid)](./DMT_Board.md)||**_(BETA)_** Create Board|
+|[deleteBoard(boardName)](./DMT_Board.md)||Delete Board|
+|[getAllBoardsInfo()](./DMT_Board.md)||Get all in the project board detailed properties of|
+|[getBoardInfo(boardName)](./DMT_Board.md)||Get detailed properties of Board|
+|[getCurrentBoardInfo()](./DMT_Board.md)||Get detailed properties of Current board|
+|[modifyBoardName(originalBoardName, boardName)](./DMT_Board.md)||Modify Board name|
 
 ---
 
@@ -124,33 +42,9 @@ function copyBoard(sourceBoardName: string): Promise<string | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-sourceBoardName
-
-</td><td>
-
-string
-
-</td><td>
-
-Source board name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|sourceBoardName|string|Source board name|
 
 ## Returns
 
@@ -175,6 +69,7 @@ const deleted = await eda.dmt_Board.deleteBoard(newBoardName);
 console.log('deleted:', deleted);
 ```
 
+
 ### createboard
 
 # DMT\_Board.createBoard() method
@@ -191,46 +86,10 @@ function createBoard(schematicUuid?: string, pcbUuid?: string): Promise<string |
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-schematicUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Associated schematic UUID
-
-</td></tr>
-<tr><td>
-
-pcbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Associated PCB UUID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|schematicUuid|string|_(Optional)_ Associated schematic UUID|
+|pcbUuid|string|_(Optional)_ Associated PCB UUID|
 
 ## Returns
 
@@ -250,6 +109,7 @@ const deleted = await eda.dmt_Board.deleteBoard(boardName);
 console.log('deleted:', deleted);
 ```
 
+
 ### deleteboard
 
 # DMT\_Board.deleteBoard() method
@@ -264,33 +124,9 @@ function deleteBoard(boardName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-Board name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|boardName|string|Board name|
 
 ## Returns
 
@@ -314,6 +150,7 @@ console.log('temp board:', tempName);
 const deleted = await eda.dmt_Board.deleteBoard(tempName);
 console.log('deleted:', deleted);
 ```
+
 
 ### getallboardsinfo
 
@@ -347,6 +184,7 @@ boards.forEach((board, i) => {
 console.log('total:', boards.length);
 ```
 
+
 ### getboardinfo
 
 # DMT\_Board.getBoardInfo() method
@@ -361,33 +199,9 @@ function getBoardInfo(boardName: string): Promise<IDMT_BoardItem | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-Board name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|boardName|string|Board name|
 
 ## Returns
 
@@ -411,6 +225,7 @@ console.log('parentProjectUuid:', board.parentProjectUuid);
 console.log('schematic:', board.schematic?.uuid);
 console.log('pcb:', board.pcb?.uuid);
 ```
+
 
 ### getcurrentboardinfo
 
@@ -451,6 +266,7 @@ console.log('schematic:', board.schematic?.uuid);
 console.log('pcb:', board.pcb?.uuid);
 ```
 
+
 ### modifyboardname
 
 # DMT\_Board.modifyBoardName() method
@@ -465,46 +281,10 @@ function modifyBoardName(originalBoardName: string, boardName: string): Promise<
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalBoardName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original board name
-
-</td></tr>
-<tr><td>
-
-boardName
-
-</td><td>
-
-string
-
-</td><td>
-
-New board name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalBoardName|string|Original board name|
+|boardName|string|New board name|
 
 ## Returns
 

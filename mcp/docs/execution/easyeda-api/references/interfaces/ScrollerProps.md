@@ -10,99 +10,13 @@ interface ScrollerProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[buffer?](./ScrollerProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of extra buffered rows to render
-
-</td></tr>
-<tr><td>
-
-[children?](./ScrollerProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Child node
-
-</td></tr>
-<tr><td>
-
-[itemCount](./ScrollerProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Total row count (required)
-
-</td></tr>
-<tr><td>
-
-[itemHeight](./ScrollerProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Height of each row (pixels, required)
-
-</td></tr>
-<tr><td>
-
-[onVisibleRowsChange?](./ScrollerProps.md)
-
-</td><td>
-
-</td><td>
-
-(visibleRows: { index: number; slotName: string }\[\]) =&gt; void
-
-</td><td>
-
-_(Optional)_ 可见行变化时触发，参数为可见行索引与对应插槽名列表
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[buffer?](./ScrollerProps.md)||number|_(Optional)_ Number of extra buffered rows to render|
+|[children?](./ScrollerProps.md)||any|_(Optional)_ Child node|
+|[itemCount](./ScrollerProps.md)||number|Total row count (required)|
+|[itemHeight](./ScrollerProps.md)||number|Height of each row (pixels, required)|
+|[onVisibleRowsChange?](./ScrollerProps.md)||(visibleRows: { index: number; slotName: string }\[\]) =&gt; void|_(Optional)_ 可见行变化时触发，参数为可见行索引与对应插槽名列表|
 
 ---
 

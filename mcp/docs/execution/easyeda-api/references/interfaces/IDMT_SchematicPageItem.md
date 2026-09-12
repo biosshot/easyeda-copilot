@@ -10,116 +10,14 @@ interface IDMT_SchematicPageItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[itemType](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[EDMT\_ItemType.SCHEMATIC\_PAGE](../enums/EDMT_ItemType.md)
-
-</td><td>
-
-Project type
-
-</td></tr>
-<tr><td>
-
-[name](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet name
-
-</td></tr>
-<tr><td>
-
-[parentSchematicUuid](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the schematic it belongs to
-
-</td></tr>
-<tr><td>
-
-[showTitleBlock](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to show the title block
-
-</td></tr>
-<tr><td>
-
-[titleBlockData](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-</td><td>
-
-Record&lt;string, { showTitle: boolean; showValue: boolean; value: any }&gt;
-
-</td><td>
-
-Title block data
-
-</td></tr>
-<tr><td>
-
-[uuid](./IDMT_SchematicPageItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Schematic sheet UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[itemType](./IDMT_SchematicPageItem.md)|`readonly`|[EDMT\_ItemType.SCHEMATIC\_PAGE](../enums/EDMT_ItemType.md)|Project type|
+|[name](./IDMT_SchematicPageItem.md)||string|Schematic sheet name|
+|[parentSchematicUuid](./IDMT_SchematicPageItem.md)||string|UUID of the schematic it belongs to|
+|[showTitleBlock](./IDMT_SchematicPageItem.md)||boolean|Whether to show the title block|
+|[titleBlockData](./IDMT_SchematicPageItem.md)||\{ \[key: string\]: \{ showTitle: boolean; showValue: boolean; value: any \} \}|Title block data|
+|[uuid](./IDMT_SchematicPageItem.md)||string|Schematic sheet UUID|
 
 ---
 
@@ -182,7 +80,7 @@ Title block data
 ## Signature
 
 ```typescript
-titleBlockData: Record<string, { showTitle: boolean; showValue: boolean; value: any }>;
+titleBlockData: { [key: string]: { showTitle: boolean; showValue: boolean; value: any } };
 ```
 
 ### uuid

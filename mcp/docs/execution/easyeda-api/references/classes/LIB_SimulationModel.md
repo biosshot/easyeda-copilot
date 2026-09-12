@@ -10,86 +10,14 @@ class LIB_SimulationModel
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(simulationModelUuid, libraryUuid, targetLibraryUuid, targetClassification, newSimulationModelName)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy the simulation model
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, model, classification, description)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a simulation model
-
-</td></tr>
-<tr><td>
-
-[delete(simulationModelUuid, libraryUuid)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the simulation model
-
-</td></tr>
-<tr><td>
-
-[get(simulationModelUuid, libraryUuid)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the simulation model
-
-</td></tr>
-<tr><td>
-
-[modify(simulationModelUuid, libraryUuid, modelProps, classification, description)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the simulation model
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, simulationModelType, itemsOfPage, page)](./LIB_SimulationModel.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search simulation models
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(simulationModelUuid, libraryUuid, targetLibraryUuid, targetClassification, newSimulationModelName)](./LIB_SimulationModel.md)||**_(BETA)_** Copy the simulation model|
+|[create(libraryUuid, model, classification, description)](./LIB_SimulationModel.md)||**_(BETA)_** Create a simulation model|
+|[delete(simulationModelUuid, libraryUuid)](./LIB_SimulationModel.md)||**_(BETA)_** Delete the simulation model|
+|[get(simulationModelUuid, libraryUuid)](./LIB_SimulationModel.md)||**_(BETA)_** Get all properties of the simulation model|
+|[modify(simulationModelUuid, libraryUuid, modelProps, classification, description)](./LIB_SimulationModel.md)||**_(BETA)_** Modify the simulation model|
+|[search(key, libraryUuid, classification, simulationModelType, itemsOfPage, page)](./LIB_SimulationModel.md)||**_(BETA)_** Search simulation models|
 
 ---
 
@@ -117,85 +45,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-simulationModelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Simulation model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newSimulationModelName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New simulation model name. If a symbol with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|simulationModelUuid|string|Simulation model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newSimulationModelName|string|_(Optional)_ New simulation model name. If a symbol with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -236,6 +92,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_SimulationModel.create() method
@@ -250,18 +107,8 @@ Create a simulation model
 function create(
 	libraryUuid: string,
 	model: { modelType: 'Ngspice' } & (
-		| {
-			modelFile: Blob;
-			modelName?: undefined | string;
-			modelCategory?: undefined | string;
-			modelPin?: undefined | string;
-		}
-		| {
-			modelData: string;
-			modelName?: undefined | string;
-			modelCategory?: undefined | string;
-			modelPin?: undefined | string;
-		}
+		| { modelFile: Blob; modelName?: string; modelCategory?: string; modelPin?: string }
+		| { modelData: string; modelName?: string; modelCategory?: string; modelPin?: string }
 	),
 	classification?: Array<string>,
 	description?: string,
@@ -270,72 +117,12 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-model
-
-</td><td>
-
-{ modelType: 'Ngspice' } &amp; ({ modelFile: Blob; modelName?: undefined \| string; modelCategory?: undefined \| string; modelPin?: undefined \| string } \| { modelData: string; modelName?: undefined \| string; modelCategory?: undefined \| string; modelPin?: undefined \| string })
-
-</td><td>
-
-Simulation model data
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|model|{ modelType: 'Ngspice' } &amp; ({ modelFile: Blob; modelName?: string; modelCategory?: string; modelPin?: string } \| { modelData: string; modelName?: string; modelCategory?: string; modelPin?: string })|Simulation model data|
+|classification|Array&lt;string&gt;|_(Optional)_ Classification|
+|description|string|_(Optional)_ Description|
 
 ## Returns
 
@@ -373,6 +160,7 @@ console.log('simulationModelUuid:', simulationModelUuid);
 console.log('modelName:', modelName);
 ```
 
+
 ### delete
 
 # LIB\_SimulationModel.delete() method
@@ -389,46 +177,10 @@ function delete(simulationModelUuid: string, libraryUuid: string): Promise<boole
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-simulationModelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Simulation model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|simulationModelUuid|string|Simulation model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -462,6 +214,7 @@ console.log('simulationModelUuid:', simulationModelUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_SimulationModel.get() method
@@ -481,46 +234,10 @@ function get(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-simulationModelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Simulation model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|simulationModelUuid|string|Simulation model UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -546,11 +263,7 @@ Modify the simulation model
 function modify(
 	simulationModelUuid: string,
 	libraryUuid: string,
-	modelProps?: {
-		modelName?: undefined | string;
-		modelCategory?: undefined | string;
-		modelPin?: undefined | string;
-	},
+	modelProps?: { modelName?: string; modelCategory?: string; modelPin?: string },
 	classification?: Array<string> | null,
 	description?: string | null,
 ): Promise<boolean>;
@@ -558,85 +271,13 @@ function modify(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-simulationModelUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Simulation model UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-modelProps
-
-</td><td>
-
-\{ modelName?: undefined \| string; modelCategory?: undefined \| string; modelPin?: undefined \| string \}
-
-</td><td>
-
-_(Optional)_ Simulation model properties
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|simulationModelUuid|string|Simulation model UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|modelProps|\{ modelName?: string; modelCategory?: string; modelPin?: string \}|_(Optional)_ Simulation model properties|
+|classification|Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
 
 ## Returns
 
@@ -681,6 +322,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### search
 
 # LIB\_SimulationModel.search() method
@@ -704,98 +346,14 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-simulationModelType
-
-</td><td>
-
-[ELIB\_SimulationModelType](../enums/ELIB_SimulationModelType.md)
-
-</td><td>
-
-_(Optional)_ Simulation model type, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|simulationModelType|[ELIB\_SimulationModelType](../enums/ELIB_SimulationModelType.md)|_(Optional)_ Simulation model type, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 

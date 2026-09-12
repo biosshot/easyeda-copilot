@@ -13,7 +13,6 @@ This chapter details the format specification of the EasyEDA schematic file. Sch
 - **Objects**: Binary objects (images, etc.).
 - **Tables**: Tables and cells.
 
-
 ## Document Header
 
 ```json

@@ -10,31 +10,9 @@ class SYS_Setting
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[restoreDefault()](./SYS_Setting.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Restore all default settings
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[restoreDefault()](./SYS_Setting.md)||**_(BETA)_** Restore all default settings|
 
 ---
 

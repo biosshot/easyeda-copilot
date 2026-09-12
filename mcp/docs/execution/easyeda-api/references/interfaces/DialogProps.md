@@ -10,219 +10,21 @@ interface DialogProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[children?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Dialog content child nodes
-
-</td></tr>
-<tr><td>
-
-[height?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Height ( pixels)
-
-</td></tr>
-<tr><td>
-
-[hide?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Hide dialog
-
-</td></tr>
-<tr><td>
-
-[left?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Position from the left (pixels)
-
-</td></tr>
-<tr><td>
-
-[maxDragY?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Maximum vertical drag distance ( pixels)
-
-</td></tr>
-<tr><td>
-
-[modal?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to display in modal mode
-
-</td></tr>
-<tr><td>
-
-[onClose?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; void
-
-</td><td>
-
-_(Optional)_ 关闭对话框时触发
-
-</td></tr>
-<tr><td>
-
-[overlay?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to show the mask layer
-
-</td></tr>
-<tr><td>
-
-[resizeX?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether horizontal resizing is allowed
-
-</td></tr>
-<tr><td>
-
-[resizeY?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether vertical resizing is allowed
-
-</td></tr>
-<tr><td>
-
-[title](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Title text ( required)
-
-</td></tr>
-<tr><td>
-
-[top?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Position from the top (pixels)
-
-</td></tr>
-<tr><td>
-
-[width?](./DialogProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Width ( pixels)
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[children?](./DialogProps.md)||any|_(Optional)_ Dialog content child nodes|
+|[height?](./DialogProps.md)||number \| 'auto'|_(Optional)_ Height ( pixels)|
+|[hide?](./DialogProps.md)||boolean|_(Optional)_ Whether Hide dialog|
+|[left?](./DialogProps.md)||number|_(Optional)_ Position from the left (pixels)|
+|[maxDragY?](./DialogProps.md)||number|_(Optional)_ Maximum vertical drag distance ( pixels)|
+|[modal?](./DialogProps.md)||boolean|_(Optional)_ Whether to display in modal mode|
+|[onClose?](./DialogProps.md)||() =&gt; void|_(Optional)_ 关闭对话框时触发|
+|[overlay?](./DialogProps.md)||boolean|_(Optional)_ Whether to show the mask layer|
+|[resizeX?](./DialogProps.md)||boolean|_(Optional)_ Whether horizontal resizing is allowed|
+|[resizeY?](./DialogProps.md)||boolean|_(Optional)_ Whether vertical resizing is allowed|
+|[title](./DialogProps.md)||string|Title text ( required)|
+|[top?](./DialogProps.md)||number|_(Optional)_ Position from the top (pixels)|
+|[width?](./DialogProps.md)||number|_(Optional)_ Width ( pixels)|
 
 ---
 
@@ -249,7 +51,7 @@ Height ( pixels)
 ## Signature
 
 ```typescript
-height?: number;
+height?: number | 'auto';
 ```
 
 ### hide

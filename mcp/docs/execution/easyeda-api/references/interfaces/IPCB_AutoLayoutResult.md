@@ -10,99 +10,13 @@ interface IPCB_AutoLayoutResult
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[duration](./IPCB_AutoLayoutResult.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Auto layout duration (milliseconds)
-
-</td></tr>
-<tr><td>
-
-[failedComponents](./IPCB_AutoLayoutResult.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-List of device primitive IDs that failed to be laid out
-
-</td></tr>
-<tr><td>
-
-[success](./IPCB_AutoLayoutResult.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether auto layout started successfully
-
-</td></tr>
-<tr><td>
-
-[successComponentsCount](./IPCB_AutoLayoutResult.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Number of devices that were laid out successfully
-
-</td></tr>
-<tr><td>
-
-[totalComponentsCount](./IPCB_AutoLayoutResult.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Total number of devices participating in auto layout
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[duration](./IPCB_AutoLayoutResult.md)||number|Auto layout duration (milliseconds)|
+|[failedComponents](./IPCB_AutoLayoutResult.md)||Array&lt;string&gt;|List of device primitive IDs that failed to be laid out|
+|[success](./IPCB_AutoLayoutResult.md)||boolean|Whether auto layout started successfully|
+|[successComponentsCount](./IPCB_AutoLayoutResult.md)||number|Number of devices that were laid out successfully|
+|[totalComponentsCount](./IPCB_AutoLayoutResult.md)||number|Total number of devices participating in auto layout|
 
 ---
 

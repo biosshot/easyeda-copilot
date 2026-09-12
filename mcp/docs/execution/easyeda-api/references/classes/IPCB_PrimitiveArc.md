@@ -15,350 +15,38 @@ Both lines and arc lines are wires, corresponding to the line traces and arc tra
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getAdjacentPrimitives()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Adjacent primitive objects
-
-</td></tr>
-<tr><td>
-
-[getEntireTrack(includeVias)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the entire wire
-
-</td></tr>
-<tr><td>
-
-[getEntireTrack(includeVias)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the entire wire
-
-</td></tr>
-<tr><td>
-
-[getState\_ArcAngle()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: arc angle
-
-</td></tr>
-<tr><td>
-
-[getState\_EndX()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: end position X
-
-</td></tr>
-<tr><td>
-
-[getState\_EndY()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: end position Y
-
-</td></tr>
-<tr><td>
-
-[getState\_InteractiveMode()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: interaction mode
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_StartX()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: start position X
-
-</td></tr>
-<tr><td>
-
-[getState\_StartY()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: start position Y
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_ArcAngle(arcAngle)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: arc angle
-
-</td></tr>
-<tr><td>
-
-[setState\_EndX(endX)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: end position X
-
-</td></tr>
-<tr><td>
-
-[setState\_EndY(endY)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: end position Y
-
-</td></tr>
-<tr><td>
-
-[setState\_InteractiveMode(interactiveMode)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: interaction mode
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_StartX(startX)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start position X
-
-</td></tr>
-<tr><td>
-
-[setState\_StartY(startY)](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start position Y
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveArc.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getAdjacentPrimitives()](./IPCB_PrimitiveArc.md)||**_(BETA)_** Get Adjacent primitive objects|
+|[getEntireTrack(includeVias)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Get the entire wire|
+|[getEntireTrack(includeVias)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Get the entire wire|
+|[getState\_ArcAngle()](./IPCB_PrimitiveArc.md)||Get the property state: arc angle|
+|[getState\_EndX()](./IPCB_PrimitiveArc.md)||Get the property state: end position X|
+|[getState\_EndY()](./IPCB_PrimitiveArc.md)||Get the property state: end position Y|
+|[getState\_InteractiveMode()](./IPCB_PrimitiveArc.md)||Get the property state: interaction mode|
+|[getState\_Layer()](./IPCB_PrimitiveArc.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitiveArc.md)||Get the property state: Line width|
+|[getState\_Net()](./IPCB_PrimitiveArc.md)||Get the property state: net name|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveArc.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveArc.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveArc.md)||Get the property state: primitive type|
+|[getState\_StartX()](./IPCB_PrimitiveArc.md)||Get the property state: start position X|
+|[getState\_StartY()](./IPCB_PrimitiveArc.md)||Get the property state: start position Y|
+|[isAsync()](./IPCB_PrimitiveArc.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveArc.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_ArcAngle(arcAngle)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: arc angle|
+|[setState\_EndX(endX)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: end position X|
+|[setState\_EndY(endY)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: end position Y|
+|[setState\_InteractiveMode(interactiveMode)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: interaction mode|
+|[setState\_Layer(layer)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Net(net)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: net name|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_StartX(startX)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: start position X|
+|[setState\_StartY(startY)](./IPCB_PrimitiveArc.md)||**_(BETA)_** Set the property state: start position Y|
+|[toAsync()](./IPCB_PrimitiveArc.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveArc.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -409,6 +97,7 @@ console.log('lineWidth:', 10, '→', refetched.getState_LineWidth());
 console.log('layer:', 1, '→', refetched.getState_Layer());
 ```
 
+
 ### getadjacentprimitives
 
 # IPCB\_PrimitiveArc.getAdjacentPrimitives() method
@@ -457,6 +146,7 @@ adjacent.forEach((p, i) => {
 });
 ```
 
+
 ### getentiretrack
 
 # IPCB\_PrimitiveArc.getEntireTrack() method
@@ -473,33 +163,9 @@ function getEntireTrack(includeVias: false): Promise<Array<IPCB_PrimitiveLine | 
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-includeVias
-
-</td><td>
-
-false
-
-</td><td>
-
-Whether to include the vias at both ends of the wire
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|includeVias|false|Whether to include the vias at both ends of the wire|
 
 ## Returns
 
@@ -533,6 +199,7 @@ trackOnly.forEach((p, i) => {
 console.log('track(true) count:', trackWithVias.length);
 ```
 
+
 ### getentiretrack_1
 
 # IPCB\_PrimitiveArc.getEntireTrack() method
@@ -551,33 +218,9 @@ function getEntireTrack(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-includeVias
-
-</td><td>
-
-true
-
-</td><td>
-
-Whether to include the vias at both ends of the wire
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|includeVias|true|Whether to include the vias at both ends of the wire|
 
 ## Returns
 
@@ -618,6 +261,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('arcAngle:', arcAngle);
 ```
 
+
 ### getstate_endx
 
 # IPCB\_PrimitiveArc.getState\_EndX() method
@@ -650,6 +294,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('endX:', endX);
 ```
+
 
 ### getstate_endy
 
@@ -684,6 +329,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('endY:', endY);
 ```
 
+
 ### getstate_interactivemode
 
 # IPCB\_PrimitiveArc.getState\_InteractiveMode() method
@@ -716,6 +362,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('interactiveMode:', interactiveMode);
 ```
+
 
 ### getstate_layer
 
@@ -750,6 +397,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('layer:', layer);
 ```
 
+
 ### getstate_linewidth
 
 # IPCB\_PrimitiveArc.getState\_LineWidth() method
@@ -783,6 +431,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('lineWidth:', lineWidth);
 ```
 
+
 ### getstate_net
 
 # IPCB\_PrimitiveArc.getState\_Net() method
@@ -815,6 +464,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('net:', net);
 ```
+
 
 ### getstate_primitiveid
 
@@ -853,6 +503,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetched type:', refetched.getState_PrimitiveType());
 ```
 
+
 ### getstate_primitivelock
 
 # IPCB\_PrimitiveArc.getState\_PrimitiveLock() method
@@ -885,6 +536,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('locked:', locked);
 ```
+
 
 ### getstate_primitivetype
 
@@ -919,6 +571,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('type:', type);
 ```
 
+
 ### getstate_startx
 
 # IPCB\_PrimitiveArc.getState\_StartX() method
@@ -952,6 +605,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('startX:', startX);
 ```
 
+
 ### getstate_starty
 
 # IPCB\_PrimitiveArc.getState\_StartY() method
@@ -984,6 +638,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('startY:', startY);
 ```
+
 
 ### isasync
 
@@ -1020,6 +675,7 @@ await eda.pcb_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -1064,6 +720,7 @@ const refetched = await eda.pcb_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_arcangle
 
 # IPCB\_PrimitiveArc.setState\_ArcAngle() method
@@ -1080,33 +737,9 @@ function setState_ArcAngle(arcAngle: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-arcAngle
-
-</td><td>
-
-number
-
-</td><td>
-
-Arc angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|arcAngle|number|Arc angle|
 
 ## Returns
 
@@ -1139,6 +772,7 @@ const after = refetched.getState_ArcAngle();
 console.log('arcAngle:', before, '→', after);
 ```
 
+
 ### setstate_endx
 
 # IPCB\_PrimitiveArc.setState\_EndX() method
@@ -1155,33 +789,9 @@ function setState_EndX(endX: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-endX
-
-</td><td>
-
-number
-
-</td><td>
-
-End position X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|endX|number|End position X|
 
 ## Returns
 
@@ -1214,6 +824,7 @@ const after = refetched.getState_EndX();
 console.log('endX:', before, '→', after);
 ```
 
+
 ### setstate_endy
 
 # IPCB\_PrimitiveArc.setState\_EndY() method
@@ -1230,33 +841,9 @@ function setState_EndY(endY: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-endY
-
-</td><td>
-
-number
-
-</td><td>
-
-End position Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|endY|number|End position Y|
 
 ## Returns
 
@@ -1289,6 +876,7 @@ const after = refetched.getState_EndY();
 console.log('endY:', before, '→', after);
 ```
 
+
 ### setstate_interactivemode
 
 # IPCB\_PrimitiveArc.setState\_InteractiveMode() method
@@ -1307,33 +895,9 @@ function setState_InteractiveMode(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactiveMode
-
-</td><td>
-
-[EPCB\_PrimitiveArcInteractiveMode](../enums/EPCB_PrimitiveArcInteractiveMode.md)
-
-</td><td>
-
-Interaction mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactiveMode|[EPCB\_PrimitiveArcInteractiveMode](../enums/EPCB_PrimitiveArcInteractiveMode.md)|Interaction mode|
 
 ## Returns
 
@@ -1366,6 +930,7 @@ const after = refetched.getState_InteractiveMode();
 console.log('interactiveMode:', before, '→', after);
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveArc.setState\_Layer() method
@@ -1382,33 +947,9 @@ function setState_Layer(layer: TPCB_LayersOfLine): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfLine](../types/TPCB_LayersOfLine.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfLine](../types/TPCB_LayersOfLine.md)|Layer|
 
 ## Returns
 
@@ -1441,6 +982,7 @@ const after = refetched.getState_Layer();
 console.log('layer:', before, '→', after);
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitiveArc.setState\_LineWidth() method
@@ -1457,33 +999,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -1516,6 +1034,7 @@ const after = refetched.getState_LineWidth();
 console.log('lineWidth:', before, '→', after);
 ```
 
+
 ### setstate_net
 
 # IPCB\_PrimitiveArc.setState\_Net() method
@@ -1532,33 +1051,9 @@ function setState_Net(net: string): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -1591,6 +1086,7 @@ const after = refetched.getState_Net();
 console.log('net:', before, '→', after);
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveArc.setState\_PrimitiveLock() method
@@ -1607,33 +1103,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1666,6 +1138,7 @@ const after = refetched.getState_PrimitiveLock();
 console.log('locked:', before, '→', after);
 ```
 
+
 ### setstate_startx
 
 # IPCB\_PrimitiveArc.setState\_StartX() method
@@ -1682,33 +1155,9 @@ function setState_StartX(startX: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startX
-
-</td><td>
-
-number
-
-</td><td>
-
-Start position X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startX|number|Start position X|
 
 ## Returns
 
@@ -1741,6 +1190,7 @@ const after = refetched.getState_StartX();
 console.log('startX:', before, '→', after);
 ```
 
+
 ### setstate_starty
 
 # IPCB\_PrimitiveArc.setState\_StartY() method
@@ -1757,33 +1207,9 @@ function setState_StartY(startY: number): IPCB_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startY
-
-</td><td>
-
-number
-
-</td><td>
-
-Start position Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startY|number|Start position Y|
 
 ## Returns
 
@@ -1815,6 +1241,7 @@ const after = refetched.getState_StartY();
 
 console.log('startY:', before, '→', after);
 ```
+
 
 ### toasync
 
@@ -1858,6 +1285,7 @@ const refetched = await eda.pcb_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('isAsync after toAsync:', arc.isAsync());
 console.log('lineWidth:', 10, '→', refetched.getState_LineWidth());
 ```
+
 
 ### tosync
 

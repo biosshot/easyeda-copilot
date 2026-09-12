@@ -10,144 +10,16 @@ interface ILIB_DevicePropertiesForSearch
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[footprintName?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Associate footprint name
-
-</td></tr>
-<tr><td>
-
-[name?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Device name
-
-</td></tr>
-<tr><td>
-
-[partCode?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Part code
-
-</td></tr>
-<tr><td>
-
-[partNumber?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Part number
-
-</td></tr>
-<tr><td>
-
-[supplierFootprint?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Supplier footprint name
-
-</td></tr>
-<tr><td>
-
-[supplierId?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Supplier ID
-
-</td></tr>
-<tr><td>
-
-[symbolName?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Associated symbol name
-
-</td></tr>
-<tr><td>
-
-[value?](./ILIB_DevicePropertiesForSearch.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Value
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[footprintName?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Associate footprint name|
+|[name?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Device name|
+|[partCode?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Part code|
+|[partNumber?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Part number|
+|[supplierFootprint?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Supplier footprint name|
+|[supplierId?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Supplier ID|
+|[symbolName?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Associated symbol name|
+|[value?](./ILIB_DevicePropertiesForSearch.md)||string|_(Optional)_ Value|
 
 ---
 

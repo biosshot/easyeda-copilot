@@ -19,54 +19,10 @@ The data of `data` can be in Blob or DataURL format
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[data?](./ILIB_ExtendLibraryItem.md)
-
-</td><td>
-
-</td><td>
-
-string \| Blob
-
-</td><td>
-
-_(Optional)_ Library file data
-
-</td></tr>
-<tr><td>
-
-[url?](./ILIB_ExtendLibraryItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library file URL
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[data?](./ILIB_ExtendLibraryItem.md)||string \| Blob|_(Optional)_ Library file data|
+|[url?](./ILIB_ExtendLibraryItem.md)||string|_(Optional)_ Library file URL|
 
 ---
 

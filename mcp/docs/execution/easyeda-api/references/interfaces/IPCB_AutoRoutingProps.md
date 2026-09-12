@@ -10,114 +10,14 @@ interface IPCB_AutoRoutingProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[cornerStyle?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-[EPCB\_AutoRoutingCornerStyle](../enums/EPCB_AutoRoutingCornerStyle.md)
-
-</td><td>
-
-_(Optional)_ 布线拐角风格
-
-</td></tr>
-<tr><td>
-
-[existingPrimitiveMode?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-[EPCB\_AutoRoutingExistingPrimitiveMode](../enums/EPCB_AutoRoutingExistingPrimitiveMode.md)
-
-</td><td>
-
-_(Optional)_ 已有导线/过孔的处理方式
-
-</td></tr>
-<tr><td>
-
-[ignoreNets?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ 忽略网络
-
-</td></tr>
-<tr><td>
-
-[layers?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ 布线图层
-
-</td></tr>
-<tr><td>
-
-[optimization?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-[EPCB\_AutoRoutingOptimization](../enums/EPCB_AutoRoutingOptimization.md)
-
-</td><td>
-
-_(Optional)_ 效果优先级
-
-</td></tr>
-<tr><td>
-
-[RoutingNets?](./IPCB_AutoRoutingProps.md)
-
-</td><td>
-
-</td><td>
-
-'selected' \| 'selectedComponents' \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ 布线网络
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[cornerStyle?](./IPCB_AutoRoutingProps.md)||[EPCB\_AutoRoutingCornerStyle](../enums/EPCB_AutoRoutingCornerStyle.md)|_(Optional)_ 布线拐角风格|
+|[existingPrimitiveMode?](./IPCB_AutoRoutingProps.md)||[EPCB\_AutoRoutingExistingPrimitiveMode](../enums/EPCB_AutoRoutingExistingPrimitiveMode.md)|_(Optional)_ 已有导线/过孔的处理方式|
+|[ignoreNets?](./IPCB_AutoRoutingProps.md)||Array&lt;string&gt;|_(Optional)_ 忽略网络|
+|[layers?](./IPCB_AutoRoutingProps.md)||Array&lt;[TPCB\_LayersOfCopper](../types/TPCB_LayersOfCopper.md)<!-- -->&gt;|_(Optional)_ 布线图层|
+|[optimization?](./IPCB_AutoRoutingProps.md)||[EPCB\_AutoRoutingOptimization](../enums/EPCB_AutoRoutingOptimization.md)|_(Optional)_ 效果优先级|
+|[RoutingNets?](./IPCB_AutoRoutingProps.md)||'selected' \| 'selectedComponents' \| Array&lt;string&gt;|_(Optional)_ 布线网络|
 
 ---
 

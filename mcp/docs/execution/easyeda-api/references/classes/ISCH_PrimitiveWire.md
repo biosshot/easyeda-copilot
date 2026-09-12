@@ -17,196 +17,24 @@ The `ISCH_PrimitiveWire.net` global net name property involves multi-sheet refre
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: bus color
-
-</td></tr>
-<tr><td>
-
-[getState\_Line()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: polyline coordinate group
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: wire color
-
-</td></tr>
-<tr><td>
-
-[setState\_Line(line)](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: polyline coordinate group
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net name
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveWire.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveWire.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Color()](./ISCH_PrimitiveWire.md)||Get the property state: bus color|
+|[getState\_Line()](./ISCH_PrimitiveWire.md)||Get the property state: polyline coordinate group|
+|[getState\_LineType()](./ISCH_PrimitiveWire.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitiveWire.md)||Get the property state: Line width|
+|[getState\_Net()](./ISCH_PrimitiveWire.md)||Get the property state: net name|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveWire.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveWire.md)||Get the property state: primitive type|
+|[isAsync()](./ISCH_PrimitiveWire.md)||Query whether the primitive is an async primitive|
+|[setState\_Color(color)](./ISCH_PrimitiveWire.md)||**_(BETA)_** Set the property state: wire color|
+|[setState\_Line(line)](./ISCH_PrimitiveWire.md)||**_(BETA)_** Set the property state: polyline coordinate group|
+|[setState\_LineType(lineType)](./ISCH_PrimitiveWire.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveWire.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_Net(net)](./ISCH_PrimitiveWire.md)||**_(BETA)_** Set the property state: net name|
+|[toAsync()](./ISCH_PrimitiveWire.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveWire.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -257,6 +85,7 @@ console.log('net:', 'SIG_A', '→', refetched.getState_Net());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_color
 
 # ISCH\_PrimitiveWire.getState\_Color() method
@@ -289,6 +118,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 
 console.log('color:', color);
 ```
+
 
 ### getstate_line
 
@@ -323,6 +153,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 console.log('line:', JSON.stringify(line));
 ```
 
+
 ### getstate_linetype
 
 # ISCH\_PrimitiveWire.getState\_LineType() method
@@ -355,6 +186,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 
 console.log('lineType:', lineType);
 ```
+
 
 ### getstate_linewidth
 
@@ -389,6 +221,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 console.log('lineWidth:', lineWidth);
 ```
 
+
 ### getstate_net
 
 # ISCH\_PrimitiveWire.getState\_Net() method
@@ -421,6 +254,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 
 console.log('net:', net);
 ```
+
 
 ### getstate_primitiveid
 
@@ -457,6 +291,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetch matched:', refetched.getState_PrimitiveId() === primitiveId);
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveWire.getState\_PrimitiveType() method
@@ -489,6 +324,7 @@ await eda.sch_PrimitiveWire.delete([wire.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### isasync
 
@@ -526,6 +362,7 @@ console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitiveWire.setState\_Color() method
@@ -542,33 +379,9 @@ function setState_Color(color: string | null): ISCH_PrimitiveWire;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Wire color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Wire color|
 
 ## Returns
 
@@ -600,6 +413,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 console.log('color:', before, '→', refetched.getState_Color());
 ```
 
+
 ### setstate_line
 
 # ISCH\_PrimitiveWire.setState\_Line() method
@@ -616,33 +430,9 @@ function setState_Line(line: Array<number> | Array<Array<number>>): ISCH_Primiti
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-line
-
-</td><td>
-
-Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;
-
-</td><td>
-
-Polyline coordinate group
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|line|Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;|Polyline coordinate group|
 
 ## Returns
 
@@ -674,6 +464,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 console.log('line:', JSON.stringify(before), '→', JSON.stringify(refetched.getState_Line()));
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitiveWire.setState\_LineType() method
@@ -690,33 +481,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -748,6 +515,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 console.log('lineType:', before, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitiveWire.setState\_LineWidth() method
@@ -764,33 +532,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitiveWire;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -822,6 +566,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 console.log('lineWidth:', before, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_net
 
 # ISCH\_PrimitiveWire.setState\_Net() method
@@ -838,33 +583,9 @@ function setState_Net(net: string): ISCH_PrimitiveWire;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -895,6 +616,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 
 console.log('net:', before, '→', refetched.getState_Net());
 ```
+
 
 ### toasync
 
@@ -937,6 +659,7 @@ const refetched = await eda.sch_PrimitiveWire.get(wire.getState_PrimitiveId());
 console.log('isAsync after toAsync:', wire.isAsync());
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
+
 
 ### tosync
 

@@ -13,64 +13,12 @@ class ISCH_PrimitiveCbbSymbolComponent extends ISCH_PrimitiveComponent
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveCbbSymbolComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Cbb()](./ISCH_PrimitiveCbbSymbolComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate reuse block
-
-</td></tr>
-<tr><td>
-
-[getState\_CbbSymbol()](./ISCH_PrimitiveCbbSymbolComponent.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: associate reuse block symbol
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveCbbSymbolComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveCbbSymbolComponent.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Cbb()](./ISCH_PrimitiveCbbSymbolComponent.md)||Get the property state: associate reuse block|
+|[getState\_CbbSymbol()](./ISCH_PrimitiveCbbSymbolComponent.md)||Get the property state: associate reuse block symbol|
+|[reset()](./ISCH_PrimitiveCbbSymbolComponent.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
 
 ---
 
@@ -125,6 +73,7 @@ const refetched = await eda.sch_Primitive.getPrimitiveByPrimitiveId(symbol.getSt
 console.log('x:', x, '→', refetched.getState_X());
 ```
 
+
 ### getstate_cbb
 
 # ISCH\_PrimitiveCbbSymbolComponent.getState\_Cbb() method
@@ -166,6 +115,7 @@ await eda.sch_PrimitiveComponent.delete([symbol.getState_PrimitiveId()]);
 console.log('cbbInfo:', cbbInfo);
 ```
 
+
 ### getstate_cbbsymbol
 
 # ISCH\_PrimitiveCbbSymbolComponent.getState\_CbbSymbol() method
@@ -178,14 +128,14 @@ Get the property state: associate reuse block symbol
 function getState_CbbSymbol(): {
 	libraryUuid: string;
 	cbbUuid: string;
-	uuid?: undefined | string;
-	name?: undefined | string;
+	uuid?: string;
+	name?: string;
 };
 ```
 
 ## Returns
 
-\{ libraryUuid: string; cbbUuid: string; uuid?: undefined \| string; name?: undefined \| string \}
+\{ libraryUuid: string; cbbUuid: string; uuid?: string; name?: string \}
 
 Associate reuse block symbol
 
@@ -211,6 +161,7 @@ await eda.sch_PrimitiveComponent.delete([symbol.getState_PrimitiveId()]);
 
 console.log('cbbSymbol:', cbbSymbol);
 ```
+
 
 ### reset
 

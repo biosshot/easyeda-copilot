@@ -10,116 +10,14 @@ interface ILIB_3DModelItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[classification?](./ILIB_3DModelItem.md)
-
-</td><td>
-
-</td><td>
-
-[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-[description?](./ILIB_3DModelItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-<tr><td>
-
-[libraryType](./ILIB_3DModelItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[ELIB\_LibraryType.MODEL](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-[libraryUuid](./ILIB_3DModelItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the library it belongs to
-
-</td></tr>
-<tr><td>
-
-[name](./ILIB_3DModelItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model name
-
-</td></tr>
-<tr><td>
-
-[uuid](./ILIB_3DModelItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-3D model UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[classification?](./ILIB_3DModelItem.md)||[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|[description?](./ILIB_3DModelItem.md)||string|_(Optional)_ Description|
+|[libraryType](./ILIB_3DModelItem.md)|`readonly`|[ELIB\_LibraryType.MODEL](../enums/ELIB_LibraryType.md)|Library type|
+|[libraryUuid](./ILIB_3DModelItem.md)||string|UUID of the library it belongs to|
+|[name](./ILIB_3DModelItem.md)||string|3D model name|
+|[uuid](./ILIB_3DModelItem.md)||string|3D model UUID|
 
 ---
 

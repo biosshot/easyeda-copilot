@@ -15,600 +15,56 @@ Pin primitives are only available in the symbol editor. In a schematic sheet, th
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[async](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-异步
-
-</td></tr>
-<tr><td>
-
-[noConnected?](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ 是否存在非连接标识
-
-</td></tr>
-<tr><td>
-
-[otherProperty?](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-Record&lt;string, string \| number \| boolean&gt;
-
-</td><td>
-
-_(Optional)_ 其它参数
-
-</td></tr>
-<tr><td>
-
-[pinColor](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-引脚颜色
-
-</td></tr>
-<tr><td>
-
-[pinLength](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-引脚长度
-
-</td></tr>
-<tr><td>
-
-[pinName](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-引脚名称
-
-</td></tr>
-<tr><td>
-
-[pinNumber](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-引脚编号
-
-</td></tr>
-<tr><td>
-
-[pinShape](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)
-
-</td><td>
-
-引脚形状
-
-</td></tr>
-<tr><td>
-
-[pinType](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)
-
-</td><td>
-
-引脚类型
-
-</td></tr>
-<tr><td>
-
-[primitiveId?](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 图元 ID
-
-</td></tr>
-<tr><td>
-
-[primitiveType](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-`readonly`
-
-</td><td>
-
-[ESCH\_PrimitiveType](../enums/ESCH_PrimitiveType.md)
-
-</td><td>
-
-图元类型
-
-</td></tr>
-<tr><td>
-
-[rotation](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-旋转角度
-
-</td></tr>
-<tr><td>
-
-[x](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-坐标 X
-
-</td></tr>
-<tr><td>
-
-[y](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-坐标 Y
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[async](./ISCH_PrimitivePin.md)|`protected`|boolean|异步|
+|[noConnected?](./ISCH_PrimitivePin.md)|`protected`|boolean|_(Optional)_ 是否存在非连接标识|
+|[otherProperty?](./ISCH_PrimitivePin.md)|`protected`|Record&lt;string, string \| number \| boolean&gt;|_(Optional)_ 其它参数|
+|[pinColor](./ISCH_PrimitivePin.md)|`protected`|string \| null|引脚颜色|
+|[pinLength](./ISCH_PrimitivePin.md)|`protected`|number|引脚长度|
+|[pinName](./ISCH_PrimitivePin.md)|`protected`|string|引脚名称|
+|[pinNumber](./ISCH_PrimitivePin.md)|`protected`|string|引脚编号|
+|[pinShape](./ISCH_PrimitivePin.md)|`protected`|[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)|引脚形状|
+|[pinType](./ISCH_PrimitivePin.md)|`protected`|[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)|引脚类型|
+|[primitiveId?](./ISCH_PrimitivePin.md)|`protected`|string|_(Optional)_ 图元 ID|
+|[primitiveType](./ISCH_PrimitivePin.md)|`protected` `readonly`|[ESCH\_PrimitiveType](../enums/ESCH_PrimitiveType.md)|图元类型|
+|[rotation](./ISCH_PrimitivePin.md)|`protected`|number|旋转角度|
+|[x](./ISCH_PrimitivePin.md)|`protected`|number|坐标 X|
+|[y](./ISCH_PrimitivePin.md)|`protected`|number|坐标 Y|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_NoConnected()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether there is a no-connect flag
-
-</td></tr>
-<tr><td>
-
-[getState\_OtherProperty()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[getState\_PinColor()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin color
-
-</td></tr>
-<tr><td>
-
-[getState\_PinLength()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin length
-
-</td></tr>
-<tr><td>
-
-[getState\_PinName()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin name
-
-</td></tr>
-<tr><td>
-
-[getState\_PinNumber()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin number
-
-</td></tr>
-<tr><td>
-
-[getState\_PinShape()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin shape
-
-</td></tr>
-<tr><td>
-
-[getState\_pinType()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pin type
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_NoConnected(noConnected)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether there is a no-connect flag
-
-</td></tr>
-<tr><td>
-
-[setState\_OtherProperty(otherProperty)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: other parameters
-
-</td></tr>
-<tr><td>
-
-[setState\_PinColor(pinColor)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin color
-
-</td></tr>
-<tr><td>
-
-[setState\_PinLength(pinLength)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin length
-
-</td></tr>
-<tr><td>
-
-[setState\_PinName(pinName)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin name
-
-</td></tr>
-<tr><td>
-
-[setState\_PinNumber(pinNumber)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin number
-
-</td></tr>
-<tr><td>
-
-[setState\_PinShape(pinShape)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin shape
-
-</td></tr>
-<tr><td>
-
-[setState\_PinType(pinType)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pin type
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X coordinate
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y coordinate
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitivePin.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_NoConnected()](./ISCH_PrimitivePin.md)||Get the property state: whether there is a no-connect flag|
+|[getState\_OtherProperty()](./ISCH_PrimitivePin.md)||Get the property state: other parameters|
+|[getState\_PinColor()](./ISCH_PrimitivePin.md)||Get the property state: pin color|
+|[getState\_PinLength()](./ISCH_PrimitivePin.md)||Get the property state: pin length|
+|[getState\_PinName()](./ISCH_PrimitivePin.md)||Get the property state: pin name|
+|[getState\_PinNumber()](./ISCH_PrimitivePin.md)||Get the property state: pin number|
+|[getState\_PinShape()](./ISCH_PrimitivePin.md)||Get the property state: pin shape|
+|[getState\_pinType()](./ISCH_PrimitivePin.md)||Get the property state: pin type|
+|[getState\_PrimitiveId()](./ISCH_PrimitivePin.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitivePin.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./ISCH_PrimitivePin.md)||Get the property state: rotation angle|
+|[getState\_X()](./ISCH_PrimitivePin.md)||Get the property state: X coordinate|
+|[getState\_Y()](./ISCH_PrimitivePin.md)||Get the property state: Y coordinate|
+|[isAsync()](./ISCH_PrimitivePin.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitivePin.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_NoConnected(noConnected)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: whether there is a no-connect flag|
+|[setState\_OtherProperty(otherProperty)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: other parameters|
+|[setState\_PinColor(pinColor)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin color|
+|[setState\_PinLength(pinLength)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin length|
+|[setState\_PinName(pinName)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin name|
+|[setState\_PinNumber(pinNumber)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin number|
+|[setState\_PinShape(pinShape)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin shape|
+|[setState\_PinType(pinType)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: pin type|
+|[setState\_Rotation(rotation)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_X(x)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: X coordinate|
+|[setState\_Y(y)](./ISCH_PrimitivePin.md)||**_(BETA)_** Set the property state: Y coordinate|
+|[toAsync()](./ISCH_PrimitivePin.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitivePin.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -839,6 +295,7 @@ console.log('applied name:', refetched.getState_PinName());
 console.log('done returns same primitive:', applied.getState_PrimitiveId() === pin.getState_PrimitiveId());
 ```
 
+
 ### getstate_noconnected
 
 # ISCH\_PrimitivePin.getState\_NoConnected() method
@@ -878,6 +335,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('noConnected:', noConnected);
 ```
+
 
 ### getstate_otherproperty
 
@@ -919,6 +377,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('otherProperty:', otherProperty);
 ```
 
+
 ### getstate_pincolor
 
 # ISCH\_PrimitivePin.getState\_PinColor() method
@@ -957,6 +416,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('pinColor:', pinColor);
 ```
+
 
 ### getstate_pinlength
 
@@ -997,6 +457,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('pinLength:', pinLength);
 ```
 
+
 ### getstate_pinname
 
 # ISCH\_PrimitivePin.getState\_PinName() method
@@ -1035,6 +496,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('pinName:', pinName);
 ```
+
 
 ### getstate_pinnumber
 
@@ -1075,6 +537,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('pinNumber:', pinNumber);
 ```
 
+
 ### getstate_pinshape
 
 # ISCH\_PrimitivePin.getState\_PinShape() method
@@ -1114,6 +577,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('pinShape:', pinShape);
 ```
 
+
 ### getstate_pintype
 
 # ISCH\_PrimitivePin.getState\_pinType() method
@@ -1152,6 +616,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('pinType:', pinType);
 ```
+
 
 ### getstate_primitiveid
 
@@ -1196,6 +661,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetched number:', refetched.getState_PinNumber());
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitivePin.getState\_PrimitiveType() method
@@ -1234,6 +700,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -1274,6 +741,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_x
 
 # ISCH\_PrimitivePin.getState\_X() method
@@ -1313,6 +781,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 console.log('x:', x);
 ```
 
+
 ### getstate_y
 
 # ISCH\_PrimitivePin.getState\_Y() method
@@ -1351,6 +820,7 @@ await eda.sch_PrimitivePin.delete([pin.getState_PrimitiveId()]);
 
 console.log('y:', y);
 ```
+
 
 ### isasync
 
@@ -1398,6 +868,7 @@ console.log('asyncByDefault:', asyncByDefault);
 console.log('afterToSync:', afterToSync);
 console.log('afterToAsync:', afterToAsync);
 ```
+
 
 ### reset
 
@@ -1448,6 +919,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinName after reset:', refetched.getState_PinName());
 ```
 
+
 ### setstate_noconnected
 
 # ISCH\_PrimitivePin.setState\_NoConnected() method
@@ -1464,33 +936,9 @@ function setState_NoConnected(noConnected: boolean): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-noConnected
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether there is a no-connect flag
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|noConnected|boolean|Whether there is a no-connect flag|
 
 ## Returns
 
@@ -1526,6 +974,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('noConnected:', before, '→', refetched.getState_NoConnected());
 ```
 
+
 ### setstate_otherproperty
 
 # ISCH\_PrimitivePin.setState\_OtherProperty() method
@@ -1544,33 +993,9 @@ function setState_OtherProperty(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-otherProperty
-
-</td><td>
-
-Record&lt;string, string \| number \| boolean&gt;
-
-</td><td>
-
-Other parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|otherProperty|Record&lt;string, string \| number \| boolean&gt;|Other parameters|
 
 ## Returns
 
@@ -1606,6 +1031,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('otherProperty:', before, '→', refetched.getState_OtherProperty());
 ```
 
+
 ### setstate_pincolor
 
 # ISCH\_PrimitivePin.setState\_PinColor() method
@@ -1622,33 +1048,9 @@ function setState_PinColor(pinColor: string | null): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Pin color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinColor|string \| null|Pin color|
 
 ## Returns
 
@@ -1684,6 +1086,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinColor:', before, '→', refetched.getState_PinColor());
 ```
 
+
 ### setstate_pinlength
 
 # ISCH\_PrimitivePin.setState\_PinLength() method
@@ -1700,33 +1103,9 @@ function setState_PinLength(pinLength: number): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinLength
-
-</td><td>
-
-number
-
-</td><td>
-
-Pin length
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinLength|number|Pin length|
 
 ## Returns
 
@@ -1762,6 +1141,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinLength:', before, '→', refetched.getState_PinLength());
 ```
 
+
 ### setstate_pinname
 
 # ISCH\_PrimitivePin.setState\_PinName() method
@@ -1778,33 +1158,9 @@ function setState_PinName(pinName: string): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pin name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinName|string|Pin name|
 
 ## Returns
 
@@ -1840,6 +1196,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinName:', before, '→', refetched.getState_PinName());
 ```
 
+
 ### setstate_pinnumber
 
 # ISCH\_PrimitivePin.setState\_PinNumber() method
@@ -1856,33 +1213,9 @@ function setState_PinNumber(pinNumber: string): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinNumber
-
-</td><td>
-
-string
-
-</td><td>
-
-Pin number
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinNumber|string|Pin number|
 
 ## Returns
 
@@ -1918,6 +1251,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinNumber:', before, '→', refetched.getState_PinNumber());
 ```
 
+
 ### setstate_pinshape
 
 # ISCH\_PrimitivePin.setState\_PinShape() method
@@ -1934,33 +1268,9 @@ function setState_PinShape(pinShape: ESCH_PrimitivePinShape): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinShape
-
-</td><td>
-
-[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)
-
-</td><td>
-
-Pin shape
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinShape|[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)|Pin shape|
 
 ## Returns
 
@@ -1996,6 +1306,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinShape:', before, '→', refetched.getState_PinShape());
 ```
 
+
 ### setstate_pintype
 
 # ISCH\_PrimitivePin.setState\_PinType() method
@@ -2012,33 +1323,9 @@ function setState_PinType(pinType: ESCH_PrimitivePinType): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pinType
-
-</td><td>
-
-[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)
-
-</td><td>
-
-Pin type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pinType|[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)|Pin type|
 
 ## Returns
 
@@ -2074,6 +1361,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('pinType:', before, '→', refetched.getState_pinType());
 ```
 
+
 ### setstate_rotation
 
 # ISCH\_PrimitivePin.setState\_Rotation() method
@@ -2090,33 +1378,9 @@ function setState_Rotation(rotation: number): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -2152,6 +1416,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_x
 
 # ISCH\_PrimitivePin.setState\_X() method
@@ -2168,33 +1433,9 @@ function setState_X(x: number): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
 
 ## Returns
 
@@ -2230,6 +1471,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('x:', before, '→', refetched.getState_X());
 ```
 
+
 ### setstate_y
 
 # ISCH\_PrimitivePin.setState\_Y() method
@@ -2246,33 +1488,9 @@ function setState_Y(y: number): ISCH_PrimitivePin;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -2307,6 +1525,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 
 console.log('y:', before, '→', refetched.getState_Y());
 ```
+
 
 ### toasync
 
@@ -2354,6 +1573,7 @@ const refetched = await eda.sch_PrimitivePin.get(pin.getState_PrimitiveId());
 console.log('isAsync after toAsync:', isAsyncNow);
 console.log('pinNumber:', refetched.getState_PinNumber());
 ```
+
 
 ### tosync
 

@@ -10,54 +10,10 @@ interface IPCB_PadPairGroupItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name](./IPCB_PadPairGroupItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-<tr><td>
-
-[padPairs](./IPCB_PadPairGroupItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;\[string, string\]&gt;
-
-</td><td>
-
-Pad for array
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name](./IPCB_PadPairGroupItem.md)||string|Pad pair group name|
+|[padPairs](./IPCB_PadPairGroupItem.md)||Array&lt;\[string, string\]&gt;|Pad for array|
 
 ---
 

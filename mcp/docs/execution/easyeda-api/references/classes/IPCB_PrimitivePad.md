@@ -13,834 +13,74 @@ class IPCB_PrimitivePad implements IPCB_Primitive
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[async](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-异步
-
-</td></tr>
-<tr><td>
-
-[heatWelding](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null
-
-</td><td>
-
-热焊优化参数
-
-</td></tr>
-<tr><td>
-
-[hole](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md) \| null
-
-</td><td>
-
-孔
-
-</td></tr>
-<tr><td>
-
-[holeOffsetX](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-孔偏移 X
-
-</td></tr>
-<tr><td>
-
-[holeOffsetY](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-孔偏移 Y
-
-</td></tr>
-<tr><td>
-
-[holeRotation](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-孔相对于焊盘的旋转角度
-
-</td></tr>
-<tr><td>
-
-[layer](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)
-
-</td><td>
-
-层
-
-</td></tr>
-<tr><td>
-
-[metallization](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-是否金属化孔壁
-
-</td></tr>
-<tr><td>
-
-[net?](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 网络名称
-
-</td></tr>
-<tr><td>
-
-[pad?](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)
-
-</td><td>
-
-_(Optional)_ 焊盘外形
-
-</td></tr>
-<tr><td>
-
-[padNumber](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-焊盘编号
-
-</td></tr>
-<tr><td>
-
-[padType](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)
-
-</td><td>
-
-焊盘类型
-
-</td></tr>
-<tr><td>
-
-[primitiveId?](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ 图元 ID
-
-</td></tr>
-<tr><td>
-
-[primitiveLock](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-boolean
-
-</td><td>
-
-是否锁定
-
-</td></tr>
-<tr><td>
-
-[primitiveType](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-`readonly`
-
-</td><td>
-
-[EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)
-
-</td><td>
-
-图元类型
-
-</td></tr>
-<tr><td>
-
-[rotation](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-旋转角度
-
-</td></tr>
-<tr><td>
-
-[solderMaskAndPasteMaskExpansion](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null
-
-</td><td>
-
-阻焊/助焊扩展
-
-</td></tr>
-<tr><td>
-
-[specialPad?](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)
-
-</td><td>
-
-_(Optional)_ 特殊焊盘外形
-
-</td></tr>
-<tr><td>
-
-[x](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-位置 X
-
-</td></tr>
-<tr><td>
-
-[y](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-`protected`
-
-</td><td>
-
-number
-
-</td><td>
-
-位置 Y
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[async](./IPCB_PrimitivePad.md)|`protected`|boolean|异步|
+|[heatWelding](./IPCB_PrimitivePad.md)|`protected`|[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null|热焊优化参数|
+|[hole](./IPCB_PrimitivePad.md)|`protected`|[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md) \| null|孔|
+|[holeOffsetX](./IPCB_PrimitivePad.md)|`protected`|number|孔偏移 X|
+|[holeOffsetY](./IPCB_PrimitivePad.md)|`protected`|number|孔偏移 Y|
+|[holeRotation](./IPCB_PrimitivePad.md)|`protected`|number|孔相对于焊盘的旋转角度|
+|[layer](./IPCB_PrimitivePad.md)|`protected`|[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)|层|
+|[metallization](./IPCB_PrimitivePad.md)|`protected`|boolean|是否金属化孔壁|
+|[net?](./IPCB_PrimitivePad.md)|`protected`|string|_(Optional)_ 网络名称|
+|[pad?](./IPCB_PrimitivePad.md)|`protected`|[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)|_(Optional)_ 焊盘外形|
+|[padNumber](./IPCB_PrimitivePad.md)|`protected`|string|焊盘编号|
+|[padType](./IPCB_PrimitivePad.md)|`protected`|[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)|焊盘类型|
+|[primitiveId?](./IPCB_PrimitivePad.md)|`protected`|string|_(Optional)_ 图元 ID|
+|[primitiveLock](./IPCB_PrimitivePad.md)|`protected`|boolean|是否锁定|
+|[primitiveType](./IPCB_PrimitivePad.md)|`protected` `readonly`|[EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)|图元类型|
+|[rotation](./IPCB_PrimitivePad.md)|`protected`|number|旋转角度|
+|[solderMaskAndPasteMaskExpansion](./IPCB_PrimitivePad.md)|`protected`|[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null|阻焊/助焊扩展|
+|[specialPad?](./IPCB_PrimitivePad.md)|`protected`|[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)|_(Optional)_ 特殊焊盘外形|
+|[x](./IPCB_PrimitivePad.md)|`protected`|number|位置 X|
+|[y](./IPCB_PrimitivePad.md)|`protected`|number|位置 Y|
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** In PCB canvas in create primitive
-
-</td></tr>
-<tr><td>
-
-[done()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_HeatWelding()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: thermal relief optimization parameters
-
-</td></tr>
-<tr><td>
-
-[getState\_Hole()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: hole
-
-</td></tr>
-<tr><td>
-
-[getState\_HoleOffsetX()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: hole offset X
-
-</td></tr>
-<tr><td>
-
-[getState\_HoleOffsetY()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: hole offset Y
-
-</td></tr>
-<tr><td>
-
-[getState\_HoleRotation()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Rotation angle of the hole relative to the pad
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_Metallization()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Whether the hole wall is plated
-
-</td></tr>
-<tr><td>
-
-[getState\_Net()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: net name
-
-</td></tr>
-<tr><td>
-
-[getState\_Pad()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pad shape
-
-</td></tr>
-<tr><td>
-
-[getState\_PadNumber()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pad number
-
-</td></tr>
-<tr><td>
-
-[getState\_PadType()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: pad type
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_SolderMaskAndPasteMaskExpansion()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: solder mask / paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[getState\_SpecialPad()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: special pad shape
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: X position
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Y position
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_HeatWelding(heatWelding)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: thermal relief optimization parameters
-
-</td></tr>
-<tr><td>
-
-[setState\_Hole(hole)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: hole
-
-</td></tr>
-<tr><td>
-
-[setState\_HoleOffsetX(holeOffsetX)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: hole offset X
-
-</td></tr>
-<tr><td>
-
-[setState\_HoleOffsetY(holeOffsetY)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: hole offset Y
-
-</td></tr>
-<tr><td>
-
-[setState\_HoleRotation(holeRotation)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Rotation angle of the hole relative to the pad
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_Metallization(metallization)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Whether the hole wall is plated
-
-</td></tr>
-<tr><td>
-
-[setState\_Net(net)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: net
-
-</td></tr>
-<tr><td>
-
-[setState\_Pad(pad)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pad shape
-
-</td></tr>
-<tr><td>
-
-[setState\_PadNumber(padNumber)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: pad number
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_SolderMaskAndPasteMaskExpansion(solderMaskAndPasteMaskExpansion)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: solder mask / paste mask expansion
-
-</td></tr>
-<tr><td>
-
-[setState\_SpecialPad(specialPad)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: special pad shape
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: X position
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Y position
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create()](./IPCB_PrimitivePad.md)||**_(BETA)_** In PCB canvas in create primitive|
+|[done()](./IPCB_PrimitivePad.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_HeatWelding()](./IPCB_PrimitivePad.md)||Get the property state: thermal relief optimization parameters|
+|[getState\_Hole()](./IPCB_PrimitivePad.md)||Get the property state: hole|
+|[getState\_HoleOffsetX()](./IPCB_PrimitivePad.md)||Get the property state: hole offset X|
+|[getState\_HoleOffsetY()](./IPCB_PrimitivePad.md)||Get the property state: hole offset Y|
+|[getState\_HoleRotation()](./IPCB_PrimitivePad.md)||Get the property state: Rotation angle of the hole relative to the pad|
+|[getState\_Layer()](./IPCB_PrimitivePad.md)||Get the property state: Layer|
+|[getState\_Metallization()](./IPCB_PrimitivePad.md)||Get the property state: Whether the hole wall is plated|
+|[getState\_Net()](./IPCB_PrimitivePad.md)||Get the property state: net name|
+|[getState\_Pad()](./IPCB_PrimitivePad.md)||Get the property state: pad shape|
+|[getState\_PadNumber()](./IPCB_PrimitivePad.md)||Get the property state: pad number|
+|[getState\_PadType()](./IPCB_PrimitivePad.md)||Get the property state: pad type|
+|[getState\_PrimitiveId()](./IPCB_PrimitivePad.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitivePad.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitivePad.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./IPCB_PrimitivePad.md)||Get the property state: rotation angle|
+|[getState\_SolderMaskAndPasteMaskExpansion()](./IPCB_PrimitivePad.md)||Get the property state: solder mask / paste mask expansion|
+|[getState\_SpecialPad()](./IPCB_PrimitivePad.md)||Get the property state: special pad shape|
+|[getState\_X()](./IPCB_PrimitivePad.md)||Get the property state: X position|
+|[getState\_Y()](./IPCB_PrimitivePad.md)||Get the property state: Y position|
+|[isAsync()](./IPCB_PrimitivePad.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitivePad.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_HeatWelding(heatWelding)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: thermal relief optimization parameters|
+|[setState\_Hole(hole)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: hole|
+|[setState\_HoleOffsetX(holeOffsetX)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: hole offset X|
+|[setState\_HoleOffsetY(holeOffsetY)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: hole offset Y|
+|[setState\_HoleRotation(holeRotation)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: Rotation angle of the hole relative to the pad|
+|[setState\_Layer(layer)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_Metallization(metallization)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: Whether the hole wall is plated|
+|[setState\_Net(net)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: net|
+|[setState\_Pad(pad)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: pad shape|
+|[setState\_PadNumber(padNumber)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: pad number|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Rotation(rotation)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_SolderMaskAndPasteMaskExpansion(solderMaskAndPasteMaskExpansion)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: solder mask / paste mask expansion|
+|[setState\_SpecialPad(specialPad)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: special pad shape|
+|[setState\_X(x)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: X position|
+|[setState\_Y(y)](./IPCB_PrimitivePad.md)||**_(BETA)_** Set the property state: Y position|
+|[toAsync()](./IPCB_PrimitivePad.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitivePad.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -1125,6 +365,7 @@ console.log('padNumber:', pad.getState_PadNumber());
 console.log('padShape:', pad.getState_Pad());
 ```
 
+
 ### done
 
 # IPCB\_PrimitivePad.done() method
@@ -1167,6 +408,7 @@ console.log('rotation:', ref.getState_Rotation());
 console.log('padNumber:', ref.getState_PadNumber());
 ```
 
+
 ### getstate_heatwelding
 
 # IPCB\_PrimitivePad.getState\_HeatWelding() method
@@ -1203,6 +445,7 @@ await eda.pcb_PrimitivePad.delete([heated.getState_PrimitiveId(), plain.getState
 console.log('heatedConfig:', heatedConfig);
 console.log('plainConfig:', plainConfig);
 ```
+
 
 ### getstate_hole
 
@@ -1241,6 +484,7 @@ console.log('throughHole:', throughHole);
 console.log('smdHole:', smdHole);
 ```
 
+
 ### getstate_holeoffsetx
 
 # IPCB\_PrimitivePad.getState\_HoleOffsetX() method
@@ -1274,6 +518,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('holeOffsetX:', holeOffsetX);
 ```
+
 
 ### getstate_holeoffsety
 
@@ -1309,6 +554,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 console.log('holeOffsetY:', holeOffsetY);
 ```
 
+
 ### getstate_holerotation
 
 # IPCB\_PrimitivePad.getState\_HoleRotation() method
@@ -1342,6 +588,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('holeRotation:', holeRotation);
 ```
+
 
 ### getstate_layer
 
@@ -1380,6 +627,7 @@ console.log('topLayer:', topLayer);
 console.log('multiLayer:', multiLayer);
 ```
 
+
 ### getstate_metallization
 
 # IPCB\_PrimitivePad.getState\_Metallization() method
@@ -1416,6 +664,7 @@ await eda.pcb_PrimitivePad.delete([plated.getState_PrimitiveId(), nonPlated.getS
 console.log('platedMetallization:', platedMetallization);
 console.log('nonPlatedMetallization:', nonPlatedMetallization);
 ```
+
 
 ### getstate_net
 
@@ -1454,6 +703,7 @@ console.log('nettedNet:', nettedNet);
 console.log('freeNet:', freeNet);
 ```
 
+
 ### getstate_pad
 
 # IPCB\_PrimitivePad.getState\_Pad() method
@@ -1488,6 +738,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 console.log('padShape:', padShape);
 ```
 
+
 ### getstate_padnumber
 
 # IPCB\_PrimitivePad.getState\_PadNumber() method
@@ -1521,6 +772,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('padNumber:', padNumber);
 ```
+
 
 ### getstate_padtype
 
@@ -1558,6 +810,7 @@ await eda.pcb_PrimitivePad.delete([normal.getState_PrimitiveId(), mark.getState_
 console.log('normalType:', normalType);
 console.log('markType:', markType);
 ```
+
 
 ### getstate_primitiveid
 
@@ -1597,6 +850,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetchSamePad:', refetched.getState_PrimitiveId() === primitiveId);
 ```
 
+
 ### getstate_primitivelock
 
 # IPCB\_PrimitivePad.getState\_PrimitiveLock() method
@@ -1630,6 +884,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('primitiveLock:', primitiveLock);
 ```
+
 
 ### getstate_primitivetype
 
@@ -1665,6 +920,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 console.log('primitiveType:', primitiveType);
 ```
 
+
 ### getstate_rotation
 
 # IPCB\_PrimitivePad.getState\_Rotation() method
@@ -1698,6 +954,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('rotation:', rotation);
 ```
+
 
 ### getstate_soldermaskandpastemaskexpansion
 
@@ -1735,6 +992,7 @@ await eda.pcb_PrimitivePad.delete([customized.getState_PrimitiveId(), plain.getS
 console.log('customizedExpansion:', customizedExpansion);
 console.log('plainExpansion:', plainExpansion);
 ```
+
 
 ### getstate_specialpad
 
@@ -1774,6 +1032,7 @@ console.log('attemptedSpecial:', attemptedSpecial);
 console.log('normalShapeKept:', JSON.stringify(attempted.getState_Pad()) === JSON.stringify(['ELLIPSE', 60, 60]));
 ```
 
+
 ### getstate_x
 
 # IPCB\_PrimitivePad.getState\_X() method
@@ -1808,6 +1067,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 console.log('posX:', posX);
 ```
 
+
 ### getstate_y
 
 # IPCB\_PrimitivePad.getState\_Y() method
@@ -1841,6 +1101,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 
 console.log('posY:', posY);
 ```
+
 
 ### isasync
 
@@ -1881,6 +1142,7 @@ console.log('afterCreate:', afterCreate);
 console.log('afterToSync:', afterToSync);
 console.log('afterToAsync:', afterToAsync);
 ```
+
 
 ### reset
 
@@ -1925,6 +1187,7 @@ await eda.pcb_PrimitivePad.delete([pad.getState_PrimitiveId()]);
 console.log('rotationAfterReset:', ref.getState_Rotation());
 ```
 
+
 ### setstate_heatwelding
 
 # IPCB\_PrimitivePad.setState\_HeatWelding() method
@@ -1941,33 +1204,9 @@ function setState_HeatWelding(heatWelding: IPCB_PrimitivePadHeatWelding | null):
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-heatWelding
-
-</td><td>
-
-[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null
-
-</td><td>
-
-Thermal relief optimization parameters
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|heatWelding|[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null|Thermal relief optimization parameters|
 
 ## Returns
 
@@ -1994,6 +1233,7 @@ const after = pad.getState_HeatWelding();
 console.log('heatWelding:', before, '→', after);
 ```
 
+
 ### setstate_hole
 
 # IPCB\_PrimitivePad.setState\_Hole() method
@@ -2010,33 +1250,9 @@ function setState_Hole(hole: TPCB_PrimitivePadHole): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-hole
-
-</td><td>
-
-[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md)
-
-</td><td>
-
-Pad drilling
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|hole|[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md)|Pad drilling|
 
 ## Returns
 
@@ -2072,6 +1288,7 @@ console.log('hole:', beforeHole, '→', ref.getState_Hole());
 console.log('layer:', ref.getState_Layer());
 ```
 
+
 ### setstate_holeoffsetx
 
 # IPCB\_PrimitivePad.setState\_HoleOffsetX() method
@@ -2088,33 +1305,9 @@ function setState_HoleOffsetX(holeOffsetX: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-holeOffsetX
-
-</td><td>
-
-number
-
-</td><td>
-
-Hole offset X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|holeOffsetX|number|Hole offset X|
 
 ## Returns
 
@@ -2145,6 +1338,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('holeOffsetX:', before, '→', ref.getState_HoleOffsetX());
 ```
 
+
 ### setstate_holeoffsety
 
 # IPCB\_PrimitivePad.setState\_HoleOffsetY() method
@@ -2161,33 +1355,9 @@ function setState_HoleOffsetY(holeOffsetY: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-holeOffsetY
-
-</td><td>
-
-number
-
-</td><td>
-
-Hole offset Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|holeOffsetY|number|Hole offset Y|
 
 ## Returns
 
@@ -2218,6 +1388,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('holeOffsetY:', before, '→', ref.getState_HoleOffsetY());
 ```
 
+
 ### setstate_holerotation
 
 # IPCB\_PrimitivePad.setState\_HoleRotation() method
@@ -2234,33 +1405,9 @@ function setState_HoleRotation(holeRotation: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-holeRotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle of the hole relative to the pad
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|holeRotation|number|Rotation angle of the hole relative to the pad|
 
 ## Returns
 
@@ -2291,6 +1438,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('holeRotation:', before, '→', ref.getState_HoleRotation());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitivePad.setState\_Layer() method
@@ -2307,33 +1455,9 @@ function setState_Layer(layer: TPCB_LayersOfPad): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)|Layer|
 
 ## Returns
 
@@ -2370,6 +1494,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('layer:', before, '→', ref.getState_Layer());
 ```
 
+
 ### setstate_metallization
 
 # IPCB\_PrimitivePad.setState\_Metallization() method
@@ -2386,33 +1511,9 @@ function setState_Metallization(metallization: boolean): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-metallization
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether the hole wall is plated
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|metallization|boolean|Whether the hole wall is plated|
 
 ## Returns
 
@@ -2443,6 +1544,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('metallization:', before, '→', ref.getState_Metallization());
 ```
 
+
 ### setstate_net
 
 # IPCB\_PrimitivePad.setState\_Net() method
@@ -2459,33 +1561,9 @@ function setState_Net(net?: string): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|_(Optional)_ Net name|
 
 ## Returns
 
@@ -2516,6 +1594,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('net:', before, '→', ref.getState_Net());
 ```
 
+
 ### setstate_pad
 
 # IPCB\_PrimitivePad.setState\_Pad() method
@@ -2532,33 +1611,9 @@ function setState_Pad(pad: TPCB_PrimitivePadShape): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pad
-
-</td><td>
-
-[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)
-
-</td><td>
-
-Pad shape
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pad|[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)|Pad shape|
 
 ## Returns
 
@@ -2591,6 +1646,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('padShape:', before, '→', ref.getState_Pad());
 ```
 
+
 ### setstate_padnumber
 
 # IPCB\_PrimitivePad.setState\_PadNumber() method
@@ -2607,33 +1663,9 @@ function setState_PadNumber(padNumber: string): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padNumber
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad number
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padNumber|string|Pad number|
 
 ## Returns
 
@@ -2660,6 +1692,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('padNumber:', before, '→', ref.getState_PadNumber());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitivePad.setState\_PrimitiveLock() method
@@ -2676,33 +1709,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -2729,6 +1738,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('primitiveLock:', before, '→', ref.getState_PrimitiveLock());
 ```
 
+
 ### setstate_rotation
 
 # IPCB\_PrimitivePad.setState\_Rotation() method
@@ -2745,33 +1755,9 @@ function setState_Rotation(rotation: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -2798,6 +1784,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('rotation:', before, '→', ref.getState_Rotation());
 ```
 
+
 ### setstate_soldermaskandpastemaskexpansion
 
 # IPCB\_PrimitivePad.setState\_SolderMaskAndPasteMaskExpansion() method
@@ -2816,33 +1803,9 @@ function setState_SolderMaskAndPasteMaskExpansion(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-solderMaskAndPasteMaskExpansion
-
-</td><td>
-
-[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null
-
-</td><td>
-
-Solder mask / paste mask expansion
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|solderMaskAndPasteMaskExpansion|[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null|Solder mask / paste mask expansion|
 
 ## Returns
 
@@ -2869,6 +1832,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('expansion:', before, '→', ref.getState_SolderMaskAndPasteMaskExpansion());
 ```
 
+
 ### setstate_specialpad
 
 # IPCB\_PrimitivePad.setState\_SpecialPad() method
@@ -2885,31 +1849,9 @@ function setState_SpecialPad(specialPad: TPCB_PrimitiveSpecialPadShape): IPCB_Pr
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-specialPad
-
-</td><td>
-
-[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|specialPad|[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)||
 
 ## Returns
 
@@ -2941,6 +1883,7 @@ console.log('specialPadApplied:', special !== undefined);
 console.log('normalShapeKept:', JSON.stringify(normalShape) === JSON.stringify(['ELLIPSE', 60, 60]));
 ```
 
+
 ### setstate_x
 
 # IPCB\_PrimitivePad.setState\_X() method
@@ -2957,33 +1900,9 @@ function setState_X(x: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X position
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X position|
 
 ## Returns
 
@@ -3009,6 +1928,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('x:', x, '→', ref.getState_X());
 ```
 
+
 ### setstate_y
 
 # IPCB\_PrimitivePad.setState\_Y() method
@@ -3025,33 +1945,9 @@ function setState_Y(y: number): IPCB_PrimitivePad;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y position
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|Y position|
 
 ## Returns
 
@@ -3076,6 +1972,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 
 console.log('y:', 3000, '→', ref.getState_Y());
 ```
+
 
 ### toasync
 
@@ -3115,6 +2012,7 @@ const ref = await eda.pcb_PrimitivePad.get(pad.getState_PrimitiveId());
 console.log('isAsync:', asyncPad.isAsync());
 console.log('x:', x, '→', ref.getState_X());
 ```
+
 
 ### tosync
 

@@ -17,196 +17,24 @@ The `ISCH_PrimitiveWire.net` global net name property involves multi-sheet refre
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_BusName()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: bus name
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: bus color
-
-</td></tr>
-<tr><td>
-
-[getState\_Line()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: polyline coordinate group
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[setState\_BusName(busName)](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: bus name
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Bus color
-
-</td></tr>
-<tr><td>
-
-[setState\_Line(line)](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: polyline coordinate group
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveBus.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveBus.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_BusName()](./ISCH_PrimitiveBus.md)||Get the property state: bus name|
+|[getState\_Color()](./ISCH_PrimitiveBus.md)||Get the property state: bus color|
+|[getState\_Line()](./ISCH_PrimitiveBus.md)||Get the property state: polyline coordinate group|
+|[getState\_LineType()](./ISCH_PrimitiveBus.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitiveBus.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveBus.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveBus.md)||Get the property state: primitive type|
+|[isAsync()](./ISCH_PrimitiveBus.md)||Query whether the primitive is an async primitive|
+|[setState\_BusName(busName)](./ISCH_PrimitiveBus.md)||**_(BETA)_** Set the property state: bus name|
+|[setState\_Color(color)](./ISCH_PrimitiveBus.md)||**_(BETA)_** Set the property state: Bus color|
+|[setState\_Line(line)](./ISCH_PrimitiveBus.md)||**_(BETA)_** Set the property state: polyline coordinate group|
+|[setState\_LineType(lineType)](./ISCH_PrimitiveBus.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveBus.md)||**_(BETA)_** Set the property state: Line width|
+|[toAsync()](./ISCH_PrimitiveBus.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveBus.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -257,6 +85,7 @@ console.log('busName:', 'DATA[0..7]', '→', refetched.getState_BusName());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_busname
 
 # ISCH\_PrimitiveBus.getState\_BusName() method
@@ -289,6 +118,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 
 console.log('busName:', busName);
 ```
+
 
 ### getstate_color
 
@@ -323,6 +153,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 console.log('color:', color);
 ```
 
+
 ### getstate_line
 
 # ISCH\_PrimitiveBus.getState\_Line() method
@@ -355,6 +186,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 
 console.log('line:', JSON.stringify(line));
 ```
+
 
 ### getstate_linetype
 
@@ -389,6 +221,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 console.log('lineType:', lineType);
 ```
 
+
 ### getstate_linewidth
 
 # ISCH\_PrimitiveBus.getState\_LineWidth() method
@@ -421,6 +254,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_primitiveid
 
@@ -457,6 +291,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetch matched:', refetched.getState_PrimitiveId() === primitiveId);
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveBus.getState\_PrimitiveType() method
@@ -489,6 +324,7 @@ await eda.sch_PrimitiveBus.delete([bus.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### isasync
 
@@ -526,6 +362,7 @@ console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
 
+
 ### setstate_busname
 
 # ISCH\_PrimitiveBus.setState\_BusName() method
@@ -542,33 +379,9 @@ function setState_BusName(busName: string): ISCH_PrimitiveBus;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-busName
-
-</td><td>
-
-string
-
-</td><td>
-
-Bus name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|busName|string|Bus name|
 
 ## Returns
 
@@ -600,6 +413,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 console.log('busName:', before, '→', refetched.getState_BusName());
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitiveBus.setState\_Color() method
@@ -616,33 +430,9 @@ function setState_Color(color: string | null): ISCH_PrimitiveBus;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Bus color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Bus color|
 
 ## Returns
 
@@ -674,6 +464,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 console.log('color:', before, '→', refetched.getState_Color());
 ```
 
+
 ### setstate_line
 
 # ISCH\_PrimitiveBus.setState\_Line() method
@@ -690,33 +481,9 @@ function setState_Line(line: Array<number> | Array<Array<number>>): ISCH_Primiti
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-line
-
-</td><td>
-
-Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;
-
-</td><td>
-
-Polyline coordinate group
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|line|Array&lt;number&gt; \| Array&lt;Array&lt;number&gt;&gt;|Polyline coordinate group|
 
 ## Returns
 
@@ -748,6 +515,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 console.log('line:', JSON.stringify(before), '→', JSON.stringify(refetched.getState_Line()));
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitiveBus.setState\_LineType() method
@@ -764,33 +532,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -822,6 +566,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 console.log('lineType:', before, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitiveBus.setState\_LineWidth() method
@@ -838,33 +583,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitiveBus;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -895,6 +616,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 
 console.log('lineWidth:', before, '→', refetched.getState_LineWidth());
 ```
+
 
 ### toasync
 
@@ -937,6 +659,7 @@ const refetched = await eda.sch_PrimitiveBus.get(bus.getState_PrimitiveId());
 console.log('isAsync after toAsync:', bus.isAsync());
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
+
 
 ### tosync
 

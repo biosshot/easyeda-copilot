@@ -10,64 +10,12 @@ class SYS_LoadingAndProgressBar
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[destroyLoading()](./SYS_LoadingAndProgressBar.md)
-
-</td><td>
-
-</td><td>
-
-Destroy the no-progress loading overlay
-
-</td></tr>
-<tr><td>
-
-[destroyProgressBar()](./SYS_LoadingAndProgressBar.md)
-
-</td><td>
-
-</td><td>
-
-Destroy the progress bar
-
-</td></tr>
-<tr><td>
-
-[showLoading()](./SYS_LoadingAndProgressBar.md)
-
-</td><td>
-
-</td><td>
-
-Show the no-progress loading overlay
-
-</td></tr>
-<tr><td>
-
-[showProgressBar(progress, title)](./SYS_LoadingAndProgressBar.md)
-
-</td><td>
-
-</td><td>
-
-Show the progress bar or set its progress
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[destroyLoading()](./SYS_LoadingAndProgressBar.md)||Destroy the no-progress loading overlay|
+|[destroyProgressBar()](./SYS_LoadingAndProgressBar.md)||Destroy the progress bar|
+|[showLoading()](./SYS_LoadingAndProgressBar.md)||Show the no-progress loading overlay|
+|[showProgressBar(progress, title)](./SYS_LoadingAndProgressBar.md)||Show the progress bar or set its progress|
 
 ---
 
@@ -102,6 +50,7 @@ eda.sys_LoadingAndProgressBar.destroyLoading();
 console.log('加载覆盖已销毁，编辑器恢复可操作');
 ```
 
+
 ### destroyprogressbar
 
 # SYS\_LoadingAndProgressBar.destroyProgressBar() method
@@ -130,6 +79,7 @@ await new Promise(r => setTimeout(r, 800));
 eda.sys_LoadingAndProgressBar.destroyProgressBar();
 console.log('进度条已销毁');
 ```
+
 
 ### showloading
 
@@ -164,6 +114,7 @@ eda.sys_LoadingAndProgressBar.destroyLoading();
 console.log('加载覆盖已销毁，编辑器恢复可操作');
 ```
 
+
 ### showprogressbar
 
 # SYS\_LoadingAndProgressBar.showProgressBar() method
@@ -178,46 +129,10 @@ function showProgressBar(progress?: number, title?: string): void;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-progress
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Progress value, value range `0-100`
-
-</td></tr>
-<tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Progress bar title
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|progress|number|_(Optional)_ Progress value, value range `0-100`|
+|title|string|_(Optional)_ Progress bar title|
 
 ## Returns
 

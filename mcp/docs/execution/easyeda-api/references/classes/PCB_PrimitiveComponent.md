@@ -11,141 +11,19 @@ class PCB_PrimitiveComponent implements IPCB_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(component, layer, x, y, rotation, primitiveLock)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Device
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Device
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Device
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Device
-
-</td></tr>
-<tr><td>
-
-[getAll(layer, primitiveLock)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Device
-
-</td></tr>
-<tr><td>
-
-[getAllPinsByPrimitiveId(primitiveId)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all pads associated with the device
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId(layer, primitiveLock)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Device primitive IDs
-
-</td></tr>
-<tr><td>
-
-[getAllPropertyNames()](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The set of all property names of all devices
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Device
-
-</td></tr>
-<tr><td>
-
-[placeComponentWithMouse(component)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Place with the mouse device
-
-</td></tr>
-<tr><td>
-
-[placeFootprintWithMouse(footprint, properties)](./PCB_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Place with the mouse footprint
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(component, layer, x, y, rotation, primitiveLock)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Create Device|
+|[delete(primitiveIds)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Delete Device|
+|[get(primitiveIds)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get Device|
+|[get(primitiveIds)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get Device|
+|[getAll(layer, primitiveLock)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get all Device|
+|[getAllPinsByPrimitiveId(primitiveId)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get all pads associated with the device|
+|[getAllPrimitiveId(layer, primitiveLock)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get all Device primitive IDs|
+|[getAllPropertyNames()](./PCB_PrimitiveComponent.md)||**_(BETA)_** Get The set of all property names of all devices|
+|[modify(primitiveId, property)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Modify Device|
+|[placeComponentWithMouse(component)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Place with the mouse device|
+|[placeFootprintWithMouse(footprint, properties)](./PCB_PrimitiveComponent.md)||**_(BETA)_** Place with the mouse footprint|
 
 ---
 
@@ -180,98 +58,14 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md) \| { libraryType: [ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_FootprintItem](../interfaces/ILIB_FootprintItem.md) \| [ILIB\_FootprintSearchItem](../interfaces/ILIB_FootprintSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-<tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md) \| { libraryType: [ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_FootprintItem](../interfaces/ILIB_FootprintItem.md) \| [ILIB\_FootprintSearchItem](../interfaces/ILIB_FootprintSearchItem.md)|Associate library device|
+|layer|[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)|Layer|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|rotation|number|_(Optional)_ Rotation angle|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -302,6 +96,7 @@ console.log('x:', comp.getState_X(), 'y:', comp.getState_Y());
 console.log('rotation:', comp.getState_Rotation());
 ```
 
+
 ### delete
 
 # PCB\_PrimitiveComponent.delete() method
@@ -318,33 +113,9 @@ function delete(primitiveIds: string | IPCB_PrimitiveComponent | Array<string> |
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md)<!-- -->&gt;
-
-</td><td>
-
-Device primitive ID or Device primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md)<!-- -->&gt;|Device primitive ID or Device primitive object|
 
 ## Returns
 
@@ -380,6 +151,7 @@ console.log('afterContains:', afterIds.includes(compId));
 console.log('component count:', beforeIds.length, '→', afterIds.length);
 ```
 
+
 ### get
 
 # PCB\_PrimitiveComponent.get() method
@@ -396,33 +168,9 @@ function get(primitiveIds: string): Promise<IPCB_PrimitiveComponent | undefined>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -456,6 +204,7 @@ console.log('array length:', arr.length);
 console.log('sameId:', arr[0].getState_PrimitiveId() === compId);
 ```
 
+
 ### get_1
 
 # PCB\_PrimitiveComponent.get() method
@@ -472,33 +221,9 @@ function get(primitiveIds: Array<string>): Promise<Array<IPCB_PrimitiveComponent
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -529,46 +254,10 @@ function getAll(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)
-
-</td><td>
-
-_(Optional)_ Layer
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)|_(Optional)_ Layer|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -601,6 +290,7 @@ console.log('fixture included:', all.some(c => c.getState_PrimitiveId() === comp
 console.log('designators:', all.map(c => c.getState_Designator()).join(', '));
 ```
 
+
 ### getallpinsbyprimitiveid
 
 # PCB\_PrimitiveComponent.getAllPinsByPrimitiveId() method
@@ -619,33 +309,9 @@ function getAllPinsByPrimitiveId(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-Device primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string|Device primitive ID|
 
 ## Returns
 
@@ -678,6 +344,7 @@ console.log('firstPin:', 'x:', pins[0].getState_X(), 'y:', pins[0].getState_Y())
 console.log('firstPinParentId:', parentIds[0]);
 ```
 
+
 ### getallprimitiveid
 
 # PCB\_PrimitiveComponent.getAllPrimitiveId() method
@@ -697,46 +364,10 @@ function getAllPrimitiveId(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)
-
-</td><td>
-
-_(Optional)_ Layer
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)|_(Optional)_ Layer|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -768,6 +399,7 @@ console.log('top layer ids:', topIds.length);
 console.log('fixture included:', allIds.includes(compId));
 console.log('firstId:', allIds[0]);
 ```
+
 
 ### getallpropertynames
 
@@ -809,6 +441,7 @@ console.log('property name count:', names.length);
 console.log('names:', names.join(', '));
 ```
 
+
 ### modify
 
 # PCB\_PrimitiveComponent.modify() method
@@ -823,64 +456,30 @@ Modify Device
 function modify(
 	primitiveId: string | IPCB_PrimitiveComponent,
 	property: {
-		layer?: undefined | EPCB_LayerId.TOP | EPCB_LayerId.BOTTOM;
-		x?: undefined | number;
-		y?: undefined | number;
-		rotation?: undefined | number;
-		primitiveLock?: undefined | false | true;
-		addIntoBom?: undefined | false | true;
-		designator?: undefined | null | string;
-		name?: undefined | null | string;
-		uniqueId?: undefined | null | string;
-		manufacturer?: undefined | null | string;
-		manufacturerId?: undefined | null | string;
-		supplier?: undefined | null | string;
-		supplierId?: undefined | null | string;
-		otherProperty?: undefined | Record<string, any>;
+		layer?: TPCB_LayersOfComponent;
+		x?: number;
+		y?: number;
+		rotation?: number;
+		primitiveLock?: boolean;
+		addIntoBom?: boolean;
+		designator?: string | null;
+		name?: string | null;
+		uniqueId?: string | null;
+		manufacturer?: string | null;
+		manufacturerId?: string | null;
+		supplier?: string | null;
+		supplierId?: string | null;
+		otherProperty?: { [key: string]: any };
 	},
 ): Promise<IPCB_PrimitiveComponent | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ layer?: undefined \| [EPCB\_LayerId.TOP](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.BOTTOM](../enums/EPCB_LayerId.md)<!-- -->; x?: undefined \| number; y?: undefined \| number; rotation?: undefined \| number; primitiveLock?: undefined \| false \| true; addIntoBom?: undefined \| false \| true; designator?: undefined \| null \| string; name?: undefined \| null \| string; uniqueId?: undefined \| null \| string; manufacturer?: undefined \| null \| string; manufacturerId?: undefined \| null \| string; supplier?: undefined \| null \| string; supplierId?: undefined \| null \| string; otherProperty?: undefined \| Record&lt;string, any&gt; }
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [IPCB\_PrimitiveComponent](./IPCB_PrimitiveComponent.md)|Primitive ID|
+|property|{ layer?: [TPCB\_LayersOfComponent](../types/TPCB_LayersOfComponent.md)<!-- -->; x?: number; y?: number; rotation?: number; primitiveLock?: boolean; addIntoBom?: boolean; designator?: string \| null; name?: string \| null; uniqueId?: string \| null; manufacturer?: string \| null; manufacturerId?: string \| null; supplier?: string \| null; supplierId?: string \| null; otherProperty?: { \[key: string\]: any } }||
 
 ## Returns
 
@@ -918,6 +517,7 @@ console.log('y:', beforeY, '→', refreshed.getState_Y());
 console.log('rotation:', beforeRotation, '→', refreshed.getState_Rotation());
 ```
 
+
 ### placecomponentwithmouse
 
 # PCB\_PrimitiveComponent.placeComponentWithMouse() method
@@ -936,33 +536,9 @@ function placeComponentWithMouse(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -990,52 +566,16 @@ Place with the mouse footprint
 function placeFootprintWithMouse(
 	footprint:
 		{ libraryUuid: string; uuid: string } | ILIB_FootprintItem | ILIB_FootprintSearchItem,
-	properties?: Record<string, boolean | number | string | undefined>,
+	properties?: { [key: string]: boolean | number | string | undefined },
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-footprint
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_FootprintItem](../interfaces/ILIB_FootprintItem.md) \| [ILIB\_FootprintSearchItem](../interfaces/ILIB_FootprintSearchItem.md)
-
-</td><td>
-
-Associate library footprint
-
-</td></tr>
-<tr><td>
-
-properties
-
-</td><td>
-
-Record&lt;string, boolean \| number \| string \| undefined&gt;
-
-</td><td>
-
-_(Optional)_ Device property
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|footprint|{ libraryUuid: string; uuid: string } \| [ILIB\_FootprintItem](../interfaces/ILIB_FootprintItem.md) \| [ILIB\_FootprintSearchItem](../interfaces/ILIB_FootprintSearchItem.md)|Associate library footprint|
+|properties|\{ \[key: string\]: boolean \| number \| string \| undefined \}|_(Optional)_ Device property|
 
 ## Returns
 

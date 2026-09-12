@@ -14,108 +14,16 @@ Get or operate the selected elements
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[clearSelected()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-Clear the selection
-
-</td></tr>
-<tr><td>
-
-[doCrossProbeSelect(components, pins, nets, highlight, select)](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-Perform cross-probe selection
-
-</td></tr>
-<tr><td>
-
-[doSelectPrimitives(primitiveIds)](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-Select primitives using primitive IDs
-
-</td></tr>
-<tr><td>
-
-[getAllSelectedPrimitives\_PrimitiveId()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query the primitive IDs of all selected primitives
-
-</td></tr>
-<tr><td>
-
-[getAllSelectedPrimitives()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query the primitive objects of all selected primitives
-
-</td></tr>
-<tr><td>
-
-[getCurrentMousePosition()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current the mouse position on the canvas
-
-</td></tr>
-<tr><td>
-
-[getSelectedPrimitives\_PrimitiveId()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-Query the primitive IDs of the selected primitives
-
-</td></tr>
-<tr><td>
-
-[getSelectedPrimitives()](./SCH_SelectControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Query all parameters of the selected primitives
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[clearSelected()](./SCH_SelectControl.md)||Clear the selection|
+|[doCrossProbeSelect(components, pins, nets, highlight, select)](./SCH_SelectControl.md)||Perform cross-probe selection|
+|[doSelectPrimitives(primitiveIds)](./SCH_SelectControl.md)||Select primitives using primitive IDs|
+|[getAllSelectedPrimitives\_PrimitiveId()](./SCH_SelectControl.md)||**_(BETA)_** Query the primitive IDs of all selected primitives|
+|[getAllSelectedPrimitives()](./SCH_SelectControl.md)||**_(BETA)_** Query the primitive objects of all selected primitives|
+|[getCurrentMousePosition()](./SCH_SelectControl.md)||**_(BETA)_** Get Current the mouse position on the canvas|
+|[getSelectedPrimitives\_PrimitiveId()](./SCH_SelectControl.md)||Query the primitive IDs of the selected primitives|
+|[getSelectedPrimitives()](./SCH_SelectControl.md)||**_(BETA)_** Query all parameters of the selected primitives|
 
 ---
 
@@ -163,6 +71,7 @@ console.log('清除后选中数量：', afterIds.length);
 await eda.sch_PrimitiveRectangle.delete([rectId]);
 ```
 
+
 ### docrossprobeselect
 
 # SCH\_SelectControl.doCrossProbeSelect() method
@@ -183,85 +92,13 @@ function doCrossProbeSelect(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-components
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Device designator
-
-</td></tr>
-<tr><td>
-
-pins
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Device designator \_ pin number, format is \['U1\_1', 'U1\_2'\]
-
-</td></tr>
-<tr><td>
-
-nets
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-highlight
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to highlight
-
-</td></tr>
-<tr><td>
-
-select
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Select
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|components|Array&lt;string&gt;|_(Optional)_ Device designator|
+|pins|Array&lt;string&gt;|_(Optional)_ Device designator \_ pin number, format is \['U1\_1', 'U1\_2'\]|
+|nets|Array&lt;string&gt;|_(Optional)_ Net name|
+|highlight|boolean|_(Optional)_ Whether to highlight|
+|select|boolean|_(Optional)_ Whether Select|
 
 ## Returns
 
@@ -287,6 +124,7 @@ eda.sch_SelectControl.clearSelected();
 await eda.sch_PrimitiveWire.delete([wireId]);
 ```
 
+
 ### doselectprimitives
 
 # SCH\_SelectControl.doSelectPrimitives() method
@@ -301,33 +139,9 @@ function doSelectPrimitives(primitiveIds: string | Array<string>): Promise<boole
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| Array&lt;string&gt;|Primitive ID|
 
 ## Returns
 
@@ -355,6 +169,7 @@ console.log('包含测试矩形：', selectedIds.includes(rectId));
 eda.sch_SelectControl.clearSelected();
 await eda.sch_PrimitiveRectangle.delete([rectId]);
 ```
+
 
 ### getallselectedprimitives
 
@@ -398,6 +213,7 @@ eda.sch_SelectControl.clearSelected();
 await eda.sch_PrimitiveRectangle.delete([rectId]);
 ```
 
+
 ### getallselectedprimitives_primitiveid
 
 # SCH\_SelectControl.getAllSelectedPrimitives\_PrimitiveId() method
@@ -437,6 +253,7 @@ eda.sch_SelectControl.clearSelected();
 await eda.sch_PrimitiveRectangle.delete(rectIds);
 ```
 
+
 ### getcurrentmouseposition
 
 # SCH\_SelectControl.getCurrentMousePosition() method
@@ -472,6 +289,7 @@ else {
 	console.log('鼠标当前不在画布上');
 }
 ```
+
 
 ### getselectedprimitives
 

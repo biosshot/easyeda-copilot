@@ -10,31 +10,9 @@ class SCH_Utils
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[splitLines(lines)](./SCH_Utils.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Split polyline
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[splitLines(lines)](./SCH_Utils.md)||**_(BETA)_** Split polyline|
 
 ---
 
@@ -58,33 +36,9 @@ function splitLines(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lines
-
-</td><td>
-
-Array&lt;number \| Array&lt;number&gt;&gt;
-
-</td><td>
-
-Polyline coordinate group. Each segment is a continuous line described by `[x1, y1, x2, y2, x3, y3]`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lines|Array&lt;number \| Array&lt;number&gt;&gt;|Polyline coordinate group. Each segment is a continuous line described by `[x1, y1, x2, y2, x3, y3]`|
 
 ## Returns
 

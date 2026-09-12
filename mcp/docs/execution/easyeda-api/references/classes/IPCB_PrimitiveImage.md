@@ -13,284 +13,32 @@ class IPCB_PrimitiveImage implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_ComplexPolygon()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: image source data ( complex polygon)
-
-</td></tr>
-<tr><td>
-
-[getState\_Height()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: height
-
-</td></tr>
-<tr><td>
-
-[getState\_HorizonMirror()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is horizontally mirrored
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_Rotation()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[getState\_Width()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: width
-
-</td></tr>
-<tr><td>
-
-[getState\_X()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: BBox top-left point coordinates X
-
-</td></tr>
-<tr><td>
-
-[getState\_Y()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: BBox top-left point coordinates Y
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_Height(height)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: height
-
-</td></tr>
-<tr><td>
-
-[setState\_HorizonMirror(horizonMirror)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is horizontally mirrored
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_Rotation(rotation)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: rotation angle
-
-</td></tr>
-<tr><td>
-
-[setState\_Width(width)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: width
-
-</td></tr>
-<tr><td>
-
-[setState\_X(x)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: BBox top-left point coordinates X
-
-</td></tr>
-<tr><td>
-
-[setState\_Y(y)](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: BBox top-left point coordinates Y
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveImage.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./IPCB_PrimitiveImage.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_ComplexPolygon()](./IPCB_PrimitiveImage.md)||Get the property state: image source data ( complex polygon)|
+|[getState\_Height()](./IPCB_PrimitiveImage.md)||Get the property state: height|
+|[getState\_HorizonMirror()](./IPCB_PrimitiveImage.md)||Get the property state: whether it is horizontally mirrored|
+|[getState\_Layer()](./IPCB_PrimitiveImage.md)||Get the property state: Layer|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveImage.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveImage.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveImage.md)||Get the property state: primitive type|
+|[getState\_Rotation()](./IPCB_PrimitiveImage.md)||Get the property state: rotation angle|
+|[getState\_Width()](./IPCB_PrimitiveImage.md)||Get the property state: width|
+|[getState\_X()](./IPCB_PrimitiveImage.md)||Get the property state: BBox top-left point coordinates X|
+|[getState\_Y()](./IPCB_PrimitiveImage.md)||Get the property state: BBox top-left point coordinates Y|
+|[isAsync()](./IPCB_PrimitiveImage.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveImage.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_Height(height)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: height|
+|[setState\_HorizonMirror(horizonMirror)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: whether it is horizontally mirrored|
+|[setState\_Layer(layer)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_Rotation(rotation)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: rotation angle|
+|[setState\_Width(width)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: width|
+|[setState\_X(x)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: BBox top-left point coordinates X|
+|[setState\_Y(y)](./IPCB_PrimitiveImage.md)||**_(BETA)_** Set the property state: BBox top-left point coordinates Y|
+|[toAsync()](./IPCB_PrimitiveImage.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveImage.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -339,6 +87,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### getstate_complexpolygon
 
 # IPCB\_PrimitiveImage.getState\_ComplexPolygon() method
@@ -374,6 +123,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 
 console.log('polygonSource:', JSON.stringify(source));
 ```
+
 
 ### getstate_height
 
@@ -411,6 +161,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('height:', height);
 ```
 
+
 ### getstate_horizonmirror
 
 # IPCB\_PrimitiveImage.getState\_HorizonMirror() method
@@ -446,6 +197,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 
 console.log('horizonMirror:', horizonMirror);
 ```
+
 
 ### getstate_layer
 
@@ -483,6 +235,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('layer:', layer);
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveImage.getState\_PrimitiveId() method
@@ -518,6 +271,7 @@ await eda.pcb_PrimitiveImage.delete([primitiveId]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -555,6 +309,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveImage.getState\_PrimitiveType() method
@@ -590,6 +345,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_rotation
 
@@ -627,6 +383,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('rotation:', rotation);
 ```
 
+
 ### getstate_width
 
 # IPCB\_PrimitiveImage.getState\_Width() method
@@ -662,6 +419,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 
 console.log('width:', width);
 ```
+
 
 ### getstate_x
 
@@ -699,6 +457,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('x:', imageX);
 ```
 
+
 ### getstate_y
 
 # IPCB\_PrimitiveImage.getState\_Y() method
@@ -735,6 +494,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 console.log('y:', imageY);
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveImage.isAsync() method
@@ -770,6 +530,7 @@ await eda.pcb_PrimitiveImage.delete([image.getState_PrimitiveId()]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -814,6 +575,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_height
 
 # IPCB\_PrimitiveImage.setState\_Height() method
@@ -830,33 +592,9 @@ function setState_Height(height: number): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-height
-
-</td><td>
-
-number
-
-</td><td>
-
-Height
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|height|number|Height|
 
 ## Returns
 
@@ -885,6 +623,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('height:', before, '→', refetched.getState_Height());
 ```
 
+
 ### setstate_horizonmirror
 
 # IPCB\_PrimitiveImage.setState\_HorizonMirror() method
@@ -901,33 +640,9 @@ function setState_HorizonMirror(horizonMirror: boolean): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-horizonMirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is horizontally mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|horizonMirror|boolean|Whether it is horizontally mirrored|
 
 ## Returns
 
@@ -956,6 +671,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('horizonMirror:', before, '→', refetched.getState_HorizonMirror());
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveImage.setState\_Layer() method
@@ -972,33 +688,9 @@ function setState_Layer(layer: TPCB_LayersOfImage): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfImage](../types/TPCB_LayersOfImage.md)|Layer|
 
 ## Returns
 
@@ -1027,6 +719,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveImage.setState\_PrimitiveLock() method
@@ -1043,33 +736,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1098,6 +767,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
 
+
 ### setstate_rotation
 
 # IPCB\_PrimitiveImage.setState\_Rotation() method
@@ -1114,33 +784,9 @@ function setState_Rotation(rotation: number): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-Rotation angle
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|rotation|number|Rotation angle|
 
 ## Returns
 
@@ -1169,6 +815,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('rotation:', before, '→', refetched.getState_Rotation());
 ```
 
+
 ### setstate_width
 
 # IPCB\_PrimitiveImage.setState\_Width() method
@@ -1185,33 +832,9 @@ function setState_Width(width: number): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-width
-
-</td><td>
-
-number
-
-</td><td>
-
-Width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|width|number|Width|
 
 ## Returns
 
@@ -1240,6 +863,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('width:', before, '→', refetched.getState_Width());
 ```
 
+
 ### setstate_x
 
 # IPCB\_PrimitiveImage.setState\_X() method
@@ -1256,33 +880,9 @@ function setState_X(x: number): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-BBox top-left point coordinates X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|BBox top-left point coordinates X|
 
 ## Returns
 
@@ -1311,6 +911,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('x:', before, '→', refetched.getState_X());
 ```
 
+
 ### setstate_y
 
 # IPCB\_PrimitiveImage.setState\_Y() method
@@ -1327,33 +928,9 @@ function setState_Y(y: number): IPCB_PrimitiveImage;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-BBox top-left point coordinates Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|y|number|BBox top-left point coordinates Y|
 
 ## Returns
 
@@ -1381,6 +958,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 
 console.log('y:', before, '→', refetched.getState_Y());
 ```
+
 
 ### toasync
 
@@ -1421,6 +999,7 @@ const refetched = await eda.pcb_PrimitiveImage.get(image.getState_PrimitiveId())
 console.log('width:', refetched.getState_Width());
 console.log('height:', refetched.getState_Height());
 ```
+
 
 ### tosync
 

@@ -10,196 +10,24 @@ class PCB_Net
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getAllNetName()](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-Get the net names of all nets
-
-</td></tr>
-<tr><td>
-
-[getAllNets()](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Detailed information of the net
-
-</td></tr>
-<tr><td>
-
-[getAllNetsName()](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-Get the net names of all nets
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitivesByNet(net, primitiveTypes)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all primitives associated with the specified net
-
-</td></tr>
-<tr><td>
-
-[getNet(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Specify detailed information of the net
-
-</td></tr>
-<tr><td>
-
-[getNetColor(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the color of the specified net
-
-</td></tr>
-<tr><td>
-
-[getNetLength(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-Get the length of the specified net
-
-</td></tr>
-<tr><td>
-
-[getNetlist(type)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-Get the netlist
-
-</td></tr>
-<tr><td>
-
-[highlightNet(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Highlight the net
-
-</td></tr>
-<tr><td>
-
-[selectNet(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Select net
-
-</td></tr>
-<tr><td>
-
-[setNetColor(net, color)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the color of the specified net
-
-</td></tr>
-<tr><td>
-
-[setNetlist(type, netlist)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-Update the netlist
-
-</td></tr>
-<tr><td>
-
-[unhighlightAllNets()](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Unhighlight all nets
-
-</td></tr>
-<tr><td>
-
-[unhighlightNet(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Unhighlight the net
-
-</td></tr>
-<tr><td>
-
-[unselectAllNets()](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Unselect all nets
-
-</td></tr>
-<tr><td>
-
-[unselectNet(net)](./PCB_Net.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Unselect the net
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getAllNetName()](./PCB_Net.md)||Get the net names of all nets|
+|[getAllNets()](./PCB_Net.md)||**_(BETA)_** Get all Detailed information of the net|
+|[getAllNetsName()](./PCB_Net.md)||Get the net names of all nets|
+|[getAllPrimitivesByNet(net, primitiveTypes)](./PCB_Net.md)||**_(BETA)_** Get all primitives associated with the specified net|
+|[getNet(net)](./PCB_Net.md)||**_(BETA)_** Get Specify detailed information of the net|
+|[getNetColor(net)](./PCB_Net.md)||**_(BETA)_** Get the color of the specified net|
+|[getNetLength(net)](./PCB_Net.md)||Get the length of the specified net|
+|[getNetlist(type)](./PCB_Net.md)||Get the netlist|
+|[highlightNet(net)](./PCB_Net.md)||**_(BETA)_** Highlight the net|
+|[selectNet(net)](./PCB_Net.md)||**_(BETA)_** Select net|
+|[setNetColor(net, color)](./PCB_Net.md)||**_(BETA)_** Set the color of the specified net|
+|[setNetlist(type, netlist)](./PCB_Net.md)||Update the netlist|
+|[unhighlightAllNets()](./PCB_Net.md)||**_(BETA)_** Unhighlight all nets|
+|[unhighlightNet(net)](./PCB_Net.md)||**_(BETA)_** Unhighlight the net|
+|[unselectAllNets()](./PCB_Net.md)||**_(BETA)_** Unselect all nets|
+|[unselectNet(net)](./PCB_Net.md)||**_(BETA)_** Unselect the net|
 
 ---
 
@@ -268,6 +96,7 @@ console.log('targetNetColor:', target?.color);
 console.log('targetNetLength:', target?.length);
 ```
 
+
 ### getallnetsname
 
 # PCB\_Net.getAllNetsName() method
@@ -303,6 +132,7 @@ console.log('netNames:', names.slice(0, 5));
 console.log('hasExampleNet:', names.includes('嘉立创示例_NET1'));
 ```
 
+
 ### getallprimitivesbynet
 
 # PCB\_Net.getAllPrimitivesByNet() method
@@ -322,46 +152,10 @@ function getAllPrimitivesByNet(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-primitiveTypes
-
-</td><td>
-
-Array&lt;[EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Array of primitive types. If the specified primitive type has no net property, the returned data will always be empty
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
+|primitiveTypes|Array&lt;[EPCB\_PrimitiveType](../enums/EPCB_PrimitiveType.md)<!-- -->&gt;|_(Optional)_ Array of primitive types. If the specified primitive type has no net property, the returned data will always be empty|
 
 ## Returns
 
@@ -390,6 +184,7 @@ console.log('firstNet:', first?.net);
 console.log('firstCenter:', first?.center);
 ```
 
+
 ### getnet
 
 # PCB\_Net.getNet() method
@@ -406,33 +201,9 @@ function getNet(net: string): Promise<IPCB_NetInfo | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -457,6 +228,7 @@ console.log('netColor:', netInfo?.color);
 console.log('netLength:', netInfo?.length);
 ```
 
+
 ### getnetcolor
 
 # PCB\_Net.getNetColor() method
@@ -473,33 +245,9 @@ function getNetColor(net: string): Promise<IPCB_NetInfo['color'] | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -522,6 +270,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('netColor:', color);
 ```
 
+
 ### getnetlength
 
 # PCB\_Net.getNetLength() method
@@ -536,33 +285,9 @@ function getNetLength(net: string): Promise<number | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -587,6 +312,7 @@ await eda.pcb_PrimitiveLine.delete([line.getState_PrimitiveId()]);
 console.log('netLength:', netLength);
 ```
 
+
 ### getnetlist
 
 # PCB\_Net.getNetlist() method
@@ -601,33 +327,9 @@ function getNetlist(type?: ESYS_NetlistType): Promise<string>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)
-
-</td><td>
-
-_(Optional)_ Netlist format
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)|_(Optional)_ Netlist format|
 
 ## Returns
 
@@ -651,33 +353,9 @@ function highlightNet(net: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -704,6 +382,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('highlighted:', highlighted);
 ```
 
+
 ### selectnet
 
 # PCB\_Net.selectNet() method
@@ -720,33 +399,9 @@ function selectNet(net: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -769,6 +424,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('selected:', selected);
 ```
 
+
 ### setnetcolor
 
 # PCB\_Net.setNetColor() method
@@ -785,46 +441,10 @@ function setNetColor(net: string, color: IPCB_NetInfo['color']): Promise<boolean
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-[IPCB\_NetInfo](../interfaces/IPCB_NetInfo.md)<!-- -->\['color'\]
-
-</td><td>
-
-Net color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
+|color|[IPCB\_NetInfo](../interfaces/IPCB_NetInfo.md)<!-- -->\['color'\]|Net color|
 
 ## Returns
 
@@ -852,6 +472,7 @@ console.log('before:', before);
 console.log('after:', after);
 ```
 
+
 ### setnetlist
 
 # PCB\_Net.setNetlist() method
@@ -866,46 +487,10 @@ function setNetlist(type: ESYS_NetlistType | undefined, netlist: string): Promis
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md) \| undefined
-
-</td><td>
-
-Netlist format
-
-</td></tr>
-<tr><td>
-
-netlist
-
-</td><td>
-
-string
-
-</td><td>
-
-Netlist data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md) \| undefined|Netlist format|
+|netlist|string|Netlist data|
 
 ## Returns
 
@@ -947,6 +532,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('allHighlightsCleared:', cleared);
 ```
 
+
 ### unhighlightnet
 
 # PCB\_Net.unhighlightNet() method
@@ -963,33 +549,9 @@ function unhighlightNet(net: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 
@@ -1018,6 +580,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 
 console.log('unhighlighted:', unhighlighted);
 ```
+
 
 ### unselectallnets
 
@@ -1059,6 +622,7 @@ await eda.pcb_PrimitiveVia.delete([via.getState_PrimitiveId()]);
 console.log('allSelectionsCleared:', cleared);
 ```
 
+
 ### unselectnet
 
 # PCB\_Net.unselectNet() method
@@ -1075,33 +639,9 @@ function unselectNet(net: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|net|string|Net name|
 
 ## Returns
 

@@ -10,84 +10,12 @@ interface ISYS_MathBBox
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[maxX](./ISYS_MathBBox.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Maximum X coordinate
-
-</td></tr>
-<tr><td>
-
-[maxY](./ISYS_MathBBox.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Maximum Y coordinate
-
-</td></tr>
-<tr><td>
-
-[minX](./ISYS_MathBBox.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Minimum X coordinate
-
-</td></tr>
-<tr><td>
-
-[minY](./ISYS_MathBBox.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-Minimum Y coordinate
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[maxX](./ISYS_MathBBox.md)||number|Maximum X coordinate|
+|[maxY](./ISYS_MathBBox.md)||number|Maximum Y coordinate|
+|[minX](./ISYS_MathBBox.md)||number|Minimum X coordinate|
+|[minY](./ISYS_MathBBox.md)||number|Minimum Y coordinate|
 
 ---
 

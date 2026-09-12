@@ -14,229 +14,27 @@ Here the editor control is based on the sheets under the currently open engineer
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[activateDocument(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Activate a document
-
-</td></tr>
-<tr><td>
-
-[activateSplitScreen(splitScreenId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Activate a split screen
-
-</td></tr>
-<tr><td>
-
-[closeDocument(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Close document
-
-</td></tr>
-<tr><td>
-
-[createSplitScreen(splitScreenType, tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Create Split screen
-
-</td></tr>
-<tr><td>
-
-[generateIndicatorMarkers(markers, color, lineWidth, zoom, tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Generate indicator markers
-
-</td></tr>
-<tr><td>
-
-[getCurrentRenderedAreaImage(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the canvas rendering region image
-
-</td></tr>
-<tr><td>
-
-[getSplitScreenIdByTabId(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Use tab ID get split screen ID
-
-</td></tr>
-<tr><td>
-
-[getSplitScreenTree()](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Get the editor split screen property tree
-
-</td></tr>
-<tr><td>
-
-[getTabsBySplitScreenId(splitScreenId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Get all tabs under the specified split screen ID
-
-</td></tr>
-<tr><td>
-
-[mergeAllDocumentFromSplitScreen()](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Merge all split screens
-
-</td></tr>
-<tr><td>
-
-[moveDocumentToSplitScreen(tabId, splitScreenId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Move a document to the specified split screen
-
-</td></tr>
-<tr><td>
-
-[openDocument(documentUuid, splitScreenId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Open document
-
-</td></tr>
-<tr><td>
-
-[openLibraryDocument(libraryUuid, libraryType, uuid, splitScreenId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open library symbol, footprint document
-
-</td></tr>
-<tr><td>
-
-[removeIndicatorMarkers(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Remove indicator markers
-
-</td></tr>
-<tr><td>
-
-[tileAllDocumentToSplitScreen()](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-Tile all documents
-
-</td></tr>
-<tr><td>
-
-[zoomTo(x, y, scaleRatio, tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Zoom to coordinates
-
-</td></tr>
-<tr><td>
-
-[zoomToAllPrimitives(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Zoom to all primitives (fit all)
-
-</td></tr>
-<tr><td>
-
-[zoomToRegion(left, right, top, bottom, tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Zoom to region
-
-</td></tr>
-<tr><td>
-
-[zoomToSelectedPrimitives(tabId)](./DMT_EditorControl.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Zoom to the selected primitives (fit selection)
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[activateDocument(tabId)](./DMT_EditorControl.md)||Activate a document|
+|[activateSplitScreen(splitScreenId)](./DMT_EditorControl.md)||Activate a split screen|
+|[closeDocument(tabId)](./DMT_EditorControl.md)||Close document|
+|[createSplitScreen(splitScreenType, tabId)](./DMT_EditorControl.md)||Create Split screen|
+|[generateIndicatorMarkers(markers, color, lineWidth, zoom, tabId)](./DMT_EditorControl.md)||**_(BETA)_** Generate indicator markers|
+|[getCurrentRenderedAreaImage(tabId)](./DMT_EditorControl.md)||**_(BETA)_** Get the canvas rendering region image|
+|[getSplitScreenIdByTabId(tabId)](./DMT_EditorControl.md)||Use tab ID get split screen ID|
+|[getSplitScreenTree()](./DMT_EditorControl.md)||Get the editor split screen property tree|
+|[getTabsBySplitScreenId(splitScreenId)](./DMT_EditorControl.md)||Get all tabs under the specified split screen ID|
+|[mergeAllDocumentFromSplitScreen()](./DMT_EditorControl.md)||Merge all split screens|
+|[moveDocumentToSplitScreen(tabId, splitScreenId)](./DMT_EditorControl.md)||Move a document to the specified split screen|
+|[openDocument(documentUuid, splitScreenId)](./DMT_EditorControl.md)||Open document|
+|[openLibraryDocument(libraryUuid, libraryType, uuid, splitScreenId)](./DMT_EditorControl.md)||**_(BETA)_** Open library symbol, footprint document|
+|[removeIndicatorMarkers(tabId)](./DMT_EditorControl.md)||**_(BETA)_** Remove indicator markers|
+|[tileAllDocumentToSplitScreen()](./DMT_EditorControl.md)||Tile all documents|
+|[zoomTo(x, y, scaleRatio, tabId)](./DMT_EditorControl.md)||**_(BETA)_** Zoom to coordinates|
+|[zoomToAllPrimitives(tabId)](./DMT_EditorControl.md)||**_(BETA)_** Zoom to all primitives (fit all)|
+|[zoomToRegion(left, right, top, bottom, tabId)](./DMT_EditorControl.md)||**_(BETA)_** Zoom to region|
+|[zoomToSelectedPrimitives(tabId)](./DMT_EditorControl.md)||**_(BETA)_** Zoom to the selected primitives (fit selection)|
 
 ---
 
@@ -256,33 +54,9 @@ function activateDocument(tabId: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-Tab ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|Tab ID|
 
 ## Returns
 
@@ -308,6 +82,7 @@ const activated = await eda.dmt_EditorControl.activateDocument(tabSch);
 console.log('activated:', activated);
 ```
 
+
 ### activatesplitscreen
 
 # DMT\_EditorControl.activateSplitScreen() method
@@ -322,33 +97,9 @@ function activateSplitScreen(splitScreenId: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-Split screen ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|splitScreenId|string|Split screen ID|
 
 ## Returns
 
@@ -380,6 +131,7 @@ const merged = await eda.dmt_EditorControl.mergeAllDocumentFromSplitScreen();
 console.log('merged:', merged);
 ```
 
+
 ### closedocument
 
 # DMT\_EditorControl.closeDocument() method
@@ -394,33 +146,9 @@ function closeDocument(tabId: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-Tab ID. Here [IDMT\_SchematicPageItem.uuid](../interfaces/IDMT_SchematicPageItem.md)<!-- -->, [IDMT\_PcbItem.uuid](../interfaces/IDMT_PcbItem.md)<!-- -->, and [IDMT\_PanelItem.uuid](../interfaces/IDMT_PanelItem.md) are supported as input
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|Tab ID. Here [IDMT\_SchematicPageItem.uuid](../interfaces/IDMT_SchematicPageItem.md)<!-- -->, [IDMT\_PcbItem.uuid](../interfaces/IDMT_PcbItem.md)<!-- -->, and [IDMT\_PanelItem.uuid](../interfaces/IDMT_PanelItem.md) are supported as input|
 
 ## Returns
 
@@ -452,6 +180,7 @@ const deleted = await eda.dmt_Schematic.deleteSchematic(schematicUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### createsplitscreen
 
 # DMT\_EditorControl.createSplitScreen() method
@@ -469,46 +198,10 @@ function createSplitScreen(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-splitScreenType
-
-</td><td>
-
-[EDMT\_EditorSplitScreenDirection](../enums/EDMT_EditorSplitScreenDirection.md)
-
-</td><td>
-
-Split screen type, `horizontal` horizontal, `vertical` vertical
-
-</td></tr>
-<tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-Tab ID. This tab will be moved into the new split screen
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|splitScreenType|[EDMT\_EditorSplitScreenDirection](../enums/EDMT_EditorSplitScreenDirection.md)|Split screen type, `horizontal` horizontal, `vertical` vertical|
+|tabId|string|Tab ID. This tab will be moved into the new split screen|
 
 ## Returns
 
@@ -546,6 +239,7 @@ const merged = await eda.dmt_EditorControl.mergeAllDocumentFromSplitScreen();
 console.log('merged:', merged);
 ```
 
+
 ### generateindicatormarkers
 
 # DMT\_EditorControl.generateIndicatorMarkers() method
@@ -568,85 +262,13 @@ function generateIndicatorMarkers(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-markers
-
-</td><td>
-
-Array&lt;[IDMT\_IndicatorMarkerShape](../interfaces/IDMT_IndicatorMarkerShape.md)<!-- -->&gt;
-
-</td><td>
-
-Array of indicator marker shape objects
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-\{ r: number; g: number; b: number; alpha: number \}
-
-</td><td>
-
-_(Optional)_ Indicator marker color
-
-</td></tr>
-<tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Line width
-
-</td></tr>
-<tr><td>
-
-zoom
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to locate and zoom
-
-</td></tr>
-<tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|markers|Array&lt;[IDMT\_IndicatorMarkerShape](../interfaces/IDMT_IndicatorMarkerShape.md)<!-- -->&gt;|Array of indicator marker shape objects|
+|color|\{ r: number; g: number; b: number; alpha: number \}|_(Optional)_ Indicator marker color|
+|lineWidth|number|_(Optional)_ Line width|
+|zoom|boolean|_(Optional)_ Whether to locate and zoom|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 
@@ -684,6 +306,7 @@ const removed = await eda.dmt_EditorControl.removeIndicatorMarkers(tabId);
 console.log('removed:', removed);
 ```
 
+
 ### getcurrentrenderedareaimage
 
 # DMT\_EditorControl.getCurrentRenderedAreaImage() method
@@ -700,33 +323,9 @@ function getCurrentRenderedAreaImage(tabId?: string): Promise<Blob | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be obtained
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be obtained|
 
 ## Returns
 
@@ -750,6 +349,7 @@ console.log('size:', image.size);
 console.log('mimeType:', image.type);
 ```
 
+
 ### getsplitscreenidbytabid
 
 # DMT\_EditorControl.getSplitScreenIdByTabId() method
@@ -764,33 +364,9 @@ function getSplitScreenIdByTabId(tabId: string): Promise<string | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-Tab ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|Tab ID|
 
 ## Returns
 
@@ -810,6 +386,7 @@ const splitScreenId = await eda.dmt_EditorControl.getSplitScreenIdByTabId(tabId)
 console.log('tabId:', tabId);
 console.log('splitScreenId:', splitScreenId);
 ```
+
 
 ### getsplitscreentree
 
@@ -852,6 +429,7 @@ console.log('split count:', splitIds.length);
 console.log('tab titles:', tabTitles);
 ```
 
+
 ### gettabsbysplitscreenid
 
 # DMT\_EditorControl.getTabsBySplitScreenId() method
@@ -866,33 +444,9 @@ function getTabsBySplitScreenId(splitScreenId: string): Promise<Array<IDMT_Edito
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-Split screen ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|splitScreenId|string|Split screen ID|
 
 ## Returns
 
@@ -923,6 +477,7 @@ console.log('splitScreenId:', leaf.id);
 console.log('tab count:', tabs.length);
 console.log('titles:', tabs.map(t => t.title));
 ```
+
 
 ### mergealldocumentfromsplitscreen
 
@@ -966,6 +521,7 @@ const tree = await eda.dmt_EditorControl.getSplitScreenTree();
 console.log('child splits left:', tree.children?.length ?? 0);
 ```
 
+
 ### movedocumenttosplitscreen
 
 # DMT\_EditorControl.moveDocumentToSplitScreen() method
@@ -980,46 +536,10 @@ function moveDocumentToSplitScreen(tabId: string, splitScreenId: string): Promis
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-Tab ID
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-[Split screen ID](../interfaces/IDMT_EditorSplitScreenItem.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|Tab ID|
+|splitScreenId|string|[Split screen ID](../interfaces/IDMT_EditorSplitScreenItem.md)|
 
 ## Returns
 
@@ -1055,6 +575,7 @@ const mergedBack = await eda.dmt_EditorControl.mergeAllDocumentFromSplitScreen()
 console.log('mergedBack:', mergedBack);
 ```
 
+
 ### opendocument
 
 # DMT\_EditorControl.openDocument() method
@@ -1069,46 +590,10 @@ function openDocument(documentUuid: string, splitScreenId?: string): Promise<str
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-documentUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Document UUID. Here [IDMT\_SchematicItem.uuid](../interfaces/IDMT_SchematicItem.md)<!-- -->, [IDMT\_SchematicPageItem.uuid](../interfaces/IDMT_SchematicPageItem.md)<!-- -->, [IDMT\_PcbItem.uuid](../interfaces/IDMT_PcbItem.md)<!-- -->, and [IDMT\_PanelItem.uuid](../interfaces/IDMT_PanelItem.md) are supported as input
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID, which is the [IDMT\_EditorSplitScreenItem.id](../interfaces/IDMT_EditorSplitScreenItem.md) obtained by the [DMT\_EditorControl.getSplitScreenTree()](./DMT_EditorControl.md) method
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|documentUuid|string|Document UUID. Here [IDMT\_SchematicItem.uuid](../interfaces/IDMT_SchematicItem.md)<!-- -->, [IDMT\_SchematicPageItem.uuid](../interfaces/IDMT_SchematicPageItem.md)<!-- -->, [IDMT\_PcbItem.uuid](../interfaces/IDMT_PcbItem.md)<!-- -->, and [IDMT\_PanelItem.uuid](../interfaces/IDMT_PanelItem.md) are supported as input|
+|splitScreenId|string|_(Optional)_ Split screen ID, which is the [IDMT\_EditorSplitScreenItem.id](../interfaces/IDMT_EditorSplitScreenItem.md) obtained by the [DMT\_EditorControl.getSplitScreenTree()](./DMT_EditorControl.md) method|
 
 ## Returns
 
@@ -1127,6 +612,7 @@ console.log('target:', pages[0].name);
 const tabId = await eda.dmt_EditorControl.openDocument(pages[0].uuid);
 console.log('tabId:', tabId);
 ```
+
 
 ### openlibrarydocument
 
@@ -1149,72 +635,12 @@ function openLibraryDocument(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-libraryType
-
-</td><td>
-
-[ELIB\_LibraryType.SYMBOL](../enums/ELIB_LibraryType.md) \| [ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type, support symbol and footprint
-
-</td></tr>
-<tr><td>
-
-uuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Symbol, footprint UUID
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID, which is the [IDMT\_EditorSplitScreenItem.id](../interfaces/IDMT_EditorSplitScreenItem.md) obtained by the [DMT\_EditorControl.getSplitScreenTree()](./DMT_EditorControl.md) method
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|libraryType|[ELIB\_LibraryType.SYMBOL](../enums/ELIB_LibraryType.md) \| [ELIB\_LibraryType.FOOTPRINT](../enums/ELIB_LibraryType.md)|Library type, support symbol and footprint|
+|uuid|string|Symbol, footprint UUID|
+|splitScreenId|string|_(Optional)_ Split screen ID, which is the [IDMT\_EditorSplitScreenItem.id](../interfaces/IDMT_EditorSplitScreenItem.md) obtained by the [DMT\_EditorControl.getSplitScreenTree()](./DMT_EditorControl.md) method|
 
 ## Returns
 
@@ -1238,6 +664,7 @@ const closed = await eda.dmt_EditorControl.closeDocument(tabId);
 console.log('closed:', closed);
 ```
 
+
 ### removeindicatormarkers
 
 # DMT\_EditorControl.removeIndicatorMarkers() method
@@ -1254,33 +681,9 @@ function removeIndicatorMarkers(tabId?: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 
@@ -1311,6 +714,7 @@ console.log('generated:', generated);
 const removed = await eda.dmt_EditorControl.removeIndicatorMarkers(tabId);
 console.log('removed:', removed);
 ```
+
 
 ### tilealldocumenttosplitscreen
 
@@ -1355,6 +759,7 @@ const merged = await eda.dmt_EditorControl.mergeAllDocumentFromSplitScreen();
 console.log('merged:', merged);
 ```
 
+
 ### zoomto
 
 # DMT\_EditorControl.zoomTo() method
@@ -1376,72 +781,12 @@ function zoomTo(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Center X coordinate. If not passed in, the current X coordinate will not be changed
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Center Y coordinate. If not passed in, the current Y coordinate will not be changed
-
-</td></tr>
-<tr><td>
-
-scaleRatio
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Zoom ratio. If not passed in, the current zoom ratio will not be changed. The unit span is `1/100`<!-- -->. If `200` is passed in, it means a zoom ratio of `200%`
-
-</td></tr>
-<tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|_(Optional)_ Center X coordinate. If not passed in, the current X coordinate will not be changed|
+|y|number|_(Optional)_ Center Y coordinate. If not passed in, the current Y coordinate will not be changed|
+|scaleRatio|number|_(Optional)_ Zoom ratio. If not passed in, the current zoom ratio will not be changed. The unit span is `1/100`<!-- -->. If `200` is passed in, it means a zoom ratio of `200%`|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 
@@ -1465,6 +810,7 @@ const bounds = await eda.dmt_EditorControl.zoomTo(100, 100, 200, tabId);
 console.log('bounds:', bounds);
 ```
 
+
 ### zoomtoallprimitives
 
 # DMT\_EditorControl.zoomToAllPrimitives() method
@@ -1483,33 +829,9 @@ function zoomToAllPrimitives(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 
@@ -1533,6 +855,7 @@ const bounds = await eda.dmt_EditorControl.zoomToAllPrimitives(tabId);
 console.log('bounds:', bounds);
 ```
 
+
 ### zoomtoregion
 
 # DMT\_EditorControl.zoomToRegion() method
@@ -1555,85 +878,13 @@ function zoomToRegion(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-left
-
-</td><td>
-
-number
-
-</td><td>
-
-First X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-right
-
-</td><td>
-
-number
-
-</td><td>
-
-Second X coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-top
-
-</td><td>
-
-number
-
-</td><td>
-
-First Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-bottom
-
-</td><td>
-
-number
-
-</td><td>
-
-Second Y coordinate of the rectangle
-
-</td></tr>
-<tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|left|number|First X coordinate of the rectangle|
+|right|number|Second X coordinate of the rectangle|
+|top|number|First Y coordinate of the rectangle|
+|bottom|number|Second Y coordinate of the rectangle|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 
@@ -1657,6 +908,7 @@ const zoomed = await eda.dmt_EditorControl.zoomToRegion(0, 400, 0, 300, tabId);
 console.log('zoomed:', zoomed);
 ```
 
+
 ### zoomtoselectedprimitives
 
 # DMT\_EditorControl.zoomToSelectedPrimitives() method
@@ -1675,33 +927,9 @@ function zoomToSelectedPrimitives(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-tabId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|tabId|string|_(Optional)_ Tab ID. If not passed in, the canvas with the last input focus will be used|
 
 ## Returns
 

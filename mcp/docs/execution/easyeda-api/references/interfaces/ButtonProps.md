@@ -10,99 +10,14 @@ interface ButtonProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[disabled?](./ButtonProps.md)
-
-</td><td>
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Disable
-
-</td></tr>
-<tr><td>
-
-[icon?](./ButtonProps.md)
-
-</td><td>
-
-</td><td>
-
-[IconProps](./IconProps.md)
-
-</td><td>
-
-_(Optional)_ Button icon configuration
-
-</td></tr>
-<tr><td>
-
-[onClick?](./ButtonProps.md)
-
-</td><td>
-
-</td><td>
-
-() =&gt; void
-
-</td><td>
-
-_(Optional)_ 点击按钮时触发
-
-</td></tr>
-<tr><td>
-
-[text?](./ButtonProps.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Button show text
-
-</td></tr>
-<tr><td>
-
-[type?](./ButtonProps.md)
-
-</td><td>
-
-</td><td>
-
-'default' \| 'primary' \| 'danger' \| 'forbidden' \| 'text'
-
-</td><td>
-
-_(Optional)_ Button style type: default / primary / danger / forbidden / text
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[disabled?](./ButtonProps.md)||boolean|_(Optional)_ Whether Disable|
+|[icon?](./ButtonProps.md)||[IconProps](./IconProps.md)|_(Optional)_ Button icon configuration|
+|[onClick?](./ButtonProps.md)||() =&gt; void|_(Optional)_ 点击按钮时触发|
+|[text?](./ButtonProps.md)||string|_(Optional)_ Button show text|
+|[triggerEnter?](./ButtonProps.md)||boolean|_(Optional)_ 是否为对话框的 Enter 触发按钮（仅 Dialog 内部生效，按 Enter 会触发该按钮点击）|
+|[type?](./ButtonProps.md)||'default' \| 'primary' \| 'danger' \| 'forbidden' \| 'text'|_(Optional)_ Button style type: default / primary / danger / forbidden / text|
 
 ---
 
@@ -154,6 +69,18 @@ Button show text
 
 ```typescript
 text?: string;
+```
+
+### triggerenter
+
+# ButtonProps.triggerEnter property
+
+是否为对话框的 Enter 触发按钮（仅 Dialog 内部生效，按 Enter 会触发该按钮点击）
+
+## Signature
+
+```typescript
+triggerEnter?: boolean;
 ```
 
 ### type

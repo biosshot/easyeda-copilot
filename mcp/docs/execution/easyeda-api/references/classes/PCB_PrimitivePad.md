@@ -11,97 +11,15 @@ class PCB_PrimitivePad implements IPCB_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(layer, padNumber, x, y, rotation, pad, net, hole, holeOffsetX, holeOffsetY, holeRotation, metallization, padType, specialPad, solderMaskAndPasteMaskExpansion, heatWelding, primitiveLock)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-Create Pad
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Pad
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Pad
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Pad
-
-</td></tr>
-<tr><td>
-
-[getAll(layer, net, primitiveLock, padType)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Pad
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId(layer, net, primitiveLock, padType)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Pad primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./PCB_PrimitivePad.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Pad
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(layer, padNumber, x, y, rotation, pad, net, hole, holeOffsetX, holeOffsetY, holeRotation, metallization, padType, specialPad, solderMaskAndPasteMaskExpansion, heatWelding, primitiveLock)](./PCB_PrimitivePad.md)||Create Pad|
+|[delete(primitiveIds)](./PCB_PrimitivePad.md)||**_(BETA)_** Delete Pad|
+|[get(primitiveIds)](./PCB_PrimitivePad.md)||**_(BETA)_** Get Pad|
+|[get(primitiveIds)](./PCB_PrimitivePad.md)||**_(BETA)_** Get Pad|
+|[getAll(layer, net, primitiveLock, padType)](./PCB_PrimitivePad.md)||**_(BETA)_** Get all Pad|
+|[getAllPrimitiveId(layer, net, primitiveLock, padType)](./PCB_PrimitivePad.md)||**_(BETA)_** Get all Pad primitive IDs|
+|[modify(primitiveId, property)](./PCB_PrimitivePad.md)||**_(BETA)_** Modify Pad|
 
 ---
 
@@ -139,241 +57,25 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-<tr><td>
-
-padNumber
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad number
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X position
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y position
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-pad
-
-</td><td>
-
-[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)
-
-</td><td>
-
-_(Optional)_ Pad shape. This parameter is required before the special pad shape is implemented
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-hole
-
-</td><td>
-
-[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md) \| null
-
-</td><td>
-
-_(Optional)_ Hole. `null` indicates no hole
-
-</td></tr>
-<tr><td>
-
-holeOffsetX
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Hole offset X
-
-</td></tr>
-<tr><td>
-
-holeOffsetY
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Hole offset Y
-
-</td></tr>
-<tr><td>
-
-holeRotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle of the hole relative to the pad
-
-</td></tr>
-<tr><td>
-
-metallization
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether the hole wall is plated
-
-</td></tr>
-<tr><td>
-
-padType
-
-</td><td>
-
-[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)
-
-</td><td>
-
-_(Optional)_ Pad type
-
-</td></tr>
-<tr><td>
-
-specialPad
-
-</td><td>
-
-[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)
-
-</td><td>
-
-_(Optional)_ Special pad shape. Currently not implemented; please do not use it
-
-</td></tr>
-<tr><td>
-
-solderMaskAndPasteMaskExpansion
-
-</td><td>
-
-[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null
-
-</td><td>
-
-_(Optional)_ Solder mask/paste mask expansion. `null` means following the rules
-
-</td></tr>
-<tr><td>
-
-heatWelding
-
-</td><td>
-
-[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null
-
-</td><td>
-
-_(Optional)_ Thermal relief optimization parameters
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)|Layer|
+|padNumber|string|Pad number|
+|x|number|X position|
+|y|number|Y position|
+|rotation|number|_(Optional)_ Rotation angle|
+|pad|[TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)|_(Optional)_ Pad shape. This parameter is required before the special pad shape is implemented|
+|net|string|_(Optional)_ Net name|
+|hole|[TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md) \| null|_(Optional)_ Hole. `null` indicates no hole|
+|holeOffsetX|number|_(Optional)_ Hole offset X|
+|holeOffsetY|number|_(Optional)_ Hole offset Y|
+|holeRotation|number|_(Optional)_ Rotation angle of the hole relative to the pad|
+|metallization|boolean|_(Optional)_ Whether the hole wall is plated|
+|padType|[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)|_(Optional)_ Pad type|
+|specialPad|[TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)|_(Optional)_ Special pad shape. Currently not implemented; please do not use it|
+|solderMaskAndPasteMaskExpansion|[IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null|_(Optional)_ Solder mask/paste mask expansion. `null` means following the rules|
+|heatWelding|[IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null|_(Optional)_ Thermal relief optimization parameters|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
 
 ## Returns
 
@@ -401,6 +103,7 @@ console.log('thru padId:', thru.getState_PrimitiveId());
 console.log('thru layer:', thru.getState_Layer());
 ```
 
+
 ### delete
 
 # PCB\_PrimitivePad.delete() method
@@ -417,33 +120,9 @@ function delete(primitiveIds: string | IPCB_PrimitivePad | Array<string> | Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [IPCB\_PrimitivePad](./IPCB_PrimitivePad.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitivePad](./IPCB_PrimitivePad.md)<!-- -->&gt;
-
-</td><td>
-
-Pad primitive ID or Pad primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [IPCB\_PrimitivePad](./IPCB_PrimitivePad.md) \| Array&lt;string&gt; \| Array&lt;[IPCB\_PrimitivePad](./IPCB_PrimitivePad.md)<!-- -->&gt;|Pad primitive ID or Pad primitive object|
 
 ## Returns
 
@@ -473,6 +152,7 @@ console.log('deleted:', deleted);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # PCB\_PrimitivePad.get() method
@@ -489,33 +169,9 @@ function get(primitiveIds: string): Promise<IPCB_PrimitivePad | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Pad primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -546,6 +202,7 @@ console.log('array length:', arr.length);
 console.log('pad2 layer:', arr[1].getState_Layer());
 ```
 
+
 ### get_1
 
 # PCB\_PrimitivePad.get() method
@@ -562,33 +219,9 @@ function get(primitiveIds: Array<string>): Promise<Array<IPCB_PrimitivePad>>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Pad primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Pad primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -621,72 +254,12 @@ function getAll(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)
-
-</td><td>
-
-_(Optional)_ Layer
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-<tr><td>
-
-padType
-
-</td><td>
-
-[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)|_(Optional)_ Layer|
+|net|string|_(Optional)_ Net name|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
+|padType|[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)|_(Optional)_|
 
 ## Returns
 
@@ -717,6 +290,7 @@ console.log('top layer pads:', topLayer.length);
 console.log('marker pad found in top layer:', topLayer.some(p => p.getState_PrimitiveId() === padId));
 ```
 
+
 ### getallprimitiveid
 
 # PCB\_PrimitivePad.getAllPrimitiveId() method
@@ -738,72 +312,12 @@ function getAllPrimitiveId(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)
-
-</td><td>
-
-_(Optional)_ Layer
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Net name
-
-</td></tr>
-<tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is locked
-
-</td></tr>
-<tr><td>
-
-padType
-
-</td><td>
-
-[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)|_(Optional)_ Layer|
+|net|string|_(Optional)_ Net name|
+|primitiveLock|boolean|_(Optional)_ Whether it is locked|
+|padType|[EPCB\_PrimitivePadType](../enums/EPCB_PrimitivePadType.md)|_(Optional)_|
 
 ## Returns
 
@@ -834,6 +348,7 @@ console.log('top layer pad ids:', topLayerIds.length);
 console.log('marker id in top layer list:', topLayerIds.includes(padId));
 ```
 
+
 ### modify
 
 # PCB\_PrimitivePad.modify() method
@@ -848,69 +363,32 @@ Modify Pad
 function modify(
 	primitiveId: string | IPCB_PrimitivePad,
 	property: {
-		layer?: undefined | EPCB_LayerId.TOP | EPCB_LayerId.BOTTOM | EPCB_LayerId.MULTI;
-		padNumber?: undefined | string;
-		x?: undefined | number;
-		y?: undefined | number;
-		rotation?: undefined | number;
-		pad?: undefined | any | any | any;
-		net?: undefined | string;
-		hole?: undefined | null | any | any;
-		holeOffsetX?: undefined | number;
-		holeOffsetY?: undefined | number;
-		holeRotation?: undefined | number;
-		metallization?: undefined | false | true;
-		specialPad?: undefined | TPCB_PrimitiveSpecialPadShape;
-		solderMaskAndPasteMaskExpansion?:
-			undefined | null | IPCB_PrimitiveSolderMaskAndPasteMaskExpansion;
-		heatWelding?: undefined | null | IPCB_PrimitivePadHeatWelding;
-		primitiveLock?: undefined | false | true;
+		layer?: TPCB_LayersOfPad;
+		padNumber?: string;
+		x?: number;
+		y?: number;
+		rotation?: number;
+		pad?: TPCB_PrimitivePadShape;
+		net?: string;
+		hole?: TPCB_PrimitivePadHole | null;
+		holeOffsetX?: number;
+		holeOffsetY?: number;
+		holeRotation?: number;
+		metallization?: boolean;
+		specialPad?: TPCB_PrimitiveSpecialPadShape;
+		solderMaskAndPasteMaskExpansion?: IPCB_PrimitiveSolderMaskAndPasteMaskExpansion | null;
+		heatWelding?: IPCB_PrimitivePadHeatWelding | null;
+		primitiveLock?: boolean;
 	},
 ): Promise<IPCB_PrimitivePad | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [IPCB\_PrimitivePad](./IPCB_PrimitivePad.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ layer?: undefined \| [EPCB\_LayerId.TOP](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.BOTTOM](../enums/EPCB_LayerId.md) \| [EPCB\_LayerId.MULTI](../enums/EPCB_LayerId.md)<!-- -->; padNumber?: undefined \| string; x?: undefined \| number; y?: undefined \| number; rotation?: undefined \| number; pad?: undefined \| any \| any \| any; net?: undefined \| string; hole?: undefined \| null \| any \| any; holeOffsetX?: undefined \| number; holeOffsetY?: undefined \| number; holeRotation?: undefined \| number; metallization?: undefined \| false \| true; specialPad?: undefined \| [TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)<!-- -->; solderMaskAndPasteMaskExpansion?: undefined \| null \| [IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md)<!-- -->; heatWelding?: undefined \| null \| [IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md)<!-- -->; primitiveLock?: undefined \| false \| true }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [IPCB\_PrimitivePad](./IPCB_PrimitivePad.md)|Primitive ID|
+|property|{ layer?: [TPCB\_LayersOfPad](../types/TPCB_LayersOfPad.md)<!-- -->; padNumber?: string; x?: number; y?: number; rotation?: number; pad?: [TPCB\_PrimitivePadShape](../types/TPCB_PrimitivePadShape.md)<!-- -->; net?: string; hole?: [TPCB\_PrimitivePadHole](../types/TPCB_PrimitivePadHole.md) \| null; holeOffsetX?: number; holeOffsetY?: number; holeRotation?: number; metallization?: boolean; specialPad?: [TPCB\_PrimitiveSpecialPadShape](../types/TPCB_PrimitiveSpecialPadShape.md)<!-- -->; solderMaskAndPasteMaskExpansion?: [IPCB\_PrimitiveSolderMaskAndPasteMaskExpansion](../interfaces/IPCB_PrimitiveSolderMaskAndPasteMaskExpansion.md) \| null; heatWelding?: [IPCB\_PrimitivePadHeatWelding](../interfaces/IPCB_PrimitivePadHeatWelding.md) \| null; primitiveLock?: boolean }|Modify Parameter|
 
 ## Returns
 

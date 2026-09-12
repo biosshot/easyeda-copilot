@@ -10,108 +10,16 @@ class LIB_Cbb
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[copy(cbbUuid, libraryUuid, targetLibraryUuid, targetClassification, newCbbName)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Copy Reuse block
-
-</td></tr>
-<tr><td>
-
-[create(libraryUuid, cbbName, classification, description)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Reuse block
-
-</td></tr>
-<tr><td>
-
-[delete(cbbUuid, libraryUuid)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Reuse block
-
-</td></tr>
-<tr><td>
-
-[get(cbbUuid, libraryUuid)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all properties of the reuse block
-
-</td></tr>
-<tr><td>
-
-[modify(cbbUuid, libraryUuid, cbbName, classification, description)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Reuse block
-
-</td></tr>
-<tr><td>
-
-[openProjectInEditor(cbbUuid, libraryUuid)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open in the editor reuse block project
-
-</td></tr>
-<tr><td>
-
-[openSymbolInEditor(cbbUuid, libraryUuid, splitScreenId)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Open in the editor reuse block symbol
-
-</td></tr>
-<tr><td>
-
-[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_Cbb.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Search reuse block
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[copy(cbbUuid, libraryUuid, targetLibraryUuid, targetClassification, newCbbName)](./LIB_Cbb.md)||**_(BETA)_** Copy Reuse block|
+|[create(libraryUuid, cbbName, classification, description)](./LIB_Cbb.md)||**_(BETA)_** Create Reuse block|
+|[delete(cbbUuid, libraryUuid)](./LIB_Cbb.md)||**_(BETA)_** Delete Reuse block|
+|[get(cbbUuid, libraryUuid)](./LIB_Cbb.md)||**_(BETA)_** Get all properties of the reuse block|
+|[modify(cbbUuid, libraryUuid, cbbName, classification, description)](./LIB_Cbb.md)||**_(BETA)_** Modify Reuse block|
+|[openProjectInEditor(cbbUuid, libraryUuid)](./LIB_Cbb.md)||**_(BETA)_** Open in the editor reuse block project|
+|[openSymbolInEditor(cbbUuid, libraryUuid, splitScreenId)](./LIB_Cbb.md)||**_(BETA)_** Open in the editor reuse block symbol|
+|[search(key, libraryUuid, classification, itemsOfPage, page)](./LIB_Cbb.md)||**_(BETA)_** Search reuse block|
 
 ---
 
@@ -139,85 +47,13 @@ function copy(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-targetLibraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Target library UUID
-
-</td></tr>
-<tr><td>
-
-targetClassification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification in the target library
-
-</td></tr>
-<tr><td>
-
-newCbbName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ New reuse block name. If a reuse block with the same name exists in the target library, the copy will fail
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|targetLibraryUuid|string|Target library UUID|
+|targetClassification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification in the target library|
+|newCbbName|string|_(Optional)_ New reuse block name. If a reuse block with the same name exists in the target library, the copy will fail|
 
 ## Returns
 
@@ -247,6 +83,7 @@ console.log('copiedUuid:', copiedUuid);
 console.log('newName:', newName);
 ```
 
+
 ### create
 
 # LIB\_Cbb.create() method
@@ -268,72 +105,12 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-cbbName
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|cbbName|string|Reuse block name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|description|string|_(Optional)_ Description|
 
 ## Returns
 
@@ -358,6 +135,7 @@ console.log('cbbName:', cbbName);
 console.log('cbbUuid:', cbbUuid);
 ```
 
+
 ### delete
 
 # LIB\_Cbb.delete() method
@@ -374,46 +152,10 @@ function delete(cbbUuid: string, libraryUuid: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -440,6 +182,7 @@ console.log('cbbUuid:', cbbUuid);
 console.log('deleted:', deleted);
 ```
 
+
 ### get
 
 # LIB\_Cbb.get() method
@@ -456,46 +199,10 @@ function get(cbbUuid: string, libraryUuid?: string): Promise<ILIB_CbbItem | unde
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -525,85 +232,13 @@ function modify(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-cbbName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Reuse block name
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-description
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|cbbName|string|_(Optional)_ Reuse block name|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt; \| null|_(Optional)_ Classification|
+|description|string \| null|_(Optional)_ Description|
 
 ## Returns
 
@@ -638,6 +273,7 @@ console.log('modified:', modified);
 console.log('newName:', newName);
 ```
 
+
 ### openprojectineditor
 
 # LIB\_Cbb.openProjectInEditor() method
@@ -654,46 +290,10 @@ function openProjectInEditor(cbbUuid: string, libraryUuid: string): Promise<bool
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
 
 ## Returns
 
@@ -728,6 +328,7 @@ console.log('opened:', opened);
 console.log('restored:', projectInfo.uuid);
 ```
 
+
 ### opensymbolineditor
 
 # LIB\_Cbb.openSymbolInEditor() method
@@ -748,59 +349,11 @@ function openSymbolInEditor(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-splitScreenId
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbUuid|string|Reuse block UUID|
+|libraryUuid|string|Library UUID, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|splitScreenId|string|_(Optional)_ Split screen ID. If not filled in, it opens in the split screen with the last input focus by default. It can be obtained using the APIs in [DMT\_EditorControl](./DMT_EditorControl.md)|
 
 ## Returns
 
@@ -835,6 +388,7 @@ console.log('source:', source.name, source.uuid);
 console.log('tabId:', tabId);
 ```
 
+
 ### search
 
 # LIB\_Cbb.search() method
@@ -857,85 +411,13 @@ function search(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-key
-
-</td><td>
-
-string
-
-</td><td>
-
-Search keyword
-
-</td></tr>
-<tr><td>
-
-libraryUuid
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in
-
-</td></tr>
-<tr><td>
-
-classification
-
-</td><td>
-
-[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification, defaults to all
-
-</td></tr>
-<tr><td>
-
-itemsOfPage
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Number of search results per page
-
-</td></tr>
-<tr><td>
-
-page
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Page count
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|key|string|Search keyword|
+|libraryUuid|string|_(Optional)_ Library UUID, default is system library, you can use [LIB\_LibrariesList](./LIB_LibrariesList.md) APIs in|
+|classification|[ILIB\_ClassificationIndex](../interfaces/ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification, defaults to all|
+|itemsOfPage|number|_(Optional)_ Number of search results per page|
+|page|number|_(Optional)_ Page count|
 
 ## Returns
 

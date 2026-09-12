@@ -14,86 +14,14 @@ All APIs here are based on the current workspace environment of the editor. To s
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getAllLibrariesList()](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-Get the list of all libraries
-
-</td></tr>
-<tr><td>
-
-[getFavoriteLibraryUuid()](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUID of the favorite library
-
-</td></tr>
-<tr><td>
-
-[getPersonalLibraryUuid()](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUID of the personal library
-
-</td></tr>
-<tr><td>
-
-[getProjectLibraryUuid()](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUID of the project library
-
-</td></tr>
-<tr><td>
-
-[getSystemLibraryUuid()](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-Get the UUID of the system library
-
-</td></tr>
-<tr><td>
-
-[registerExtendLibrary(title, libraryFunctions)](./LIB_LibrariesList.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Register an external library
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getAllLibrariesList()](./LIB_LibrariesList.md)||Get the list of all libraries|
+|[getFavoriteLibraryUuid()](./LIB_LibrariesList.md)||Get the UUID of the favorite library|
+|[getPersonalLibraryUuid()](./LIB_LibrariesList.md)||Get the UUID of the personal library|
+|[getProjectLibraryUuid()](./LIB_LibrariesList.md)||Get the UUID of the project library|
+|[getSystemLibraryUuid()](./LIB_LibrariesList.md)||Get the UUID of the system library|
+|[registerExtendLibrary(title, libraryFunctions)](./LIB_LibrariesList.md)||**_(BETA)_** Register an external library|
 
 ---
 
@@ -133,6 +61,7 @@ libraries.forEach((lib, i) => {
 	console.log(`[${i}] name:`, lib.name, 'uuid:', lib.uuid);
 });
 ```
+
 
 ### getfavoritelibraryuuid
 
@@ -232,55 +161,21 @@ Register an external library
 function registerExtendLibrary(
 	title: string,
 	libraryFunctions: {
-		device?: undefined | ILIB_ExtendLibraryDeviceFunctions;
-		symbol?: undefined | ILIB_ExtendLibrarySymbolFunctions;
-		footprint?: undefined | ILIB_ExtendLibraryFootprintFunctions;
-		cbb?: undefined | ILIB_ExtendLibraryCbbFunctions;
-		model3d?: undefined | ILIB_ExtendLibrary3DModelFunctions;
+		device?: ILIB_ExtendLibraryDeviceFunctions;
+		symbol?: ILIB_ExtendLibrarySymbolFunctions;
+		footprint?: ILIB_ExtendLibraryFootprintFunctions;
+		cbb?: ILIB_ExtendLibraryCbbFunctions;
+		model3d?: ILIB_ExtendLibrary3DModelFunctions;
 	},
 ): Promise<string | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-title
-
-</td><td>
-
-string
-
-</td><td>
-
-Title
-
-</td></tr>
-<tr><td>
-
-libraryFunctions
-
-</td><td>
-
-{ device?: undefined \| [ILIB\_ExtendLibraryDeviceFunctions](../interfaces/ILIB_ExtendLibraryDeviceFunctions.md)<!-- -->; symbol?: undefined \| [ILIB\_ExtendLibrarySymbolFunctions](../interfaces/ILIB_ExtendLibrarySymbolFunctions.md)<!-- -->; footprint?: undefined \| [ILIB\_ExtendLibraryFootprintFunctions](../interfaces/ILIB_ExtendLibraryFootprintFunctions.md)<!-- -->; cbb?: undefined \| [ILIB\_ExtendLibraryCbbFunctions](../interfaces/ILIB_ExtendLibraryCbbFunctions.md)<!-- -->; model3d?: undefined \| [ILIB\_ExtendLibrary3DModelFunctions](../interfaces/ILIB_ExtendLibrary3DModelFunctions.md) }
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|title|string|Title|
+|libraryFunctions|{ device?: [ILIB\_ExtendLibraryDeviceFunctions](../interfaces/ILIB_ExtendLibraryDeviceFunctions.md)<!-- -->; symbol?: [ILIB\_ExtendLibrarySymbolFunctions](../interfaces/ILIB_ExtendLibrarySymbolFunctions.md)<!-- -->; footprint?: [ILIB\_ExtendLibraryFootprintFunctions](../interfaces/ILIB_ExtendLibraryFootprintFunctions.md)<!-- -->; cbb?: [ILIB\_ExtendLibraryCbbFunctions](../interfaces/ILIB_ExtendLibraryCbbFunctions.md)<!-- -->; model3d?: [ILIB\_ExtendLibrary3DModelFunctions](../interfaces/ILIB_ExtendLibrary3DModelFunctions.md) }||
 
 ## Returns
 

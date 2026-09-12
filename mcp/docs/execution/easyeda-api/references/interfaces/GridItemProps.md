@@ -11,84 +11,12 @@ interface GridItemProps extends StyleProps
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[align?](./GridItemProps.md)
-
-</td><td>
-
-</td><td>
-
-'start' \| 'center' \| 'end' \| 'stretch'
-
-</td><td>
-
-_(Optional)_ Alignment within the cell
-
-</td></tr>
-<tr><td>
-
-[children?](./GridItemProps.md)
-
-</td><td>
-
-</td><td>
-
-any
-
-</td><td>
-
-_(Optional)_ Child node
-
-</td></tr>
-<tr><td>
-
-[colSpan?](./GridItemProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Column span
-
-</td></tr>
-<tr><td>
-
-[rowSpan?](./GridItemProps.md)
-
-</td><td>
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Row span
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[align?](./GridItemProps.md)||'start' \| 'center' \| 'end' \| 'stretch'|_(Optional)_ Alignment within the cell|
+|[children?](./GridItemProps.md)||any|_(Optional)_ Child node|
+|[colSpan?](./GridItemProps.md)||number|_(Optional)_ Column span|
+|[rowSpan?](./GridItemProps.md)||number|_(Optional)_ Row span|
 
 ---
 

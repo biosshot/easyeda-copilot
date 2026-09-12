@@ -13,317 +13,35 @@ class ISCH_PrimitiveArc implements ISCH_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[done()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_Color()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: color
-
-</td></tr>
-<tr><td>
-
-[getState\_EndX()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: end point X
-
-</td></tr>
-<tr><td>
-
-[getState\_EndY()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: end point Y
-
-</td></tr>
-<tr><td>
-
-[getState\_FillColor()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[getState\_LineType()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: line type
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_ReferenceX()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: reference point X
-
-</td></tr>
-<tr><td>
-
-[getState\_ReferenceY()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: reference point Y
-
-</td></tr>
-<tr><td>
-
-[getState\_StartX()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: start point X
-
-</td></tr>
-<tr><td>
-
-[getState\_StartY()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: start point Y
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_Color(color)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: color
-
-</td></tr>
-<tr><td>
-
-[setState\_EndX(endX)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: end point X
-
-</td></tr>
-<tr><td>
-
-[setState\_EndY(endY)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: end point Y
-
-</td></tr>
-<tr><td>
-
-[setState\_FillColor(fillColor)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: fill color
-
-</td></tr>
-<tr><td>
-
-[setState\_LineType(lineType)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: line type
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_ReferenceX(referenceX)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: reference point X
-
-</td></tr>
-<tr><td>
-
-[setState\_ReferenceY(referenceY)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: reference point Y
-
-</td></tr>
-<tr><td>
-
-[setState\_StartX(startX)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start point X
-
-</td></tr>
-<tr><td>
-
-[setState\_StartY(startY)](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: start point Y
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./ISCH_PrimitiveArc.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[done()](./ISCH_PrimitiveArc.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_Color()](./ISCH_PrimitiveArc.md)||Get the property state: color|
+|[getState\_EndX()](./ISCH_PrimitiveArc.md)||Get the property state: end point X|
+|[getState\_EndY()](./ISCH_PrimitiveArc.md)||Get the property state: end point Y|
+|[getState\_FillColor()](./ISCH_PrimitiveArc.md)||Get the property state: fill color|
+|[getState\_LineType()](./ISCH_PrimitiveArc.md)||Get the property state: line type|
+|[getState\_LineWidth()](./ISCH_PrimitiveArc.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./ISCH_PrimitiveArc.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveType()](./ISCH_PrimitiveArc.md)||Get the property state: primitive type|
+|[getState\_ReferenceX()](./ISCH_PrimitiveArc.md)||Get the property state: reference point X|
+|[getState\_ReferenceY()](./ISCH_PrimitiveArc.md)||Get the property state: reference point Y|
+|[getState\_StartX()](./ISCH_PrimitiveArc.md)||Get the property state: start point X|
+|[getState\_StartY()](./ISCH_PrimitiveArc.md)||Get the property state: start point Y|
+|[isAsync()](./ISCH_PrimitiveArc.md)||Query whether the primitive is an async primitive|
+|[reset()](./ISCH_PrimitiveArc.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_Color(color)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: color|
+|[setState\_EndX(endX)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: end point X|
+|[setState\_EndY(endY)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: end point Y|
+|[setState\_FillColor(fillColor)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: fill color|
+|[setState\_LineType(lineType)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: line type|
+|[setState\_LineWidth(lineWidth)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_ReferenceX(referenceX)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: reference point X|
+|[setState\_ReferenceY(referenceY)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: reference point Y|
+|[setState\_StartX(startX)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: start point X|
+|[setState\_StartY(startY)](./ISCH_PrimitiveArc.md)||**_(BETA)_** Set the property state: start point Y|
+|[toAsync()](./ISCH_PrimitiveArc.md)||Convert Primitive to Async primitive|
+|[toSync()](./ISCH_PrimitiveArc.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -374,6 +92,7 @@ console.log('endX:', x + 200, '→', refetched.getState_EndX());
 console.log('color:', '#00AA00', '→', refetched.getState_Color());
 ```
 
+
 ### getstate_color
 
 # ISCH\_PrimitiveArc.getState\_Color() method
@@ -406,6 +125,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('color:', color);
 ```
+
 
 ### getstate_endx
 
@@ -440,6 +160,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('endX:', endX);
 ```
 
+
 ### getstate_endy
 
 # ISCH\_PrimitiveArc.getState\_EndY() method
@@ -472,6 +193,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('endY:', endY);
 ```
+
 
 ### getstate_fillcolor
 
@@ -506,6 +228,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('fillColor:', fillColor);
 ```
 
+
 ### getstate_linetype
 
 # ISCH\_PrimitiveArc.getState\_LineType() method
@@ -539,6 +262,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('lineType:', lineType);
 ```
 
+
 ### getstate_linewidth
 
 # ISCH\_PrimitiveArc.getState\_LineWidth() method
@@ -571,6 +295,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('lineWidth:', lineWidth);
 ```
+
 
 ### getstate_primitiveid
 
@@ -607,6 +332,7 @@ console.log('primitiveId:', primitiveId);
 console.log('refetch matched:', refetched.getState_PrimitiveId() === primitiveId);
 ```
 
+
 ### getstate_primitivetype
 
 # ISCH\_PrimitiveArc.getState\_PrimitiveType() method
@@ -639,6 +365,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_referencex
 
@@ -673,6 +400,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('referenceX:', referenceX);
 ```
 
+
 ### getstate_referencey
 
 # ISCH\_PrimitiveArc.getState\_ReferenceY() method
@@ -705,6 +433,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('referenceY:', referenceY);
 ```
+
 
 ### getstate_startx
 
@@ -739,6 +468,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('startX:', startX);
 ```
 
+
 ### getstate_starty
 
 # ISCH\_PrimitiveArc.getState\_StartY() method
@@ -771,6 +501,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 
 console.log('startY:', startY);
 ```
+
 
 ### isasync
 
@@ -807,6 +538,7 @@ await eda.sch_PrimitiveArc.delete([arc.getState_PrimitiveId()]);
 console.log('isAsync on create:', asyncOnCreate);
 console.log('isAsync after toSync:', asyncAfterToSync);
 ```
+
 
 ### reset
 
@@ -851,6 +583,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('lineWidth after reset:', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_color
 
 # ISCH\_PrimitiveArc.setState\_Color() method
@@ -867,33 +600,9 @@ function setState_Color(color: string | null): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-color
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|color|string \| null|Color|
 
 ## Returns
 
@@ -925,6 +634,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('color:', before, '→', refetched.getState_Color());
 ```
 
+
 ### setstate_endx
 
 # ISCH\_PrimitiveArc.setState\_EndX() method
@@ -941,33 +651,9 @@ function setState_EndX(endX: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-endX
-
-</td><td>
-
-number
-
-</td><td>
-
-End point X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|endX|number|End point X|
 
 ## Returns
 
@@ -999,6 +685,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('endX:', before, '→', refetched.getState_EndX());
 ```
 
+
 ### setstate_endy
 
 # ISCH\_PrimitiveArc.setState\_EndY() method
@@ -1015,33 +702,9 @@ function setState_EndY(endY: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-endY
-
-</td><td>
-
-number
-
-</td><td>
-
-End point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|endY|number|End point Y|
 
 ## Returns
 
@@ -1073,6 +736,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('endY:', before, '→', refetched.getState_EndY());
 ```
 
+
 ### setstate_fillcolor
 
 # ISCH\_PrimitiveArc.setState\_FillColor() method
@@ -1089,33 +753,9 @@ function setState_FillColor(fillColor: string | null): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fillColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-Fill color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fillColor|string \| null|Fill color|
 
 ## Returns
 
@@ -1147,6 +787,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('fillColor:', before, '→', refetched.getState_FillColor());
 ```
 
+
 ### setstate_linetype
 
 # ISCH\_PrimitiveArc.setState\_LineType() method
@@ -1163,33 +804,9 @@ function setState_LineType(lineType: ESCH_PrimitiveLineType | null): ISCH_Primit
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineType
-
-</td><td>
-
-[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null
-
-</td><td>
-
-Line type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineType|[ESCH\_PrimitiveLineType](../enums/ESCH_PrimitiveLineType.md) \| null|Line type|
 
 ## Returns
 
@@ -1221,6 +838,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('lineType:', before, '→', refetched.getState_LineType());
 ```
 
+
 ### setstate_linewidth
 
 # ISCH\_PrimitiveArc.setState\_LineWidth() method
@@ -1237,33 +855,9 @@ function setState_LineWidth(lineWidth: number | null): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number \| null
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number \| null|Line width|
 
 ## Returns
 
@@ -1295,6 +889,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('lineWidth:', before, '→', refetched.getState_LineWidth());
 ```
 
+
 ### setstate_referencex
 
 # ISCH\_PrimitiveArc.setState\_ReferenceX() method
@@ -1311,33 +906,9 @@ function setState_ReferenceX(referenceX: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-referenceX
-
-</td><td>
-
-number
-
-</td><td>
-
-Reference point X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|referenceX|number|Reference point X|
 
 ## Returns
 
@@ -1369,6 +940,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('referenceX:', before, '→', refetched.getState_ReferenceX());
 ```
 
+
 ### setstate_referencey
 
 # ISCH\_PrimitiveArc.setState\_ReferenceY() method
@@ -1385,33 +957,9 @@ function setState_ReferenceY(referenceY: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-referenceY
-
-</td><td>
-
-number
-
-</td><td>
-
-Reference point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|referenceY|number|Reference point Y|
 
 ## Returns
 
@@ -1443,6 +991,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('referenceY:', before, '→', refetched.getState_ReferenceY());
 ```
 
+
 ### setstate_startx
 
 # ISCH\_PrimitiveArc.setState\_StartX() method
@@ -1459,33 +1008,9 @@ function setState_StartX(startX: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startX
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point X
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startX|number|Start point X|
 
 ## Returns
 
@@ -1517,6 +1042,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('startX:', before, '→', refetched.getState_StartX());
 ```
 
+
 ### setstate_starty
 
 # ISCH\_PrimitiveArc.setState\_StartY() method
@@ -1533,33 +1059,9 @@ function setState_StartY(startY: number): ISCH_PrimitiveArc;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-startY
-
-</td><td>
-
-number
-
-</td><td>
-
-Start point Y
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|startY|number|Start point Y|
 
 ## Returns
 
@@ -1590,6 +1092,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 
 console.log('startY:', before, '→', refetched.getState_StartY());
 ```
+
 
 ### toasync
 
@@ -1633,6 +1136,7 @@ const refetched = await eda.sch_PrimitiveArc.get(arc.getState_PrimitiveId());
 console.log('isAsync after toAsync:', arc.isAsync());
 console.log('lineWidth:', 6, '→', refetched.getState_LineWidth());
 ```
+
 
 ### tosync
 

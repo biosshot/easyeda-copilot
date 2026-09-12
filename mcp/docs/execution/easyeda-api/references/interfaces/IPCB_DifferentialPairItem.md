@@ -10,69 +10,11 @@ interface IPCB_DifferentialPairItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[name](./IPCB_DifferentialPairItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Differential pair name
-
-</td></tr>
-<tr><td>
-
-[negativeNet](./IPCB_DifferentialPairItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Negative net
-
-</td></tr>
-<tr><td>
-
-[positiveNet](./IPCB_DifferentialPairItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Positive net
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[name](./IPCB_DifferentialPairItem.md)||string|Differential pair name|
+|[negativeNet](./IPCB_DifferentialPairItem.md)||string|Negative net|
+|[positiveNet](./IPCB_DifferentialPairItem.md)||string|Positive net|
 
 ---
 

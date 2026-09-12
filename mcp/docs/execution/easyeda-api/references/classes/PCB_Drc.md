@@ -14,526 +14,51 @@ Check and set DRC rules
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addNetToEqualLengthNetGroup(equalLengthNetGroupName, net)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a net to an equal-length net group
-
-</td></tr>
-<tr><td>
-
-[addNetToNetClass(netClassName, net)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Will net add to net class
-
-</td></tr>
-<tr><td>
-
-[addPadPairToPadPairGroup(padPairGroupName, padPair)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a pad pair to a pad pair group
-
-</td></tr>
-<tr><td>
-
-[check(strict, userInterface, includeVerboseError)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Check DRC
-
-</td></tr>
-<tr><td>
-
-[check(strict, userInterface, includeVerboseError)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Check DRC
-
-</td></tr>
-<tr><td>
-
-[createDifferentialPair(differentialPairName, positiveNet, negativeNet)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a differential pair
-
-</td></tr>
-<tr><td>
-
-[createEqualLengthNetGroup(equalLengthNetGroupName, nets, color)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create an equal-length net group
-
-</td></tr>
-<tr><td>
-
-[createNetClass(netClassName, nets, color)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Net class
-
-</td></tr>
-<tr><td>
-
-[createPadPairGroup(padPairGroupName, padPairs)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a pad pair group
-
-</td></tr>
-<tr><td>
-
-[deleteDifferentialPair(differentialPairName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the differential pair
-
-</td></tr>
-<tr><td>
-
-[deleteEqualLengthNetGroup(equalLengthNetGroupName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the equal-length net group
-
-</td></tr>
-<tr><td>
-
-[deleteNetClass(netClassName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Net class
-
-</td></tr>
-<tr><td>
-
-[deletePadPairGroup(padPairGroupName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete the pad pair group
-
-</td></tr>
-<tr><td>
-
-[deleteRuleConfiguration(configurationName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Design rule configuration
-
-</td></tr>
-<tr><td>
-
-[getAllDifferentialPairs()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of all differential pairs
-
-</td></tr>
-<tr><td>
-
-[getAllEqualLengthNetGroups()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of all equal-length net groups
-
-</td></tr>
-<tr><td>
-
-[getAllNetClasses()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Net class detailed properties of
-
-</td></tr>
-<tr><td>
-
-[getAllPadPairGroups()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of all pad pair groups
-
-</td></tr>
-<tr><td>
-
-[getAllRuleConfigurations(includeSystem)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Design rule configuration
-
-</td></tr>
-<tr><td>
-
-[getCurrentRuleConfiguration()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current design rule configuration
-
-</td></tr>
-<tr><td>
-
-[getCurrentRuleConfigurationName()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-Get Current design rule configuration name
-
-</td></tr>
-<tr><td>
-
-[getDefaultRuleConfigurationName()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the name of the default design rule configuration for new PCBs
-
-</td></tr>
-<tr><td>
-
-[getNetByNetRules()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Net - net rules
-
-</td></tr>
-<tr><td>
-
-[getNetRules()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Net rules
-
-</td></tr>
-<tr><td>
-
-[getPadPairGroupMinWireLength(padPairGroupName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the minimum wire length of a pad pair group
-
-</td></tr>
-<tr><td>
-
-[getRealTimeDrcStatus()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Real-time DRC check state
-
-</td></tr>
-<tr><td>
-
-[getRegionRules()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get region rules
-
-</td></tr>
-<tr><td>
-
-[getRuleConfiguration(configurationName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-Get Specify design rule configuration
-
-</td></tr>
-<tr><td>
-
-[modifyDifferentialPairName(originalDifferentialPairName, differentialPairName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the name of the differential pair
-
-</td></tr>
-<tr><td>
-
-[modifyDifferentialPairNegativeNet(differentialPairName, negativeNet)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the negative net of the differential pair
-
-</td></tr>
-<tr><td>
-
-[modifyDifferentialPairPositiveNet(differentialPairName, positiveNet)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the positive net of the differential pair
-
-</td></tr>
-<tr><td>
-
-[modifyEqualLengthNetGroupName(originalEqualLengthNetGroupName, equalLengthNetGroupName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the name of the equal-length net group
-
-</td></tr>
-<tr><td>
-
-[modifyNetClassName(originalNetClassName, netClassName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Net class name of
-
-</td></tr>
-<tr><td>
-
-[modifyPadPairGroupName(originalPadPairGroupName, padPairGroupName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify the name of the pad pair group
-
-</td></tr>
-<tr><td>
-
-[overwriteCurrentRuleConfiguration(ruleConfiguration)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Overwrite current design rule configuration
-
-</td></tr>
-<tr><td>
-
-[overwriteNetByNetRules(netByNetRules)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Overwrite net - net rules
-
-</td></tr>
-<tr><td>
-
-[overwriteNetRules(netRules)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Overwrite net rules
-
-</td></tr>
-<tr><td>
-
-[overwriteRegionRules(regionRules)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Overwrite region rules
-
-</td></tr>
-<tr><td>
-
-[removeNetFromEqualLengthNetGroup(equalLengthNetGroupName, net)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Remove a net from an equal-length net group
-
-</td></tr>
-<tr><td>
-
-[removeNetFromNetClass(netClassName, net)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** From net class in remove net
-
-</td></tr>
-<tr><td>
-
-[removePadPairFromPadPairGroup(padPairGroupName, padPair)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Remove a pad pair from a pad pair group
-
-</td></tr>
-<tr><td>
-
-[renameRuleConfiguration(originalConfigurationName, configurationName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Rename the design rule configuration
-
-</td></tr>
-<tr><td>
-
-[saveRuleConfiguration(ruleConfiguration, configurationName, allowOverwrite)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Save Design rule configuration
-
-</td></tr>
-<tr><td>
-
-[setAsDefaultRuleConfiguration(configurationName)](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set as the default design rule configuration for new PCBs
-
-</td></tr>
-<tr><td>
-
-[startRealTimeDrc()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Start real-time DRC check
-
-</td></tr>
-<tr><td>
-
-[stopRealTimeDrc()](./PCB_Drc.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Stop real-time DRC check
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addNetToEqualLengthNetGroup(equalLengthNetGroupName, net)](./PCB_Drc.md)||**_(BETA)_** Add a net to an equal-length net group|
+|[addNetToNetClass(netClassName, net)](./PCB_Drc.md)||**_(BETA)_** Will net add to net class|
+|[addPadPairToPadPairGroup(padPairGroupName, padPair)](./PCB_Drc.md)||**_(BETA)_** Add a pad pair to a pad pair group|
+|[check(strict, userInterface, includeVerboseError)](./PCB_Drc.md)||**_(BETA)_** Check DRC|
+|[check(strict, userInterface, includeVerboseError)](./PCB_Drc.md)||**_(BETA)_** Check DRC|
+|[createDifferentialPair(differentialPairName, positiveNet, negativeNet)](./PCB_Drc.md)||**_(BETA)_** Create a differential pair|
+|[createEqualLengthNetGroup(equalLengthNetGroupName, nets, color)](./PCB_Drc.md)||**_(BETA)_** Create an equal-length net group|
+|[createNetClass(netClassName, nets, color)](./PCB_Drc.md)||**_(BETA)_** Create Net class|
+|[createPadPairGroup(padPairGroupName, padPairs)](./PCB_Drc.md)||**_(BETA)_** Create a pad pair group|
+|[deleteDifferentialPair(differentialPairName)](./PCB_Drc.md)||**_(BETA)_** Delete the differential pair|
+|[deleteEqualLengthNetGroup(equalLengthNetGroupName)](./PCB_Drc.md)||**_(BETA)_** Delete the equal-length net group|
+|[deleteNetClass(netClassName)](./PCB_Drc.md)||**_(BETA)_** Delete Net class|
+|[deletePadPairGroup(padPairGroupName)](./PCB_Drc.md)||**_(BETA)_** Delete the pad pair group|
+|[deleteRuleConfiguration(configurationName)](./PCB_Drc.md)||**_(BETA)_** Delete Design rule configuration|
+|[getAllDifferentialPairs()](./PCB_Drc.md)||**_(BETA)_** Get the detailed properties of all differential pairs|
+|[getAllEqualLengthNetGroups()](./PCB_Drc.md)||**_(BETA)_** Get the detailed properties of all equal-length net groups|
+|[getAllNetClasses()](./PCB_Drc.md)||**_(BETA)_** Get all Net class detailed properties of|
+|[getAllPadPairGroups()](./PCB_Drc.md)||**_(BETA)_** Get the detailed properties of all pad pair groups|
+|[getAllRuleConfigurations(includeSystem)](./PCB_Drc.md)||**_(BETA)_** Get all Design rule configuration|
+|[getCurrentRuleConfiguration()](./PCB_Drc.md)||**_(BETA)_** Get Current design rule configuration|
+|[getCurrentRuleConfigurationName()](./PCB_Drc.md)||Get Current design rule configuration name|
+|[getDefaultRuleConfigurationName()](./PCB_Drc.md)||**_(BETA)_** Get the name of the default design rule configuration for new PCBs|
+|[getNetByNetRules()](./PCB_Drc.md)||**_(BETA)_** Get Net - net rules|
+|[getNetRules()](./PCB_Drc.md)||**_(BETA)_** Get Net rules|
+|[getPadPairGroupMinWireLength(padPairGroupName)](./PCB_Drc.md)||**_(BETA)_** Get the minimum wire length of a pad pair group|
+|[getRegionRules()](./PCB_Drc.md)||**_(BETA)_** Get region rules|
+|[getRuleConfiguration(configurationName)](./PCB_Drc.md)||Get Specify design rule configuration|
+|[modifyDifferentialPairName(originalDifferentialPairName, differentialPairName)](./PCB_Drc.md)||**_(BETA)_** Modify the name of the differential pair|
+|[modifyDifferentialPairNegativeNet(differentialPairName, negativeNet)](./PCB_Drc.md)||**_(BETA)_** Modify the negative net of the differential pair|
+|[modifyDifferentialPairPositiveNet(differentialPairName, positiveNet)](./PCB_Drc.md)||**_(BETA)_** Modify the positive net of the differential pair|
+|[modifyEqualLengthNetGroupName(originalEqualLengthNetGroupName, equalLengthNetGroupName)](./PCB_Drc.md)||**_(BETA)_** Modify the name of the equal-length net group|
+|[modifyNetClassName(originalNetClassName, netClassName)](./PCB_Drc.md)||**_(BETA)_** Modify Net class name of|
+|[modifyPadPairGroupName(originalPadPairGroupName, padPairGroupName)](./PCB_Drc.md)||**_(BETA)_** Modify the name of the pad pair group|
+|[overwriteCurrentRuleConfiguration(ruleConfiguration)](./PCB_Drc.md)||**_(BETA)_** Overwrite current design rule configuration|
+|[overwriteNetByNetRules(netByNetRules)](./PCB_Drc.md)||**_(BETA)_** Overwrite net - net rules|
+|[overwriteNetRules(netRules)](./PCB_Drc.md)||**_(BETA)_** Overwrite net rules|
+|[overwriteRegionRules(regionRules)](./PCB_Drc.md)||**_(BETA)_** Overwrite region rules|
+|[removeNetFromEqualLengthNetGroup(equalLengthNetGroupName, net)](./PCB_Drc.md)||**_(BETA)_** Remove a net from an equal-length net group|
+|[removeNetFromNetClass(netClassName, net)](./PCB_Drc.md)||**_(BETA)_** From net class in remove net|
+|[removePadPairFromPadPairGroup(padPairGroupName, padPair)](./PCB_Drc.md)||**_(BETA)_** Remove a pad pair from a pad pair group|
+|[renameRuleConfiguration(originalConfigurationName, configurationName)](./PCB_Drc.md)||**_(BETA)_** Rename the design rule configuration|
+|[saveRuleConfiguration(ruleConfiguration, configurationName, allowOverwrite)](./PCB_Drc.md)||**_(BETA)_** Save Design rule configuration|
+|[setAsDefaultRuleConfiguration(configurationName)](./PCB_Drc.md)||**_(BETA)_** Set as the default design rule configuration for new PCBs|
 
 ---
 
@@ -558,46 +83,10 @@ function addNetToEqualLengthNetGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-equalLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Equal-length net group name
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|equalLengthNetGroupName|string|Equal-length net group name|
+|net|string \| Array&lt;string&gt;|Net name|
 
 ## Returns
 
@@ -623,6 +112,7 @@ console.log('addedOne:', addedOne);
 console.log('addedBatch:', addedBatch);
 ```
 
+
 ### addnettonetclass
 
 # PCB\_Drc.addNetToNetClass() method
@@ -639,46 +129,10 @@ function addNetToNetClass(netClassName: string, net: string | Array<string>): Pr
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-Net class name
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netClassName|string|Net class name|
+|net|string \| Array&lt;string&gt;|Net name|
 
 ## Returns
 
@@ -704,6 +158,7 @@ console.log('addedOne:', addedOne);
 console.log('addedBatch:', addedBatch);
 ```
 
+
 ### addpadpairtopadpairgroup
 
 # PCB\_Drc.addPadPairToPadPairGroup() method
@@ -723,46 +178,10 @@ function addPadPairToPadPairGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-<tr><td>
-
-padPair
-
-</td><td>
-
-\[string, string\] \| Array&lt;\[string, string\]&gt;
-
-</td><td>
-
-Pad for
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padPairGroupName|string|Pad pair group name|
+|padPair|\[string, string\] \| Array&lt;\[string, string\]&gt;|Pad for|
 
 ## Returns
 
@@ -794,59 +213,11 @@ function check(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-strict
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether strict checking is enabled. The current PCB is uniformly in strict checking mode
-
-</td></tr>
-<tr><td>
-
-userInterface
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to show the UI (open the bottom DRC window)
-
-</td></tr>
-<tr><td>
-
-includeVerboseError
-
-</td><td>
-
-false
-
-</td><td>
-
-Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|strict|boolean|Whether strict checking is enabled. The current PCB is uniformly in strict checking mode|
+|userInterface|boolean|Whether to show the UI (open the bottom DRC window)|
+|includeVerboseError|false|Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array|
 
 ## Returns
 
@@ -869,6 +240,7 @@ const passed = await eda.pcb_Drc.check(true, false, false);
 console.log('allPassed:', passed);
 ```
 
+
 ### check_1
 
 # PCB\_Drc.check() method
@@ -889,59 +261,11 @@ function check(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-strict
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether strict checking is enabled. The current PCB is uniformly in strict checking mode
-
-</td></tr>
-<tr><td>
-
-userInterface
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether to show the UI (open the bottom DRC window)
-
-</td></tr>
-<tr><td>
-
-includeVerboseError
-
-</td><td>
-
-true
-
-</td><td>
-
-Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|strict|boolean|Whether strict checking is enabled. The current PCB is uniformly in strict checking mode|
+|userInterface|boolean|Whether to show the UI (open the bottom DRC window)|
+|includeVerboseError|true|Whether to include detailed error information in the return value. If it is `true`<!-- -->, the return value will always be an array|
 
 ## Returns
 
@@ -969,59 +293,11 @@ function createDifferentialPair(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-differentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-Differential pair name
-
-</td></tr>
-<tr><td>
-
-positiveNet
-
-</td><td>
-
-string
-
-</td><td>
-
-Positive net name
-
-</td></tr>
-<tr><td>
-
-negativeNet
-
-</td><td>
-
-string
-
-</td><td>
-
-Negative net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|differentialPairName|string|Differential pair name|
+|positiveNet|string|Positive net name|
+|negativeNet|string|Negative net name|
 
 ## Returns
 
@@ -1049,6 +325,7 @@ console.log('pairName:', `嘉立创示例_差分对_${ts}`);
 console.log('created:', created);
 ```
 
+
 ### createequallengthnetgroup
 
 # PCB\_Drc.createEqualLengthNetGroup() method
@@ -1069,59 +346,11 @@ function createEqualLengthNetGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-equalLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Equal-length net group name
-
-</td></tr>
-<tr><td>
-
-nets
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Net name array
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-[IPCB\_EqualLengthNetGroupItem](../interfaces/IPCB_EqualLengthNetGroupItem.md)<!-- -->\['color'\]
-
-</td><td>
-
-Equal-length net group color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|equalLengthNetGroupName|string|Equal-length net group name|
+|nets|Array&lt;string&gt;|Net name array|
+|color|[IPCB\_EqualLengthNetGroupItem](../interfaces/IPCB_EqualLengthNetGroupItem.md)<!-- -->\['color'\]|Equal-length net group color|
 
 ## Returns
 
@@ -1137,6 +366,7 @@ const created = await eda.pcb_Drc.createEqualLengthNetGroup('嘉立创示例_等
 
 console.log('created:', created);
 ```
+
 
 ### createnetclass
 
@@ -1158,59 +388,11 @@ function createNetClass(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-Net class name
-
-</td></tr>
-<tr><td>
-
-nets
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Net name array
-
-</td></tr>
-<tr><td>
-
-color
-
-</td><td>
-
-[IPCB\_EqualLengthNetGroupItem](../interfaces/IPCB_EqualLengthNetGroupItem.md)<!-- -->\['color'\]
-
-</td><td>
-
-Net class color
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netClassName|string|Net class name|
+|nets|Array&lt;string&gt;|Net name array|
+|color|[IPCB\_EqualLengthNetGroupItem](../interfaces/IPCB_EqualLengthNetGroupItem.md)<!-- -->\['color'\]|Net class color|
 
 ## Returns
 
@@ -1232,6 +414,7 @@ const created = await eda.pcb_Drc.createNetClass('嘉立创示例_网络类', ['
 console.log('created:', created);
 ```
 
+
 ### createpadpairgroup
 
 # PCB\_Drc.createPadPairGroup() method
@@ -1251,46 +434,10 @@ function createPadPairGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-<tr><td>
-
-padPairs
-
-</td><td>
-
-Array&lt;\[string, string\]&gt;
-
-</td><td>
-
-Pad for array
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padPairGroupName|string|Pad pair group name|
+|padPairs|Array&lt;\[string, string\]&gt;|Pad for array|
 
 ## Returns
 
@@ -1318,33 +465,9 @@ function deleteDifferentialPair(differentialPairName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-differentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-Differential pair name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|differentialPairName|string|Differential pair name|
 
 ## Returns
 
@@ -1373,6 +496,7 @@ const result = await eda.pcb_Drc.deleteDifferentialPair(pairName);
 console.log('result:', result);
 ```
 
+
 ### deleteequallengthnetgroup
 
 # PCB\_Drc.deleteEqualLengthNetGroup() method
@@ -1389,33 +513,9 @@ function deleteEqualLengthNetGroup(equalLengthNetGroupName: string): Promise<boo
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-equalLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Equal-length net group name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|equalLengthNetGroupName|string|Equal-length net group name|
 
 ## Returns
 
@@ -1435,6 +535,7 @@ const result = await eda.pcb_Drc.deleteEqualLengthNetGroup('嘉立创示例_待�
 console.log('result:', result);
 ```
 
+
 ### deletenetclass
 
 # PCB\_Drc.deleteNetClass() method
@@ -1451,33 +552,9 @@ function deleteNetClass(netClassName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-Net class name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netClassName|string|Net class name|
 
 ## Returns
 
@@ -1497,6 +574,7 @@ const result = await eda.pcb_Drc.deleteNetClass('嘉立创示例_待删网络类
 console.log('result:', result);
 ```
 
+
 ### deletepadpairgroup
 
 # PCB\_Drc.deletePadPairGroup() method
@@ -1513,33 +591,9 @@ function deletePadPairGroup(padPairGroupName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padPairGroupName|string|Pad pair group name|
 
 ## Returns
 
@@ -1563,33 +617,9 @@ function deleteRuleConfiguration(configurationName: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|configurationName|string|Configuration name|
 
 ## Returns
 
@@ -1614,6 +644,7 @@ const result = await eda.pcb_Drc.deleteRuleConfiguration('嘉立创示例_待删
 console.log('result:', result);
 ```
 
+
 ### getalldifferentialpairs
 
 # PCB\_Drc.getAllDifferentialPairs() method
@@ -1625,12 +656,14 @@ Get the detailed properties of all differential pairs
 ## Signature
 
 ```typescript
-function getAllDifferentialPairs(): Promise<Array<IPCB_DifferentialPairItem> | Record<string, any>>;
+function getAllDifferentialPairs(): Promise<
+	Array<IPCB_DifferentialPairItem> | { [key: string]: any }
+>;
 ```
 
 ## Returns
 
-Promise&lt;Array&lt;[IPCB\_DifferentialPairItem](../interfaces/IPCB_DifferentialPairItem.md)<!-- -->&gt; \| Record&lt;string, any&gt;&gt;
+Promise&lt;Array&lt;[IPCB\_DifferentialPairItem](../interfaces/IPCB_DifferentialPairItem.md)<!-- -->&gt; \| { \[key: string\]: any }&gt;
 
 Detailed properties of all differential pairs
 
@@ -1662,6 +695,7 @@ list.forEach((p, i) => {
 // 3. 清理测试差分对（查询类清理现场）
 await eda.pcb_Drc.deleteDifferentialPair(pairName);
 ```
+
 
 ### getallequallengthnetgroups
 
@@ -1700,6 +734,7 @@ groups.forEach((g, i) => {
 await eda.pcb_Drc.deleteEqualLengthNetGroup('嘉立创示例_查询等长组');
 ```
 
+
 ### getallnetclasses
 
 # PCB\_Drc.getAllNetClasses() method
@@ -1737,6 +772,7 @@ classes.forEach((c, i) => {
 await eda.pcb_Drc.deleteNetClass('嘉立创示例_查询网络类');
 ```
 
+
 ### getallpadpairgroups
 
 # PCB\_Drc.getAllPadPairGroups() method
@@ -1773,6 +809,7 @@ groups.forEach((g, i) => {
 });
 ```
 
+
 ### getallruleconfigurations
 
 # PCB\_Drc.getAllRuleConfigurations() method
@@ -1784,42 +821,18 @@ Get all Design rule configuration
 ## Signature
 
 ```typescript
-function getAllRuleConfigurations(includeSystem?: boolean): Promise<Array<Record<string, any>>>;
+function getAllRuleConfigurations(includeSystem?: boolean): Promise<Array<{ [key: string]: any }>>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-includeSystem
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Get System design rule configuration
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|includeSystem|boolean|_(Optional)_ Whether Get System design rule configuration|
 
 ## Returns
 
-Promise&lt;Array&lt;Record&lt;string, any&gt;&gt;&gt;
+Promise&lt;Array&lt;{ \[key: string\]: any }&gt;&gt;
 
 All design rule configurations
 
@@ -1836,6 +849,7 @@ all.forEach((c, i) => {
 });
 ```
 
+
 ### getcurrentruleconfiguration
 
 # PCB\_Drc.getCurrentRuleConfiguration() method
@@ -1847,12 +861,12 @@ Get Current design rule configuration
 ## Signature
 
 ```typescript
-function getCurrentRuleConfiguration(): Promise<Record<string, any> | undefined>;
+function getCurrentRuleConfiguration(): Promise<{ [key: string]: any } | undefined>;
 ```
 
 ## Returns
 
-Promise&lt;Record&lt;string, any&gt; \| undefined&gt;
+Promise&lt;{ \[key: string\]: any } \| undefined&gt;
 
 Current design rule configuration; `undefined` indicates that the retrieval failed
 
@@ -1905,12 +919,12 @@ Get Net - net rules
 ## Signature
 
 ```typescript
-function getNetByNetRules(): Promise<Record<string, any>>;
+function getNetByNetRules(): Promise<{ [key: string]: any }>;
 ```
 
 ## Returns
 
-Promise&lt;Record&lt;string, any&gt;&gt;
+Promise&lt;{ \[key: string\]: any }&gt;
 
 All net-by-net rules of the current PCB
 
@@ -1925,12 +939,12 @@ Get Net rules
 ## Signature
 
 ```typescript
-function getNetRules(): Promise<Array<Record<string, any>>>;
+function getNetRules(): Promise<Array<{ [key: string]: any }>>;
 ```
 
 ## Returns
 
-Promise&lt;Array&lt;Record&lt;string, any&gt;&gt;&gt;
+Promise&lt;Array&lt;{ \[key: string\]: any }&gt;&gt;
 
 All net rules of the current PCB
 
@@ -1952,63 +966,15 @@ function getPadPairGroupMinWireLength(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padPairGroupName|string|Pad pair group name|
 
 ## Returns
 
 Promise&lt;Array&lt;[IPCB\_PadPairMinWireLengthItem](../interfaces/IPCB_PadPairMinWireLengthItem.md)<!-- -->&gt;&gt;
 
 The minimum wire lengths of all pad pairs
-
-### getrealtimedrcstatus
-
-# PCB\_Drc.getRealTimeDrcStatus() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get Real-time DRC check state
-
-## Signature
-
-```typescript
-function getRealTimeDrcStatus(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Real-time DRC check status. If real-time DRC is stopped, not in a PCB, or the retrieval fails, `false` is returned
-
-## Remarks
-
-ADD since EDA v4.2
 
 ### getregionrules
 
@@ -2021,12 +987,12 @@ Get region rules
 ## Signature
 
 ```typescript
-function getRegionRules(): Promise<Array<Record<string, any>>>;
+function getRegionRules(): Promise<Array<{ [key: string]: any }>>;
 ```
 
 ## Returns
 
-Promise&lt;Array&lt;Record&lt;string, any&gt;&gt;&gt;
+Promise&lt;Array&lt;{ \[key: string\]: any }&gt;&gt;
 
 - All region rules of the current PCB
 
@@ -2039,42 +1005,20 @@ Get Specify design rule configuration
 ## Signature
 
 ```typescript
-function getRuleConfiguration(configurationName: string): Promise<Record<string, any> | undefined>;
+function getRuleConfiguration(
+	configurationName: string,
+): Promise<{ [key: string]: any } | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|configurationName|string|Configuration name|
 
 ## Returns
 
-Promise&lt;Record&lt;string, any&gt; \| undefined&gt;
+Promise&lt;{ \[key: string\]: any } \| undefined&gt;
 
 Design rule configuration, `undefined` is does not exist this design rules
 
@@ -2097,46 +1041,10 @@ function modifyDifferentialPairName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalDifferentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original differential pair name
-
-</td></tr>
-<tr><td>
-
-differentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-New differential pair name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalDifferentialPairName|string|Original differential pair name|
+|differentialPairName|string|New differential pair name|
 
 ## Returns
 
@@ -2167,6 +1075,7 @@ console.log('newName:', newName);
 console.log('result:', result);
 ```
 
+
 ### modifydifferentialpairnegativenet
 
 # PCB\_Drc.modifyDifferentialPairNegativeNet() method
@@ -2186,46 +1095,10 @@ function modifyDifferentialPairNegativeNet(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-differentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-Differential pair name
-
-</td></tr>
-<tr><td>
-
-negativeNet
-
-</td><td>
-
-string
-
-</td><td>
-
-Negative net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|differentialPairName|string|Differential pair name|
+|negativeNet|string|Negative net name|
 
 ## Returns
 
@@ -2257,6 +1130,7 @@ console.log('newNegativeNet:', newNetN);
 console.log('result:', result);
 ```
 
+
 ### modifydifferentialpairpositivenet
 
 # PCB\_Drc.modifyDifferentialPairPositiveNet() method
@@ -2276,46 +1150,10 @@ function modifyDifferentialPairPositiveNet(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-differentialPairName
-
-</td><td>
-
-string
-
-</td><td>
-
-Differential pair name
-
-</td></tr>
-<tr><td>
-
-positiveNet
-
-</td><td>
-
-string
-
-</td><td>
-
-Positive net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|differentialPairName|string|Differential pair name|
+|positiveNet|string|Positive net name|
 
 ## Returns
 
@@ -2347,6 +1185,7 @@ console.log('newPositiveNet:', newNetP);
 console.log('result:', result);
 ```
 
+
 ### modifyequallengthnetgroupname
 
 # PCB\_Drc.modifyEqualLengthNetGroupName() method
@@ -2366,46 +1205,10 @@ function modifyEqualLengthNetGroupName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalEqualLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original equal-length net group name
-
-</td></tr>
-<tr><td>
-
-equalLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-New equal-length net group name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalEqualLengthNetGroupName|string|Original equal-length net group name|
+|equalLengthNetGroupName|string|New equal-length net group name|
 
 ## Returns
 
@@ -2427,6 +1230,7 @@ console.log('newName:', newName);
 console.log('result:', result);
 ```
 
+
 ### modifynetclassname
 
 # PCB\_Drc.modifyNetClassName() method
@@ -2443,46 +1247,10 @@ function modifyNetClassName(originalNetClassName: string, netClassName: string):
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalNetClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original net class name
-
-</td></tr>
-<tr><td>
-
-netClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-New net class name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalNetClassName|string|Original net class name|
+|netClassName|string|New net class name|
 
 ## Returns
 
@@ -2504,6 +1272,7 @@ console.log('newName:', newName);
 console.log('result:', result);
 ```
 
+
 ### modifypadpairgroupname
 
 # PCB\_Drc.modifyPadPairGroupName() method
@@ -2523,46 +1292,10 @@ function modifyPadPairGroupName(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalPadPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original pad pair group name
-
-</td></tr>
-<tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-New pad pair group name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalPadPairGroupName|string|Original pad pair group name|
+|padPairGroupName|string|New pad pair group name|
 
 ## Returns
 
@@ -2581,40 +1314,16 @@ Overwrite current design rule configuration
 ## Signature
 
 ```typescript
-function overwriteCurrentRuleConfiguration(
-	ruleConfiguration: Record<string, any>,
-): Promise<boolean>;
+function overwriteCurrentRuleConfiguration(ruleConfiguration: {
+	[key: string]: any;
+}): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-ruleConfiguration
-
-</td><td>
-
-Record&lt;string, any&gt;
-
-</td><td>
-
-Design rule configuration
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|ruleConfiguration|\{ \[key: string\]: any \}|Design rule configuration|
 
 ## Returns
 
@@ -2639,6 +1348,7 @@ console.log('configName:', current.name);
 console.log('result:', result);
 ```
 
+
 ### overwritenetbynetrules
 
 # PCB\_Drc.overwriteNetByNetRules() method
@@ -2650,38 +1360,14 @@ Overwrite net - net rules
 ## Signature
 
 ```typescript
-function overwriteNetByNetRules(netByNetRules: Record<string, any>): Promise<boolean>;
+function overwriteNetByNetRules(netByNetRules: { [key: string]: any }): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netByNetRules
-
-</td><td>
-
-Record&lt;string, any&gt;
-
-</td><td>
-
-Net - net rules
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netByNetRules|\{ \[key: string\]: any \}|Net - net rules|
 
 ## Returns
 
@@ -2706,6 +1392,7 @@ console.log('ruleKeys:', Object.keys(netByNetRules).join(', '));
 console.log('result:', result);
 ```
 
+
 ### overwritenetrules
 
 # PCB\_Drc.overwriteNetRules() method
@@ -2717,38 +1404,14 @@ Overwrite net rules
 ## Signature
 
 ```typescript
-function overwriteNetRules(netRules: Array<Record<string, any>>): Promise<boolean>;
+function overwriteNetRules(netRules: Array<{ [key: string]: any }>): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netRules
-
-</td><td>
-
-Array&lt;Record&lt;string, any&gt;&gt;
-
-</td><td>
-
-Net rules
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netRules|Array&lt;{ \[key: string\]: any }&gt;|Net rules|
 
 ## Returns
 
@@ -2773,6 +1436,7 @@ console.log('ruleCount:', netRules.length);
 console.log('result:', result);
 ```
 
+
 ### overwriteregionrules
 
 # PCB\_Drc.overwriteRegionRules() method
@@ -2784,38 +1448,14 @@ Overwrite region rules
 ## Signature
 
 ```typescript
-function overwriteRegionRules(regionRules: Array<Record<string, any>>): Promise<boolean>;
+function overwriteRegionRules(regionRules: Array<{ [key: string]: any }>): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-regionRules
-
-</td><td>
-
-Array&lt;Record&lt;string, any&gt;&gt;
-
-</td><td>
-
-Region rules
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|regionRules|Array&lt;{ \[key: string\]: any }&gt;|Region rules|
 
 ## Returns
 
@@ -2840,6 +1480,7 @@ console.log('ruleCount:', regionRules.length);
 console.log('result:', result);
 ```
 
+
 ### removenetfromequallengthnetgroup
 
 # PCB\_Drc.removeNetFromEqualLengthNetGroup() method
@@ -2859,46 +1500,10 @@ function removeNetFromEqualLengthNetGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-equalLengthNetGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Equal-length net group name
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|equalLengthNetGroupName|string|Equal-length net group name|
+|net|string \| Array&lt;string&gt;|Net name|
 
 ## Returns
 
@@ -2925,6 +1530,7 @@ console.log('removedOne:', removedOne);
 console.log('removedBatch:', removedBatch);
 ```
 
+
 ### removenetfromnetclass
 
 # PCB\_Drc.removeNetFromNetClass() method
@@ -2941,46 +1547,10 @@ function removeNetFromNetClass(netClassName: string, net: string | Array<string>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-netClassName
-
-</td><td>
-
-string
-
-</td><td>
-
-Net class name
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string \| Array&lt;string&gt;
-
-</td><td>
-
-Net name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|netClassName|string|Net class name|
+|net|string \| Array&lt;string&gt;|Net name|
 
 ## Returns
 
@@ -3007,6 +1577,7 @@ console.log('removedOne:', removedOne);
 console.log('removedBatch:', removedBatch);
 ```
 
+
 ### removepadpairfrompadpairgroup
 
 # PCB\_Drc.removePadPairFromPadPairGroup() method
@@ -3026,46 +1597,10 @@ function removePadPairFromPadPairGroup(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-padPairGroupName
-
-</td><td>
-
-string
-
-</td><td>
-
-Pad pair group name
-
-</td></tr>
-<tr><td>
-
-padPair
-
-</td><td>
-
-\[string, string\] \| Array&lt;\[string, string\]&gt;
-
-</td><td>
-
-Pad for
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|padPairGroupName|string|Pad pair group name|
+|padPair|\[string, string\] \| Array&lt;\[string, string\]&gt;|Pad for|
 
 ## Returns
 
@@ -3096,46 +1631,10 @@ function renameRuleConfiguration(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalConfigurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original design rule configuration name
-
-</td></tr>
-<tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-New design rule configuration name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|originalConfigurationName|string|Original design rule configuration name|
+|configurationName|string|New design rule configuration name|
 
 ## Returns
 
@@ -3163,6 +1662,7 @@ const result = await eda.pcb_Drc.renameRuleConfiguration('嘉立创示例_待改
 console.log('result:', result);
 ```
 
+
 ### saveruleconfiguration
 
 # PCB\_Drc.saveRuleConfiguration() method
@@ -3175,7 +1675,7 @@ Save Design rule configuration
 
 ```typescript
 function saveRuleConfiguration(
-	ruleConfiguration: Record<string, any>,
+	ruleConfiguration: { [key: string]: any },
 	configurationName: string,
 	allowOverwrite?: boolean,
 ): Promise<boolean>;
@@ -3183,59 +1683,11 @@ function saveRuleConfiguration(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-ruleConfiguration
-
-</td><td>
-
-Record&lt;string, any&gt;
-
-</td><td>
-
-Design rule configuration
-
-</td></tr>
-<tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-<tr><td>
-
-allowOverwrite
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to allow overwriting a design rule configuration with the same name. If `false`<!-- -->, `false` will be returned when a configuration with the same name is encountered. Please note the possible risk of data loss
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|ruleConfiguration|\{ \[key: string\]: any \}|Design rule configuration|
+|configurationName|string|Configuration name|
+|allowOverwrite|boolean|_(Optional)_ Whether to allow overwriting a design rule configuration with the same name. If `false`<!-- -->, `false` will be returned when a configuration with the same name is encountered. Please note the possible risk of data loss|
 
 ## Returns
 
@@ -3259,6 +1711,7 @@ const saved = await eda.pcb_Drc.saveRuleConfiguration(current.config, '嘉立创
 console.log('saved:', saved);
 ```
 
+
 ### setasdefaultruleconfiguration
 
 # PCB\_Drc.setAsDefaultRuleConfiguration() method
@@ -3275,33 +1728,9 @@ function setAsDefaultRuleConfiguration(configurationName: string): Promise<boole
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|configurationName|string|Configuration name|
 
 ## Returns
 
@@ -3325,51 +1754,3 @@ const result = await eda.pcb_Drc.setAsDefaultRuleConfiguration('嘉立创示例_
 
 console.log('result:', result);
 ```
-
-### startrealtimedrc
-
-# PCB\_Drc.startRealTimeDrc() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Start real-time DRC check
-
-## Signature
-
-```typescript
-function startRealTimeDrc(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether Successful enable real-time DRC check
-
-## Remarks
-
-The return value of this API is result-oriented. If real-time DRC check was already enabled before calling this API, `true` will also be returned ADD since EDA v4.2
-
-### stoprealtimedrc
-
-# PCB\_Drc.stopRealTimeDrc() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Stop real-time DRC check
-
-## Signature
-
-```typescript
-function stopRealTimeDrc(): Promise<boolean>;
-```
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether real-time DRC check was successfully disabled
-
-## Remarks
-
-The return value of this API is result-oriented. If real-time DRC check was already disabled before calling this API, `true` will also be returned ADD since EDA v4.2

@@ -10,101 +10,13 @@ interface IDMT_PcbItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[itemType](./IDMT_PcbItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[EDMT\_ItemType.PCB](../enums/EDMT_ItemType.md) \| [EDMT\_ItemType.CBB\_PCB](../enums/EDMT_ItemType.md)
-
-</td><td>
-
-Project type
-
-</td></tr>
-<tr><td>
-
-[name](./IDMT_PcbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB name
-
-</td></tr>
-<tr><td>
-
-[parentBoardName?](./IDMT_PcbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Name of the board it belongs to
-
-</td></tr>
-<tr><td>
-
-[parentProjectUuid](./IDMT_PcbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the project it belongs to
-
-</td></tr>
-<tr><td>
-
-[uuid](./IDMT_PcbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-PCB UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[itemType](./IDMT_PcbItem.md)|`readonly`|[EDMT\_ItemType.PCB](../enums/EDMT_ItemType.md) \| [EDMT\_ItemType.CBB\_PCB](../enums/EDMT_ItemType.md)|Project type|
+|[name](./IDMT_PcbItem.md)||string|PCB name|
+|[parentBoardName?](./IDMT_PcbItem.md)||string|_(Optional)_ Name of the board it belongs to|
+|[parentProjectUuid](./IDMT_PcbItem.md)||string|UUID of the project it belongs to|
+|[uuid](./IDMT_PcbItem.md)||string|PCB UUID|
 
 ---
 

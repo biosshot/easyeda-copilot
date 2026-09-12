@@ -13,273 +13,31 @@ class SCH_PrimitiveComponent implements ISCH_PrimitiveAPI
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(component, x, y, subPartName, rotation, mirror, addIntoBom, addIntoPcb)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Device
-
-</td></tr>
-<tr><td>
-
-[createCbbSymbol(cbbSymbol, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Reuse block symbol
-
-</td></tr>
-<tr><td>
-
-[createNetFlag(identification, net, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Net flag
-
-</td></tr>
-<tr><td>
-
-[createNetPort(direction, net, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Net port
-
-</td></tr>
-<tr><td>
-
-[createShortCircuitFlag(x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create a short circuit flag
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Device
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Device
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Device
-
-</td></tr>
-<tr><td>
-
-[getAll(componentType, allSchematicPages)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Device
-
-</td></tr>
-<tr><td>
-
-[getAllPinsByPrimitiveId(primitiveId)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all pins associated with the device
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId(componentType, allSchematicPages)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Device primitive IDs
-
-</td></tr>
-<tr><td>
-
-[getAllPropertyNames()](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get The set of all property names of all devices
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Device
-
-</td></tr>
-<tr><td>
-
-[placeCbbSchematicPage(cbbSchematicPage, x, y, props)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Place reuse block schematic sheet
-
-</td></tr>
-<tr><td>
-
-[placeComponentWithMouse(component, subPartName)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Place with the mouse device
-
-</td></tr>
-<tr><td>
-
-[placeSymbolWithMouse(symbol, subPartName, properties)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Place with the mouse symbol
-
-</td></tr>
-<tr><td>
-
-[setNetFlagComponentUuid\_AnalogGround(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the AnalogGround net flag in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetFlagComponentUuid\_Ground(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the Ground net flag in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetFlagComponentUuid\_Power(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the Power net flag in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetFlagComponentUuid\_ProtectGround(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the ProtectGround net flag in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetPortComponentUuid\_BI(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the BI net port in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetPortComponentUuid\_IN(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the IN net port in the extension API
-
-</td></tr>
-<tr><td>
-
-[setNetPortComponentUuid\_OUT(component)](./SCH_PrimitiveComponent.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the device UUID associated with the OUT net port in the extension API
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(component, x, y, subPartName, rotation, mirror, addIntoBom, addIntoPcb)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Create Device|
+|[createCbbSymbol(cbbSymbol, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Create Reuse block symbol|
+|[createNetFlag(identification, net, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Create Net flag|
+|[createNetPort(direction, net, x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Create Net port|
+|[createShortCircuitFlag(x, y, rotation, mirror)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Create a short circuit flag|
+|[delete(primitiveIds)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Delete Device|
+|[get(primitiveIds)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get Device|
+|[get(primitiveIds)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get Device|
+|[getAll(componentType, allSchematicPages)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get all Device|
+|[getAllPinsByPrimitiveId(primitiveId)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get all pins associated with the device|
+|[getAllPrimitiveId(componentType, allSchematicPages)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get all Device primitive IDs|
+|[getAllPropertyNames()](./SCH_PrimitiveComponent.md)||**_(BETA)_** Get The set of all property names of all devices|
+|[modify(primitiveId, property)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Modify Device|
+|[placeCbbSchematicPage(cbbSchematicPage, x, y)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Place reuse block schematic sheet|
+|[placeComponentWithMouse(component, subPartName)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Place with the mouse device|
+|[placeSymbolWithMouse(symbol, subPartName, properties)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Place with the mouse symbol|
+|[setNetFlagComponentUuid\_AnalogGround(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the AnalogGround net flag in the extension API|
+|[setNetFlagComponentUuid\_Ground(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the Ground net flag in the extension API|
+|[setNetFlagComponentUuid\_Power(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the Power net flag in the extension API|
+|[setNetFlagComponentUuid\_ProtectGround(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the ProtectGround net flag in the extension API|
+|[setNetPortComponentUuid\_BI(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the BI net port in the extension API|
+|[setNetPortComponentUuid\_IN(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the IN net port in the extension API|
+|[setNetPortComponentUuid\_OUT(component)](./SCH_PrimitiveComponent.md)||**_(BETA)_** Set the device UUID associated with the OUT net port in the extension API|
 
 ---
 
@@ -298,7 +56,7 @@ Create Device
 ```typescript
 function create(
 	component:
-		| { libraryType?: undefined | ELIB_LibraryType.DEVICE; libraryUuid: string; uuid: string }
+		| { libraryType?: ELIB_LibraryType.DEVICE; libraryUuid: string; uuid: string }
 		| ILIB_DeviceItem
 		| ILIB_DeviceSearchItem
 		| { libraryType: ELIB_LibraryType.SYMBOL; libraryUuid: string; uuid: string }
@@ -316,124 +74,16 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryType?: undefined \| [ELIB\_LibraryType.DEVICE](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md) \| { libraryType: [ELIB\_LibraryType.SYMBOL](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_SymbolItem](../interfaces/ILIB_SymbolItem.md) \| [ILIB\_SymbolSearchItem](../interfaces/ILIB_SymbolSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-subPartName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Sub-part name
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-<tr><td>
-
-addIntoBom
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Add to BOM
-
-</td></tr>
-<tr><td>
-
-addIntoPcb
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether Transfer to PCB
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryType?: [ELIB\_LibraryType.DEVICE](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md) \| { libraryType: [ELIB\_LibraryType.SYMBOL](../enums/ELIB_LibraryType.md)<!-- -->; libraryUuid: string; uuid: string } \| [ILIB\_SymbolItem](../interfaces/ILIB_SymbolItem.md) \| [ILIB\_SymbolSearchItem](../interfaces/ILIB_SymbolSearchItem.md)|Associate library device|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|subPartName|string|_(Optional)_ Sub-part name|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
+|addIntoBom|boolean|_(Optional)_ Whether Add to BOM|
+|addIntoPcb|boolean|_(Optional)_ Whether Transfer to PCB|
 
 ## Returns
 
@@ -468,6 +118,7 @@ console.log('position:', comp.getState_X(), ',', comp.getState_Y());
 console.log('addIntoBom:', comp.getState_AddIntoBom());
 ```
 
+
 ### createcbbsymbol
 
 # SCH\_PrimitiveComponent.createCbbSymbol() method
@@ -480,7 +131,7 @@ Create Reuse block symbol
 
 ```typescript
 function createCbbSymbol(
-	cbbSymbol: { libraryUuid: string; cbbUuid: string; uuid?: undefined | string },
+	cbbSymbol: { libraryUuid: string; cbbUuid: string; uuid?: string },
 	x: number,
 	y: number,
 	rotation?: number,
@@ -490,85 +141,13 @@ function createCbbSymbol(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbSymbol
-
-</td><td>
-
-\{ libraryUuid: string; cbbUuid: string; uuid?: undefined \| string \}
-
-</td><td>
-
-Associated library reuse block symbol. `libraryUuid` is the UUID of the library where the CBB project is located, `cbbUuid` is the UUID of the CBB project, and `uuid` is the UUID of the symbol in the CBB project
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbSymbol|\{ libraryUuid: string; cbbUuid: string; uuid?: string \}|Associated library reuse block symbol. `libraryUuid` is the UUID of the library where the CBB project is located, `cbbUuid` is the UUID of the CBB project, and `uuid` is the UUID of the symbol in the CBB project|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
 
 ## Returns
 
@@ -605,6 +184,7 @@ console.log('primitiveType:', symbol.getState_PrimitiveType());
 console.log('position:', symbol.getState_X(), ',', symbol.getState_Y());
 ```
 
+
 ### createnetflag
 
 # SCH\_PrimitiveComponent.createNetFlag() method
@@ -628,98 +208,14 @@ function createNetFlag(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-identification
-
-</td><td>
-
-'Power' \| 'Ground' \| 'AnalogGround' \| 'ProtectGround'
-
-</td><td>
-
-Identification type
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|identification|'Power' \| 'Ground' \| 'AnalogGround' \| 'ProtectGround'|Identification type|
+|net|string|Net name|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
 
 ## Returns
 
@@ -750,6 +246,7 @@ console.log('net:', flag.getState_Net());
 console.log('componentType:', flag.getState_ComponentType());
 ```
 
+
 ### createnetport
 
 # SCH\_PrimitiveComponent.createNetPort() method
@@ -773,98 +270,14 @@ function createNetPort(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-direction
-
-</td><td>
-
-'IN' \| 'OUT' \| 'BI'
-
-</td><td>
-
-Port direction
-
-</td></tr>
-<tr><td>
-
-net
-
-</td><td>
-
-string
-
-</td><td>
-
-Net name
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|direction|'IN' \| 'OUT' \| 'BI'|Port direction|
+|net|string|Net name|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
 
 ## Returns
 
@@ -895,6 +308,7 @@ console.log('net:', port.getState_Net());
 console.log('componentType:', port.getState_ComponentType());
 ```
 
+
 ### createshortcircuitflag
 
 # SCH\_PrimitiveComponent.createShortCircuitFlag() method
@@ -916,72 +330,12 @@ function createShortCircuitFlag(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle
-
-</td></tr>
-<tr><td>
-
-mirror
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether it is mirrored
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|rotation|number|_(Optional)_ Rotation angle|
+|mirror|boolean|_(Optional)_ Whether it is mirrored|
 
 ## Returns
 
@@ -1010,6 +364,7 @@ console.log('componentType:', flag.getState_ComponentType());
 console.log('position:', flag.getState_X(), ',', flag.getState_Y());
 ```
 
+
 ### delete
 
 # SCH\_PrimitiveComponent.delete() method
@@ -1026,33 +381,9 @@ function delete(primitiveIds: string | ISCH_PrimitiveComponent | Array<string> |
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md)<!-- -->&gt;
-
-</td><td>
-
-Device primitive ID or Device primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md)<!-- -->&gt;|Device primitive ID or Device primitive object|
 
 ## Returns
 
@@ -1085,6 +416,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitiveComponent.get() method
@@ -1101,33 +433,9 @@ function get(primitiveIds: string): Promise<ISCH_PrimitiveComponent | undefined>
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -1162,6 +470,7 @@ console.log('array length:', arr.length);
 console.log('comp2 designator:', arr[1].getState_Designator());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitiveComponent.get() method
@@ -1178,33 +487,9 @@ function get(primitiveIds: Array<string>): Promise<Array<ISCH_PrimitiveComponent
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Device primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -1235,46 +520,10 @@ function getAll(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-componentType
-
-</td><td>
-
-[ESCH\_PrimitiveComponentType](../enums/ESCH_PrimitiveComponentType.md)
-
-</td><td>
-
-_(Optional)_ Device type
-
-</td></tr>
-<tr><td>
-
-allSchematicPages
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to get the devices of all schematic sheets
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|componentType|[ESCH\_PrimitiveComponentType](../enums/ESCH_PrimitiveComponentType.md)|_(Optional)_ Device type|
+|allSchematicPages|boolean|_(Optional)_ Whether to get the devices of all schematic sheets|
 
 ## Returns
 
@@ -1307,6 +556,7 @@ console.log('marker comp found:', all.some(c => c.getState_PrimitiveId() === com
 console.log('netflag count:', flags.length);
 ```
 
+
 ### getallpinsbyprimitiveid
 
 # SCH\_PrimitiveComponent.getAllPinsByPrimitiveId() method
@@ -1325,33 +575,9 @@ function getAllPinsByPrimitiveId(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string
-
-</td><td>
-
-Device primitive ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string|Device primitive ID|
 
 ## Returns
 
@@ -1380,6 +606,7 @@ console.log('first pin number:', pins[0].pinNumber);
 console.log('first pin type:', pins[0].pinType);
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitiveComponent.getAllPrimitiveId() method
@@ -1399,46 +626,10 @@ function getAllPrimitiveId(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-componentType
-
-</td><td>
-
-[ESCH\_PrimitiveComponentType](../enums/ESCH_PrimitiveComponentType.md)
-
-</td><td>
-
-_(Optional)_ Device type
-
-</td></tr>
-<tr><td>
-
-allSchematicPages
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to get the devices of all schematic sheets
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|componentType|[ESCH\_PrimitiveComponentType](../enums/ESCH_PrimitiveComponentType.md)|_(Optional)_ Device type|
+|allSchematicPages|boolean|_(Optional)_ Whether to get the devices of all schematic sheets|
 
 ## Returns
 
@@ -1468,6 +659,7 @@ console.log('total ids:', allIds.length);
 console.log('netflag ids:', flagIds.length);
 console.log('marker flag found:', flagIds.includes(flagId));
 ```
+
 
 ### getallpropertynames
 
@@ -1508,6 +700,7 @@ console.log('property name count:', names.length);
 console.log('names:', names.join(', '));
 ```
 
+
 ### modify
 
 # SCH\_PrimitiveComponent.modify() method
@@ -1522,64 +715,30 @@ Modify Device
 function modify(
 	primitiveId: string | ISCH_PrimitiveComponent,
 	property: {
-		x?: undefined | number;
-		y?: undefined | number;
-		rotation?: undefined | number;
-		mirror?: undefined | false | true;
-		addIntoBom?: undefined | false | true;
-		addIntoPcb?: undefined | false | true;
-		designator?: undefined | null | string;
-		name?: undefined | null | string;
-		uniqueId?: undefined | null | string;
-		manufacturer?: undefined | null | string;
-		manufacturerId?: undefined | null | string;
-		supplier?: undefined | null | string;
-		supplierId?: undefined | null | string;
-		otherProperty?: undefined | Record<string, string | number | false | true>;
+		x?: number;
+		y?: number;
+		rotation?: number;
+		mirror?: boolean;
+		addIntoBom?: boolean;
+		addIntoPcb?: boolean;
+		designator?: string | null;
+		name?: string | null;
+		uniqueId?: string | null;
+		manufacturer?: string | null;
+		manufacturerId?: string | null;
+		supplier?: string | null;
+		supplierId?: string | null;
+		otherProperty?: Record<string, string | number | boolean>;
 	},
 ): Promise<ISCH_PrimitiveComponent | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ x?: undefined \| number; y?: undefined \| number; rotation?: undefined \| number; mirror?: undefined \| false \| true; addIntoBom?: undefined \| false \| true; addIntoPcb?: undefined \| false \| true; designator?: undefined \| null \| string; name?: undefined \| null \| string; uniqueId?: undefined \| null \| string; manufacturer?: undefined \| null \| string; manufacturerId?: undefined \| null \| string; supplier?: undefined \| null \| string; supplierId?: undefined \| null \| string; otherProperty?: undefined \| Record&lt;string, string \| number \| false \| true&gt; }
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitiveComponent](./ISCH_PrimitiveComponent.md)|Primitive ID|
+|property|{ x?: number; y?: number; rotation?: number; mirror?: boolean; addIntoBom?: boolean; addIntoPcb?: boolean; designator?: string \| null; name?: string \| null; uniqueId?: string \| null; manufacturer?: string \| null; manufacturerId?: string \| null; supplier?: string \| null; supplierId?: string \| null; otherProperty?: Record&lt;string, string \| number \| boolean&gt; }||
 
 ## Returns
 
@@ -1623,6 +782,7 @@ console.log('rotation:', beforeRotation, '→', refreshed.getState_Rotation());
 console.log('x:', beforeX, '→', refreshed.getState_X());
 ```
 
+
 ### placecbbschematicpage
 
 # SCH\_PrimitiveComponent.placeCbbSchematicPage() method
@@ -1638,78 +798,16 @@ function placeCbbSchematicPage(
 	cbbSchematicPage: { libraryUuid: string; cbbUuid: string; uuid: string },
 	x: number,
 	y: number,
-	props?: { reimportWhenNameRepeated?: undefined | false | true },
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-cbbSchematicPage
-
-</td><td>
-
-\{ libraryUuid: string; cbbUuid: string; uuid: string \}
-
-</td><td>
-
-Reuse block schematic sheet. `libraryUuid` is the UUID of the library where the CBB project is located, `cbbUuid` is the UUID of the CBB project, and `uuid` is the UUID of the schematic sheet in the CBB project
-
-</td></tr>
-<tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-props
-
-</td><td>
-
-\{ reimportWhenNameRepeated?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_ Placement parameters: `reimportWhenNameRepeated` - whether to re-import when a module with the same name exists, default `true`<!-- -->. ADD since EDA v4.2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|cbbSchematicPage|\{ libraryUuid: string; cbbUuid: string; uuid: string \}|Reuse block schematic sheet. `libraryUuid` is the UUID of the library where the CBB project is located, `cbbUuid` is the UUID of the CBB project, and `uuid` is the UUID of the schematic sheet in the CBB project|
+|x|number|X coordinate|
+|y|number|Y coordinate|
 
 ## Returns
 
@@ -1736,46 +834,10 @@ function placeComponentWithMouse(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-<tr><td>
-
-subPartName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Sub-part name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
+|subPartName|string|_(Optional)_ Sub-part name|
 
 ## Returns
 
@@ -1803,65 +865,17 @@ Place with the mouse symbol
 function placeSymbolWithMouse(
 	symbol: { libraryUuid: string; uuid: string } | ILIB_SymbolItem | ILIB_SymbolSearchItem,
 	subPartName?: string,
-	properties?: Record<string, boolean | number | string | undefined>,
+	properties?: { [key: string]: boolean | number | string | undefined },
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-symbol
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_SymbolItem](../interfaces/ILIB_SymbolItem.md) \| [ILIB\_SymbolSearchItem](../interfaces/ILIB_SymbolSearchItem.md)
-
-</td><td>
-
-Associate library symbol
-
-</td></tr>
-<tr><td>
-
-subPartName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Sub-part name
-
-</td></tr>
-<tr><td>
-
-properties
-
-</td><td>
-
-Record&lt;string, boolean \| number \| string \| undefined&gt;
-
-</td><td>
-
-_(Optional)_ Device property
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|symbol|{ libraryUuid: string; uuid: string } \| [ILIB\_SymbolItem](../interfaces/ILIB_SymbolItem.md) \| [ILIB\_SymbolSearchItem](../interfaces/ILIB_SymbolSearchItem.md)|Associate library symbol|
+|subPartName|string|_(Optional)_ Sub-part name|
+|properties|\{ \[key: string\]: boolean \| number \| string \| undefined \}|_(Optional)_ Device property|
 
 ## Returns
 
@@ -1893,33 +907,9 @@ function setNetFlagComponentUuid_AnalogGround(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -1945,33 +935,9 @@ function setNetFlagComponentUuid_Ground(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -1997,33 +963,9 @@ function setNetFlagComponentUuid_Power(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -2049,33 +991,9 @@ function setNetFlagComponentUuid_ProtectGround(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -2101,33 +1019,9 @@ function setNetPortComponentUuid_BI(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -2153,33 +1047,9 @@ function setNetPortComponentUuid_IN(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 
@@ -2205,33 +1075,9 @@ function setNetPortComponentUuid_OUT(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-component
-
-</td><td>
-
-{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)
-
-</td><td>
-
-Associate library device
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|component|{ libraryUuid: string; uuid: string } \| [ILIB\_DeviceItem](../interfaces/ILIB_DeviceItem.md) \| [ILIB\_DeviceSearchItem](../interfaces/ILIB_DeviceSearchItem.md)|Associate library device|
 
 ## Returns
 

@@ -15,97 +15,15 @@ Pin primitives are only available in the symbol editor. In a schematic sheet, th
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[create(x, y, pinNumber, pinName, rotation, pinLength, pinColor, pinShape, pinType)](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Create Pin
-
-</td></tr>
-<tr><td>
-
-[delete(primitiveIds)](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Pin
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Pin
-
-</td></tr>
-<tr><td>
-
-[get(primitiveIds)](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Pin
-
-</td></tr>
-<tr><td>
-
-[getAll()](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Pin
-
-</td></tr>
-<tr><td>
-
-[getAllPrimitiveId()](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Pin primitive IDs
-
-</td></tr>
-<tr><td>
-
-[modify(primitiveId, property)](./SCH_PrimitivePin.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Pin
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[create(x, y, pinNumber, pinName, rotation, pinLength, pinColor, pinShape, pinType)](./SCH_PrimitivePin.md)||**_(BETA)_** Create Pin|
+|[delete(primitiveIds)](./SCH_PrimitivePin.md)||**_(BETA)_** Delete Pin|
+|[get(primitiveIds)](./SCH_PrimitivePin.md)||**_(BETA)_** Get Pin|
+|[get(primitiveIds)](./SCH_PrimitivePin.md)||**_(BETA)_** Get Pin|
+|[getAll()](./SCH_PrimitivePin.md)||**_(BETA)_** Get all Pin|
+|[getAllPrimitiveId()](./SCH_PrimitivePin.md)||**_(BETA)_** Get all Pin primitive IDs|
+|[modify(primitiveId, property)](./SCH_PrimitivePin.md)||**_(BETA)_** Modify Pin|
 
 ---
 
@@ -137,137 +55,17 @@ function create(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-x
-
-</td><td>
-
-number
-
-</td><td>
-
-X coordinate
-
-</td></tr>
-<tr><td>
-
-y
-
-</td><td>
-
-number
-
-</td><td>
-
-Y coordinate
-
-</td></tr>
-<tr><td>
-
-pinNumber
-
-</td><td>
-
-string
-
-</td><td>
-
-Pin number
-
-</td></tr>
-<tr><td>
-
-pinName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Pin name
-
-</td></tr>
-<tr><td>
-
-rotation
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Rotation angle. Options: `0` `90` `180` `270`
-
-</td></tr>
-<tr><td>
-
-pinLength
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Pin length
-
-</td></tr>
-<tr><td>
-
-pinColor
-
-</td><td>
-
-string \| null
-
-</td><td>
-
-_(Optional)_ Pin color, `null` indicates the default
-
-</td></tr>
-<tr><td>
-
-pinShape
-
-</td><td>
-
-[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)
-
-</td><td>
-
-_(Optional)_ Pin shape
-
-</td></tr>
-<tr><td>
-
-pinType
-
-</td><td>
-
-[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)
-
-</td><td>
-
-_(Optional)_ Pin type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|x|number|X coordinate|
+|y|number|Y coordinate|
+|pinNumber|string|Pin number|
+|pinName|string|_(Optional)_ Pin name|
+|rotation|number|_(Optional)_ Rotation angle. Options: `0` `90` `180` `270`|
+|pinLength|number|_(Optional)_ Pin length|
+|pinColor|string \| null|_(Optional)_ Pin color, `null` indicates the default|
+|pinShape|[ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)|_(Optional)_ Pin shape|
+|pinType|[ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)|_(Optional)_ Pin type|
 
 ## Returns
 
@@ -303,6 +101,7 @@ console.log('pinColor:', pin.getState_PinColor());
 console.log('pinShape:', pin.getState_PinShape(), 'pinType:', pin.getState_pinType());
 ```
 
+
 ### delete
 
 # SCH\_PrimitivePin.delete() method
@@ -319,33 +118,9 @@ function delete(primitiveIds: string | ISCH_PrimitivePin | Array<string> | Array
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string \| [ISCH\_PrimitivePin](./ISCH_PrimitivePin.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitivePin](./ISCH_PrimitivePin.md)<!-- -->&gt;
-
-</td><td>
-
-Pin primitive ID or Pin primitive object
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string \| [ISCH\_PrimitivePin](./ISCH_PrimitivePin.md) \| Array&lt;string&gt; \| Array&lt;[ISCH\_PrimitivePin](./ISCH_PrimitivePin.md)<!-- -->&gt;|Pin primitive ID or Pin primitive object|
 
 ## Returns
 
@@ -385,6 +160,7 @@ console.log('deleted by object:', deleted2);
 console.log('beforeCount:', beforeCount, '→ afterCount:', afterCount);
 ```
 
+
 ### get
 
 # SCH\_PrimitivePin.get() method
@@ -403,33 +179,9 @@ function get(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-string
-
-</td><td>
-
-Pin primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|string|Pin primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -471,6 +223,7 @@ console.log('pin2 name:', arr[1].getState_PinName());
 console.log('pin2 type:', arr[1].getState_pinType());
 ```
 
+
 ### get_1
 
 # SCH\_PrimitivePin.get() method
@@ -489,33 +242,9 @@ function get(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveIds
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-Pin primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveIds|Array&lt;string&gt;|Pin primitive ID, which can be a string or an array of strings. If it is an array, an array is also returned|
 
 ## Returns
 
@@ -575,6 +304,7 @@ console.log('marker pin found:', all.some(p => p.getState_PrimitiveId() === pinI
 console.log('marker pinName:', all.find(p => p.getState_PrimitiveId() === pinId).getState_PinName());
 ```
 
+
 ### getallprimitiveid
 
 # SCH\_PrimitivePin.getAllPrimitiveId() method
@@ -622,6 +352,7 @@ console.log('total pin ids:', allIds.length);
 console.log('marker id in list:', allIds.includes(pinId));
 ```
 
+
 ### modify
 
 # SCH\_PrimitivePin.modify() method
@@ -636,80 +367,27 @@ Modify Pin
 function modify(
 	primitiveId: string | ISCH_PrimitivePin | ISCH_PrimitiveComponentPin,
 	property: {
-		x?: undefined | number;
-		y?: undefined | number;
-		pinNumber?: undefined | string;
-		pinName?: undefined | string;
-		rotation?: undefined | number;
-		pinLength?: undefined | number;
-		pinColor?: undefined | null | string;
-		pinShape?:
-			| undefined
-			| ESCH_PrimitivePinShape.NONE
-			| ESCH_PrimitivePinShape.INVERTED
-			| ESCH_PrimitivePinShape.CLOCK
-			| ESCH_PrimitivePinShape.INVERTED_CLOCK;
-		pinType?:
-			| undefined
-			| ESCH_PrimitivePinType.IN
-			| ESCH_PrimitivePinType.OUT
-			| ESCH_PrimitivePinType.BI
-			| ESCH_PrimitivePinType.PASSIVE
-			| ESCH_PrimitivePinType.OPEN_COLLECTOR
-			| ESCH_PrimitivePinType.OPEN_EMITTER
-			| ESCH_PrimitivePinType.POWER
-			| ESCH_PrimitivePinType.GROUND
-			| ESCH_PrimitivePinType.HIZ
-			| ESCH_PrimitivePinType.TERMINATOR
-			| ESCH_PrimitivePinType.UNDEFINED;
-		noConnected?: undefined | false | true;
-		otherProperty?: undefined | Record<string, string | number | false | true>;
+		x?: number;
+		y?: number;
+		pinNumber?: string;
+		pinName?: string;
+		rotation?: number;
+		pinLength?: number;
+		pinColor?: string | null;
+		pinShape?: ESCH_PrimitivePinShape;
+		pinType?: ESCH_PrimitivePinType;
+		noConnected?: boolean;
+		otherProperty?: Record<string, string | number | boolean>;
 	},
 ): Promise<ISCH_PrimitivePin | ISCH_PrimitiveComponentPin | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveId
-
-</td><td>
-
-string \| [ISCH\_PrimitivePin](./ISCH_PrimitivePin.md) \| [ISCH\_PrimitiveComponentPin](./ISCH_PrimitiveComponentPin.md)
-
-</td><td>
-
-Primitive ID
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ x?: undefined \| number; y?: undefined \| number; pinNumber?: undefined \| string; pinName?: undefined \| string; rotation?: undefined \| number; pinLength?: undefined \| number; pinColor?: undefined \| null \| string; pinShape?: undefined \| [ESCH\_PrimitivePinShape.NONE](../enums/ESCH_PrimitivePinShape.md) \| [ESCH\_PrimitivePinShape.INVERTED](../enums/ESCH_PrimitivePinShape.md) \| [ESCH\_PrimitivePinShape.CLOCK](../enums/ESCH_PrimitivePinShape.md) \| [ESCH\_PrimitivePinShape.INVERTED\_CLOCK](../enums/ESCH_PrimitivePinShape.md)<!-- -->; pinType?: undefined \| [ESCH\_PrimitivePinType.IN](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.OUT](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.BI](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.PASSIVE](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.OPEN\_COLLECTOR](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.OPEN\_EMITTER](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.POWER](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.GROUND](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.HIZ](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.TERMINATOR](../enums/ESCH_PrimitivePinType.md) \| [ESCH\_PrimitivePinType.UNDEFINED](../enums/ESCH_PrimitivePinType.md)<!-- -->; noConnected?: undefined \| false \| true; otherProperty?: undefined \| Record&lt;string, string \| number \| false \| true&gt; }
-
-</td><td>
-
-Modify Parameter
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveId|string \| [ISCH\_PrimitivePin](./ISCH_PrimitivePin.md) \| [ISCH\_PrimitiveComponentPin](./ISCH_PrimitiveComponentPin.md)|Primitive ID|
+|property|{ x?: number; y?: number; pinNumber?: string; pinName?: string; rotation?: number; pinLength?: number; pinColor?: string \| null; pinShape?: [ESCH\_PrimitivePinShape](../enums/ESCH_PrimitivePinShape.md)<!-- -->; pinType?: [ESCH\_PrimitivePinType](../enums/ESCH_PrimitivePinType.md)<!-- -->; noConnected?: boolean; otherProperty?: Record&lt;string, string \| number \| boolean&gt; }|Modify Parameter|
 
 ## Returns
 

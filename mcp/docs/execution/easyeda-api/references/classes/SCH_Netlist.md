@@ -14,42 +14,10 @@ Get, update the netlist
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[getNetlist(type)](./SCH_Netlist.md)
-
-</td><td>
-
-</td><td>
-
-Get the netlist
-
-</td></tr>
-<tr><td>
-
-[setNetlist(type, netlist)](./SCH_Netlist.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Update the netlist
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[getNetlist(type)](./SCH_Netlist.md)||Get the netlist|
+|[setNetlist(type, netlist)](./SCH_Netlist.md)||**_(BETA)_** Update the netlist|
 
 ---
 
@@ -73,33 +41,9 @@ function getNetlist(type?: ESYS_NetlistType): Promise<string>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)
-
-</td><td>
-
-_(Optional)_ Netlist format
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)|_(Optional)_ Netlist format|
 
 ## Returns
 
@@ -123,46 +67,10 @@ function setNetlist(type: ESYS_NetlistType | undefined, netlist: string): Promis
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-type
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md) \| undefined
-
-</td><td>
-
-Netlist format
-
-</td></tr>
-<tr><td>
-
-netlist
-
-</td><td>
-
-string
-
-</td><td>
-
-Netlist data
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|type|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md) \| undefined|Netlist format|
+|netlist|string|Netlist data|
 
 ## Returns
 

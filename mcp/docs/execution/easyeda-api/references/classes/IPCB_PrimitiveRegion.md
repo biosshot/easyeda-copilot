@@ -13,262 +13,30 @@ class IPCB_PrimitiveRegion implements IPCB_Primitive
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[convertToFill()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: fill primitive
-
-</td></tr>
-<tr><td>
-
-[convertToPolyline()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: polyline primitive
-
-</td></tr>
-<tr><td>
-
-[convertToPour()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Convert to: Copper border primitive
-
-</td></tr>
-<tr><td>
-
-[done()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Apply the changes to the primitives to the canvas
-
-</td></tr>
-<tr><td>
-
-[getState\_ComplexPolygon()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[getState\_Layer()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[getState\_LineWidth()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveId()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive ID
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveLock()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[getState\_PrimitiveType()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: primitive type
-
-</td></tr>
-<tr><td>
-
-[getState\_RegionName()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: region name
-
-</td></tr>
-<tr><td>
-
-[getState\_RuleType()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Get the property state: region rule type
-
-</td></tr>
-<tr><td>
-
-[isAsync()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the primitive is an async primitive
-
-</td></tr>
-<tr><td>
-
-[reset()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Reset the async primitive to the current canvas state
-
-</td></tr>
-<tr><td>
-
-[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: complex polygon
-
-</td></tr>
-<tr><td>
-
-[setState\_Layer(layer)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Layer
-
-</td></tr>
-<tr><td>
-
-[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: Line width
-
-</td></tr>
-<tr><td>
-
-[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: whether it is locked
-
-</td></tr>
-<tr><td>
-
-[setState\_RegionName(regionName)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: region name
-
-</td></tr>
-<tr><td>
-
-[setState\_RuleType(ruleType)](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the property state: region rule type
-
-</td></tr>
-<tr><td>
-
-[toAsync()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Async primitive
-
-</td></tr>
-<tr><td>
-
-[toSync()](./IPCB_PrimitiveRegion.md)
-
-</td><td>
-
-</td><td>
-
-Convert Primitive to Sync primitive
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[convertToFill()](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Convert to: fill primitive|
+|[convertToPolyline()](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Convert to: polyline primitive|
+|[convertToPour()](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Convert to: Copper border primitive|
+|[done()](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Apply the changes to the primitives to the canvas|
+|[getState\_ComplexPolygon()](./IPCB_PrimitiveRegion.md)||Get the property state: complex polygon|
+|[getState\_Layer()](./IPCB_PrimitiveRegion.md)||Get the property state: Layer|
+|[getState\_LineWidth()](./IPCB_PrimitiveRegion.md)||Get the property state: Line width|
+|[getState\_PrimitiveId()](./IPCB_PrimitiveRegion.md)||Get the property state: primitive ID|
+|[getState\_PrimitiveLock()](./IPCB_PrimitiveRegion.md)||Get the property state: whether it is locked|
+|[getState\_PrimitiveType()](./IPCB_PrimitiveRegion.md)||Get the property state: primitive type|
+|[getState\_RegionName()](./IPCB_PrimitiveRegion.md)||Get the property state: region name|
+|[getState\_RuleType()](./IPCB_PrimitiveRegion.md)||Get the property state: region rule type|
+|[isAsync()](./IPCB_PrimitiveRegion.md)||Query whether the primitive is an async primitive|
+|[reset()](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Reset the async primitive to the current canvas state|
+|[setState\_ComplexPolygon(complexPolygon)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: complex polygon|
+|[setState\_Layer(layer)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: Layer|
+|[setState\_LineWidth(lineWidth)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: Line width|
+|[setState\_PrimitiveLock(primitiveLock)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: whether it is locked|
+|[setState\_RegionName(regionName)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: region name|
+|[setState\_RuleType(ruleType)](./IPCB_PrimitiveRegion.md)||**_(BETA)_** Set the property state: region rule type|
+|[toAsync()](./IPCB_PrimitiveRegion.md)||Convert Primitive to Async primitive|
+|[toSync()](./IPCB_PrimitiveRegion.md)||Convert Primitive to Sync primitive|
 
 ---
 
@@ -312,6 +80,7 @@ console.log('primitiveType:', `Region → ${fill.getState_PrimitiveType()}`);
 console.log('primitiveId:', fill.getState_PrimitiveId());
 ```
 
+
 ### converttopolyline
 
 # IPCB\_PrimitiveRegion.convertToPolyline() method
@@ -350,6 +119,7 @@ console.log('primitiveType:', `Region → ${polyline.getState_PrimitiveType()}`)
 console.log('primitiveId:', polyline.getState_PrimitiveId());
 ```
 
+
 ### converttopour
 
 # IPCB\_PrimitiveRegion.convertToPour() method
@@ -387,6 +157,7 @@ const pour = await region.convertToPour();
 console.log('primitiveType:', `Region → ${pour.getState_PrimitiveType()}`);
 console.log('primitiveId:', pour.getState_PrimitiveId());
 ```
+
 
 ### done
 
@@ -431,6 +202,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### getstate_complexpolygon
 
 # IPCB\_PrimitiveRegion.getState\_ComplexPolygon() method
@@ -468,6 +240,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 console.log('polygonSource:', JSON.stringify(source));
 ```
 
+
 ### getstate_layer
 
 # IPCB\_PrimitiveRegion.getState\_Layer() method
@@ -503,6 +276,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 
 console.log('layer:', layer);
 ```
+
 
 ### getstate_linewidth
 
@@ -540,6 +314,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 console.log('lineWidth:', lineWidth);
 ```
 
+
 ### getstate_primitiveid
 
 # IPCB\_PrimitiveRegion.getState\_PrimitiveId() method
@@ -575,6 +350,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 
 console.log('primitiveId:', primitiveId);
 ```
+
 
 ### getstate_primitivelock
 
@@ -612,6 +388,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 console.log('primitiveLock:', primitiveLock);
 ```
 
+
 ### getstate_primitivetype
 
 # IPCB\_PrimitiveRegion.getState\_PrimitiveType() method
@@ -647,6 +424,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 
 console.log('primitiveType:', primitiveType);
 ```
+
 
 ### getstate_regionname
 
@@ -684,6 +462,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 console.log('regionName:', regionName);
 ```
 
+
 ### getstate_ruletype
 
 # IPCB\_PrimitiveRegion.getState\_RuleType() method
@@ -720,6 +499,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 console.log('ruleType:', JSON.stringify(ruleType));
 ```
 
+
 ### isasync
 
 # IPCB\_PrimitiveRegion.isAsync() method
@@ -755,6 +535,7 @@ await eda.pcb_PrimitiveRegion.delete([region.getState_PrimitiveId()]);
 
 console.log('isAsync:', isAsync);
 ```
+
 
 ### reset
 
@@ -801,6 +582,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_complexpolygon
 
 # IPCB\_PrimitiveRegion.setState\_ComplexPolygon() method
@@ -817,33 +599,9 @@ function setState_ComplexPolygon(complexPolygon: IPCB_Polygon): IPCB_PrimitiveRe
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-complexPolygon
-
-</td><td>
-
-[IPCB\_Polygon](./IPCB_Polygon.md)
-
-</td><td>
-
-Complex polygon
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|complexPolygon|[IPCB\_Polygon](./IPCB_Polygon.md)|Complex polygon|
 
 ## Returns
 
@@ -876,6 +634,7 @@ const after = JSON.stringify(refetched.getState_ComplexPolygon().getSource());
 console.log('polygonSource:', before, '→', after);
 ```
 
+
 ### setstate_layer
 
 # IPCB\_PrimitiveRegion.setState\_Layer() method
@@ -892,33 +651,9 @@ function setState_Layer(layer: TPCB_LayersOfRegion): IPCB_PrimitiveRegion;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfRegion](../types/TPCB_LayersOfRegion.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfRegion](../types/TPCB_LayersOfRegion.md)|Layer|
 
 ## Returns
 
@@ -949,6 +684,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 console.log('layer:', before, '→', refetched.getState_Layer());
 ```
 
+
 ### setstate_linewidth
 
 # IPCB\_PrimitiveRegion.setState\_LineWidth() method
@@ -965,33 +701,9 @@ function setState_LineWidth(lineWidth: number): IPCB_PrimitiveRegion;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-lineWidth
-
-</td><td>
-
-number
-
-</td><td>
-
-Line width
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|lineWidth|number|Line width|
 
 ## Returns
 
@@ -1023,6 +735,7 @@ const after = region.getState_LineWidth();
 console.log('lineWidth:', before, '→', after);
 ```
 
+
 ### setstate_primitivelock
 
 # IPCB\_PrimitiveRegion.setState\_PrimitiveLock() method
@@ -1039,33 +752,9 @@ function setState_PrimitiveLock(primitiveLock: boolean): IPCB_PrimitiveRegion;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-primitiveLock
-
-</td><td>
-
-boolean
-
-</td><td>
-
-Whether it is locked
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|primitiveLock|boolean|Whether it is locked|
 
 ## Returns
 
@@ -1096,6 +785,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 console.log('primitiveLock:', before, '→', refetched.getState_PrimitiveLock());
 ```
 
+
 ### setstate_regionname
 
 # IPCB\_PrimitiveRegion.setState\_RegionName() method
@@ -1112,33 +802,9 @@ function setState_RegionName(regionName?: string): IPCB_PrimitiveRegion;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-regionName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Region name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|regionName|string|_(Optional)_ Region name|
 
 ## Returns
 
@@ -1176,6 +842,7 @@ const after = region.getState_RegionName();
 console.log('regionName:', before, '→', after);
 ```
 
+
 ### setstate_ruletype
 
 # IPCB\_PrimitiveRegion.setState\_RuleType() method
@@ -1192,33 +859,9 @@ function setState_RuleType(ruleType: Array<EPCB_PrimitiveRegionRuleType>): IPCB_
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-ruleType
-
-</td><td>
-
-Array&lt;[EPCB\_PrimitiveRegionRuleType](../enums/EPCB_PrimitiveRegionRuleType.md)<!-- -->&gt;
-
-</td><td>
-
-Region rule type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|ruleType|Array&lt;[EPCB\_PrimitiveRegionRuleType](../enums/EPCB_PrimitiveRegionRuleType.md)<!-- -->&gt;|Region rule type|
 
 ## Returns
 
@@ -1248,6 +891,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 
 console.log('ruleType:', before, '→', JSON.stringify(refetched.getState_RuleType()));
 ```
+
 
 ### toasync
 
@@ -1290,6 +934,7 @@ const refetched = await eda.pcb_PrimitiveRegion.get(region.getState_PrimitiveId(
 console.log('layer:', refetched.getState_Layer());
 console.log('ruleType:', JSON.stringify(refetched.getState_RuleType()));
 ```
+
 
 ### tosync
 

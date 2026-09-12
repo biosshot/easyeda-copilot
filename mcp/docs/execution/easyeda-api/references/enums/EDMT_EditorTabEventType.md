@@ -10,53 +10,11 @@ enum EDMT_EditorTabEventType
 
 ## Enumeration Members
 
-<table><thead><tr><th>
-
-Member
-
-</th><th>
-
-Value
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-CLOSE
-
-</td><td>
-
-`'close'`
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-OPEN
-
-</td><td>
-
-`'open'`
-
-</td><td>
-
-</td></tr>
-<tr><td>
-
-TOGGLE
-
-</td><td>
-
-`'toggle'`
-
-</td><td>
-
-</td></tr>
-</tbody></table>
+|Member|Value|Description|
+|---|---|---|
+|CLOSE|`'close'`||
+|OPEN|`'open'`||
+|TOGGLE|`'toggle'`||
 
 ## Remarks
 

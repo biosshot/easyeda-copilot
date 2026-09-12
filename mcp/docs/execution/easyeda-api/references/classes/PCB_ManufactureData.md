@@ -14,350 +14,38 @@ Get the manufacture data files of the current PCB and quick ordering
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[deleteBomTemplate(template)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete BOM template
-
-</td></tr>
-<tr><td>
-
-[get3DFile(fileName, fileType, element, modelMode, autoGenerateModels)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get 3D model file
-
-</td></tr>
-<tr><td>
-
-[get3DShellFile(fileName, fileType)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the 3D shell file
-
-</td></tr>
-<tr><td>
-
-[getAltiumDesignerFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Altium Designer file
-
-</td></tr>
-<tr><td>
-
-[getAutoLayoutJsonFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Auto layout file (JSON)
-
-</td></tr>
-<tr><td>
-
-[getAutoRouteJsonFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Auto routing file (JSON)
-
-</td></tr>
-<tr><td>
-
-[getAutoRouteJsonFileForJRouter(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the JRouter-specific auto routing file (JSON)
-
-</td></tr>
-<tr><td>
-
-[getBomFile(fileName, fileType, template, filterOptions, statistics, property, columns)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM file
-
-</td></tr>
-<tr><td>
-
-[getBomTemplateFile(template)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM template file
-
-</td></tr>
-<tr><td>
-
-[getBomTemplates()](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get BOM template list
-
-</td></tr>
-<tr><td>
-
-[getDsnFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Auto routing file (DSN)
-
-</td></tr>
-<tr><td>
-
-[getDxfFile(fileName, layers, objects)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get DXF file
-
-</td></tr>
-<tr><td>
-
-[getFlyingProbeTestFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the flying probe test file
-
-</td></tr>
-<tr><td>
-
-[getGerberFile(fileName, colorSilkscreen, unit, digitalFormat, other, layers, objects)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the PCB fabrication file (Gerber)
-
-</td></tr>
-<tr><td>
-
-[getIdxFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get IDX file
-
-</td></tr>
-<tr><td>
-
-[getIpc2581CFile(fileName, fileType, unit, oemNumber)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get IPC-2581C file
-
-</td></tr>
-<tr><td>
-
-[getIpcD356AFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get IPC-D-356A file
-
-</td></tr>
-<tr><td>
-
-[getManufactureData()](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Export the manufacture data
-
-</td></tr>
-<tr><td>
-
-[getNetlistFile(fileName, netlistType)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the netlist file (Netlist)
-
-</td></tr>
-<tr><td>
-
-[getOpenDatabaseDoublePlusFile(fileName, unit, otherData, layers, objects)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get ODB++ file
-
-</td></tr>
-<tr><td>
-
-[getPadsFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get PADS file
-
-</td></tr>
-<tr><td>
-
-[getPcbInfoFile(fileName)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get PCB information file
-
-</td></tr>
-<tr><td>
-
-[getPdfFile(fileName, outputMethod, contentConfig, watermark, graphPageConfig)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get PDF file
-
-</td></tr>
-<tr><td>
-
-[getPickAndPlaceFile(fileName, fileType, unit)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Coordinate file (PickAndPlace)
-
-</td></tr>
-<tr><td>
-
-[getTestPointFile(fileName, fileType)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the test point report file
-
-</td></tr>
-<tr><td>
-
-[place3DShellOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** 3D shell ordering
-
-</td></tr>
-<tr><td>
-
-[placeComponentsOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Component ordering
-
-</td></tr>
-<tr><td>
-
-[placePcbOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** PCB ordering
-
-</td></tr>
-<tr><td>
-
-[placeSmtComponentsOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** SMT component ordering
-
-</td></tr>
-<tr><td>
-
-[uploadBomTemplateFile(templateFile, template)](./PCB_ManufactureData.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Upload a BOM template file
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[deleteBomTemplate(template)](./PCB_ManufactureData.md)||**_(BETA)_** Delete BOM template|
+|[get3DFile(fileName, fileType, element, modelMode, autoGenerateModels)](./PCB_ManufactureData.md)||**_(BETA)_** Get 3D model file|
+|[get3DShellFile(fileName, fileType)](./PCB_ManufactureData.md)||**_(BETA)_** Get the 3D shell file|
+|[getAltiumDesignerFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get Altium Designer file|
+|[getAutoLayoutJsonFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get Auto layout file (JSON)|
+|[getAutoRouteJsonFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get Auto routing file (JSON)|
+|[getAutoRouteJsonFileForJRouter(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get the JRouter-specific auto routing file (JSON)|
+|[getBomFile(fileName, fileType, template, filterOptions, statistics, property, columns)](./PCB_ManufactureData.md)||**_(BETA)_** Get BOM file|
+|[getBomTemplateFile(template)](./PCB_ManufactureData.md)||**_(BETA)_** Get BOM template file|
+|[getBomTemplates()](./PCB_ManufactureData.md)||**_(BETA)_** Get BOM template list|
+|[getDsnFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get Auto routing file (DSN)|
+|[getDxfFile(fileName, layers, objects)](./PCB_ManufactureData.md)||**_(BETA)_** Get DXF file|
+|[getFlyingProbeTestFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get the flying probe test file|
+|[getGerberFile(fileName, colorSilkscreen, unit, digitalFormat, other, layers, objects)](./PCB_ManufactureData.md)||**_(BETA)_** Get the PCB fabrication file (Gerber)|
+|[getIdxFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get IDX file|
+|[getIpc2581CFile(fileName, fileType, unit, oemNumber)](./PCB_ManufactureData.md)||**_(BETA)_** Get IPC-2581C file|
+|[getIpcD356AFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get IPC-D-356A file|
+|[getManufactureData()](./PCB_ManufactureData.md)||**_(BETA)_** Export the manufacture data|
+|[getNetlistFile(fileName, netlistType)](./PCB_ManufactureData.md)||**_(BETA)_** Get the netlist file (Netlist)|
+|[getOpenDatabaseDoublePlusFile(fileName, unit, otherData, layers, objects)](./PCB_ManufactureData.md)||**_(BETA)_** Get ODB++ file|
+|[getPadsFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get PADS file|
+|[getPcbInfoFile(fileName)](./PCB_ManufactureData.md)||**_(BETA)_** Get PCB information file|
+|[getPdfFile(fileName, outputMethod, contentConfig, watermark, graphPageConfig)](./PCB_ManufactureData.md)||**_(BETA)_** Get PDF file|
+|[getPickAndPlaceFile(fileName, fileType, unit)](./PCB_ManufactureData.md)||**_(BETA)_** Get Coordinate file (PickAndPlace)|
+|[getTestPointFile(fileName, fileType)](./PCB_ManufactureData.md)||**_(BETA)_** Get the test point report file|
+|[place3DShellOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)||**_(BETA)_** 3D shell ordering|
+|[placeComponentsOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)||**_(BETA)_** Component ordering|
+|[placePcbOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)||**_(BETA)_** PCB ordering|
+|[placeSmtComponentsOrder(interactive, ignoreWarning)](./PCB_ManufactureData.md)||**_(BETA)_** SMT component ordering|
+|[uploadBomTemplateFile(templateFile, template)](./PCB_ManufactureData.md)||**_(BETA)_** Upload a BOM template file|
 
 ---
 
@@ -379,33 +67,9 @@ function deleteBomTemplate(template: string): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-BOM template name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|template|string|BOM template name|
 
 ## Returns
 
@@ -448,85 +112,13 @@ function get3DFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'step' \| 'obj'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-element
-
-</td><td>
-
-Array&lt;'Component Model' \| 'Via' \| 'Silkscreen' \| 'Wire In Signal Layer'&gt;
-
-</td><td>
-
-_(Optional)_ Exported objects
-
-</td></tr>
-<tr><td>
-
-modelMode
-
-</td><td>
-
-'Outfit' \| 'Parts'
-
-</td><td>
-
-_(Optional)_ Export mode. `Outfit` = assembly, `Parts` = parts
-
-</td></tr>
-<tr><td>
-
-autoGenerateModels
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to automatically generate a 3D model for components not bound to a 3D model (based on the "height" property of the component)
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'step' \| 'obj'|_(Optional)_ File type|
+|element|Array&lt;'Component Model' \| 'Via' \| 'Silkscreen' \| 'Wire In Signal Layer'&gt;|_(Optional)_ Exported objects|
+|modelMode|'Outfit' \| 'Parts'|_(Optional)_ Export mode. `Outfit` = assembly, `Parts` = parts|
+|autoGenerateModels|boolean|_(Optional)_ Whether to automatically generate a 3D model for components not bound to a 3D model (based on the "height" property of the component)|
 
 ## Returns
 
@@ -593,46 +185,10 @@ function get3DShellFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'stl' \| 'step' \| 'obj'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'stl' \| 'step' \| 'obj'|_(Optional)_ File type|
 
 ## Returns
 
@@ -676,33 +232,9 @@ function getAltiumDesignerFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -740,33 +272,9 @@ function getAutoLayoutJsonFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -803,33 +311,9 @@ function getAutoRouteJsonFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -866,33 +350,9 @@ function getAutoRouteJsonFileForJRouter(fileName?: string): Promise<File | undef
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -915,6 +375,7 @@ console.log('导出文件名：', jrouterFile?.name);
 console.log('文件大小：', jrouterFile?.size);
 ```
 
+
 ### getbomfile
 
 # PCB\_ManufactureData.getBomFile() method
@@ -930,7 +391,7 @@ function getBomFile(
 	fileName?: string,
 	fileType?: 'xlsx' | 'csv',
 	template?: string,
-	filterOptions?: Array<{ property: string; includeValue: string | false | true }>,
+	filterOptions?: Array<{ property: string; includeValue: boolean | string }>,
 	statistics?: Array<string>,
 	property?: Array<string>,
 	columns?: Array<IPCB_BomPropertiesTableColumns>,
@@ -939,111 +400,15 @@ function getBomFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'xlsx' \| 'csv'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Template name
-
-</td></tr>
-<tr><td>
-
-filterOptions
-
-</td><td>
-
-Array&lt;{ property: string; includeValue: string \| false \| true }&gt;
-
-</td><td>
-
-_(Optional)_ Filter rules, which should only contain the rules to be enabled. `property` is the rule name, and `includeValue` is the matched value
-
-</td></tr>
-<tr><td>
-
-statistics
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Statistics, containing the names of all statistic items to be enabled
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Properties, containing the names of all properties to be enabled
-
-</td></tr>
-<tr><td>
-
-columns
-
-</td><td>
-
-Array&lt;[IPCB\_BomPropertiesTableColumns](../interfaces/IPCB_BomPropertiesTableColumns.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Column properties and sorting. If `title`<!-- -->, `sort`<!-- -->, `group`<!-- -->, and `orderWeight` are not passed in, default values are used. `null` means \*\*none\*\* or \*\*empty\*\*
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'xlsx' \| 'csv'|_(Optional)_ File type|
+|template|string|_(Optional)_ Template name|
+|filterOptions|Array&lt;{ property: string; includeValue: boolean \| string }&gt;|_(Optional)_ Filter rules, which should only contain the rules to be enabled. `property` is the rule name, and `includeValue` is the matched value|
+|statistics|Array&lt;string&gt;|_(Optional)_ Statistics, containing the names of all statistic items to be enabled|
+|property|Array&lt;string&gt;|_(Optional)_ Properties, containing the names of all properties to be enabled|
+|columns|Array&lt;[IPCB\_BomPropertiesTableColumns](../interfaces/IPCB_BomPropertiesTableColumns.md)<!-- -->&gt;|_(Optional)_ Column properties and sorting. If `title`<!-- -->, `sort`<!-- -->, `group`<!-- -->, and `orderWeight` are not passed in, default values are used. `null` means \*\*none\*\* or \*\*empty\*\*|
 
 ## Returns
 
@@ -1108,33 +473,9 @@ function getBomTemplateFile(template: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-BOM template name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|template|string|BOM template name|
 
 ## Returns
 
@@ -1199,33 +540,9 @@ function getDsnFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -1266,59 +583,11 @@ function getDxfFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-layers
-
-</td><td>
-
-Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; mirror: boolean }&gt;
-
-</td><td>
-
-_(Optional)_ Exported layers
-
-</td></tr>
-<tr><td>
-
-objects
-
-</td><td>
-
-Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Exported objects
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|layers|Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; mirror: boolean }&gt;|_(Optional)_ Exported layers|
+|objects|Array&lt;string&gt;|_(Optional)_ Exported objects|
 
 ## Returns
 
@@ -1355,6 +624,7 @@ else {
 }
 ```
 
+
 ### getflyingprobetestfile
 
 # PCB\_ManufactureData.getFlyingProbeTestFile() method
@@ -1371,33 +641,9 @@ function getFlyingProbeTestFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -1461,111 +707,15 @@ function getGerberFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-colorSilkscreen
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to generate a color silkscreen fabrication file (EasyEDA-specific file)
-
-</td></tr>
-<tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md)
-
-</td><td>
-
-_(Optional)_ Unit
-
-</td></tr>
-<tr><td>
-
-digitalFormat
-
-</td><td>
-
-\{ integerNumber: number; decimalNumber: number \}
-
-</td><td>
-
-_(Optional)_ Digital format
-
-</td></tr>
-<tr><td>
-
-other
-
-</td><td>
-
-\{ metallicDrillingInformation: boolean; nonMetallicDrillingInformation: boolean; drillTable: boolean; flyingProbeTestingFile: boolean \}
-
-</td><td>
-
-_(Optional)_ Other
-
-</td></tr>
-<tr><td>
-
-layers
-
-</td><td>
-
-Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; isMirror: boolean }&gt;
-
-</td><td>
-
-_(Optional)_ Exported layers. By default, they are exported according to EasyEDA production requirements
-
-</td></tr>
-<tr><td>
-
-objects
-
-</td><td>
-
-Array&lt;'Pad' \| 'Via' \| 'Track' \| 'Text' \| 'Image' \| 'Dimension' \| 'BoardOutline' \| 'BoardCutout' \| 'CopperFilled' \| 'SolidRegion' \| 'FPCStiffener' \| 'Line' \| 'PlaneZone' \| 'ComponentProperty' \| 'ComponentSilkscreen' \| 'TearDrop'&gt;
-
-</td><td>
-
-_(Optional)_ Exported objects. By default, they are exported according to EasyEDA production requirements
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|colorSilkscreen|boolean|_(Optional)_ Whether to generate a color silkscreen fabrication file (EasyEDA-specific file)|
+|unit|[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md)|_(Optional)_ Unit|
+|digitalFormat|\{ integerNumber: number; decimalNumber: number \}|_(Optional)_ Digital format|
+|other|\{ metallicDrillingInformation: boolean; nonMetallicDrillingInformation: boolean; drillTable: boolean; flyingProbeTestingFile: boolean \}|_(Optional)_ Other|
+|layers|Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; isMirror: boolean }&gt;|_(Optional)_ Exported layers. By default, they are exported according to EasyEDA production requirements|
+|objects|Array&lt;'Pad' \| 'Via' \| 'Track' \| 'Text' \| 'Image' \| 'Dimension' \| 'BoardOutline' \| 'BoardCutout' \| 'CopperFilled' \| 'SolidRegion' \| 'FPCStiffener' \| 'Line' \| 'PlaneZone' \| 'ComponentProperty' \| 'ComponentSilkscreen' \| 'TearDrop'&gt;|_(Optional)_ Exported objects. By default, they are exported according to EasyEDA production requirements|
 
 ## Returns
 
@@ -1577,7 +727,42 @@ PCB fabrication file data
 
 You can use [SYS\_FileSystem.saveFile()](./SYS_FileSystem.md) API export the file to the local file system
 
+默认参数与编辑器「导出 PCB 制版文件」弹窗的 \*\*一键导出\*\* 选项保持一致（单位 `MM`<!-- -->、数字格式 `4:5`<!-- -->、导出板内真实使用的层及钻孔图层等）
+
 ## Example
+
+```javascript
+// 导出默认的 Gerber 文件
+const gerberFile = await eda.pcb_ManufactureData.getGerberFile('MyBoard_Gerber');
+if (gerberFile) {
+    console.log('Gerber 文件已生成:', gerberFile);
+}
+
+// 导出并保存到本地
+const gerberFile = await eda.pcb_ManufactureData.getGerberFile(
+    'MyBoard_Gerber',
+    false,
+    ESYS_Unit.MILLIMETER,
+    { integerNumber: 4, decimalNumber: 6 }
+);
+if (gerberFile) {
+    await eda.sys_FileSystem.saveFile(gerberFile,'Gerber.zip');
+}
+
+// 自定义导出层和对象
+const gerberFile = await eda.pcb_ManufactureData.getGerberFile(
+    'Custom_Gerber',
+    false,
+    ESYS_Unit.INCH,
+    { integerNumber: 3, decimalNumber: 5 },
+    { metallicDrillingInformation: true, nonMetallicDrillingInformation: true, drillTable: false, flyingProbeTestingFile: false },
+    [{ layerId: EPCB_LayerId.TOP, isMirror: false }, { layerId: EPCB_LayerId.BOTTOM, isMirror: false }, { layerId: EPCB_LayerId.BOARD_OUTLINE, isMirror: false }],
+    ['Pad', 'Via', 'Track', 'BoardOutline']
+);
+```
+
+
+## Example (local)
 
 ```javascript
 // 导出默认的 Gerber 文件
@@ -1609,6 +794,7 @@ const gerberFile = await eda.pcb_ManufactureData.getGerberFile(
 );
 ```
 
+
 ### getidxfile
 
 # PCB\_ManufactureData.getIdxFile() method
@@ -1625,33 +811,9 @@ function getIdxFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_|
 
 ## Returns
 
@@ -1693,72 +855,12 @@ function getIpc2581CFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'xml' \| 'cvg' \| '2581'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-<tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md)
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-<tr><td>
-
-oemNumber
-
-</td><td>
-
-'Device' \| 'Manufacturer Part' \| 'Supplier Part' \| 'Comment'
-
-</td><td>
-
-_(Optional)_
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'xml' \| 'cvg' \| '2581'|_(Optional)_|
+|unit|[ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md)|_(Optional)_|
+|oemNumber|'Device' \| 'Manufacturer Part' \| 'Supplier Part' \| 'Comment'|_(Optional)_|
 
 ## Returns
 
@@ -1790,6 +892,7 @@ else {
 }
 ```
 
+
 ### getipcd356afile
 
 # PCB\_ManufactureData.getIpcD356AFile() method
@@ -1806,33 +909,9 @@ function getIpcD356AFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -1895,6 +974,7 @@ catch (e) {
 }
 ```
 
+
 ### getnetlistfile
 
 # PCB\_ManufactureData.getNetlistFile() method
@@ -1914,46 +994,10 @@ function getNetlistFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-netlistType
-
-</td><td>
-
-[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)
-
-</td><td>
-
-_(Optional)_ Netlist type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|netlistType|[ESYS\_NetlistType](../enums/ESYS_NetlistType.md)|_(Optional)_ Netlist type|
 
 ## Returns
 
@@ -2003,12 +1047,12 @@ Get ODB++ file
 ```typescript
 function getOpenDatabaseDoublePlusFile(
 	fileName?: string,
-	unit?: ESYS_Unit.INCH | ESYS_Unit.MILLIMETER,
+	unit?: ESYS_Unit.INCH,
 	otherData?: {
-		metallizedDrilledHoles?: undefined | false | true;
-		nonMetallizedDrilledHoles?: undefined | false | true;
-		drillTable?: undefined | false | true;
-		flyingProbeTestFile?: undefined | false | true;
+		metallizedDrilledHoles?: boolean;
+		nonMetallizedDrilledHoles?: boolean;
+		drillTable?: boolean;
+		flyingProbeTestFile?: boolean;
 	},
 	layers?: Array<{ layerId: EPCB_LayerId; mirror: boolean }>,
 	objects?: Array<{ objectName: string }>,
@@ -2017,85 +1061,13 @@ function getOpenDatabaseDoublePlusFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md)
-
-</td><td>
-
-_(Optional)_ Unit
-
-</td></tr>
-<tr><td>
-
-otherData
-
-</td><td>
-
-\{ metallizedDrilledHoles?: undefined \| false \| true; nonMetallizedDrilledHoles?: undefined \| false \| true; drillTable?: undefined \| false \| true; flyingProbeTestFile?: undefined \| false \| true \}
-
-</td><td>
-
-_(Optional)_ Other
-
-</td></tr>
-<tr><td>
-
-layers
-
-</td><td>
-
-Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; mirror: boolean }&gt;
-
-</td><td>
-
-_(Optional)_ Exported layers. By default, they are exported according to EasyEDA production requirements
-
-</td></tr>
-<tr><td>
-
-objects
-
-</td><td>
-
-Array&lt;{ objectName: string }&gt;
-
-</td><td>
-
-_(Optional)_ Exported objects. By default, they are exported according to EasyEDA production requirements
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|unit|[ESYS\_Unit.INCH](../enums/ESYS_Unit.md)|_(Optional)_ Unit|
+|otherData|\{ metallizedDrilledHoles?: boolean; nonMetallizedDrilledHoles?: boolean; drillTable?: boolean; flyingProbeTestFile?: boolean \}|_(Optional)_ Other|
+|layers|Array&lt;{ layerId: [EPCB\_LayerId](../enums/EPCB_LayerId.md)<!-- -->; mirror: boolean }&gt;|_(Optional)_ Exported layers. By default, they are exported according to EasyEDA production requirements|
+|objects|Array&lt;{ objectName: string }&gt;|_(Optional)_ Exported objects. By default, they are exported according to EasyEDA production requirements|
 
 ## Returns
 
@@ -2142,33 +1114,9 @@ function getPadsFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -2206,33 +1154,9 @@ function getPcbInfoFile(fileName?: string): Promise<File | undefined>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
 
 ## Returns
 
@@ -2269,108 +1193,31 @@ function getPdfFile(
 	outputMethod?: EPCB_PdfOutputMethod,
 	contentConfig?: { displayAttributesAsMenu: boolean; showOutlineOnly: boolean },
 	watermark?: {
-		show?: undefined | false | true;
-		content?: undefined | string;
-		styleConfig?:
-			| undefined
-			| {
-				color: string;
-				transparency: 'Opaque' | '75%' | '50%' | '25%';
-				font: string;
-				fontSize: {
-					unit: ESYS_Unit.MILLIMETER | ESYS_Unit.INCH | ESYS_Unit.MIL;
-					value: number;
-				};
-				style: { bold: boolean; italic: boolean; underline: boolean };
-				slope: 0 | 45 | 90;
-				denseness: 'Single' | 'Sparse' | 'Std' | 'Dense';
-			};
+		show?: boolean;
+		content?: string;
+		styleConfig?: {
+			color: string;
+			transparency: 'Opaque' | '75%' | '50%' | '25%';
+			font: string;
+			fontSize: string;
+			style: { blood: boolean; italic: boolean; underline: boolean };
+			slope: 0 | 45 | 90;
+			denseness: 'Single' | 'Sparse' | 'Std' | 'Dense';
+		};
 	},
-	graphPageConfig?: Array<Record<string, any>>,
+	graphPageConfig?: Array<{ [key: string]: any }>,
 ): Promise<File | undefined>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-outputMethod
-
-</td><td>
-
-[EPCB\_PdfOutputMethod](../enums/EPCB_PdfOutputMethod.md)
-
-</td><td>
-
-_(Optional)_ Output method. ADD since EDA v4.2
-
-</td></tr>
-<tr><td>
-
-contentConfig
-
-</td><td>
-
-\{ displayAttributesAsMenu: boolean; showOutlineOnly: boolean \}
-
-</td><td>
-
-_(Optional)_ Content configuration. ADD since EDA v4.2
-
-</td></tr>
-<tr><td>
-
-watermark
-
-</td><td>
-
-{ show?: undefined \| false \| true; content?: undefined \| string; styleConfig?: undefined \| { color: string; transparency: 'Opaque' \| '75%' \| '50%' \| '25%'; font: string; fontSize: { unit: [ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.INCH](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md)<!-- -->; value: number }; style: { bold: boolean; italic: boolean; underline: boolean }; slope: 0 \| 45 \| 90; denseness: 'Single' \| 'Sparse' \| 'Std' \| 'Dense' } }
-
-</td><td>
-
-_(Optional)_ Watermark. ADD since EDA v4.2
-
-</td></tr>
-<tr><td>
-
-graphPageConfig
-
-</td><td>
-
-Array&lt;Record&lt;string, any&gt;&gt;
-
-</td><td>
-
-_(Optional)_ Graph page configuration. ADD since EDA v4.2
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|outputMethod|[EPCB\_PdfOutputMethod](../enums/EPCB_PdfOutputMethod.md)|_(Optional)_ Output method. ADD since EDA v4.2|
+|contentConfig|\{ displayAttributesAsMenu: boolean; showOutlineOnly: boolean \}|_(Optional)_ Content configuration. ADD since EDA v4.2|
+|watermark|{ show?: boolean; content?: string; styleConfig?: { color: string; transparency: 'Opaque' \| '75%' \| '50%' \| '25%'; font: string; fontSize: string; style: { blood: boolean; italic: boolean; underline: boolean }; slope: 0 \| 45 \| 90; denseness: 'Single' \| 'Sparse' \| 'Std' \| 'Dense' } }|_(Optional)_ Watermark. ADD since EDA v4.2|
+|graphPageConfig|Array&lt;{ \[key: string\]: any }&gt;|_(Optional)_ Graph page configuration. ADD since EDA v4.2|
 
 ## Returns
 
@@ -2417,59 +1264,11 @@ function getPickAndPlaceFile(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'xlsx' \| 'csv'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-<tr><td>
-
-unit
-
-</td><td>
-
-[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md)
-
-</td><td>
-
-_(Optional)_ Unit
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'xlsx' \| 'csv'|_(Optional)_ File type|
+|unit|[ESYS\_Unit.MILLIMETER](../enums/ESYS_Unit.md) \| [ESYS\_Unit.MIL](../enums/ESYS_Unit.md)|_(Optional)_ Unit|
 
 ## Returns
 
@@ -2511,46 +1310,10 @@ function getTestPointFile(fileName?: string, fileType?: 'xlsx' | 'csv'): Promise
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-fileName
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ File name
-
-</td></tr>
-<tr><td>
-
-fileType
-
-</td><td>
-
-'xlsx' \| 'csv'
-
-</td><td>
-
-_(Optional)_ File type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|fileName|string|_(Optional)_ File name|
+|fileType|'xlsx' \| 'csv'|_(Optional)_ File type|
 
 ## Returns
 
@@ -2588,46 +1351,10 @@ function place3DShellOrder(interactive?: boolean, ignoreWarning?: boolean): Prom
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -2651,6 +1378,7 @@ This API currently only supports interactive checking. The input parameters have
 console.log('演示调用：place3DShellOrder(true) 交互式检查，或 place3DShellOrder(false, true) 静默下单');
 ```
 
+
 ### placecomponentsorder
 
 # PCB\_ManufactureData.placeComponentsOrder() method
@@ -2667,46 +1395,10 @@ function placeComponentsOrder(interactive?: boolean, ignoreWarning?: boolean): P
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -2730,6 +1422,7 @@ This API currently only supports interactive checking. The input parameters have
 console.log('演示调用：placeComponentsOrder(true) 交互式检查，或 placeComponentsOrder(false, true) 静默下单');
 ```
 
+
 ### placepcborder
 
 # PCB\_ManufactureData.placePcbOrder() method
@@ -2746,46 +1439,10 @@ function placePcbOrder(interactive?: boolean, ignoreWarning?: boolean): Promise<
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -2809,6 +1466,7 @@ This API currently only supports interactive checking. The input parameters have
 console.log('演示调用：placePcbOrder(true) 交互式检查，或 placePcbOrder(false, true) 静默下单');
 ```
 
+
 ### placesmtcomponentsorder
 
 # PCB\_ManufactureData.placeSmtComponentsOrder() method
@@ -2825,46 +1483,10 @@ function placeSmtComponentsOrder(interactive?: boolean, ignoreWarning?: boolean)
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-interactive
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab
-
-</td></tr>
-<tr><td>
-
-ignoreWarning
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|interactive|boolean|_(Optional)_ Whether to enable interactive checking. If enabled, a popup will wait for user interaction, and the `ignoreWarning` parameter cannot be used to ignore warnings; that is, the `ignoreWarning` parameter will be ignored. If disabled, no EDA internal popup will appear after the call, and the program performs a silent check. If the ordering conditions are met, `true` will be returned and the ordering page will be opened in a new tab|
+|ignoreWarning|boolean|_(Optional)_ Ignore warnings during non-interactive checking. If set to `true`<!-- -->, all check warning items will be ignored and the ordering data will be generated as much as possible; if set to `false`<!-- -->, any warning will interrupt execution and return `false`|
 
 ## Returns
 
@@ -2888,6 +1510,7 @@ This API currently only supports interactive checking. The input parameters have
 console.log('演示调用：placeSmtComponentsOrder(true) 交互式检查，或 placeSmtComponentsOrder(false, true) 静默下单');
 ```
 
+
 ### uploadbomtemplatefile
 
 # PCB\_ManufactureData.uploadBomTemplateFile() method
@@ -2904,46 +1527,10 @@ function uploadBomTemplateFile(templateFile: File, template?: string): Promise<s
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-templateFile
-
-</td><td>
-
-File
-
-</td><td>
-
-BOM template file
-
-</td></tr>
-<tr><td>
-
-template
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ BOM template name. If it is `undefined`<!-- -->, the value is automatically taken from `templateFile`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|templateFile|File|BOM template file|
+|template|string|_(Optional)_ BOM template name. If it is `undefined`<!-- -->, the value is automatically taken from `templateFile`|
 
 ## Returns
 

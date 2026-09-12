@@ -16,8 +16,6 @@ This chapter details the format specification of the EasyEDA PCB file. PCB files
 - **Panelization**: Panelization parameters.
 - **Design Rules**: Rule templates, rules.
 
-
-
 ## Document Header
 
 ```json

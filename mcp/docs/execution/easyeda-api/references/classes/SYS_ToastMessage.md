@@ -18,31 +18,9 @@ Pops up a brief message notification at the edge of the screen, which will autom
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[showMessage(message, messageType, timer, bottomPanel, buttonTitle, buttonCallbackFn)](./SYS_ToastMessage.md)
-
-</td><td>
-
-</td><td>
-
-Show a toast message
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[showMessage(message, messageType, timer, bottomPanel, buttonTitle, buttonCallbackFn)](./SYS_ToastMessage.md)||Show a toast message|
 
 ---
 
@@ -73,98 +51,14 @@ function showMessage(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-message
-
-</td><td>
-
-string
-
-</td><td>
-
-Message content
-
-</td></tr>
-<tr><td>
-
-messageType
-
-</td><td>
-
-[ESYS\_ToastMessageType](../enums/ESYS_ToastMessageType.md)
-
-</td><td>
-
-_(Optional)_ Message type
-
-</td></tr>
-<tr><td>
-
-timer
-
-</td><td>
-
-number
-
-</td><td>
-
-_(Optional)_ Auto-close countdown in seconds. `0` means it will not auto-close
-
-</td></tr>
-<tr><td>
-
-bottomPanel
-
-</td><td>
-
-[ESYS\_BottomPanelTab](../enums/ESYS_BottomPanelTab.md)
-
-</td><td>
-
-_(Optional)_ Expand the bottom information panel
-
-</td></tr>
-<tr><td>
-
-buttonTitle
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Callback button title
-
-</td></tr>
-<tr><td>
-
-buttonCallbackFn
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Callback function content, in string form. It will be automatically parsed and executed
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|message|string|Message content|
+|messageType|[ESYS\_ToastMessageType](../enums/ESYS_ToastMessageType.md)|_(Optional)_ Message type|
+|timer|number|_(Optional)_ Auto-close countdown in seconds. `0` means it will not auto-close|
+|bottomPanel|[ESYS\_BottomPanelTab](../enums/ESYS_BottomPanelTab.md)|_(Optional)_ Expand the bottom information panel|
+|buttonTitle|string|_(Optional)_ Callback button title|
+|buttonCallbackFn|string|_(Optional)_ Callback function content, in string form. It will be automatically parsed and executed|
 
 ## Returns
 

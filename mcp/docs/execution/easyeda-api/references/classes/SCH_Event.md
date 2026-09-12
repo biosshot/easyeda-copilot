@@ -14,75 +14,13 @@ Register an event callback
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addMouseEventListener(id, eventType, callFn, onlyOnce)](./SCH_Event.md)
-
-</td><td>
-
-</td><td>
-
-Add a mouse event listener
-
-</td></tr>
-<tr><td>
-
-[addPrimitiveEventListener(id, eventType, callFn, onlyOnce)](./SCH_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a primitive event listener
-
-</td></tr>
-<tr><td>
-
-[addSimulationEnginePullEventListener(id, eventType, callFn)](./SCH_Event.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Register a simulation engine pull event listener
-
-</td></tr>
-<tr><td>
-
-[isEventListenerAlreadyExist(id)](./SCH_Event.md)
-
-</td><td>
-
-</td><td>
-
-Query whether the event listener exists
-
-</td></tr>
-<tr><td>
-
-[removeEventListener(id)](./SCH_Event.md)
-
-</td><td>
-
-</td><td>
-
-Remove Event listener
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addMouseEventListener(id, eventType, callFn, onlyOnce)](./SCH_Event.md)||Add a mouse event listener|
+|[addPrimitiveEventListener(id, eventType, callFn, onlyOnce)](./SCH_Event.md)||**_(BETA)_** Add a primitive event listener|
+|[addSimulationEnginePullEventListener(id, eventType, callFn)](./SCH_Event.md)||**_(BETA)_** Register a simulation engine pull event listener|
+|[isEventListenerAlreadyExist(id)](./SCH_Event.md)||Query whether the event listener exists|
+|[removeEventListener(id)](./SCH_Event.md)||Remove Event listener|
 
 ---
 
@@ -107,72 +45,12 @@ function addMouseEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [ESCH\_MouseEventType](../enums/ESCH_MouseEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [ESCH\_MouseEventType](../enums/ESCH_MouseEventType.md)<!-- -->) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [ESCH\_MouseEventType](../enums/ESCH_MouseEventType.md)|Event type|
+|callFn|(eventType: [ESCH\_MouseEventType](../enums/ESCH_MouseEventType.md)<!-- -->) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -207,6 +85,7 @@ const removed = eda.sch_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addprimitiveeventlistener
 
 # SCH\_Event.addPrimitiveEventListener() method
@@ -223,7 +102,7 @@ function addPrimitiveEventListener(
 	eventType: 'all' | ESCH_PrimitiveEventType,
 	callFn: (
 		eventType: ESCH_PrimitiveEventType,
-		props: { primitiveIds: string[] },
+		props: { primitiveIds: Array<string> },
 	) => void | Promise<void>,
 	onlyOnce?: boolean,
 ): void;
@@ -231,72 +110,12 @@ function addPrimitiveEventListener(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all' \| [ESCH\_PrimitiveEventType](../enums/ESCH_PrimitiveEventType.md)
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [ESCH\_PrimitiveEventType](../enums/ESCH_PrimitiveEventType.md)<!-- -->, props: { primitiveIds: string\[\] }) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-<tr><td>
-
-onlyOnce
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to listen only once
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all' \| [ESCH\_PrimitiveEventType](../enums/ESCH_PrimitiveEventType.md)|Event type|
+|callFn|(eventType: [ESCH\_PrimitiveEventType](../enums/ESCH_PrimitiveEventType.md)<!-- -->, props: { primitiveIds: Array&lt;string&gt; }) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
+|onlyOnce|boolean|_(Optional)_ Whether to listen only once|
 
 ## Returns
 
@@ -331,6 +150,7 @@ const removed = eda.sch_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### addsimulationenginepulleventlistener
 
 # SCH\_Event.addSimulationEnginePullEventListener() method
@@ -348,66 +168,18 @@ function addSimulationEnginePullEventListener(
 	callFn: (
 		eventType:
 			ESCH_DynamicSimulationEnginePullEventType | ESCH_SpiceSimulationEnginePullEventType,
-		props: Record<string, any>,
+		props: { [key: string]: any },
 	) => void | Promise<void>,
 ): void;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID, used to prevent duplicate event registration
-
-</td></tr>
-<tr><td>
-
-eventType
-
-</td><td>
-
-'all'
-
-</td><td>
-
-Event type
-
-</td></tr>
-<tr><td>
-
-callFn
-
-</td><td>
-
-(eventType: [ESCH\_DynamicSimulationEnginePullEventType](../enums/ESCH_DynamicSimulationEnginePullEventType.md) \| [ESCH\_SpiceSimulationEnginePullEventType](../enums/ESCH_SpiceSimulationEnginePullEventType.md)<!-- -->, props: Record&lt;string, any&gt;) =&gt; void \| Promise&lt;void&gt;
-
-</td><td>
-
-The callback function triggered when the event fires
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID, used to prevent duplicate event registration|
+|eventType|'all'|Event type|
+|callFn|(eventType: [ESCH\_DynamicSimulationEnginePullEventType](../enums/ESCH_DynamicSimulationEnginePullEventType.md) \| [ESCH\_SpiceSimulationEnginePullEventType](../enums/ESCH_SpiceSimulationEnginePullEventType.md)<!-- -->, props: { \[key: string\]: any }) =&gt; void \| Promise&lt;void&gt;|The callback function triggered when the event fires|
 
 ## Returns
 
@@ -441,6 +213,7 @@ const removed = eda.sch_Event.removeEventListener(listenerId);
 console.log('removed:', removed);
 ```
 
+
 ### iseventlisteneralreadyexist
 
 # SCH\_Event.isEventListenerAlreadyExist() method
@@ -455,33 +228,9 @@ function isEventListenerAlreadyExist(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 
@@ -511,6 +260,7 @@ const afterRemove = eda.sch_Event.isEventListenerAlreadyExist(listenerId);
 console.log('afterRemove:', afterRemove);
 ```
 
+
 ### removeeventlistener
 
 # SCH\_Event.removeEventListener() method
@@ -525,33 +275,9 @@ function removeEventListener(id: string): boolean;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-id
-
-</td><td>
-
-string
-
-</td><td>
-
-Event ID
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|id|string|Event ID|
 
 ## Returns
 

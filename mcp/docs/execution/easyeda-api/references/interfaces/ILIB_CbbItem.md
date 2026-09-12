@@ -10,131 +10,15 @@ interface ILIB_CbbItem
 
 ## Properties
 
-<table><thead><tr><th>
-
-Property
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[boards](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-Array&lt;[IDMT\_BoardItem](./IDMT_BoardItem.md)<!-- -->&gt;
-
-</td><td>
-
-Subordinate boards
-
-</td></tr>
-<tr><td>
-
-[classification?](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;
-
-</td><td>
-
-_(Optional)_ Classification
-
-</td></tr>
-<tr><td>
-
-[description?](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-_(Optional)_ Description
-
-</td></tr>
-<tr><td>
-
-[libraryType](./ILIB_CbbItem.md)
-
-</td><td>
-
-`readonly`
-
-</td><td>
-
-[ELIB\_LibraryType.CBB](../enums/ELIB_LibraryType.md)
-
-</td><td>
-
-Library type
-
-</td></tr>
-<tr><td>
-
-[libraryUuid](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-UUID of the library it belongs to
-
-</td></tr>
-<tr><td>
-
-[name](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block name
-
-</td></tr>
-<tr><td>
-
-[uuid](./ILIB_CbbItem.md)
-
-</td><td>
-
-</td><td>
-
-string
-
-</td><td>
-
-Reuse block UUID
-
-</td></tr>
-</tbody></table>
+|Property|Modifiers|Type|Description|
+|---|---|---|---|
+|[boards](./ILIB_CbbItem.md)||Array&lt;[IDMT\_BoardItem](./IDMT_BoardItem.md)<!-- -->&gt;|Subordinate boards|
+|[classification?](./ILIB_CbbItem.md)||[ILIB\_ClassificationIndex](./ILIB_ClassificationIndex.md) \| Array&lt;string&gt;|_(Optional)_ Classification|
+|[description?](./ILIB_CbbItem.md)||string|_(Optional)_ Description|
+|[libraryType](./ILIB_CbbItem.md)|`readonly`|[ELIB\_LibraryType.CBB](../enums/ELIB_LibraryType.md)|Library type|
+|[libraryUuid](./ILIB_CbbItem.md)||string|UUID of the library it belongs to|
+|[name](./ILIB_CbbItem.md)||string|Reuse block name|
+|[uuid](./ILIB_CbbItem.md)||string|Reuse block UUID|
 
 ---
 

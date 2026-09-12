@@ -10,295 +10,22 @@ class PCB_Layer
 
 ## Methods
 
-<table><thead><tr><th>
-
-Method
-
-</th><th>
-
-Modifiers
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-[addCustomLayer()](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Add a custom layer
-
-</td></tr>
-<tr><td>
-
-[deletePhysicalStackingConfiguration(configurationName, physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Delete Physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[getAllLayers()](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of all layers
-
-</td></tr>
-<tr><td>
-
-[getAllPhysicalStackingConfigurations(physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get all Physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[getCurrentLayer()](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the detailed properties of the current layer
-
-</td></tr>
-<tr><td>
-
-[getCurrentPhysicalStackingConfiguration()](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[getCurrentPhysicalStackingConfigurationName()](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Current physical stacking configuration name
-
-</td></tr>
-<tr><td>
-
-[getDefaultPhysicalStackingConfigurationName(physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get the name of the default physical stacking configuration for new PCBs
-
-</td></tr>
-<tr><td>
-
-[getPhysicalStackingConfiguration(configurationName, physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Get Specify physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[lockLayer(layer)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Lock the layer
-
-</td></tr>
-<tr><td>
-
-[modifyLayer(layer, property)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Modify Layer properties
-
-</td></tr>
-<tr><td>
-
-[overwriteCurrentPhysicalStackingConfiguration(physicalStackingConfiguration)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Overwrite current physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[removeLayer(layer)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Remove Layer
-
-</td></tr>
-<tr><td>
-
-[renamePhysicalStackingConfiguration(originalConfigurationName, configurationName, physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Rename the physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[savePhysicalStackingConfiguration(physicalStackingConfiguration, configurationName, physicalProps, allowOverwrite)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Save Physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-[selectLayer(layer)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-Select a layer
-
-</td></tr>
-<tr><td>
-
-[setAsDefaultPhysicalStackingConfiguration(configurationName, physicalProps)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set as the default physical stacking configuration for new PCBs
-
-</td></tr>
-<tr><td>
-
-[setInactiveLayerDisplayMode(displayMode)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set Inactive layer display mode
-
-</td></tr>
-<tr><td>
-
-[setInactiveLayerTransparency(transparency)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the inactive layer transparency
-
-</td></tr>
-<tr><td>
-
-[setLayerColorConfiguration(colorConfiguration)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the layer color configuration
-
-</td></tr>
-<tr><td>
-
-[setLayerInvisible(layer, setOtherLayerVisible)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the layer to invisible
-
-</td></tr>
-<tr><td>
-
-[setLayerVisible(layer, setOtherLayerInvisible)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set the layer to visible
-
-</td></tr>
-<tr><td>
-
-[setPcbType(pcbType)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set PCB type
-
-</td></tr>
-<tr><td>
-
-[setTheNumberOfCopperLayers(numberOfLayers)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Set Number of copper layers
-
-</td></tr>
-<tr><td>
-
-[unlockLayer(layer)](./PCB_Layer.md)
-
-</td><td>
-
-</td><td>
-
-**_(BETA)_** Unlock the layer
-
-</td></tr>
-</tbody></table>
+|Method|Modifiers|Description|
+|---|---|---|
+|[addCustomLayer()](./PCB_Layer.md)||**_(BETA)_** Add a custom layer|
+|[getAllLayers()](./PCB_Layer.md)||**_(BETA)_** Get the detailed properties of all layers|
+|[lockLayer(layer)](./PCB_Layer.md)||**_(BETA)_** Lock the layer|
+|[modifyLayer(layer, property)](./PCB_Layer.md)||**_(BETA)_** Modify Layer properties|
+|[removeLayer(layer)](./PCB_Layer.md)||**_(BETA)_** Remove Layer|
+|[selectLayer(layer)](./PCB_Layer.md)||Select a layer|
+|[setInactiveLayerDisplayMode(displayMode)](./PCB_Layer.md)||**_(BETA)_** Set Inactive layer display mode|
+|[setInactiveLayerTransparency(transparency)](./PCB_Layer.md)||**_(BETA)_** Set the inactive layer transparency|
+|[setLayerColorConfiguration(colorConfiguration)](./PCB_Layer.md)||**_(BETA)_** Set the layer color configuration|
+|[setLayerInvisible(layer, setOtherLayerVisible)](./PCB_Layer.md)||**_(BETA)_** Set the layer to invisible|
+|[setLayerVisible(layer, setOtherLayerInvisible)](./PCB_Layer.md)||**_(BETA)_** Set the layer to visible|
+|[setPcbType(pcbType)](./PCB_Layer.md)||**_(BETA)_** Set PCB type|
+|[setTheNumberOfCopperLayers(numberOfLayers)](./PCB_Layer.md)||**_(BETA)_** Set Number of copper layers|
+|[unlockLayer(layer)](./PCB_Layer.md)||**_(BETA)_** Unlock the layer|
 
 ---
 
@@ -345,75 +72,6 @@ console.log('newLayerName:', newLayer?.name);
 console.log('customLayerCount:', after.filter(l => l.type === 'CUSTOM').length);
 ```
 
-### deletephysicalstackingconfiguration
-
-# PCB\_Layer.deletePhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Delete Physical stacking configuration
-
-## Signature
-
-```typescript
-function deletePhysicalStackingConfiguration(
-	configurationName: string,
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-<tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Delete Whether Successful
-
-## Remarks
-
-ADD since EDA v4.2
 
 ### getalllayers
 
@@ -454,261 +112,6 @@ console.log('topLayerLocked:', top?.locked);
 console.log('copperLayerCount:', copperCount);
 ```
 
-### getallphysicalstackingconfigurations
-
-# PCB\_Layer.getAllPhysicalStackingConfigurations() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get all Physical stacking configuration
-
-## Signature
-
-```typescript
-function getAllPhysicalStackingConfigurations(
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<Array<IPCB_PhysicalStackingConfiguration>>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;Array&lt;[IPCB\_PhysicalStackingConfiguration](../interfaces/IPCB_PhysicalStackingConfiguration.md)<!-- -->&gt;&gt;
-
-All physical stacking configurations
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getcurrentlayer
-
-# PCB\_Layer.getCurrentLayer() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get the detailed properties of the current layer
-
-## Signature
-
-```typescript
-function getCurrentLayer(): Promise<IPCB_LayerItem | undefined>;
-```
-
-## Returns
-
-Promise&lt;[IPCB\_LayerItem](../interfaces/IPCB_LayerItem.md) \| undefined&gt;
-
-Detailed properties of the current layer. `undefined` is returned when there is no active layer or no PCB canvas
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getcurrentphysicalstackingconfiguration
-
-# PCB\_Layer.getCurrentPhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get Current physical stacking configuration
-
-## Signature
-
-```typescript
-function getCurrentPhysicalStackingConfiguration(): Promise<
-	IPCB_PhysicalStackingConfiguration | undefined
->;
-```
-
-## Returns
-
-Promise&lt;[IPCB\_PhysicalStackingConfiguration](../interfaces/IPCB_PhysicalStackingConfiguration.md) \| undefined&gt;
-
-Current physical stacking configuration; `undefined` indicates that the retrieval failed
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getcurrentphysicalstackingconfigurationname
-
-# PCB\_Layer.getCurrentPhysicalStackingConfigurationName() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get Current physical stacking configuration name
-
-## Signature
-
-```typescript
-function getCurrentPhysicalStackingConfigurationName(): Promise<string | undefined>;
-```
-
-## Returns
-
-Promise&lt;string \| undefined&gt;
-
-Current physical stacking configuration name; `undefined` indicates that the retrieval failed
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getdefaultphysicalstackingconfigurationname
-
-# PCB\_Layer.getDefaultPhysicalStackingConfigurationName() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get the name of the default physical stacking configuration for new PCBs
-
-## Signature
-
-```typescript
-function getDefaultPhysicalStackingConfigurationName(
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<string | undefined>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;string \| undefined&gt;
-
-Default physical stacking configuration name of; `undefined` indicates that the retrieval failed
-
-## Remarks
-
-ADD since EDA v4.2
-
-### getphysicalstackingconfiguration
-
-# PCB\_Layer.getPhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Get Specify physical stacking configuration
-
-## Signature
-
-```typescript
-function getPhysicalStackingConfiguration(
-	configurationName: string,
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<IPCB_PhysicalStackingConfiguration | undefined>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-<tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;[IPCB\_PhysicalStackingConfiguration](../interfaces/IPCB_PhysicalStackingConfiguration.md) \| undefined&gt;
-
-Physical stacking configuration, `undefined` is does not exist this physical stacking
-
-## Remarks
-
-ADD since EDA v4.2
 
 ### locklayer
 
@@ -728,33 +131,9 @@ function lockLayer(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Layer. If no layer is specified, all layers are used by default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;|_(Optional)_ Layer. If no layer is specified, all layers are used by default|
 
 ## Returns
 
@@ -780,6 +159,7 @@ console.log('topLockedNow:', top?.locked);
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### modifylayer
 
 # PCB\_Layer.modifyLayer() method
@@ -794,56 +174,20 @@ Modify Layer properties
 function modifyLayer(
 	layer: TPCB_LayersInTheSelectable,
 	property: {
-		name?: undefined | string;
-		type?: undefined | EPCB_LayerType.SIGNAL | EPCB_LayerType.INTERNAL_ELECTRICAL;
-		color?: undefined | string;
-		transparency?: undefined | number;
+		name?: string;
+		type?: TPCB_LayerTypesOfInnerLayer;
+		color?: string;
+		transparency?: number;
 	},
 ): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-<tr><td>
-
-property
-
-</td><td>
-
-{ name?: undefined \| string; type?: undefined \| [EPCB\_LayerType.SIGNAL](../enums/EPCB_LayerType.md) \| [EPCB\_LayerType.INTERNAL\_ELECTRICAL](../enums/EPCB_LayerType.md)<!-- -->; color?: undefined \| string; transparency?: undefined \| number }
-
-</td><td>
-
-Property
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)|Layer|
+|property|{ name?: string; type?: [TPCB\_LayerTypesOfInnerLayer](../types/TPCB_LayerTypesOfInnerLayer.md)<!-- -->; color?: string; transparency?: number }|Property|
 
 ## Returns
 
@@ -879,61 +223,6 @@ console.log('nameBefore:', before?.name, '→ nameAfter:', after?.name);
 console.log('colorBefore:', before?.color, '→ colorAfter:', after?.color);
 ```
 
-### overwritecurrentphysicalstackingconfiguration
-
-# PCB\_Layer.overwriteCurrentPhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Overwrite current physical stacking configuration
-
-## Signature
-
-```typescript
-function overwriteCurrentPhysicalStackingConfiguration(
-	physicalStackingConfiguration: IPCB_PhysicalStackingConfiguration,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-physicalStackingConfiguration
-
-</td><td>
-
-[IPCB\_PhysicalStackingConfiguration](../interfaces/IPCB_PhysicalStackingConfiguration.md)
-
-</td><td>
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Overwrite whether it is successful
-
-## Remarks
-
-It will overwrite the current physical stacking configuration of the PCB. Please note the risk of data loss
-
-If the passed-in physical stacking configuration does not match the physical properties of the current PCB, `false` will be returned directly without modification ADD since EDA v4.2
 
 ### removelayer
 
@@ -951,33 +240,9 @@ function removeLayer(layer: TPCB_LayersOfCustom): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersOfCustom](../types/TPCB_LayersOfCustom.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersOfCustom](../types/TPCB_LayersOfCustom.md)|Layer|
 
 ## Returns
 
@@ -1006,187 +271,6 @@ console.log('removedLayerId:', customLayerId);
 console.log('customLayerLeft:', rest.length);
 ```
 
-### renamephysicalstackingconfiguration
-
-# PCB\_Layer.renamePhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Rename the physical stacking configuration
-
-## Signature
-
-```typescript
-function renamePhysicalStackingConfiguration(
-	originalConfigurationName: string,
-	configurationName: string,
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-originalConfigurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Original physical stacking configuration name
-
-</td></tr>
-<tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-New physical stacking configuration name
-
-</td></tr>
-<tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Whether the rename was successful
-
-## Remarks
-
-ADD since EDA v4.2
-
-### savephysicalstackingconfiguration
-
-# PCB\_Layer.savePhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Save Physical stacking configuration
-
-## Signature
-
-```typescript
-function savePhysicalStackingConfiguration(
-	physicalStackingConfiguration: IPCB_PhysicalStackingConfiguration,
-	configurationName: string,
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-	allowOverwrite?: boolean,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-physicalStackingConfiguration
-
-</td><td>
-
-[IPCB\_PhysicalStackingConfiguration](../interfaces/IPCB_PhysicalStackingConfiguration.md)
-
-</td><td>
-
-Physical stacking configuration
-
-</td></tr>
-<tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-<tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-<tr><td>
-
-allowOverwrite
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to allow overwriting a physical stacking configuration with the same name. If `false`<!-- -->, `false` will be returned when a configuration with the same name is encountered. Please note the possible risk of data loss
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Save Whether Successful
-
-## Remarks
-
-ADD since EDA v4.2
 
 ### selectlayer
 
@@ -1202,33 +286,9 @@ function selectLayer(layer: TPCB_LayersInTheSelectable): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)
-
-</td><td>
-
-Layer
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)|Layer|
 
 ## Returns
 
@@ -1249,75 +309,6 @@ console.log('selectResult:', selectResult);
 console.log('restoreResult:', restoreResult);
 ```
 
-### setasdefaultphysicalstackingconfiguration
-
-# PCB\_Layer.setAsDefaultPhysicalStackingConfiguration() method
-
-> This API is provided as a beta preview for developers and may change based on feedback that we receive. Do not use this API in a production environment.
-
-Set as the default physical stacking configuration for new PCBs
-
-## Signature
-
-```typescript
-function setAsDefaultPhysicalStackingConfiguration(
-	configurationName: string,
-	physicalProps?: IPCB_SubstratePhysicalProperties,
-): Promise<boolean>;
-```
-
-## Parameters
-
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-configurationName
-
-</td><td>
-
-string
-
-</td><td>
-
-Configuration name
-
-</td></tr>
-<tr><td>
-
-physicalProps
-
-</td><td>
-
-[IPCB\_SubstratePhysicalProperties](../interfaces/IPCB_SubstratePhysicalProperties.md)
-
-</td><td>
-
-_(Optional)_ Physical properties. If not passed in, the current PCB properties are used by default
-
-</td></tr>
-</tbody></table>
-
-## Returns
-
-Promise&lt;boolean&gt;
-
-Set Whether Successful
-
-## Remarks
-
-The return value is result-oriented. Repeatedly setting the same physical stacking as the default will also return `true` ADD since EDA v4.2
 
 ### setinactivelayerdisplaymode
 
@@ -1335,33 +326,9 @@ function setInactiveLayerDisplayMode(displayMode?: EPCB_InactiveLayerDisplayMode
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-displayMode
-
-</td><td>
-
-[EPCB\_InactiveLayerDisplayMode](../enums/EPCB_InactiveLayerDisplayMode.md)
-
-</td><td>
-
-_(Optional)_ Display mode
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|displayMode|[EPCB\_InactiveLayerDisplayMode](../enums/EPCB_InactiveLayerDisplayMode.md)|_(Optional)_ Display mode|
 
 ## Returns
 
@@ -1382,6 +349,7 @@ console.log('setResult:', setResult);
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### setinactivelayertransparency
 
 # PCB\_Layer.setInactiveLayerTransparency() method
@@ -1398,33 +366,9 @@ function setInactiveLayerTransparency(transparency: number): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-transparency
-
-</td><td>
-
-number
-
-</td><td>
-
-Transparency, range `0-100`
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|transparency|number|Transparency, range `0-100`|
 
 ## Returns
 
@@ -1445,6 +389,7 @@ console.log('setResult:', setResult);
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### setlayercolorconfiguration
 
 # PCB\_Layer.setLayerColorConfiguration() method
@@ -1463,33 +408,9 @@ function setLayerColorConfiguration(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-colorConfiguration
-
-</td><td>
-
-[EPCB\_LayerColorConfiguration](../enums/EPCB_LayerColorConfiguration.md)
-
-</td><td>
-
-Color configuration
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|colorConfiguration|[EPCB\_LayerColorConfiguration](../enums/EPCB_LayerColorConfiguration.md)|Color configuration|
 
 ## Returns
 
@@ -1517,6 +438,7 @@ console.log('topColorBefore:', before?.color, '→ topColorAfter:', after?.color
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### setlayerinvisible
 
 # PCB\_Layer.setLayerInvisible() method
@@ -1536,46 +458,10 @@ function setLayerInvisible(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Layer. If no layer is specified, all layers are used by default
-
-</td></tr>
-<tr><td>
-
-setOtherLayerVisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to set other layers to visible
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;|_(Optional)_ Layer. If no layer is specified, all layers are used by default|
+|setOtherLayerVisible|boolean|_(Optional)_ Whether to set other layers to visible|
 
 ## Returns
 
@@ -1601,6 +487,7 @@ console.log('silkLayerStatus:', silk?.layerStatus);
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### setlayervisible
 
 # PCB\_Layer.setLayerVisible() method
@@ -1620,46 +507,10 @@ function setLayerVisible(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Layer. If no layer is specified, all layers are used by default
-
-</td></tr>
-<tr><td>
-
-setOtherLayerInvisible
-
-</td><td>
-
-boolean
-
-</td><td>
-
-_(Optional)_ Whether to set other layers to invisible
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;|_(Optional)_ Layer. If no layer is specified, all layers are used by default|
+|setOtherLayerInvisible|boolean|_(Optional)_ Whether to set other layers to invisible|
 
 ## Returns
 
@@ -1684,6 +535,7 @@ console.log('showResult:', showResult);
 console.log('silkLayerStatus:', silk?.layerStatus);
 ```
 
+
 ### setpcbtype
 
 # PCB\_Layer.setPcbType() method
@@ -1700,33 +552,9 @@ function setPcbType(pcbType: EPCB_PcbPlateType): Promise<boolean>;
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-pcbType
-
-</td><td>
-
-[EPCB\_PcbPlateType](../enums/EPCB_PcbPlateType.md)
-
-</td><td>
-
-PCB type
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|pcbType|[EPCB\_PcbPlateType](../enums/EPCB_PcbPlateType.md)|PCB type|
 
 ## Returns
 
@@ -1764,6 +592,7 @@ console.log('layerCountBefore:', before.length, '→ layerCountAfter:', fpcLayer
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### setthenumberofcopperlayers
 
 # PCB\_Layer.setTheNumberOfCopperLayers() method
@@ -1775,38 +604,16 @@ Set Number of copper layers
 ## Signature
 
 ```typescript
-function setTheNumberOfCopperLayers(numberOfLayers: TPCB_NumberOfCopperLayers): Promise<boolean>;
+function setTheNumberOfCopperLayers(
+	numberOfLayers: 2 | 4 | 6 | 8 | 10 | 12 | 14 | 16 | 18 | 20 | 22 | 24 | 26 | 28 | 30 | 32,
+): Promise<boolean>;
 ```
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-numberOfLayers
-
-</td><td>
-
-[TPCB\_NumberOfCopperLayers](../types/TPCB_NumberOfCopperLayers.md)
-
-</td><td>
-
-Number of copper layers
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|numberOfLayers|2 \| 4 \| 6 \| 8 \| 10 \| 12 \| 14 \| 16 \| 18 \| 20 \| 22 \| 24 \| 26 \| 28 \| 30 \| 32|Number of copper layers|
 
 ## Returns
 
@@ -1841,6 +648,7 @@ console.log('inner1Name:', inner1?.name);
 console.log('restoreResult:', restoreResult);
 ```
 
+
 ### unlocklayer
 
 # PCB\_Layer.unlockLayer() method
@@ -1859,33 +667,9 @@ function unlockLayer(
 
 ## Parameters
 
-<table><thead><tr><th>
-
-Parameter
-
-</th><th>
-
-Type
-
-</th><th>
-
-Description
-
-</th></tr></thead>
-<tbody><tr><td>
-
-layer
-
-</td><td>
-
-[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;
-
-</td><td>
-
-_(Optional)_ Layer. If no layer is specified, all layers are used by default
-
-</td></tr>
-</tbody></table>
+|Parameter|Type|Description|
+|---|---|---|
+|layer|[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md) \| Array&lt;[TPCB\_LayersInTheSelectable](../types/TPCB_LayersInTheSelectable.md)<!-- -->&gt;|_(Optional)_ Layer. If no layer is specified, all layers are used by default|
 
 ## Returns
 
