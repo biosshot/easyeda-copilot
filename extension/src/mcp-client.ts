@@ -1366,7 +1366,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             const inputs = body.inputs ?? {};
             if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
                 || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
-            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false), inputs as Record<string, string>));
+            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false, 'Before JavaScript execution'), inputs as Record<string, string>));
             return;
         }
 
@@ -1470,7 +1470,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
                     // DRC, selective copper deletion, new geometry, refill, and native
                     // verification share one recovery boundary.
-                    const checkpointId = await checkpointer.save(false);
+                    const checkpointId = await checkpointer.save(false, 'Before PCB routing');
                     if (!checkpointId) throw new Error('Failed to create routing transaction checkpoint.');
                     try {
                         const rules = bundle === undefined ? undefined : await routingTransactionStep(
@@ -1802,7 +1802,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');
 
-            await checkpointer.save(false);
+            await checkpointer.save(false, 'Before schematic assembly');
             await assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0]);
             const sheetSpace = await withTimeout(
                 estimateSchematicSheetSpace(),
@@ -1887,19 +1887,27 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             const board = body.boardAssemble ?? body.board ?? body.pcb_board_assemble;
             if (!board) throw new Error('Missing board assemble payload in assemble-board body');
 
-            await checkpointer.save(false);
+            await checkpointer.save(false, 'Before PCB placement');
             await assembleBoard(board as Parameters<typeof assembleBoard>[0]);
             reply(true, { assembled: true });
             return;
         }
 
         if (message.event === 'checkpoint-list') {
-            reply(true, await checkpointer.list().then(cs => cs.slice(0, 16)));
+            const limit = body.limit ?? 16;
+            if (typeof limit !== 'number' || !Number.isInteger(limit) || limit < 1 || limit > 512) {
+                throw new Error('Checkpoint limit must be an integer between 1 and 512');
+            }
+            reply(true, await checkpointer.list().then(cs => cs.slice(0, limit)));
             return;
         }
 
         if (message.event === 'checkpoint-save') {
-            const checkpointId = await checkpointer.save(false);
+            if (body.name !== undefined && (typeof body.name !== 'string' || body.name.trim().length > 200)) {
+                throw new Error('Checkpoint name must be a string of at most 200 characters');
+            }
+            const checkpointId = await checkpointer.save(false, body.name as string | undefined);
+            if (!checkpointId) throw new Error('Failed to save checkpoint');
             reply(true, { checkpointId });
             return;
         }

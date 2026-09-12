@@ -1,5 +1,7 @@
 # Keep, repair or restore
 
+Save meaningful milestones with `save_checkpoint_for_current_page({name: "Schematic verified, before property changes"})`. Use verified facts in names; a name does not itself prove verification. Names are optional (up to 200 characters) and need not be unique. `list_checkpoints({limit: 100})` returns names and IDs, newest first (default 16, maximum 512). Older unnamed checkpoints get an English date-based display name without rewriting stored records. Automatic checkpoints use English operation names. Always restore by ID. Both the MCP server and extension must be updated for names and configurable limits. Naming does not pin a checkpoint or exempt it from automatic pruning.
+
 After the stage's verification, keep a satisfactory result or an explicitly accepted non-blocking limitation. Prefer a focused repair for a concrete local defect. Restore a clearly invalid or broadly regressed agent-applied result when a safe repair is unavailable. Report the decision and remaining findings; a warning alone does not require rollback.
 
 Before checkpoint restoration:

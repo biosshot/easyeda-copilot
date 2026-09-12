@@ -5,10 +5,12 @@ interface Checkpoint {
     _id: string,
     timestamp: number,
     content: string,
+    name?: string,
     pageId?: string
 }
 
 const checkpointsDb = new AppDBClient(false).init('checkpoints', {
+    // These are indexes, not allowed fields. Keep them unchanged for existing databases.
     checkpoints: ['timestamp', 'content', '_id', 'pageId']
 });
 
@@ -26,8 +28,11 @@ const getCurrentPageId = async () => {
     return page?.uuid;
 }
 
-async function saveCheckpoint(minor: boolean) {
+async function saveCheckpoint(minor: boolean, name?: string) {
     try {
+        if (name !== undefined && (typeof name !== 'string' || name.trim().length > 200)) {
+            throw new Error('Checkpoint name must be a string of at most 200 characters');
+        }
         const content = await eda.sys_FileManager.getDocumentSource();
         if (!content) {
             eda.sys_Message.showToastMessage('Failed insert checkpoint to db: not found content', ESYS_ToastMessageType.WARNING);
@@ -38,6 +43,7 @@ async function saveCheckpoint(minor: boolean) {
             _id: generateInsecureToken(16),
             timestamp: Date.now(),
             content,
+            ...(name?.trim() ? { name: name.trim() } : {}),
             pageId: await getCurrentPageId()
         };
 
@@ -118,6 +124,7 @@ async function listCheckpoints() {
         .map(checkpoint => ({
             _id: checkpoint._id,
             timestamp: checkpoint.timestamp,
+            name: checkpoint.name == null ? `Unnamed — ${new Date(checkpoint.timestamp).toISOString()}` : String(checkpoint.name),
             pageId: checkpoint.pageId,
             isCurrentPage: !checkpoint.pageId || checkpoint.pageId === currentPageId,
         }))
@@ -132,6 +139,7 @@ async function readCheckpoint(id: string) {
     return {
         _id: checkpoint._id,
         timestamp: checkpoint.timestamp,
+        name: checkpoint.name == null ? undefined : String(checkpoint.name),
         pageId: checkpoint.pageId,
         content: checkpoint.content,
     };

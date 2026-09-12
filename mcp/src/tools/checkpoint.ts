@@ -8,11 +8,13 @@ export function registerCheckpointTools(server: McpServer, bridge: Bridge) {
         'list_checkpoints',
         {
             title: 'List EasyEDA Checkpoints',
-            description: 'List saved checkpoints.',
-            inputSchema: z.object({}),
+            description: 'List saved checkpoints with names, newest first. Defaults to 16; use limit to include older checkpoints.',
+            inputSchema: z.object({
+                limit: z.number().int().min(1).max(512).optional(),
+            }),
         },
-        async () => {
-            const result = await bridge.requestEasyEda('checkpoint-list');
+        async ({ limit }) => {
+            const result = await bridge.requestEasyEda('checkpoint-list', { limit });
             return textResult(result);
         },
     );
@@ -21,11 +23,13 @@ export function registerCheckpointTools(server: McpServer, bridge: Bridge) {
         'save_checkpoint_for_current_page',
         {
             title: 'Save EasyEDA Checkpoint',
-            description: 'Save a checkpoint for the current EasyEDA document.',
-            inputSchema: z.object({}),
+            description: 'Save a checkpoint for the current EasyEDA document. Give it a short descriptive name for recovery; only describe checks as passed after verification. Restore by the returned ID, even when names match.',
+            inputSchema: z.object({
+                name: z.string().trim().max(200).optional(),
+            }),
         },
-        async () => {
-            const result = await bridge.requestEasyEda('checkpoint-save');
+        async ({ name }) => {
+            const result = await bridge.requestEasyEda('checkpoint-save', { name });
             return textResult(result);
         },
     );

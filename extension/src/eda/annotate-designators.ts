@@ -92,7 +92,7 @@ async function applyPlan(
     for (const page of pages) {
         if (!changedPageUuids.has(page.uuid)) continue;
         await openDocument(page.uuid);
-        const checkpointId = await checkpointer.save(false);
+        const checkpointId = await checkpointer.save(false, 'Before component annotation');
         if (!checkpointId) throw new Error(`Failed to create annotation checkpoint for page: ${page.name}`);
         checkpoints.set(page.uuid, checkpointId);
 

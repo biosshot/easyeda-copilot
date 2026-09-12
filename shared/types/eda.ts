@@ -20,14 +20,16 @@ declare global {
         getLibraryUuidList?: (libraryUuid?: string) => Promise<string[]>,
         checkpointer?: {
             restore: (id?: string, allAgree?: boolean) => Promise<boolean>;
-            save: (minor: boolean) => Promise<string | null>;
+            save: (minor: boolean, name?: string) => Promise<string | null>;
             list: () => Promise<{
+                name: string;
                 _id: string;
                 timestamp: number;
                 pageId?: string;
                 isCurrentPage: boolean;
             }[]>;
             read: (id: string) => Promise<{
+                name?: string;
                 _id: string;
                 timestamp: number;
                 pageId?: string;

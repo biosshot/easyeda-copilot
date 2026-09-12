@@ -177,7 +177,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 throw new Error(`Components have no part_uuid: ${missingPartUuid.join(', ')}`);
             }
 
-            const checkpointResult = await bridge.requestEasyEda('checkpoint-save') as { checkpointId?: unknown };
+            const checkpointResult = await bridge.requestEasyEda('checkpoint-save', { name: 'Before schematic beautification' }) as { checkpointId?: unknown };
             const checkpointId = checkpointResult?.checkpointId;
             if (typeof checkpointId !== 'string' || !checkpointId) {
                 throw new Error('Failed to save a checkpoint before beautify.');
