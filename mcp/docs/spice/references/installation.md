@@ -16,7 +16,7 @@ The plotter uses an existing usable Sharp installation when available. Otherwise
 
 ## Model archive
 
-The checked-in manifest points to library version 2026.09.1 attached to GitHub Release v1.1.8. Search downloads and verifies this archive automatically when it is absent from the cache; no installation command or manifest override is needed. The library version is independent of the hosting application's release version. To build and test a different library locally:
+The checked-in manifest points to library version 2026.09.2 attached to GitHub Release v1.1.8. Search downloads and verifies this archive automatically when it is absent from the cache; no installation command or manifest override is needed. The library version is independent of the hosting application's release version. To build and test a different library locally:
 
 ```sh
 node scripts/pack-library.mjs /path/to/exported/spice-lib --out /path/to/artifacts --version 2026.09.1
