@@ -58,6 +58,10 @@ for (const name of Object.keys(cleanEnv)) {
 }
 process.stdout.write(run([join(consumer, 'smoke.mjs'), join(consumer, 'node_modules/easyeda-copilot-mcp/dist/index.js'), join(consumer, 'fixtures.mjs')], consumer, cleanEnv));
 const installedDocs = join(consumer, 'node_modules/easyeda-copilot-mcp/docs');
+for (const helper of ['download', 'pdf-outline']) {
+  const result = JSON.parse(run([join(installedDocs, 'datasheets/scripts', helper + '.mjs'), '--help'], consumer, cleanEnv));
+  assert.ok(result.usage, 'Packaged DataSheets helper must run: ' + helper);
+}
 process.stdout.write(run([join(mcp, 'scripts/check-docs.mjs'), installedDocs], consumer, cleanEnv));
 if (process.env.SPICE_TEST_NGSPICE) {
   process.stdout.write(run([join(mcp, 'scripts/check-spice-package.mjs'), join(installedDocs, 'spice')], consumer, cleanEnv));

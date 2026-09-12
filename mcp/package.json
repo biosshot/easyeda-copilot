@@ -21,6 +21,7 @@
   "scripts": {
     "test:docs": "node scripts/check-docs.mjs",
     "test:spice": "node --test tests/spice.test.mjs",
+    "test:datasheets": "node --test tests/datasheets.test.mjs",
     "prebuild": "node ../scripts/build-local-dependencies.mjs",
     "build": "tsup",
     "router:info": "node scripts/router-info.mjs",
@@ -34,7 +35,7 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:spice && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
+    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:spice && npm run test:datasheets && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
     "prepack": "node ../scripts/check-release.mjs && npm run build",
     "start": "node dist/index.js",
     "test:package": "node scripts/check-package.mjs"
