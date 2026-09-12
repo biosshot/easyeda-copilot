@@ -4,10 +4,9 @@ import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
 import { componentSearch, searchReusedBlock } from "eda-copilot-backend/components";
 import { extractCircuit } from "eda-copilot-backend/schematic";
-import { SKILL_DOC_PATH, TEMP_DIR } from "../utils/dirs";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { join } from "node:path";
-import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit, ExplainCircuitStruct } from "@copilot/shared/types/circuit";
+import { SKILL_DOC_PATH } from "../utils/dirs";
+import { readFile } from "node:fs/promises";
+import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit } from "@copilot/shared/types/circuit";
 
 type SchematicBlocks = Record<string, string[]>;
 
@@ -241,8 +240,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'get_schematic',
         {
             title: 'Get Schematic',
-            description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic.\n' +
-                `Format: ${JSON.stringify(ExplainCircuitStruct().toJSONSchema())}`,
+            description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic. Responses over 16 KiB are saved to a file.',
             inputSchema: z.object({
                 get_full_schematic: z.boolean().default(false)
                     .describe('Get Full Schematic: retrieve the schematic from all pages.'),
@@ -252,17 +250,6 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             const result = await bridge.requestEasyEda(get_full_schematic
                 ? 'get-multi-page-schematic' : 'get-schematic') as ExplainCircuit;
             const schematic = { ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) };
-
-            if (schematic.components.length > 40) {
-                await mkdir(TEMP_DIR, { recursive: true });
-
-                const savePath = join(TEMP_DIR, `sch-${crypto.randomUUID().slice(0, 6)}.json`);
-                await writeFile(savePath, JSON.stringify(schematic, null, 2));
-                return textResult({
-                    "message": "Schematic too big, so it was saved to a file. components len: " + schematic.components.length,
-                    "path": savePath
-                });
-            }
 
             return textResult(schematic);
         },

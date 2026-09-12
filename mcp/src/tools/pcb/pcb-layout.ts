@@ -256,7 +256,7 @@ async function writePlacementDebugArtifactFiles(artifacts: PlacementDebugArtifac
 
     const indexPath = join(debugArtifactsDir, 'index.json');
     await mkdir(debugArtifactsDir, { recursive: true });
-    await writeFile(indexPath, JSON.stringify(saved, null, 2));
+    await writeFile(indexPath, JSON.stringify(saved));
 
     return {
         debugArtifactsDir,

@@ -91,7 +91,7 @@ async function executeRoutingOperation(
     const nativeDrc = PcbDrcBundleSchema().parse(capture.drc) as PcbDrcBundle;
     await writeFile(
         join(artifactsDirectory, 'easyeda-drc-input.json'),
-        `${JSON.stringify(nativeDrc, null, 2)}\n`,
+        `${JSON.stringify(nativeDrc)}\n`,
     );
     context.signal.throwIfAborted();
 
@@ -110,7 +110,7 @@ async function executeRoutingOperation(
     };
     await writeFile(
         join(artifactsDirectory, 'copilot-router-input.json'),
-        `${JSON.stringify(routerInput, null, 2)}\n`,
+        `${JSON.stringify(routerInput)}\n`,
     );
 
     context.setStage('routing');
@@ -132,7 +132,7 @@ async function executeRoutingOperation(
     });
     await writeFile(
         join(artifactsDirectory, 'routing-result.json'),
-        `${JSON.stringify(result, null, 2)}\n`,
+        `${JSON.stringify(result)}\n`,
     );
     // A watchdog-expired router run may still return independently audited,
     // applicable partial copper. Only an explicit operation cancellation may
@@ -156,7 +156,7 @@ async function executeRoutingOperation(
     };
     await writeFile(
         join(artifactsDirectory, 'easyeda-routing-application.json'),
-        `${JSON.stringify(application, null, 2)}\n`,
+        `${JSON.stringify(application)}\n`,
     );
     const shouldApplyDrc = result.operation === 'apply-drc' || result.operation === 'all';
     const ruleChanges = diffRoutingRules(sourceRules, result.rules);

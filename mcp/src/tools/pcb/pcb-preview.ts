@@ -4,11 +4,11 @@ import { PcbLayerNameSchema } from "@copilot/shared/types/pcb/shared";
 import type { RawPcb } from "@copilot/shared/types/pcb/raw";
 import { savePcbPreview } from "../../pcb-preview";
 import { Bridge } from "../../bridge";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import { TEMP_DIR } from "../../utils/dirs";
 import { textResult } from "../../utils/tool-result";
-import { ExplainPCB, ExplainPcbSchema } from "@copilot/shared/types/pcb/explain";
+import { ExplainPCB } from "@copilot/shared/types/pcb/explain";
 
 export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
 
@@ -111,28 +111,11 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'get_current_pcb',
         {
             title: 'Get EasyEDA PCB',
-            description: 'Read a PCB overview from native primitives through the connected MCP interface; not an atomic revision snapshot. Open a PCB document first. Coordinates are mm in the native PCB frame, not the normalized routing frame. For edits, resolve exact primitive IDs and reread their native poses. wires contains copper statistics grouped by net; pads lists net membership; polygons are source outlines, not rebuilt fill geometry. Use native DRC for connectivity.\n' +
-                `Format: ${JSON.stringify(ExplainPcbSchema({ forLLM: true }).toJSONSchema())}`,
+            description: 'Read a PCB overview from native primitives through the connected MCP interface; not an atomic revision snapshot. Open a PCB document first. Coordinates are mm in the native PCB frame, not the normalized routing frame. For edits, resolve exact primitive IDs and reread their native poses. wires contains copper statistics grouped by net; pads lists net membership; polygons are source outlines, not rebuilt fill geometry. Use native DRC for connectivity. Responses over 16 KiB are saved to a file.',
             inputSchema: z.object({}),
         },
         async () => {
             const result = await bridge.requestEasyEda('get-pcb') as ExplainPCB;
-
-            if (result.components.length > 30 || (result.vias?.length ?? 0) > 50 || (result.polygons?.length ?? 0) > 20 || (result.wires?.length ?? 0) > 50) {
-                await mkdir(TEMP_DIR, { recursive: true });
-
-                const savePath = join(TEMP_DIR, `pcb-${crypto.randomUUID().slice(0, 6)}.json`);
-                await writeFile(savePath, JSON.stringify(result, null, 2));
-                return textResult({
-                    "message": "Pcb too big, so it was saved to a file.\n" +
-                        `components len: ${result.components.length}\n` +
-                        `vias len: ${result.vias?.length}\n` +
-                        `polygons len: ${result.polygons?.length}\n` +
-                        `wires len: ${result.wires?.length}`,
-                    "path": savePath
-                });
-            }
-
 
             return textResult(result);
         },

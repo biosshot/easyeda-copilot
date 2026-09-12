@@ -466,7 +466,7 @@ class OwnerBroker {
 
         throw new Error([
             'Multiple EasyEDA instances are connected. Call list_easyeda_instances, then select_easyeda_instance.',
-            JSON.stringify(this.listEasyEdaInstances(), null, 2),
+            JSON.stringify(this.listEasyEdaInstances()),
         ].join('\n'));
     }
 }

@@ -9,7 +9,7 @@ import {
 } from '@copilot/shared/types/execute-js';
 import type { Bridge } from '../bridge';
 import { DOCS_DIR, TEMP_DIR } from '../utils/dirs';
-import { textResult } from '../utils/tool-result';
+import { inlineTextResult as textResult, MAX_INLINE_RESPONSE_BYTES } from '../utils/tool-result';
 
 export const ExecuteJsInputSchema = z.object({
     code: z.string().min(1).max(EXECUTE_JS_MAX_CODE_BYTES).optional()
@@ -24,7 +24,6 @@ export const ExecuteJsInputSchema = z.object({
     message: 'Provide exactly one of code or file_path.',
 });
 
-const MAX_INLINE_RESPONSE_BYTES = 16 * 1024;
 const ARTIFACT_DIR = join(TEMP_DIR, 'responses');
 const extensions: Record<string, string> = {
     'application/json': 'json', 'text/plain': 'txt', 'image/png': 'png',
