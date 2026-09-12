@@ -19,14 +19,6 @@ function simplifyItem(item: Record<string, unknown>): SimplifiedDrcViolation {
         primitive_ids: Array.isArray(item.objs) ? item.objs.filter((id): id is string => typeof id === 'string') : undefined,
         rule_name: typeof item.ruleName === 'string' ? item.ruleName : undefined,
         layer: typeof item.layer === 'string' ? item.layer : undefined,
-        // Preserve native object descriptors, parameters and errData for repair.
-        // In particular, errData coordinates are NOT native PCB mil or normalized mm.
-        native: {
-            obj1: item.obj1, obj2: item.obj2,
-            explanation: item.explanation, pos: item.pos,
-            globalIndex: item.globalIndex, errorObjType: item.errorObjType,
-            ruleTypeName: item.ruleTypeName,
-        },
     };
 }
 
@@ -46,12 +38,15 @@ export async function checkPcbDrc(limit: number): Promise<SimplifiedDrcCategory[
         return {
             name: rawCategory.name as string,
             violation_count: nonEmptyGroups.reduce((sum, group) => sum + group.list.length, 0),
-            truncated: nonEmptyGroups.some(group => group.list.length > perGroup),
+            ...(nonEmptyGroups.some(group => group.list.length > perGroup) ? { truncated: true as const } : {}),
             list: nonEmptyGroups.map(group => ({
                 name: group.name,
                 violation_count: group.list.length,
-                truncated: group.list.length > perGroup,
-                list: group.list.slice(0, perGroup).map(simplifyItem),
+                ...(group.list.length > perGroup ? { truncated: true as const } : {}),
+                list: group.list.slice(0, perGroup).map(item => {
+                    const { errorType, ...violation } = simplifyItem(item);
+                    return violation;
+                }),
             })).filter(group => group.list.length > 0),
         };
     }).filter(category => category.list.length > 0);
@@ -76,7 +71,7 @@ export async function checkPcbNetDrc(net: string, limit: number): Promise<Inspec
     const count = Number.isFinite(limit) ? Math.max(1, Math.min(200, Math.floor(limit))) : 24;
     return {
         violation_count: violations.length,
-        truncated: violations.length > count,
+        ...(violations.length > count ? { truncated: true as const } : {}),
         violations: violations.slice(0, count),
     };
 }

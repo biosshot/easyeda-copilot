@@ -52,19 +52,17 @@ export const SimplifiedDrcViolationSchema = () => z.object({
     primitive_ids: z.array(z.string()).optional(),
     rule_name: z.string().optional(),
     layer: z.string().optional(),
-    // Native verbose DRC has its own coordinate scale; do not label it mm.
-    native: z.record(z.string(), z.unknown()).optional(),
 }).strict();
 
 export const SimplifiedDrcCategorySchema = () => z.object({
     name: z.string(),
     violation_count: z.number().int().nonnegative().optional(),
-    truncated: z.boolean().optional(),
+    truncated: z.literal(true).optional(),
     list: z.array(z.object({
         name: z.string(),
         violation_count: z.number().int().nonnegative().optional(),
-        truncated: z.boolean().optional(),
-        list: z.array(SimplifiedDrcViolationSchema()),
+        truncated: z.literal(true).optional(),
+        list: z.array(SimplifiedDrcViolationSchema().omit({ errorType: true })),
     }).strict()),
 }).strict();
 
@@ -125,7 +123,7 @@ export const InspectPcbNetSchema = () => ExplainPcbWireSchema().extend({
     polygons: z.array(ExplainPcbPolygonSchema()),
     drc: z.object({
         violation_count: z.number(),
-        truncated: z.boolean(),
+        truncated: z.literal(true).optional(),
         violations: z.array(SimplifiedDrcViolationSchema()),
     }).strict(),
 }).strict();

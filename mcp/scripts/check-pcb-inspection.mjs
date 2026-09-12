@@ -114,7 +114,7 @@ await test('unrouted net still runs DRC; net filtering precedes truncation', asy
   assert.equal(r.drc.truncated, true);
   assert.equal(r.drc.violations[0].message, 'Distance 0.1mm');
   const full = await inspect('TEST', 200);
-  assert.equal(full.drc.truncated, false);
+  assert.equal(Object.hasOwn(full.drc, 'truncated'), false);
   assert.equal(full.drc.violations[2].obj1, '(TEST): J2_1');
 });
 await test('one net summary covers separate tracks on different layers without tracing islands', async () => {
@@ -214,7 +214,7 @@ await test('changing the active document rejects mixed-board evidence', async ()
   board.switchDocument = true;
   await assert.rejects(inspect(), /Active PCB changed/);
 });
-await test('native repair IDs and diagnostics survive net and whole-board summaries', async () => {
+await test('compact DRC preserves repair IDs and messages without native payloads', async () => {
   const finding = { ...item('Clearance Error', '(TEST): e17', '(OTHER): U1_1'),
     objs: ['track-uuid', 'pad-uuid'], ruleName: 'spacing', layer: 'Top Layer',
     pos: { x: -6.88996, y: 9.005115 },
@@ -227,11 +227,19 @@ await test('native repair IDs and diagnostics survive net and whole-board summar
   const v = net.drc.violations[0];
   assert.deepEqual(v.primitive_ids, finding.objs);
   assert.equal(v.rule_name, 'spacing'); assert.equal(v.layer, 'Top Layer');
-  assert.deepEqual(v.native.pos, finding.pos);
-  assert.deepEqual(v.native.explanation, finding.explanation);
+  assert.equal(v.message, 'Distance 0.111mm');
+  assert.equal(Object.hasOwn(v, 'native'), false);
+  assert.equal(Object.hasOwn((await module.exports.checkPcbDrc(1))[0].list[0].list[0], 'native'), false);
   const all = plain((await module.exports.checkPcbDrc(1)).map(c => module.exports.SimplifiedDrcCategorySchema().parse(c)));
   assert.equal(all[0].violation_count, 3); assert.equal(all[0].truncated, true);
   assert.equal(all[0].list[0].violation_count, 3); assert.equal(all[0].list[0].truncated, true);
-  assert.deepEqual(all[0].list[0].list[0], v);
+  const { errorType, ...groupedViolation } = v;
+  assert.equal(errorType, 'Clearance Error');
+  assert.deepEqual(all[0].list[0].list[0], groupedViolation);
+  const complete = await module.exports.checkPcbDrc(10);
+  assert.equal(Object.hasOwn(complete[0], 'truncated'), false);
+  assert.equal(Object.hasOwn(complete[0].list[0], 'truncated'), false);
+  assert.equal(Object.hasOwn(complete[0].list[0].list[0], 'errorType'), false);
+  module.exports.SimplifiedDrcCategorySchema().parse(complete[0]);
 });
 console.log('PCB inspection checks passed (' + checks + ').');

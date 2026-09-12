@@ -50,7 +50,7 @@ async function editorRequest(event, body) {
   if (event === 'get-pcb') return { components: [], wires: [pcbSummary] };
   if (event === 'get-pcb-raw') return rawPcb;
   if (event === 'inspect-net') return { ...pcbSummary, net: body.net, found: true,
-    pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, truncated: false, violations: [] } };
+    pads: ['J1.1', 'J2.1'], polygons: [], drc: { violation_count: 0, violations: [] } };
   if (event === 'checkpoint-save') return { checkpointId: 'before-beautify' };
   if (event === 'assemble-circuit') return { sheetSpace: { freePercent: 8 } };
   if (['beautify-current-page', 'assemble-board'].includes(event)) return {};
@@ -102,7 +102,7 @@ try {
   assert.deepEqual((await call('get_current_pcb', {})).wires, [pcbSummary], 'Small PCB summary should be inline');
   const inspected = await call('inspect_net', { net: 'TEST', drc_limit: 7 });
   assert.equal(inspected.length, 25.4);
-  assert.deepEqual(inspected.drc, { violation_count: 0, truncated: false, violations: [] });
+  assert.deepEqual(inspected.drc, { violation_count: 0, violations: [] });
   assert.equal('connected_pads' in inspected, false);
   assert.equal(requests.find(request => request.event === 'inspect-net').body.drc_limit, 7);
   const previewInput = { layers: ['TOP'], highlight_net: 'TEST', highlight_component: 'U1',
