@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "version": "2026.09.1",
-  "url": "https://github.com/biosshot/easyeda-copilot/releases/download/v1.1.8/spice-library-2026.09.1.jsonl.gz",
+  "url": "https://github.com/biosshot/easyeda-copilot/releases/download/v1.1.8/spice-library-2026.09.2.jsonl.gz",
   "sha256": "5972aa57db213d4f1c755d76bf0a6c0719e44c32d9e944a4b8b65601a085dd02",
   "format": "spice-jsonl-gzip-v1"
 }
