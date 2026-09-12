@@ -57,5 +57,10 @@ for (const name of Object.keys(cleanEnv)) {
   if (/^(?:NODE_OPTIONS|NODE_PATH|PCB_BOARD_PACKER_NATIVE_PATH|COPILOT_ROUTER_.*|EASYEDA_COPILOT_SERVER_URL|KICAD_COPILOT_SERVER_URL|PYTHONPATH|PYTHONHOME)$/i.test(name)) delete cleanEnv[name];
 }
 process.stdout.write(run([join(consumer, 'smoke.mjs'), join(consumer, 'node_modules/easyeda-copilot-mcp/dist/index.js'), join(consumer, 'fixtures.mjs')], consumer, cleanEnv));
+const installedDocs = join(consumer, 'node_modules/easyeda-copilot-mcp/docs');
+process.stdout.write(run([join(mcp, 'scripts/check-docs.mjs'), installedDocs], consumer, cleanEnv));
+if (process.env.SPICE_TEST_NGSPICE) {
+  process.stdout.write(run([join(mcp, 'scripts/check-spice-package.mjs'), join(installedDocs, 'spice')], consumer, cleanEnv));
+} else assert.ok(!process.env.SPICE_TEST_REQUIRED, 'SPICE package checks must not be skipped in CI');
 writeFileSync(join(artifacts, 'package-check.json'), JSON.stringify({ mcp: packed.filename, dependencies: manifest.dependencies, consumer, checkedAt: new Date().toISOString() }, null, 2));
 console.log('Separate-package MCP installation and protocol tests passed.');

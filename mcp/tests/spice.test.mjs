@@ -12,6 +12,7 @@ import { copyModel } from '../docs/spice/scripts/copy-model.mjs';
 import { simulate } from '../docs/spice/scripts/simulate.mjs';
 import { readRaw } from '../docs/spice/scripts/raw.mjs';
 import { svgPlot } from '../docs/spice/scripts/plot.mjs';
+import { ngspice } from '../docs/spice/scripts/ngspice.mjs';
 
 const model = (name, status = 'compiled') => ({ name, path: `${name}.lib`, aliases: [], description: 'dual operational amplifier', validation: { status } });
 test('MPN ranking separates exact, substring, fuzzy and reviewed models', () => {
@@ -70,7 +71,12 @@ test('process timeout is reported', async () => {
   const r = await run(process.execPath, ['-e', 'setInterval(()=>{},1000)'], { timeout: 50 });
   assert.equal(r.timedOut, true);
 });
+test('an invalid explicit ngspice path cannot silently select another runtime', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'spice missing runtime '));
+  await assert.rejects(ngspice({ ngspice: join(root, 'missing-executable'), cache: root }), /ENOENT|ngspice executable/);
+});
 const executable = process.env.SPICE_TEST_NGSPICE;
+assert.ok(!process.env.SPICE_TEST_REQUIRED || executable, 'SPICE_TEST_REQUIRED requires SPICE_TEST_NGSPICE; real simulations must not be skipped in CI');
 test('ngspice: RC frequency response, transient, OP and PNG', { skip: !executable }, async () => {
   const root = await mkdtemp(join(tmpdir(), 'spice integration '));
   const result = await simulate({ _: [fileURLToPath(new URL('../docs/spice/examples/rc-filter.cir', import.meta.url))], ngspice: executable, out: join(root, 'result'), 'no-install': true });
@@ -100,6 +106,8 @@ test('ngspice: nested model snapshots and DC sweep; broken models fail', { skip:
   const data = await readRaw(result.analyses[0].raw);
   const last = data.vectors.find(v => v.name === 'v(out)').real.at(-1);
   assert.ok(last > .5 && last < .9);
+  await writeFile(join(root, 'models with spaces', 'inner.lib'), '.model demo D(Is=2n N=1.8)\n.control\nquit\n.endc\n');
+  await assert.rejects(simulate({ _: [circuit], ngspice: executable, out: join(root, 'model control') }), /runner owns \.control/);
   await writeFile(circuit, 'Broken\nD1 out 0 missing_model\nV1 out 0 1\n.op\n.end\n');
   const broken = await simulate({ _: [circuit], ngspice: executable, out: join(root, 'broken'), 'no-plot': true });
   assert.equal(broken.simulationStatus, 'error');

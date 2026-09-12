@@ -50,6 +50,17 @@ jobs:
         working-directory: copilot-router
         run: npm ci
       - run: npm ci
+      - name: Install ngspice (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ngspice
+      - name: Install ngspice (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ngspice
+      - name: Prepare and verify ngspice runtime
+        run: node mcp/scripts/prepare-spice-test.mjs
+      - name: Verify public SPICE model archive
+        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
+        run: node mcp/scripts/check-spice-library.mjs
       - name: Test dependency switching
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         run: npm run test:dependencies
@@ -72,7 +83,10 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
+        if: always()
         with:
           name: integration-${{ matrix.os }}-node-${{ matrix.node }}
-          path: easyeda-copilot/mcp/.artifacts/package-check.json
+          path: |
+            easyeda-copilot/mcp/.artifacts/package-check.json
+            easyeda-copilot/mcp/.artifacts/spice-runtime.json
           include-hidden-files: true

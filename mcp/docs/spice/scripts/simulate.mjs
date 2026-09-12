@@ -16,6 +16,7 @@ async function snapshot(input, out) {
     seen.set(source, relative);
     if (seen.size > 5000) throw new Error('Too many model dependencies');
     let body = await readFile(source, 'utf8');
+    if (/^\s*\.control\b/im.test(body)) throw new Error(`The runner owns .control and result export; remove the control block from ${source}`);
     total += Buffer.byteLength(body);
     if (total > 512 * 1024 ** 2) throw new Error('Model dependencies exceed 512 MiB');
     dependencies.push({ source, snapshot: relative, sha256: createHash('sha256').update(body).digest('hex') });

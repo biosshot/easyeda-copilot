@@ -62,6 +62,10 @@ For dependency switching and release checks, follow [local development](docs/loc
 
 ## Pull requests
 
+The MCP `check` command also validates packaged documentation links and runs SPICE tests. To include real simulations locally, install ngspice and set `SPICE_TEST_NGSPICE` to its absolute executable path. Set `SPICE_TEST_REQUIRED=1` to fail instead of skipping these tests when the path is missing. `node mcp/scripts/prepare-spice-test.mjs` checks runtime discovery (and fresh automatic installation on Windows x64), writing its path to `mcp/.artifacts/spice-runtime.json`; in GitHub Actions it exports both variables for subsequent steps.
+
+CI installs ngspice on Linux/macOS and tests automatic preparation on Windows, on all four OS/architecture targets with Node 20 and 24. It verifies numerical simulations and PNG output, then installs the MCP tarball outside the checkout and tests backend/router plus documentation availability. It also copies the packaged SPICE skill into an independent directory to test automatic Sharp installation and offline reuse. One matrix job downloads the public model archive with a fresh cache and checks its checksum, search and model copying. These checks require network access; failures block the release job. They do not validate the accuracy or redistribution rights of every model in the archive.
+
 1. Create a branch.
 2. Make your changes.
 3. Run the relevant build or MCP check.
