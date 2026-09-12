@@ -53,17 +53,17 @@ jobs:
       - name: Test dependency switching
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         run: npm run test:dependencies
+      - run: npm run test:extension
       - run: npm run check --workspace=mcp
       - run: npm run test:package --workspace=mcp
       - name: Verify release dependencies
         if: startsWith(github.ref, 'refs/tags/v')
         run: npm run check:release
       - name: Build extension
-        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         run: npm run build
       - name: Collect exact release archives
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
-        run: node -e "const fs=require('node:fs');const p=require('./mcp/package.json');const e=require('./extension.json');fs.mkdirSync('.artifacts',{recursive:true});const m=p.name+'-'+p.version+'.tgz';const x=e.name+'_v'+e.version+'.eext';fs.copyFileSync('mcp/.artifacts/'+m,'.artifacts/'+m);fs.copyFileSync('build/dist/'+x,'.artifacts/'+x)"
+        run: node -e "const fs=require('node:fs');const p=require('./mcp/package.json');const e=require('./extension/extension.json');fs.mkdirSync('.artifacts',{recursive:true});const m=p.name+'-'+p.version+'.tgz';const x=e.name+'_v'+e.version+'.eext';fs.copyFileSync('mcp/.artifacts/'+m,'.artifacts/'+m);fs.copyFileSync('build/dist/'+x,'.artifacts/'+x)"
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         with:

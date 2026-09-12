@@ -9,10 +9,10 @@ import sharp from 'sharp';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const require = createRequire(root + 'package.json');
-const utils = ts.createSourceFile('utils.ts', await readFile(root + 'src/eda/utils.ts', 'utf8'), ts.ScriptTarget.Latest, true);
+const utils = ts.createSourceFile('utils.ts', await readFile(root + 'extension/src/eda/utils.ts', 'utf8'), ts.ScriptTarget.Latest, true);
 const helpers = utils.statements.filter(node => ['round', 'milToMm', 'mmToMil'].includes(node.name?.text))
     .map(node => node.getText(utils)).join('\n');
-const bundled = await build({ entryPoints: [root + 'src/eda/pcb-preview.ts'], bundle: true, write: false,
+const bundled = await build({ entryPoints: [root + 'extension/src/eda/pcb-preview.ts'], bundle: true, write: false,
     platform: 'node', format: 'cjs', plugins: [{ name: 'native-preview-fixture', setup(builder) {
         builder.onLoad({ filter: /[\\/]src[\\/]eda[\\/]utils\.ts$/ }, () => ({
             contents: helpers + '\nexport const VERSION_EDASYEDA = globalThis.testVersion;', loader: 'ts',

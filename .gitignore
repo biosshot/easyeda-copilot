@@ -8,3 +8,8 @@
 /mcp/node_modules/
 /mcp/.artifacts/
 /.artifacts/
+
+/extension/dist/
+/extension/iframe/
+/extension/node_modules/
+/extension/*.tsbuildinfo

@@ -1,6 +1,8 @@
 English | [简体中文](README.zh-CN.md) | [Русский](README.ru.md)
 
-# <img src="images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+
+Extension sources, UI, resources and build configuration live in `extension/`; `mcp/` and `shared/` are sibling workspaces. Root build/dev commands remain the entry point. The `.eext` output remains in `build/dist/`. See [extension development](extension/README.md).
 
 MCP-based engineering automation for native EasyEDA Pro and JLCEDA documents.
 

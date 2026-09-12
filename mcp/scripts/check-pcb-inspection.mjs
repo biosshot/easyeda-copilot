@@ -10,11 +10,11 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 const require = createRequire(new URL('../../package.json', import.meta.url));
 // Bundle the production reader and DRC adapter. Only replace utils' editor/bootstrap
 // dependencies, retaining its exact unit conversions and string handling.
-const utils = ts.createSourceFile('utils.ts', await readFile(root + 'src/eda/utils.ts', 'utf8'), ts.ScriptTarget.Latest, true);
+const utils = ts.createSourceFile('utils.ts', await readFile(root + 'extension/src/eda/utils.ts', 'utf8'), ts.ScriptTarget.Latest, true);
 const helpers = utils.statements.filter(node => ['round', 'milToMm', 'mmToMil', 'safeString'].includes(node.name?.text))
   .map(node => node.getText(utils)).join('\n');
 const bundled = await build({
-  stdin: { contents: 'export * from "./src/eda/pcb"; export * from "./src/eda/drc"; export * from "./shared/types/pcb/explain";', resolveDir: root },
+  stdin: { contents: 'export * from "./extension/src/eda/pcb"; export * from "./extension/src/eda/drc"; export * from "./shared/types/pcb/explain";', resolveDir: root },
   bundle: true, write: false, platform: 'node', format: 'cjs',
   plugins: [{ name: 'native-reader-fixture', setup(builder) {
     builder.onLoad({ filter: /[\\/]src[\\/]eda[\\/]utils\.ts$/ }, () => ({

@@ -1,6 +1,8 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | Русский
 
-# <img src="images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+
+Код расширения, UI, ресурсы и сборочные настройки находятся в `extension/`; `mcp/` и `shared/` — соседние workspace. Команды сборки и разработки запускаются из корня, `.eext` остаётся в `build/dist/`. Подробнее: [разработка расширения](extension/README.md).
 
 Инженерная автоматизация на базе MCP для нативных документов EasyEDA Pro и JLCEDA.
 

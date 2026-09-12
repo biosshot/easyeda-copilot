@@ -1,5 +1,7 @@
 # Contributing to easyeda-copilot
 
+The `extension/` workspace owns the editor code, Vue UI, assets, manifest and build configuration. Root commands delegate to it. See [extension development](extension/README.md) for the layout and packaging contract.
+
 Thanks for your interest in the project! Bug reports, ideas, documentation updates, and code contributions are welcome.
 
 ## Setup

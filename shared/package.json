@@ -1,9 +1,11 @@
 {
-    "name": "@copilot/shared",
-    "version": "1.0.0",
-    "main": "index.ts",
-    "types": "index.ts",
-    "dependencies": {
-        "@jlceda/pro-api-types": "^0.2.30"
-    }
+  "name": "@copilot/shared",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "types": "index.ts",
+  "dependencies": {
+    "@jlceda/pro-api-types": "^0.2.30",
+    "zod": "^4.3.5"
+  },
+  "private": true
 }

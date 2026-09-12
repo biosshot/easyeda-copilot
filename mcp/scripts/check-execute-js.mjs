@@ -21,7 +21,7 @@ const root = resolve(mcpRoot, '..');
 await mkdir(join(mcpRoot, '.test-data'), { recursive: true });
 const temp = await mkdtemp(join(mcpRoot, '.test-data', 'execute-js-'));
 const runtimeFile = join(temp, 'runtime.mjs');
-await build({ entryPoints: [join(root, 'src/eda/execute-js.ts')], outfile: runtimeFile,
+await build({ entryPoints: [join(root, 'extension/src/eda/execute-js.ts')], outfile: runtimeFile,
     bundle: true, minify: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
 const { executeJavaScript } = await import(pathToFileURL(runtimeFile).href);
 

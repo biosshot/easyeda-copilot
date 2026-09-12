@@ -1,6 +1,8 @@
 [English](README.md) | 简体中文 | [Русский](README.ru.md)
 
-# <img src="images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+
+扩展代码、界面、资源和构建配置位于 `extension/`，与 `mcp/`、`shared/` 工作区并列。开发和构建命令仍从仓库根目录运行，`.eext` 输出仍位于 `build/dist/`。参见[扩展开发](extension/README.md)。
 
 基于 MCP 的工程自动化工具，直接操作 EasyEDA Pro 和嘉立创 EDA 原生文档。
 

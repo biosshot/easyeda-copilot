@@ -4,7 +4,12 @@
 
 ```text
 projects/
-  easyeda-copilot/       # расширение EasyEDA, UI, MCP
+  easyeda-copilot/
+    extension/          # код расширения, UI, ресурсы и сборка
+    mcp/                # MCP-сервер
+    shared/             # общие внутренние контракты
+    scripts/            # переключение зависимостей и проверки релиза
+    build/dist/         # готовый .eext
   eda-copilot-backend/   # самостоятельная библиотека, собственные типы и Rust
   copilot-router/       # npm-пакет eda-copilot-router
 ```
@@ -56,3 +61,5 @@ EasyEDA Copilot проверяет интеграцию на тех же чет�
 Backend-репозиторий создан на GitHub: [biosshot/eda-copilot-backend](https://github.com/biosshot/eda-copilot-backend). CI использует его для локальных file-зависимостей. Если имя или доступность remote изменятся, обновите checkout в integration.yml; для приватного remote потребуется отдельный read-доступ.
 
 Linux ARM64, Windows ARM64 и Alpine/musl пока не входят в поддерживаемую полную цепочку. Локальный Windows-прогон не заменяет результаты CI Linux/macOS. При первой трассировке router может загружать KRT/Python и зависимости из сети.
+
+Команды `npm run dev`, `build`, `compile`, `build:vite` и `eslint` из корня делегируются workspace `@copilot/extension`. `npm run test:extension` запускает тесты редакторной логики. Манифест расширения теперь `extension/extension.json`, версия workspace — `extension/package.json`; обе сверяются с версией MCP при `check:release`.
