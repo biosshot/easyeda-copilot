@@ -240,7 +240,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'get_schematic',
         {
             title: 'Get Schematic',
-            description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic. Responses over 16 KiB are saved to a file.',
+            description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic. Responses over 8 KiB are saved to a file.',
             inputSchema: z.object({
                 get_full_schematic: z.boolean().default(false)
                     .describe('Get Full Schematic: retrieve the schematic from all pages.'),

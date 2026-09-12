@@ -152,7 +152,7 @@ Return binary data directly rather than nested in an object. `Blob`, `File`, `Ar
 }
 ```
 
-Responses larger than **16,384 UTF-8 bytes**, measured on the serialized MCP result including its envelope and escaping, are also saved as local JSON artifacts. The JSON file contains the full `{checkpoint,result,artifacts}` response. Large errors use the same behavior and retain MCP `isError: true`; SDK validation errors before the handler use the SDK's response behavior.
+Responses larger than **8,192 UTF-8 bytes**, measured on the serialized MCP result including its envelope and escaping, are also saved as local JSON artifacts. The JSON file contains the full `{checkpoint,result,artifacts}` response. Large errors use the same behavior and retain MCP `isError: true`; SDK validation errors before the handler use the SDK's response behavior.
 
 Read only relevant records/fields from a JSON artifact with local tools. For example:
 

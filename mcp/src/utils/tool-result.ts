@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { join } from 'node:path';
 import { TEMP_DIR } from './dirs';
 
-export const MAX_INLINE_RESPONSE_BYTES = 16 * 1024;
+export const MAX_INLINE_RESPONSE_BYTES = 8 * 1024;
 
 // execute_js applies the same budget itself to preserve its checkpoint/artifacts contract.
 export function inlineTextResult(value: unknown) {
@@ -25,7 +25,7 @@ export async function textResult(value: unknown) {
         const path = join(directory, `${randomUUID()}.${isText ? 'txt' : 'json'}`);
         const text = result.content[0].text;
         const reference = inlineTextResult({
-            message: 'Response exceeds 16 KiB; full content saved to file.',
+            message: 'Response exceeds 8 KiB; full content saved to file.',
             path,
             mime_type: isText ? 'text/plain' : 'application/json',
             bytes: Buffer.byteLength(text),

@@ -111,7 +111,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
         'get_current_pcb',
         {
             title: 'Get EasyEDA PCB',
-            description: 'Read a PCB overview from native primitives through the connected MCP interface; not an atomic revision snapshot. Open a PCB document first. Coordinates are mm in the native PCB frame, not the normalized routing frame. For edits, resolve exact primitive IDs and reread their native poses. wires contains copper statistics grouped by net; pads lists net membership; polygons are source outlines, not rebuilt fill geometry. Use native DRC for connectivity. Responses over 16 KiB are saved to a file.',
+            description: 'Read a PCB overview from native primitives through the connected MCP interface; not an atomic revision snapshot. Open a PCB document first. Coordinates are mm in the native PCB frame, not the normalized routing frame. For edits, resolve exact primitive IDs and reread their native poses. wires contains copper statistics grouped by net; pads lists net membership; polygons are source outlines, not rebuilt fill geometry. Use native DRC for connectivity. Responses over 8 KiB are saved to a file.',
             inputSchema: z.object({}),
         },
         async () => {

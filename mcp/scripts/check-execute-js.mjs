@@ -12,7 +12,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { executeJs, ExecuteJsInputSchema, registerExecuteJsTools } from '../dist/tools/execute-js.js';
-const MAX_INLINE_RESPONSE_BYTES = 16 * 1024;
+const MAX_INLINE_RESPONSE_BYTES = 8 * 1024;
 const MAX_CODE_BYTES = 64 * 1024 * 1024;
 const MAX_INPUT_BYTES = 512 * 1024 * 1024;
 
@@ -29,7 +29,7 @@ const cases = [];
 const test = (name, fn) => cases.push([name, fn]);
 const size = value => Buffer.byteLength(JSON.stringify(value));
 const payload = result => JSON.parse(result.content[0].text);
-const bounded = result => assert.ok(size(result) <= MAX_INLINE_RESPONSE_BYTES, 'response exceeds 16 KiB');
+const bounded = result => assert.ok(size(result) <= MAX_INLINE_RESPONSE_BYTES, 'response exceeds 8 KiB');
 const save = async () => 'checkpoint-test';
 const runtime = (code, api = {}, checkpoint = save) => executeJavaScript(code, api, checkpoint);
 const dispatches = [];
@@ -292,7 +292,7 @@ test('caller timeout cannot release the extension queue while execution continue
     assert.deepEqual(order, ['first', 'second']);
 });
 
-test('16 KiB boundary counts the serialized execute_js response', async () => {
+test('8 KiB boundary counts the serialized execute_js response', async () => {
     const empty = await executeJs(bridge, { code: 'return "";' });
     const overhead = size(empty);
     const exactValue = 'x'.repeat(MAX_INLINE_RESPONSE_BYTES - overhead);

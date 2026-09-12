@@ -25,7 +25,7 @@ test('small objects use compact JSON and strings retain intentional whitespace',
     assert.equal((await textResult('a\n  b')).content[0].text, 'a\n  b');
 });
 
-test('exactly 16 KiB stays inline; one extra byte is saved without loss', async () => {
+test('exactly 8 KiB stays inline; one extra byte is saved without loss', async () => {
     const text = 'x'.repeat(MAX_INLINE_RESPONSE_BYTES - size(inlineTextResult('')));
     const inline = await textResult(text);
     assert.equal(size(inline), MAX_INLINE_RESPONSE_BYTES);
