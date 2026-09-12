@@ -1,5 +1,7 @@
 # Интеграция EDA Copilot Backend
 
+Исторический документ: backend теперь находится в отдельном репозитории `eda-copilot-backend`. Актуальная схема описана в [local-development.md](local-development.md).
+
 Дата: 2026-09-09. Ветка: `feat/mcp-extract-backend`. Локальная реализация для review; публикация и интеграция на сервере отложены.
 
 ## Принятые границы

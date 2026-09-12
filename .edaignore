@@ -28,4 +28,5 @@ debug.log
 /packages
 /.edaignore
 /mcp
-/backend
+/scripts
+/.artifacts

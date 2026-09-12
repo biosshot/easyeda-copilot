@@ -16,7 +16,7 @@ The agent entry point links to schematic, placement and routing guides. Read the
 
 - [Contributing and builds](../CONTRIBUTING.md)
 - [Connect a local router checkout](local-router.md)
-- [Local backend](../backend/README.md)
+- [Separate backend, local development and release checks](local-development.md)
 - [Backend extraction record](backend-integration-plan.md) — historical implementation scope
 
 ## Legacy built-in interface

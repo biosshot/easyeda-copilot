@@ -5,9 +5,11 @@ Thanks for your interest in the project! Bug reports, ideas, documentation updat
 ## Setup
 
 ```bash
+git clone https://github.com/biosshot/eda-copilot-backend.git
+git clone https://github.com/biosshot/eda-copilot-router.git copilot-router
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
-npm install
+npm ci
 ```
 
 Set the mode in `shared/mode.ts`:
@@ -36,11 +38,15 @@ The extension package will be created in `build/dist`.
 
 ## MCP server
 
-Build the local backend first, then check types, build MCP and run its integration checks. The native build requires Rust when a matching binary has not already been built:
+The default checkout uses published backend/router packages. Run `npm run check --workspace=mcp` without sibling repositories or Rust. Developing these libraries together is optional; clone and prepare them as follows (Rust and a platform C/C++ toolchain are required):
 
 ```bash
-npm run native:build --workspace=eda-copilot-backend
-npm run build --workspace=eda-copilot-backend
+git clone https://github.com/biosshot/eda-copilot-backend.git ../eda-copilot-backend
+git clone https://github.com/biosshot/eda-copilot-router.git ../copilot-router
+npm --prefix ../eda-copilot-backend ci
+npm --prefix ../eda-copilot-backend run native:build
+npm --prefix ../copilot-router ci
+npm run deps:local
 npm run check --workspace=mcp
 ```
 
@@ -52,7 +58,7 @@ npm run inspect --workspace=mcp
 
 To test tools that communicate with EasyEDA, start EasyEDA Desktop and enable `External Interactions` for the EasyEDA Copilot extension.
 
-For an unpublished router checkout, follow [local router integration](docs/local-router.md). Use [the documentation map](docs/README.md) to distinguish current MCP instructions from legacy UI guides. The LLM routing reference and the router package reference are maintained separately; review relevant API changes when updating the dependency.
+For dependency switching and release checks, follow [local development](docs/local-development.md). For router-specific diagnostics, see [local router integration](docs/local-router.md). Use [the documentation map](docs/README.md) to distinguish current MCP instructions from legacy UI guides. The LLM routing reference and the router package reference are maintained separately; review relevant API changes when updating the dependency.
 
 ## Pull requests
 

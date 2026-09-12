@@ -36,14 +36,21 @@ MCP 集成可以实现：
 
 ## 构建
 ```bash
+git clone https://github.com/biosshot/eda-copilot-backend
+git clone https://github.com/biosshot/eda-copilot-router copilot-router
 git clone https://github.com/biosshot/easyeda-copilot
 cd easyeda-copilot
 npm ci
-npm run native:build --workspace=eda-copilot-backend
+npm --prefix ../eda-copilot-backend ci
+npm --prefix ../eda-copilot-backend run native:build
+npm --prefix ../copilot-router ci
+npm run deps:local
 npm run build --workspace=easyeda-copilot-mcp
 ```
 
-源码通过 `file:../backend` 使用本地 `eda-copilot-backend`，不需要发布 backend npm 包。请克隆完整仓库（包括 `backend`）并在仓库根目录安装依赖。构建 MCP 时会自动构建 backend。PCB 布局需要执行上述原生构建，并安装 Rust/Cargo 及平台 C/C++ 构建工具。请使用下方 node 配置运行本地副本；npx 运行的是另行发布的 MCP 包。
+Backend 和 router 是独立的 npm 包。本地开发需要相邻的 `eda-copilot-backend` 和 `copilot-router` 仓库，使用 `npm run deps:local` 切换。MCP 构建会重新构建本地依赖。Backend 自行声明运行时依赖并携带原生二进制文件，不再打包进 MCP。`npm run deps:release` 恢复 `scripts/dependency-config.json` 中的已发布版本；`npm run check:release` 验证发布条件。参见[本地开发指南](../docs/local-development.md)。
+
+npm 发布包需要 Node.js >=20.19 和 npm，无需 Rust 或 C/C++ 编译器。目标平台：Windows x64、Linux x64（glibc >=2.35）、macOS x64/arm64。首次布线会下载预编译 KRT，必要时还会下载独立 Python 及其依赖，需要访问 GitHub 和 PyPI。完整工具链暂不支持 Linux ARM64、Windows ARM64 或 Alpine/musl。
 
 ## 使用 npx 配置 MCP
 

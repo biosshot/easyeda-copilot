@@ -165,10 +165,12 @@ await test('document switch rejects the image without restoring settings onto a 
 });
 for (const stage of ['Zoom', 'Image']) await test('hung native ' + stage + ' releases the command and does not resume after a late response', async () => {
     state['hang' + stage] = true;
-    // A near bridge deadline exercises the same timeout path without waiting eight seconds.
-    await assert.rejects(previewPcb(input({ layers: ['TOP'] }), Date.now() + 1_600), /timed out/);
+    // Leave enough time to reach image capture after the renderer's settle delay.
+    // The production call budget reserves 1.5 seconds for restoration.
+    await assert.rejects(previewPcb(input({ layers: ['TOP'] }), Date.now() + 3_000), /timed out/);
     restored();
     const callsAfterTimeout = state.calls.length;
+    assert.equal(typeof state['release' + stage], 'function', `The test must reach ${stage} before timing out`);
     state['release' + stage]();
     await new Promise(resolve => setTimeout(resolve, 20));
     assert.equal(state.calls.length, callsAfterTimeout, 'Late native completion must not resume the preview');

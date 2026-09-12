@@ -11,7 +11,13 @@
 		"build:vite": "vite build --mode development",
 		"compile": "rimraf ./dist/ && ts-node ./config/esbuild.prod.ts",
 		"eslint": "eslint ./web ./src",
-		"build": "node build.mjs && npm run compile && ts-node ./build/packaged.ts"
+		"build": "node build.mjs && npm run compile && ts-node ./build/packaged.ts",
+		"deps:local": "node scripts/dependencies.mjs local",
+		"deps:release": "node scripts/dependencies.mjs release",
+		"deps:status": "node scripts/dependencies.mjs status",
+		"deps:build": "node scripts/build-local-dependencies.mjs",
+		"check:release": "node scripts/check-release.mjs",
+		"test:dependencies": "node --test scripts/dependencies.test.mjs"
 	},
 	"devDependencies": {
 		"@jlceda/pro-api-types": "^0.2.30",
@@ -39,7 +45,7 @@
 		"*.{js,ts,html,css,json,md}": "prettier --write"
 	},
 	"engines": {
-		"node": ">=20.5.0"
+		"node": "^20.19.0 || >=22.12.0"
 	},
 	"dependencies": {
 		"@vue-flow/core": "^1.48.2",
@@ -61,7 +67,6 @@
 		"src",
 		"web",
 		"shared",
-		"backend",
 		"mcp"
 	]
 }

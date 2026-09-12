@@ -12,6 +12,7 @@ MCP is the recommended and actively developed EasyEDA Copilot interface. The bui
 - EasyEDA Desktop V3.2.149.
 - EasyEDA Copilot extension with `External Interactions` enabled.
 - An MCP-capable client such as Codex or Claude Code.
+- Node.js >=20.19 and npm. Release targets: Windows x64, Linux x64 with glibc >=2.35, and macOS x64/arm64. Rust and C/C++ tools are not needed for npm installations. Routing downloads prebuilt KRT and, when needed, a private Python runtime and Python dependencies on first use; allow access to GitHub and PyPI. Linux ARM64, Windows ARM64 and Alpine/musl are not currently supported by the complete stack.
 
 ## Usage
 
@@ -43,14 +44,19 @@ Typical workflow: synchronize schematic changes, stop while the user confirms th
 ## Build
 
 ```bash
+git clone https://github.com/biosshot/eda-copilot-backend
+git clone https://github.com/biosshot/eda-copilot-router copilot-router
 git clone https://github.com/biosshot/easyeda-copilot
 cd easyeda-copilot
 npm ci
-npm run native:build --workspace=eda-copilot-backend
+npm --prefix ../eda-copilot-backend ci
+npm --prefix ../eda-copilot-backend run native:build
+npm --prefix ../copilot-router ci
+npm run deps:local
 npm run build --workspace=easyeda-copilot-mcp
 ```
 
-The checkout uses `eda-copilot-backend` from `file:../backend`; no published backend package is needed. Keep the full repository, including `backend`, and install from its root. The MCP build automatically builds the backend. PCB placement requires the native build above, with Rust/Cargo and the platform C/C++ build tools installed. Run this checkout using the node configuration below; npx runs the separately published MCP package.
+Backend and router are separate npm packages. For local development, keep sibling `eda-copilot-backend` and `copilot-router` repositories and use `npm run deps:local`. The MCP build rebuilds local dependencies; backend owns its runtime dependencies and native binaries. Use `npm run deps:release` to restore the published versions in `scripts/dependency-config.json`, then `npm run check:release`. No backend code is bundled into MCP. See [local development and release checks](../docs/local-development.md).
 
 ## MCP Config With npx
 

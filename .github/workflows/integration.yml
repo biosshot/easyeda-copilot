@@ -1,0 +1,78 @@
+name: MCP integration
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, windows-latest, macos-15-intel, macos-15]
+        node: [20, 24]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: easyeda-copilot
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: easyeda-copilot
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node }}
+          package-manager-cache: false
+      - name: Select development dependencies
+        id: mode
+        shell: bash
+        run: |
+          node -e "const d=require('./mcp/package.json').dependencies; for (const [key,name] of [['backend','eda-copilot-backend'],['router','eda-copilot-router']]) console.log(key+'='+d[name].startsWith('file:'))" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        if: steps.mode.outputs.backend == 'true'
+        with:
+          repository: biosshot/eda-copilot-backend
+          path: eda-copilot-backend
+      - name: Prepare local backend
+        if: steps.mode.outputs.backend == 'true'
+        working-directory: eda-copilot-backend
+        run: |
+          npm ci
+          rustup default stable
+          npm run native:build
+      - uses: actions/checkout@v7
+        if: steps.mode.outputs.router == 'true'
+        with:
+          repository: biosshot/eda-copilot-router
+          path: copilot-router
+      - name: Prepare local router
+        if: steps.mode.outputs.router == 'true'
+        working-directory: copilot-router
+        run: npm ci
+      - run: npm ci
+      - name: Test dependency switching
+        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
+        run: npm run test:dependencies
+      - run: npm run check --workspace=mcp
+      - run: npm run test:package --workspace=mcp
+      - name: Verify release dependencies
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: npm run check:release
+      - name: Build extension
+        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
+        run: npm run build
+      - name: Collect exact release archives
+        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
+        run: node -e "const fs=require('node:fs');const p=require('./mcp/package.json');const e=require('./extension.json');fs.mkdirSync('.artifacts',{recursive:true});const m=p.name+'-'+p.version+'.tgz';const x=e.name+'_v'+e.version+'.eext';fs.copyFileSync('mcp/.artifacts/'+m,'.artifacts/'+m);fs.copyFileSync('build/dist/'+x,'.artifacts/'+x)"
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
+        with:
+          name: mcp-release
+          path: easyeda-copilot/.artifacts/*
+          include-hidden-files: true
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        with:
+          name: integration-${{ matrix.os }}-node-${{ matrix.node }}
+          path: easyeda-copilot/mcp/.artifacts/package-check.json
+          include-hidden-files: true

@@ -7,12 +7,12 @@ These commands assume sibling `copilot-router` and `easyeda-copilot` repositorie
 ```sh
 npm --prefix ../copilot-router ci
 npm --prefix ../copilot-router run build:package
-npm link ../copilot-router --no-save --package-lock=false --ignore-scripts
+npm run deps:local
 npm run router:info --workspace=mcp
 npm run check --workspace=mcp
 ```
 
-`npm link` creates a local dependency link (a junction on Windows) and a global npm link registration. It leaves the published dependency version and lockfile unchanged. Run it from the repository root, without a workspace filter. `router:info` prints the resolved package path, package version, managed KRT version and authoritative DSL path. Check the path and KRT version: unpublished local code can share a package version with an older registry release.
+`npm run deps:local` switches backend and router to sibling `file:` paths and updates the lockfile. `router:info` prints the actual resolved package path and managed KRT version. See [local development](local-development.md).
 
 `mcp/docs/pcb-routing/dsl.ts` is the curated LLM reference. It is intentionally maintained separately from the router package's declarations. Review changed signatures and defaults during an upgrade; MCP builds do not overwrite this reference.
 
@@ -35,4 +35,4 @@ Finish or cancel active operations before restarting that MCP server in the clie
 
 The local upgrade uses KRT 0.22.0, includes ground in normal routing/recovery, removes forced QFN via-in-pad opt-in, and defaults plane stitching to `viaInPad: false`. It adds no positive `same-net-pad-clearance` override and does not guarantee that every native via avoids pads. `onlyNets` and `ignoreNets` remain explicit routing filters.
 
-To return to the lockfile dependencies, finish operations and run `npm ci` from this repository root, rebuild the local backend and MCP, then restart MCP. `npm ci` replaces local dependency links. Before publishing, release the updated router under a new package version and update MCP's dependency and lockfile; a local link does not update npm consumers.
+To return to published dependencies, finish active operations and run `npm run deps:release`, then rebuild and restart MCP. The switch requires both versions to exist in npm and regenerates the lockfile. `npm ci` alone does not switch dependency modes.
