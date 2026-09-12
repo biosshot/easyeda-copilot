@@ -5,7 +5,7 @@ Use this workflow without continuing to PCB work unless the user explicitly asks
 ## Create or modify
 
 1. Resolve the target schematic and functional page.
-2. Open that page and read it with `get_current_page_schematic`.
+2. Open that page and read it with `get_schematic`. Set `get_full_schematic: true` to read all schematic pages instead.
 3. Search only unknown parts with `component_search` and use explicit, resolved components.
 4. Apply related changes with `extract_circuit_on_current_page`. Prefer one coherent call per page; multiple calls are allowed when staged checking is safer.
    - Inspect the returned `sheetSpace`.

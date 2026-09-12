@@ -5,7 +5,7 @@ import { textResult } from "../utils/tool-result";
 import { componentSearch, searchReusedBlock } from "eda-copilot-backend/components";
 import { extractCircuit } from "eda-copilot-backend/schematic";
 import { SKILL_DOC_PATH, TEMP_DIR } from "../utils/dirs";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit, ExplainCircuitStruct } from "@copilot/shared/types/circuit";
 
@@ -107,9 +107,18 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Extract Circuit',
             description: `Apply circuit changes to the current EasyEDA page. Every added component must include part_uuid. The result reports remaining current-sheet space and warns below 10%. For circuit modification docs, read: ${SKILL_DOC_PATH}`,
-            inputSchema: CircuitModStruct(),
+            inputSchema: CircuitModStruct().partial().extend({
+                file_path: z.string().min(1).optional()
+                    .describe('Path to a UTF-8 JSON file containing CircuitMod. Provide either file_path or inline circuit fields.'),
+            }),
         },
-        async (circuit) => {
+        async ({ file_path, ...inlineCircuit }) => {
+            if (file_path !== undefined && Object.values(inlineCircuit).some(value => value !== undefined)) {
+                throw new Error('Provide either file_path or inline circuit fields, not both.');
+            }
+            const circuit = CircuitModStruct().parse(file_path !== undefined
+                ? JSON.parse(await readFile(file_path, 'utf8'))
+                : inlineCircuit);
             const missingPartUuid = circuit.add_components
                 .filter(component => !component.part_uuid || /^0+$/.test(component.part_uuid))
                 .map(component => component.designator);
@@ -229,15 +238,19 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
     );
 
     server.registerTool(
-        'get_current_page_schematic',
+        'get_schematic',
         {
-            title: 'Get EasyEDA Schematic',
-            description: 'Get the current EasyEDA schematic through the connected MCP interface.\n' +
+            title: 'Get Schematic',
+            description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic.\n' +
                 `Format: ${JSON.stringify(ExplainCircuitStruct().toJSONSchema())}`,
-            inputSchema: z.object({}),
+            inputSchema: z.object({
+                get_full_schematic: z.boolean().default(false)
+                    .describe('Get Full Schematic: retrieve the schematic from all pages.'),
+            }),
         },
-        async () => {
-            const result = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
+        async ({ get_full_schematic }) => {
+            const result = await bridge.requestEasyEda(get_full_schematic
+                ? 'get-multi-page-schematic' : 'get-schematic') as ExplainCircuit;
             const schematic = { ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) };
 
             if (schematic.components.length > 40) {

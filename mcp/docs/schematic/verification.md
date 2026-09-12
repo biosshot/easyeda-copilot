@@ -1,6 +1,6 @@
 # Schematic verification
 
-Check the affected page before finishing or continuing to PCB work. Reuse current readback; call `get_current_page_schematic` when exact components or connectivity have not yet been confirmed after the edit.
+Check the affected page before finishing or continuing to PCB work. Reuse current readback; call `get_schematic` when exact components or connectivity have not yet been confirmed after the edit.
 
 - Confirm intended parts, values, packages, pins and net names. Trace changed connections through the functional circuit, including supply and return connections and intentionally unconnected pins.
 - Confirm that unrelated circuitry and functional page ownership are preserved.

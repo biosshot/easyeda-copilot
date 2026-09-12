@@ -93,6 +93,12 @@ try {
     });
   });
   await ready;
+  assert.ok(tools.some(tool => tool.name === 'get_schematic'));
+  assert.ok(!tools.some(tool => tool.name === 'get_current_page_schematic'));
+  assert.deepEqual(await call('get_schematic', {}), currentSchematic);
+  assert.equal(requests.at(-1).event, 'get-schematic');
+  assert.deepEqual(await call('get_schematic', { get_full_schematic: true }), pcbSchematic);
+  assert.equal(requests.at(-1).event, 'get-multi-page-schematic');
   assert.deepEqual((await call('get_current_pcb', {})).wires, [pcbSummary], 'Small PCB summary should be inline');
   const inspected = await call('inspect_net', { net: 'TEST', drc_limit: 7 });
   assert.equal(inspected.length, 25.4);
@@ -116,6 +122,16 @@ try {
   const extracted = await call('extract_circuit_on_current_page', schematicInput.circuit);
   assert.equal(extracted.sheetSpace.level, 'warning');
   assert.ok(requests.find(r => r.event === 'assemble-circuit').body.circuit.components.length);
+  const circuitFile = join(directory, 'circuit.json');
+  await writeFile(circuitFile, JSON.stringify(schematicInput.circuit));
+  assert.deepEqual(await call('extract_circuit_on_current_page', { file_path: circuitFile }), extracted);
+  await assert.rejects(call('extract_circuit_on_current_page', {
+    file_path: circuitFile, ...schematicInput.circuit,
+  }), /either file_path or inline/);
+  await writeFile(circuitFile, '{}');
+  const requestCount = requests.length;
+  await assert.rejects(call('extract_circuit_on_current_page', { file_path: circuitFile }));
+  assert.equal(requests.length, requestCount, 'Invalid file must fail before editor requests');
   currentSchematic = { components: schematicInput.circuit.add_components };
   const beautified = await call('beautify_schematic_on_current_page', { blocks: { divider: ['R1', 'R2'] }, draw_block_box: true });
   assert.equal(beautified.checkpointId, 'before-beautify');
