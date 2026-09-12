@@ -85,7 +85,7 @@ https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
 ### 环境要求
 
 - EasyEDA Pro 桌面版；
-- Node.js 20 或更高版本；
+- Node.js >=20.19；
 - 支持 MCP 的客户端，例如 Codex 或 Claude Code。
 
 ### 1. 安装 EasyEDA 扩展
@@ -325,7 +325,7 @@ Codex / Claude Code / 其他 MCP 客户端
 
 EasyEDA 扩展、MCP 桥接服务、文档应用逻辑、检查点系统、设计检查工具以及 PCB 布线软件包均为开源。MCP 桥接服务通过 `127.0.0.1` 与 EasyEDA 扩展进行本地通信。
 
-MCP 后端通过 EasyEDA 公共 API 解析元器件，并在本地生成原理图和 PCB 布局方案。生成的方案通过 EasyEDA 扩展进行应用、检查点保存、检查和 DRC 验证。旧版内置聊天使用独立的服务配置。PCB 布线基于开源的 [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 软件包。
+独立 npm 库 [`eda-copilot-backend`](https://github.com/biosshot/eda-copilot-backend) 通过 EasyEDA 公共 API 解析元器件，并在本地生成原理图和 PCB 布局方案。生成的方案通过 EasyEDA 扩展进行应用、检查点保存、检查和 DRC 验证。旧版内置聊天使用独立的服务配置。PCB 布线基于开源的 [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 软件包。
 
 ## 文档
 
@@ -345,10 +345,12 @@ MCP 后端通过 EasyEDA 公共 API 解析元器件，并在本地生成原理�
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
-npm install
+npm ci
 npm run build
 npm run check --workspace=mcp
 ```
+
+默认安装已发布的 backend/router 软件包。联合开发、依赖切换及平台支持范围见[开发指南](docs/local-development.md)。构建扩展需要 Node ^20.19.0 或 >=22.12.0。
 
 独立的 PCB 布线软件包在 [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 中开发。
 

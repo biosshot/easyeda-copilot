@@ -5,8 +5,6 @@ Thanks for your interest in the project! Bug reports, ideas, documentation updat
 ## Setup
 
 ```bash
-git clone https://github.com/biosshot/eda-copilot-backend.git
-git clone https://github.com/biosshot/eda-copilot-router.git copilot-router
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
 npm ci

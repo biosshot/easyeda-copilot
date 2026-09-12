@@ -85,7 +85,7 @@ https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
 ### Требования
 
 - EasyEDA Pro Desktop;
-- Node.js 20 или новее;
+- Node.js >=20.19;
 - MCP-клиент, например Codex или Claude Code.
 
 ### 1. Установите расширение EasyEDA
@@ -325,7 +325,7 @@ Codex / Claude Code / другой MCP-клиент
 
 Расширение EasyEDA, мост MCP, логика применения документов, система контрольных точек, инструменты анализа и пакет трассировки PCB имеют открытый исходный код. Мост MCP обменивается данными с расширением EasyEDA локально через `127.0.0.1`.
 
-Бэкенд MCP находит компоненты через публичные API EasyEDA и локально формирует планы схем и размещения PCB. Планы применяются, сохраняются в контрольных точках, анализируются и проверяются DRC через расширение EasyEDA. Устаревший встроенный чат использует собственные настройки сервисов. Трассировка PCB основана на пакете с открытым исходным кодом [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
+Отдельная npm-библиотека [`eda-copilot-backend`](https://github.com/biosshot/eda-copilot-backend) находит компоненты через публичные API EasyEDA и локально формирует планы схем и размещения PCB. Планы применяются, сохраняются в контрольных точках, анализируются и проверяются DRC через расширение EasyEDA. Устаревший встроенный чат использует собственные настройки сервисов. Трассировка PCB основана на пакете с открытым исходным кодом [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 
 ## Документация
 
@@ -345,10 +345,12 @@ Codex / Claude Code / другой MCP-клиент
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
-npm install
+npm ci
 npm run build
 npm run check --workspace=mcp
 ```
+
+По умолчанию устанавливаются опубликованные backend/router. Совместная разработка, переключение зависимостей и границы поддержки платформ описаны в [руководстве](docs/local-development.md). Для сборки расширения нужен Node ^20.19.0 или >=22.12.0.
 
 Отдельный пакет трассировки PCB разрабатывается в репозитории [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 

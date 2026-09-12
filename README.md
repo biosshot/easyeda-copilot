@@ -85,7 +85,7 @@ More editable examples are available on [OSHWLab](https://oshwlab.com/biosshot/e
 ### Requirements
 
 - EasyEDA Pro Desktop;
-- Node.js 20 or newer;
+- Node.js >=20.19;
 - an MCP-capable client such as Codex or Claude Code.
 
 ### 1. Install the EasyEDA extension
@@ -325,7 +325,7 @@ Codex / Claude Code / another MCP client
 
 The EasyEDA extension, MCP bridge, document application logic, checkpoint system, inspection tools, and PCB routing package are open source. The MCP bridge communicates with the EasyEDA extension locally through `127.0.0.1`.
 
-The MCP backend resolves components through public EasyEDA APIs and generates schematic and PCB placement plans locally. Plans are applied, checkpointed, inspected, and DRC-checked through the EasyEDA extension. The legacy built-in chat uses its own service configuration. PCB routing is based on the open-source [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) package.
+The standalone [`eda-copilot-backend`](https://github.com/biosshot/eda-copilot-backend) npm library resolves components through public EasyEDA APIs and generates schematic and PCB placement plans locally. Plans are applied, checkpointed, inspected, and DRC-checked through the EasyEDA extension. The legacy built-in chat uses its own service configuration. PCB routing is based on the open-source [`eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) package.
 
 ## Documentation
 
@@ -345,10 +345,12 @@ Build the extension and MCP package from source:
 ```bash
 git clone https://github.com/biosshot/easyeda-copilot.git
 cd easyeda-copilot
-npm install
+npm ci
 npm run build
 npm run check --workspace=mcp
 ```
+
+Published backend/router packages are installed by default. For joint development, dependency switching, and platform limits, see [local development](docs/local-development.md). Building the extension requires Node ^20.19.0 or >=22.12.0.
 
 The standalone PCB routing package is developed in [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 
