@@ -23,6 +23,9 @@
     "test:checkpoints": "node scripts/check-checkpoint-tools.mjs",
     "test:spice": "node --test tests/spice.test.mjs",
     "test:datasheets": "node --test tests/datasheets.test.mjs",
+    "test:tool-results": "node --test tests/tool-result.test.mjs",
+    "test:api-docs": "node --test tests/api-docs.test.mjs",
+    "docs:update-api": "node scripts/update-easyeda-api.mjs",
     "prebuild": "node ../scripts/build-local-dependencies.mjs",
     "build": "tsup",
     "router:info": "node scripts/router-info.mjs",
@@ -36,7 +39,7 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
+    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && npm run test:tool-results && npm run test:api-docs && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
     "prepack": "node ../scripts/check-release.mjs && npm run build",
     "start": "node dist/index.js",
     "test:package": "node scripts/check-package.mjs"
@@ -44,7 +47,7 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
     "eda-copilot-backend": "0.1.0",
-    "eda-copilot-router": "0.3.1",
+    "eda-copilot-router": "file:../../copilot-router",
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",
     "ws": "^8.20.1",

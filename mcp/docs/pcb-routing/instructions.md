@@ -19,17 +19,19 @@ For new or full-board routing, plan the complete board before splitting work. Es
 - planes, required polygons, and required via stitching;
 - routing scope, net importance, and via preferences.
 
-Plan critical routes and their return paths together. The following is a **recommended starting sequence**. Adapt, combine or reorder passes to suit the board's topology, stack, return paths, existing copper and observed routing results. A board with adequate ground copper may need no auxiliary GND pass; an incremental task may need only a local repair. Choose the sequence that satisfies the actual design requirements.
+For a simple single-sided or two-layer board with low placement density and ample routing space, try routing the whole board in one `run_pcb_router_dsl` call with `runAll()`, including the complete net plan, rules and required routing intent. Ground uses pours by default even in this single-call strategy: exclude ordinary ground nets from track routing with `ignoreNets(...)` while declaring their required polygons or planes. Handle any critical ground segment explicitly as described below; full-board intent does not mean routing every GND connection with tracks. Respect the intended routing layers; single-sided routing does not require an unsupported one-layer EasyEDA stack. If the attempt fails verification, leaves unrouted connections or stalls, switch to the scoped transaction workflow below instead of repeating the same full-board attempt.
+
+Plan critical routes and their return paths together. The following is a **recommended starting sequence** for scoped transactions. Adapt, combine or reorder passes to suit the board's topology, stack, return paths, existing copper and observed routing results. Ordinary ground connections are provided by pours and checked afterward; an incremental task may need only a local repair. Choose the sequence that satisfies the actual design requirements.
 
 ```text
 Suggested order (adapt to the board):
-CRITICAL CIRCUITS -> AUXILIARY GND CONNECTIONS -> ORDINARY CIRCUITS -> POUR/STITCHING -> FINAL CHECKS
+CRITICAL CIRCUITS AND RETURNS -> ORDINARY CIRCUITS -> POUR/STITCHING -> GROUND CHECK AND REPAIR -> FINAL CHECKS
 ```
 
 1. **Critical circuits.** Usually begin with power paths, differential pairs, controlled-impedance signals, length-matched groups, crystal/resonator and clock connections, RF paths and sensitive analog/feedback circuits. Critical means that current capacity, coupling, impedance, timing, noise or local loop geometry constrains the route. Give these requirements priority when choosing and evaluating the routing strategy.
-2. **Auxiliary GND connections.** Where a ground passage needs protection, reserve it with legal narrow tracks and useful vias while preserving useful critical copper. In this suggested sequence, the reservation precedes ordinary routing. Plan the eventual pour at the outset; a critical return branch retains its current and loop requirements and is not reduced to an auxiliary minimum-width track.
-3. **Ordinary circuits.** Route the remaining unconstrained connections while preserving critical copper and necessary ground passages. Repair local failures within their scope.
-4. **Pour and stitching.** Finalize the chosen ground pours, useful stitching and remaining ground connections once the relevant routing stabilizes. Earlier reference copper can remain when it supports the chosen strategy.
+2. **Ordinary circuits.** Route the remaining signal and power connections while preserving critical copper and planned ground-pour space. Exclude ordinary ground nets from track routing; a critical return segment is handled with its critical circuit, not by raising the priority of the entire GND net.
+3. **Pour and stitching.** Generate the chosen ground pours and useful stitching. Earlier reference copper can remain or be created when critical routing needs it.
+4. **Ground check and repair.** Rebuild and inspect the actual fill and check connectivity. For required pads or islands that remain disconnected, first try a local pour correction or necessary ground vias. Route remaining ground connections with tracks only where the pour cannot provide the required connection, then refill and recheck.
 5. **Final checks.** Verify whole-board connectivity, actual filled copper, critical constraints and native DRC. Recheck affected critical routes after any later repair.
 
 Each transaction is one DSL file and one `run_pcb_router_dsl` call with exactly one terminal. `runAll()` applies the intent declared in that transaction; it does not require routing the entire board in one call. Split transactions when stage boundaries help control scope or inspect progress; combine work when the board permits it. When a particular order matters, express it through scoped calls; `priority` alone does not guarantee that order across the whole board.
@@ -40,37 +42,29 @@ Smaller transactions are a normal option when they make progress easier to inspe
 
 While `status: "running"`, call `wait_operation`. Its `progress.log_tail`, when available, shows recent router activity, including stage or remaining connections when the engine reports them. Follow [operation results](../operations.md) to interpret progress and terminal results. If abandoning a large attempt to split it, use `cancel_operation` and establish that it has finished before starting another mutation on that PCB. Inspect any applied partial result before choosing the next scope. Do not run competing routing transactions in parallel.
 
-## Ground: preserve passages, finish with connected copper
+## Ground: pour first, route only where needed
 
-Prefer a continuous, connected ground pour as the main GND conductor and reference. Use `plane({ net, layers, region: board() })` for a board-wide pour; use `polygon(...)` for targeted copper. Auxiliary tracks preserve needed passages; vias connect pads and ground copper across layers and provide local return connections.
+Use a continuous, connected ground pour as the default GND conductor and reference. Use `plane({ net, layers, region: board() })` for a board-wide pour or `polygon(...)` for targeted copper. Do not pre-route ordinary GND connections with tracks or assign high priority to the whole net merely because it is ground.
 
 Identify the actual nets from connectivity, including `/GND`, `VSS`, `AGND`, or `PGND` when present. Names are not interchangeable. Preserve intentional separate grounds and their defined connection points.
 
-1. **Plan ground with the critical circuits.** Locate narrow passages, isolated ground pads, high-current returns and signals that need a continuous reference. Choose ground layers and reserve the necessary space in the plan before routing critical circuits.
-2. **Reserve vulnerable passages when useful.** In the suggested staged approach, do this after the most constrained critical routes and before ordinary routing; adjust the timing to the board's needs. Set auxiliary GND tracks to the minimum allowed by fabrication and effective DRC, normally `0.127 mm` for this workflow. Allow useful layer transitions; use ground vias wherever pads, pours or return paths need connections between layers.
-3. **Continue routing while retaining useful critical and ground connections.** Existing GND tracks reserve their own copper and clearance; inspect that the useful pour corridor still exists. Add required local return vias at the stage that needs them.
-4. **Finalize the ground pour and required stitching.** Once the relevant routing repairs stabilize, rebuild the planned fill as needed. Resolve remaining ground connections, inspect the filled result, and verify the entire requested scope.
+1. **Plan ground with critical circuits.** Choose the ground layers and space needed for return paths from the outset. Provide a specific critical return segment immediately when its current, timing, noise or local-loop geometry requires it, including necessary local return vias. This exception applies to that segment, not every connection on its ground net. Reserve a passage with a track only for a diagnosed need, not as a standard preliminary GND stage.
+2. **Route ordinary circuits without ordinary GND tracks.** Use `ignoreNets(...)` with the actual ground-net names, or `onlyNets(...)` for the intended non-ground group. These selectors affect track-routing scope, not declared pours. Retain useful existing ground copper and any required early reference plane.
+3. **Generate and verify the ground fill.** Rebuild pours and inspect actual connectivity of required pads and islands, reference continuity and narrow necks. Successfully creating a polygon does not prove that the required connection exists through its filled copper.
+4. **Repair remaining ground connections.** First try correcting the local pour or adding necessary vias to useful ground copper. Use tracks where the pour cannot provide the required connection. Preserve valid filled copper and critical returns; after repair, rebuild affected pours and verify the whole requested scope again.
 
-The `0.127 mm` preference is for auxiliary ground routing, not a blanket width for every return current. Read `get_pcb_drc_rules` before requesting it. `runAll()` enforces a track-width floor of at least `0.127 mm`; use a wider width when fabrication or effective DRC requires it. Do not lower fabrication limits or add `minTrackWidthMm: 0.127` merely to make the example pass. A high-current ground branch or a ground connection that will remain the only conductor needs appropriate current-derived geometry.
-
-Example auxiliary GND transaction for a plan that reserves ground after critical routing. **Confirm that GND exists and its effective minimum permits 0.127 mm**:
+For example, after confirming that `GND` is the actual ordinary ground net and BOTTOM is the chosen pour layer, the full routing program can include:
 
 ```js
-onlyNets("GND");
-signalNet("GND", {
-  trackWidthMm: 0.127,
-  priority: "high",
-});
+ignoreNets("GND");
+plane({ net: "GND", layers: "BOTTOM", region: board() });
+// Include the board's stack, DRC rules and signal/power routing intent.
 runAll();
 ```
 
-`signalNet` supplies routing preferences for the named net; it does not change GND's electrical identity. This example scopes the whole GND net and retains the imported routable layers. Add `allowedLayers` only when the proposed layers still let every selected pad reach its ground connection, including package escapes; verify that the resulting tracks protect the intended pour passage. For a dedicated reservation pass that defers the pour, leave the plane declaration out of this file. An imported filled plane may already connect ground pads; inspect existing copper before expecting additional routes. Continue with the chosen remaining scope, retaining useful critical routes and auxiliary GND copper.
+`ignoreNets("GND")` excludes the entire net from track routing, including critical branches; it does not isolate an ordinary subset. Handle a required critical ground segment explicitly before relying on this exclusion. Likewise, `onlyNets("GND")` selects the entire net, not one return branch. Use a precise [execute_js edit](../execution/instructions.md) when the DSL cannot express the required local connection. A later GND repair must follow inspected fill/connectivity evidence rather than blindly routing the entire net.
 
-A narrow GND track guarantees neither enough width for the eventual pour nor a low-impedance reference. After filling, inspect actual copper continuity and bottlenecks. A connected ratline graph with a long thin ground neck is not sufficient evidence of a good reference plane. If the corridor is still blocked, reroute the obstructing local signal copper or revise the layer strategy within the authorized scope.
-
-Protect only passages that need it: ground reservations can force a later ordinary signal into a longer detour. Compare the resulting signal path, ground continuity and return geometry. Preserve critical routes when adjusting local placement, auxiliary ground connections or the layer plan; do not give a ground reservation precedence over a critical circuit's requirements.
-
-Later ground routing through vias can also connect separated islands while retaining a shorter signal route. Check whether that connection meets the current and return-path requirements: electrically connected islands still do not form a continuous reference plane on the split layer.
+Choose repair-track geometry from the actual current and return-path requirements and effective DRC. A connection that remains the only conductor needs appropriate current capacity; do not apply a blanket minimum width. Narrow tracks and vias can establish connectivity without providing an adequate reference plane. Electrically connected islands still do not form a continuous reference on a split layer. If a required return corridor is blocked, diagnose the obstructing copper or placement and correct it within the authorized scope.
 
 ## Choose the ground-pour layers
 
@@ -88,7 +82,7 @@ plane({ net: "GND", layers: "BOTTOM", region: board() });
 runCopper();
 ```
 
-Use `runCopper()` when only copper generation is needed. If remaining connections also require routed tracks, declare the plane, select the actual ground net with `onlyNets(...)`, and use `runAll()`. One `plane(...)` declaration is one logical zone; `zones: 1` does not identify how many physical layers were filled.
+Use `runCopper()` when only copper generation is needed. Only after checking the rebuilt fill and trying appropriate pour/via corrections, use `onlyNets(...)` with the actual ground net and `runAll()` if the remaining connections require tracks; retain valid copper and include any required plane declarations. One `plane(...)` declaration is one logical zone; `zones: 1` does not identify how many physical layers were filled.
 
 `onlyNets(...)` and `ignoreNets(...)` select routing scope, not the scope of copper declarations or deletion. Usually defer final GND pours and broad stitching until the relevant routes stabilize; retain or create earlier reference copper when the board needs it. For a new impedance reference, follow the [reference-plane guidance](#copper-layers-and-physical-assumptions). If existing zones or vias obstruct a later repair, use scoped cleanup for the diagnosed blockers.
 
@@ -129,7 +123,7 @@ Let the router derive geometry from the effective rules and declared physical as
 
 A logical high-speed or differential path may cross series resistors, AC-coupling capacitors, ferrite beads, or common-mode chokes and therefore use different physical net names on each side. Trace the complete logical path and apply the appropriate intent to every routed segment; a net-name boundary does not make the downstream segment ordinary. Do not extend the path through shunt or protection branches.
 
-Use semantic intent to derive current and impedance geometry. Explicit auxiliary GND width is supported by the ground workflow above; other explicit dimensions should come from the user, fabricator, pad geometry, or a verified requirement.
+Use semantic intent to derive current and impedance geometry. Explicit dimensions, including ground repair widths, should come from the user, fabricator, pad geometry, or a verified requirement.
 
 ## Differential pairs and matched lengths
 
@@ -218,7 +212,7 @@ End every DSL file with exactly one terminal:
 
 1. Open the target PCB and call `get_pcb_stack_layers` when current layers affect the decision.
 2. For full-board routing, review complete connectivity once and classify every connected net; use targeted inspection for a partial operation. Confirm that the placement and intended layers provide plausible corridors and package escapes before starting the router.
-3. Write the next DSL transaction for the chosen board-specific strategy and call `run_pcb_router_dsl({ file })`. Use the suggested critical/GND/ordinary sequence as a starting point, adapting scope and order as needed. Preserve useful copper and verify affected requirements as work advances.
+3. Write the next DSL transaction for the chosen board-specific strategy and call `run_pcb_router_dsl({ file })`. Use the single-call or scoped strategy above, keeping ordinary ground connections pour-first and repairing them only after fill verification. Preserve useful copper and verify affected requirements as work advances.
 4. If it returns `status: "running"`, call `wait_operation({ operation_id })` until terminal and use its progress to follow the attempt. Follow [operation results](../operations.md) for completion, cancellation, and application errors.
 5. Apply [routing verification](verification.md) to the result. A useful `partial` result is already applied; diagnose its remaining work before choosing a repair.
 6. Repair a concrete blocker using the procedure below, then recheck the affected scope. For full-board work, continue remaining groups and final ground completion. Stop at the requested boundary and report the verified result and unresolved findings.
@@ -234,9 +228,9 @@ Continue targeted attempts while they produce measurable progress, such as fewer
 
 The routing apply step uses one EasyEDA checkpoint recovery boundary and restores automatically on an application exception. A useful incomplete result remains applied, as does a successfully applied result with non-catastrophic DRC diagnostics, until the agent chooses to keep, repair, or restore it after verification. EasyEDA currently applies through vias and copper zones without holes.
 
-The compact router response currently does not expose the automatic checkpoint ID. When manual restoration may be needed, save and retain an explicit checkpoint before the transaction; do not guess its baseline from the latest checkpoint afterward.
+Rely on the automatically created checkpoint; no separate pre-routing snapshot is needed. The compact router response currently does not expose its ID, so identify the matching checkpoint before a manual restore; do not guess its baseline from the latest checkpoint afterward.
 
-Ground-reference background: [TI, High-Speed Layout Guidelines (SCAA082A)](https://www.ti.com/lit/pdf/SCAA082A) explains why gaps in a reference plane disrupt signal return paths. The narrow-track passage strategy above is a workflow choice; it does not replace evaluating the final reference copper.
+Ground-reference background: [TI, High-Speed Layout Guidelines (SCAA082A)](https://www.ti.com/lit/pdf/SCAA082A) explains why gaps in a reference plane disrupt signal return paths. Evaluate the final reference copper even when ground connectivity checks pass.
 
 
 ## Layers reserved for planes
