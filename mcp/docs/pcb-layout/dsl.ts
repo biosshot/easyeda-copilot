@@ -22,11 +22,11 @@ type PinTargetRef = Extract<TargetRef, { type: "pin" }>;
 interface BlockOptions {
   /** Main blocks are placed globally. Satellite blocks are compact physical islands attached near a parent block/component area. Split power converters and dense IC support into small satellites by function/side. */
   placement?: BlockPlacement;
-  /** Parent block name for satellite placement. */
+  /** Parent block name for satellite placement. The satellite is nested into the parent's placement family; add anchor for attraction to a specific parent pin. */
   attachTo?: string;
-  /** Soft parent-side anchor for satellite placement, usually a pin(...) on the parent IC. */
+  /** Soft near relation from the satellite block to this target, usually a pin(...) on the parent IC. */
   anchor?: TargetRef;
-  /** Escape hatch for small same-role placement groups that intentionally do not share a non-GND net, e.g. USB DP/DM series resistor pairs or repeated indicators. Do not use for real functional blocks; split unrelated power/MCU/RF support into separate blocks instead. */
+  /** Escape hatch for small same-role placement groups that intentionally do not share a non-GND net. This creates no spatial attachment; use satellite/attachTo/anchor or an external near/veryNear/criticalPair. */
   allowDisconnected?: boolean;
 }
 

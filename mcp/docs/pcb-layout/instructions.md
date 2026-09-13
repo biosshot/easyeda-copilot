@@ -67,7 +67,7 @@ Do not reassemble an older `layoutId` after live corrections: it can overwrite t
 ## Placement structure
 
 - Every new or movable real component belongs to exactly one explicit block. A component protected by `preserve({ components: ... })` may be omitted; the runtime gives otherwise unowned preserved components a system block.
-- A block is one physical island and normally shares a non-GND net. Use `allowDisconnected: true` only for intentional mechanical or same-role groups.
+- A block is one physical island and normally shares a non-GND net. Use `allowDisconnected: true` only for intentional mechanical or same-role groups. It permits disconnected topology but adds no spatial attachment. A movable passive-only block should be a satellite with `placement: "satellite"`, `attachTo`, and preferably `anchor: pin(...)`, or have an external `near`, `veryNear`, or `criticalPair` through concrete `comp()`/`pin()` targets.
 - Keep blocks below 12 components. Split dense functions into local power, clock, flash, feedback, input, output, or interface islands.
 - Keep an IC with the local parts that make its stage work; do not group by component type.
 - Do not mix top and bottom components in one block.
