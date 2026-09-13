@@ -73,6 +73,7 @@ Do not reassemble an older `layoutId` after live corrections: it can overwrite t
 - Do not mix top and bottom components in one block.
 - A block containing `fixed`, `edgeMount`, or `edgePlace` components must be board-level/main. It cannot use `placement: "satellite"` or `attachTo`; relate its electronics to other blocks with `near`, `veryNear`, or `criticalPair`.
 - If any component in a block uses `edgePlace()`, every component in that block must also use `edgePlace()`. Multiple `edgePlace()` components may share a block. Put ordinary support components in separate compact blocks and connect them with `near()`, `veryNear()`, or `criticalPair()`. Mixed blocks are rejected with the block name and affected designators.
+- Mechanical groups nested in modules are dissolved recursively so each `edgePlace()` component keeps its own edge requirements. Constraints must not reference a group that is dissolved for board placement: use `comp("designator")` or `pin("designator", "pin_number")` instead of `block("name")`. Such group references are rejected instead of silently ignored.
 - Use modules as soft macro groups; do not put distant edge connectors into one sparse module.
 - Do not repeat a satellite in a module that already contains its parent block; the parent family already owns that satellite.
 - Use `criticalPair` for one isolated dominant pad-to-pad hop that is not part of a longer declared path.
