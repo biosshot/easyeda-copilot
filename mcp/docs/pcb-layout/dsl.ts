@@ -347,7 +347,7 @@ interface ComponentBuilder {
   faceTo(direction: MechanicalFaceDirection): ComponentBuilder;
   /** Mount a mechanical component on a board edge. Computes fixed center, face direction, and board overflow from the real footprint bbox after rotation. Prefer this for USB/ports/buttons on edges instead of fixed()+offset+boardOverflow. */
   edgeMount(edge: BoardEdge, options?: EdgeMountOptions): ComponentBuilder;
-  /** Place a mechanical component near one or more board edges while keeping it inside the board. Use for buttons/LEDs/side controls. Runtime normally detects the mechanical face; use faceAt0(...) only to correct a verified wrong inference. */
+  /** Place a mechanical component near one or more board edges while keeping it inside the board. Every component in its block must also use edgePlace; put ordinary support components in separate blocks linked with near(), veryNear(), or criticalPair(). Multiple edgePlace components may share a board-level block. Use for buttons/LEDs/side controls. Runtime normally detects the mechanical face; use faceAt0(...) only to correct a verified wrong inference. */
   edgePlace(edgeOrEdges: BoardEdge | BoardEdge[], options?: EdgePlaceOptions): ComponentBuilder;
   /** Lock this component to an exact board position. Allowed only for role("connector") mechanical parts; normal components must be placed by blocks/hints. */
   fixed(options: FixedPlacementOptions): ComponentBuilder;
@@ -424,7 +424,7 @@ interface EdgePlaceOptions {
   layer?: Layer;
 }
 
-/** Place mechanical components near board edge(s) but inside the board. Use for buttons, LEDs, side-access connectors, and edge controls. Not for USB/ports that must overhang; use edgeMount for those. */
+/** Place mechanical components near board edge(s) but inside the board. Every component in each affected block must also use edgePlace; put ordinary support components in separate blocks linked with near(), veryNear(), or criticalPair(). Multiple edgePlace components may share a board-level block. Use for buttons, LEDs, side-access connectors, and edge controls. Not for USB/ports that must overhang; use edgeMount for those. */
 declare function edgePlace(designators: string | string[], options: EdgePlaceOptions): void;
 
 /** Lock a component to an exact/anchor-relative board position. Allowed only for role("connector") mechanical parts. */

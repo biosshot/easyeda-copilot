@@ -13,7 +13,8 @@ board.roundedRect(33, 25, {
 block("rf_input", ["RF1"], "connector", "SMA input");
 block("rf_core", ["C6", "U2", "C7"], "rf", "DC blocks and wideband gain stage");
 block("rf_output", ["RF2"], "connector", "SMA output");
-block("power", ["CN1", "U1", "C1", "C2", "C3"], "power", "Input and low-noise regulator");
+block("power_input", ["CN1"], "connector", "Power input at board edge");
+block("power", ["U1", "C1", "C2", "C3"], "power", "Low-noise regulator and local bypass");
 block("rf_supply", ["L1", "C4", "C5"], "power", null, {
   placement: "satellite",
   attachTo: "rf_core",
@@ -31,7 +32,7 @@ component("RF2").block("rf_output").role("connector").top().edgeMount("right", {
   face: "outward",
   align: "center",
 });
-component("CN1").block("power").role("connector").top().edgePlace("top", {
+component("CN1").block("power_input").role("connector").top().edgePlace("top", {
   inset: 0.7,
   face: "any",
   align: "center",
