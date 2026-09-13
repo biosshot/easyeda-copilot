@@ -43,6 +43,8 @@ Typical workflow: synchronize schematic changes, stop while the user confirms th
 
 ## Build
 
+The MCP distribution includes a local Node.js/Python SDK in `dist/lib`. It connects as a client to the existing broker and exposes calls such as `await eda.pcb_PrimitiveComponent.getAll()`. No additional npm/pip package or extension update is needed. See [SDK setup, types, binary values and examples](docs/execution/local-sdk.md).
+
 ```bash
 git clone https://github.com/biosshot/eda-copilot-backend
 git clone https://github.com/biosshot/eda-copilot-router copilot-router

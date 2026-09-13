@@ -2,6 +2,8 @@
 
 Use `execute_js` for a focused native API inspection, a specific correction after Copilot placement/routing, or an operation without a suitable dedicated tool. The tool name is `execute_js`; a `.js` file is one way to supply its code. Scripts run with extension permissions, without a sandbox or automatic rollback.
 
+For local Python/Node.js computation, use the bundled [local SDK](local-sdk.md). It exposes awaitable native API proxies through the existing broker, supports binary values, and keeps the ordinary JavaScript execution path available.
+
 ## Select the action
 
 | Need | Use |

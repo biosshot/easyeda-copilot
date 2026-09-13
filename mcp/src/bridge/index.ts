@@ -471,7 +471,8 @@ class OwnerBroker {
     }
 }
 
-class ProxyBridge {
+/** Client-only transport. Unlike MeshBridge, never opens a server or participates in election. */
+export class ProxyBridge {
     private socket?: WebSocket;
     private readonly pendingProxyRequests = new Map<string, PendingRequest>();
     private heartbeatTimer?: ReturnType<typeof setInterval>;
