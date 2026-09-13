@@ -61,7 +61,7 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
     async function encode(value: any, seen = new Set<any>()): Promise<any> {
         if (value === undefined) return { t: 'undefined' };
         if (typeof value === 'bigint') return { t: 'bigint', value: String(value) };
-        if (typeof value === 'number' && !Number.isFinite(value)) return { t: 'number', value: String(value) };
+        if (typeof value === 'number' && (!Number.isFinite(value) || Object.is(value, -0))) return { t: 'number', value: Object.is(value, -0) ? '-0' : String(value) };
         if (value === null || ['string', 'number', 'boolean'].includes(typeof value)) return { t: 'value', value };
         const type = Object.prototype.toString.call(value).slice(8, -1);
         if (type === 'Blob' || type === 'File') return { t: 'binary', type, mime: value.type, name: value.name,
@@ -74,10 +74,10 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
         if (seen.has(value)) return reference(value);
         seen.add(value);
         try {
-            if (Array.isArray(value)) return { t: 'array', value: await Promise.all(value.map(v => encode(v, new Set(seen)))) };
+            if (Array.isArray(value)) return { t: 'array', value: await Promise.all(Array.from(value, v => encode(v, new Set(seen)))) };
             const proto = Object.getPrototypeOf(value);
             if (typeof value === 'object' && (proto === null || proto === Object.prototype)
-                && !Object.values(value).some(v => typeof v === 'function')) {
+                && !Object.values(Object.getOwnPropertyDescriptors(value)).some(d => d.get || d.set || typeof d.value === 'function')) {
                 const entries = [];
                 for (const [k, v] of Object.entries(value)) entries.push([k, await encode(v, seen)]);
                 return { t: 'object', value: entries };
@@ -93,8 +93,12 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
             case 'number': return Number(value.value);
             case 'date': return new Date(value.value);
             case 'expr': return evaluate(value.value);
-            case 'array': return Promise.all(value.value.map(decode));
-            case 'object': return Object.fromEntries(await Promise.all(value.value.map(async ([k, v]: any) => [k, await decode(v)])));
+            case 'array': return decodeList(value.value);
+            case 'object': {
+                const entries = [];
+                for (const [key, item] of value.value) entries.push([key, await decode(item)]);
+                return Object.fromEntries(entries);
+            }
             case 'binary': {
                 const bytes = unbase64(value.data);
                 if (value.type === 'Blob') return new Blob([bytes], { type: value.mime });
@@ -105,6 +109,12 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
             }
             default: throw Error('Invalid SDK argument');
         }
+    }
+    async function decodeList(values: any[]) {
+        const result = [];
+        // Arguments may contain lazy native mutations. Preserve evaluation order and stop on failure.
+        for (const value of values) result.push(await decode(value));
+        return result;
     }
     // Expressions may be passed as arguments or chained after their first await.
     // Retain their result across batches so a create/modify expression never runs twice.
@@ -127,8 +137,11 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
                 const receiver = expr.target.k === 'get' ? await evaluate(expr.target.target) : undefined;
                 const fn = expr.target.k === 'get' ? property(receiver, expr.target.key) : await evaluate(expr.target);
                 if (typeof fn !== 'function') throw Error('SDK target is not a function');
-                const args = await Promise.all(expr.args.map(decode));
-                return await fn.apply(receiver, args);
+                const args = await decodeList(expr.args);
+                await assertDocument();
+                const result = await fn.apply(receiver, args);
+                await assertDocument();
+                return result;
             })();
             cache.set(expr.id, promise); return promise;
         }
@@ -140,7 +153,9 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
     }
     if (packet.action === 'eval') {
         const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-        const result = await new AsyncFunction('eda', 'inputs', packet.code)(eda, await decode(packet.inputs));
+        const inputs = await decode(packet.inputs);
+        await assertDocument();
+        const result = await new AsyncFunction('eda', 'inputs', packet.code)(eda, inputs);
         await assertDocument(); return await encode(result);
     }
     const results = [];
@@ -151,7 +166,9 @@ export async function remoteRuntime(eda: any, packet: any): Promise<any> {
             await assertDocument();
             results.push({ ok: true, value: await encode(value) });
         } catch (error: any) {
-            results.push({ ok: false, error: { message: String(error?.message ?? error), stack: error?.stack } });
+            let message = 'Native call failed with an unprintable error';
+            try { message = String(error?.message ?? error); } catch { /* Preserve the successful prefix. */ }
+            results.push({ ok: false, error: { message } });
             break; // Preserve the successful prefix; never silently continue after a failed edit.
         }
     }

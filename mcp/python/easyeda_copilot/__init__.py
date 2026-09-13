@@ -24,6 +24,9 @@ class SdkError(RuntimeError):
 
 
 class _Undefined:
+    def __bool__(self):
+        return False
+
     def __repr__(self):
         return 'UNDEFINED'
 
@@ -75,6 +78,8 @@ def _encode(value, session, seen=None):
         return {'t': 'bigint', 'value': str(value)}
     if isinstance(value, float) and not math.isfinite(value):
         return {'t': 'number', 'value': 'NaN' if math.isnan(value) else 'Infinity' if value > 0 else '-Infinity'}
+    if isinstance(value, float) and value == 0 and math.copysign(1, value) < 0:
+        return {'t': 'number', 'value': '-0'}
     if value is None or isinstance(value, (str, int, float, bool)):
         return {'t': 'value', 'value': value}
     if isinstance(value, (Blob, ArrayBuffer, TypedArray, bytes, bytearray, memoryview)):
@@ -137,8 +142,8 @@ class _Remote:
         object.__setattr__(self, name, value)
 
     def __getitem__(self, key):
-        if not isinstance(key, (str, int)): raise TypeError('SDK key must be a string or integer')
-        return _Remote(self._session, {'k': 'get', 'target': self._expr, 'key': key})
+        if isinstance(key, bool) or not isinstance(key, (str, int)): raise TypeError('SDK key must be a string or integer')
+        return _Remote(self._session, {'k': 'get', 'target': self._expr, 'key': str(key)})
 
     def __call__(self, *args):
         return _Remote(self._session, {'k': 'call', 'id': str(uuid.uuid4()), 'target': self._expr,
@@ -153,7 +158,12 @@ class _Remote:
         return asyncio.shield(self._future).__await__()
 
     def __bool__(self):
+        if self._expr['k'] in ('root', 'ref'): return True
         raise TypeError('Await the remote value before using it locally')
+
+    def __iter__(self):
+        # __getitem__ otherwise makes Python synthesize an infinite sequence iterator.
+        raise TypeError('Await the remote array before iterating it locally')
 
     def __repr__(self):
         return '<EasyEDA remote expression>'
@@ -166,6 +176,7 @@ class Session:
         self._pending = []
         self._flush_task = None
         self._closed = False
+        self._close_task = None
         self.last_checkpoint = None
         self.id = None
         self.instance_id = None
@@ -174,11 +185,15 @@ class Session:
 
     async def _rpc(self, method, params=None):
         if self._closed: raise SdkError('SDK session is closed')
+        rid = str(uuid.uuid4())
+        try:
+            encoded = (json.dumps({'id': rid, 'method': method, 'params': params or {}}, allow_nan=False) + '\n').encode()
+        except (TypeError, ValueError) as error:
+            raise SdkError(f'Invalid local SDK input: {error}') from error
         async with self._lock:
             if self._closed: raise SdkError('SDK session is closed')
-            rid = str(uuid.uuid4())
             try:
-                self._process.stdin.write((json.dumps({'id': rid, 'method': method, 'params': params or {}}, allow_nan=False) + '\n').encode())
+                self._process.stdin.write(encoded)
                 await self._process.stdin.drain()
                 # Cancellation must not leave an unread reply to be mistaken for the next request.
                 raw = await self._process.stdout.readline()
@@ -188,10 +203,17 @@ class Session:
             except BaseException as error:
                 self._closed = True
                 self._process.stdin.close()
+                # No reader remains for the eventual reply. Kill only the transport worker,
+                # otherwise a large stdout reply can keep it (and close()) alive indefinitely.
+                # JavaScript already dispatched to EasyEDA still runs; never replay it.
+                if self._process.returncode is None:
+                    try: self._process.kill()
+                    except ProcessLookupError: pass
                 if isinstance(error, asyncio.CancelledError): raise
                 raise SdkError(f'{error}. Execution may still be running; do not retry automatically.', outcome_unknown=True) from error
             if 'error' in reply:
                 e = reply['error']
+                self.last_checkpoint = e.get('checkpoint')
                 raise SdkError(e['message'], e.get('checkpoint'), e.get('outcomeUnknown', False), e.get('failedIndex'))
             self.last_checkpoint = reply.get('checkpoint')
             return reply.get('result')
@@ -234,6 +256,11 @@ class Session:
         await self._rpc('packet', {'action': 'release', 'ids': ids})
 
     async def close(self):
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._finish_close())
+        await asyncio.shield(self._close_task)
+
+    async def _finish_close(self):
         if self._flush_task is not None: await self._flush_task
         try:
             if not self._closed: await self._rpc('close')

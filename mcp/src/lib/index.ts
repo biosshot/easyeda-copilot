@@ -1,8 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { Blob, File } from 'node:buffer';
+import { isAbsolute } from 'node:path';
 import { ProxyBridge, type EasyEdaInstance } from '../bridge/index';
-import type { ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
+import { EXECUTE_JS_MAX_CODE_BYTES, EXECUTE_JS_MAX_INPUT_BYTES, type ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
 import { remoteRuntime } from './runtime';
 
 type Expression = { k: 'root' } | { k: 'ref'; id: string; sessionId: string }
@@ -39,7 +40,7 @@ export async function encode(value: any, session?: Session, seen = new Set<any>(
     }
     if (value === undefined) return { t: 'undefined' };
     if (typeof value === 'bigint') return { t: 'bigint', value: String(value) };
-    if (typeof value === 'number' && !Number.isFinite(value)) return { t: 'number', value: String(value) };
+    if (typeof value === 'number' && (!Number.isFinite(value) || Object.is(value, -0))) return { t: 'number', value: Object.is(value, -0) ? '-0' : String(value) };
     if (value === null || ['string', 'number', 'boolean'].includes(typeof value)) return { t: 'value', value };
     const type = Object.prototype.toString.call(value).slice(8, -1);
     if (type === 'Blob' || type === 'File') return { t: 'binary', type, mime: value.type, name: value.name,
@@ -53,7 +54,7 @@ export async function encode(value: any, session?: Session, seen = new Set<any>(
     if (seen.has(value)) throw new SdkError('Cyclic local arguments are unsupported');
     seen.add(value);
     try {
-        if (Array.isArray(value)) return { t: 'array', value: await Promise.all(value.map(v => encode(v, session, new Set(seen)))) };
+        if (Array.isArray(value)) return { t: 'array', value: await Promise.all(Array.from(value, v => encode(v, session, new Set(seen)))) };
         if (Object.getPrototypeOf(value) !== Object.prototype && Object.getPrototypeOf(value) !== null) throw new SdkError('Pass plain data, binary data or a remote object');
         const entries = [];
         for (const [k, v] of Object.entries(value)) entries.push([k, await encode(v, session, seen)]);
@@ -93,6 +94,8 @@ export class Session {
     lastCheckpoint: string | null = null;
     private closed = false;
     private broken = false;
+    private closing?: Promise<void>;
+    private readonly flushing = new Set<Promise<void>>();
     private tail: Promise<unknown> = Promise.resolve();
     private pending: { expression: Promise<Expression>; resolve: (v: any) => void; reject: (e: any) => void }[] = [];
     private scheduled?: ReturnType<typeof setImmediate>;
@@ -119,6 +122,7 @@ export class Session {
                 const target = expression instanceof Promise
                     ? expression.then(target => ({ k: 'get' as const, target, key }))
                     : { k: 'get' as const, target: expression, key };
+                if (target instanceof Promise) target.catch(() => undefined);
                 return this.proxy(target, true);
             },
             apply: (_target, _this, args) => {
@@ -136,10 +140,17 @@ export class Session {
         return proxy;
     }
     private enqueue(expression: Promise<Expression>) {
+        if (this.closing || this.closed || this.broken) return Promise.reject(new SdkError('SDK session is closed or disconnected; reconnect explicitly'));
         return new Promise((resolve, reject) => {
             this.pending.push({ expression, resolve, reject });
-            this.scheduled ??= setImmediate(() => { this.scheduled = undefined; void this.flush(); });
+            this.scheduled ??= setImmediate(() => { this.scheduled = undefined; void this.startFlush(); });
         });
+    }
+    private startFlush() {
+        const running = this.flush();
+        this.flushing.add(running);
+        void running.then(() => this.flushing.delete(running), () => this.flushing.delete(running));
+        return running;
     }
     private async flush() {
         const jobs = this.pending.splice(0);
@@ -161,6 +172,9 @@ export class Session {
     }
     private async wire(code: string, inputs: Record<string, string> = {}) {
         if (this.closed || this.broken) throw new SdkError('SDK session is closed or disconnected; reconnect explicitly');
+        if (typeof code !== 'string' || !code.trim()) throw new SdkError('JavaScript code must be a nonempty string');
+        if (Buffer.byteLength(code) > EXECUTE_JS_MAX_CODE_BYTES) throw new SdkError('JavaScript exceeds 64 MiB');
+        if (Object.values(inputs).reduce((size, value) => size + Buffer.byteLength(value), 0) > EXECUTE_JS_MAX_INPUT_BYTES) throw new SdkError('SDK inputs exceed 512 MiB');
         let reply: ExecuteJsWireResult;
         try {
             reply = await this.bridge.requestEasyEda('execute-js', { code, inputs }, this.timeoutMs, this.instanceId) as ExecuteJsWireResult;
@@ -189,10 +203,17 @@ export class Session {
     /** Existing EasyEDA script semantics, including inputs[name] strings. Returns data, not MCP file artifacts. */
     async executeJs(options: ExecuteJsOptions): Promise<any> {
         if ((options.code !== undefined) === (options.file_path !== undefined)) throw new SdkError('Provide exactly one of code or file_path');
-        const code = options.code ?? await readFile(options.file_path!, 'utf8');
-        const inputs = { ...options.inputs };
-        for (const [name, file] of Object.entries(options.input_files ?? {})) inputs[name] = await readFile(file.path, 'utf8');
+        const code = options.code ?? await readInput(options.file_path!, EXECUTE_JS_MAX_CODE_BYTES);
+        const inputs: Record<string, string> = Object.assign(Object.create(null), options.inputs);
         if (Object.values(inputs).some(v => typeof v !== 'string')) throw new SdkError('Legacy inputs must be strings');
+        let size = Object.values(inputs).reduce((sum, value) => sum + Buffer.byteLength(value), 0);
+        if (size > EXECUTE_JS_MAX_INPUT_BYTES) throw new SdkError('SDK inputs exceed 512 MiB');
+        for (const [name, file] of Object.entries(options.input_files ?? {})) {
+            if (file.encoding !== undefined && file.encoding !== 'utf8') throw new SdkError('input_files encoding must be utf8');
+            size -= Buffer.byteLength(inputs[name] ?? '');
+            inputs[name] = await readInput(file.path, EXECUTE_JS_MAX_INPUT_BYTES - size);
+            size += Buffer.byteLength(inputs[name]);
+        }
         return this.serialize(async () => {
             const result = await this.wire(code, inputs);
             return result.kind === 'json' ? JSON.parse(result.json)
@@ -207,10 +228,14 @@ export class Session {
         });
         await this.request({ action: 'release', ids });
     }
-    async close() {
+    close(): Promise<void> {
+        return this.closing ??= this.finishClose();
+    }
+    private async finishClose() {
         if (this.closed) return;
         if (this.scheduled) { clearImmediate(this.scheduled); this.scheduled = undefined; }
-        await this.flush();
+        await this.startFlush();
+        await Promise.all(this.flushing);
         try { if (!this.broken) await this.request({ action: 'close' }); }
         finally { this.closed = true; this.bridge.close(); }
     }
@@ -223,6 +248,15 @@ async function resolveExpressions(value: any): Promise<any> {
     return value;
 }
 
+async function readInput(path: string, limit: number) {
+    if (typeof path !== 'string' || !isAbsolute(path)) throw new SdkError('File paths must be absolute on the SDK host');
+    const info = await stat(path);
+    if (!info.isFile() || info.size > limit) throw new SdkError(`Expected a regular file of at most ${limit} bytes`);
+    const bytes = await readFile(path);
+    if (bytes.length > limit) throw new SdkError(`File exceeds ${limit} bytes`);
+    return new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+}
+
 function url(options: ConnectOptions) {
     return options.url ?? `ws://${process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1'}:${process.env.EASYEDA_COPILOT_MCP_WS_PORT || '8787'}`;
 }
@@ -232,6 +266,8 @@ export async function listInstances(options: Pick<ConnectOptions, 'url'> = {}): 
     finally { bridge.close(); }
 }
 export async function connect(options: ConnectOptions = {}): Promise<Session> {
+    const timeout = options.timeoutMs ?? 60_000;
+    if (!Number.isFinite(timeout) || timeout <= 0 || timeout > 2_147_482_647) throw new SdkError('timeoutMs must be positive and fit a JavaScript timer');
     const bridge = new ProxyBridge(url(options), () => undefined);
     try {
         await bridge.connect();
@@ -239,8 +275,6 @@ export async function connect(options: ConnectOptions = {}): Promise<Session> {
         const instance = options.instanceId ? instances.find(i => i.instanceId === options.instanceId)
             : instances.length === 1 ? instances[0] : undefined;
         if (!instance) throw new SdkError('Select a connected instanceId; use listInstances()');
-        const timeout = options.timeoutMs ?? 60_000;
-        if (!Number.isFinite(timeout) || timeout <= 0) throw new SdkError('timeoutMs must be positive');
         const session = new Session(bridge, instance.instanceId, timeout);
         await session.initialize(options.documentUuid);
         return session;

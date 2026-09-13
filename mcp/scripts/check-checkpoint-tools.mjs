@@ -1,18 +1,20 @@
 import assert from 'node:assert/strict';
 import { build } from 'esbuild';
-import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
-import { runInNewContext } from 'node:vm';
+import { mkdir, mkdtemp } from 'node:fs/promises';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { join } from 'node:path';
 
-const built = await build({
+const testRoot = fileURLToPath(new URL('../.test-data/', import.meta.url));
+await mkdir(testRoot, { recursive: true });
+const outfile = join(await mkdtemp(join(testRoot, 'checkpoints-')), 'checkpoint.mjs');
+await build({
     entryPoints: [fileURLToPath(new URL('../src/tools/checkpoint.ts', import.meta.url))],
-    bundle: true, write: false, platform: 'node', format: 'cjs', packages: 'external',
+    bundle: true, outfile, platform: 'node', format: 'esm', packages: 'external',
 });
-const module = { exports: {} };
-runInNewContext(built.outputFiles[0].text, { module, exports: module.exports, require: createRequire(import.meta.url) });
+const { registerCheckpointTools } = await import(pathToFileURL(outfile));
 const registered = new Map();
 const requests = [];
-module.exports.registerCheckpointTools({
+registerCheckpointTools({
     registerTool: (name, config, handler) => registered.set(name, { ...config, handler }),
 }, {
     requestEasyEda: async (event, body) => {

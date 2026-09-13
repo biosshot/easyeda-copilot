@@ -88,6 +88,8 @@ Property access builds an expression. A method call builds a lazy awaitable. `aw
 
 Returned arrays and plain records are local values; native class instances are remote object references. Their methods preserve `this`. Pass those proxies back as arguments, including nested in arrays/records. Await even synchronous native getters:
 
+Objects with native accessor properties also remain remote, so serialization does not trigger their getters. Sparse array holes become explicit `undefined` elements; negative zero and nonfinite numbers are preserved. Nested argument expressions execute in order and stop after an error.
+
 ```javascript
 const designator = await components[0].getState_Designator();
 await eda.pcb_PrimitiveComponent.modify(components[0], { x: 100, y: 200 });
@@ -148,3 +150,11 @@ Changing the active document invalidates a bound session. References do not surv
 Every underlying `execute-js`, including reads and session housekeeping, still creates a checkpoint. Keep `session.lastCheckpoint` / `session.last_checkpoint` immediately after the edit of interest; later reads produce new checkpoints. The extension's checkpoint cost remains unchanged.
 
 `SdkError` includes the checkpoint when available, `failedIndex` (`failed_index`) for a grouped call, and `outcomeUnknown` (`outcome_unknown`) for transport failures. A timeout/disconnect closes the SDK connection but does not cancel JavaScript already running in EasyEDA. Do not automatically retry a mutation or restore while its outcome is unknown; follow [execution recovery](instructions.md#errors-and-timeout). Other MCP connections and the broker remain running.
+
+In Python, cancelling one waiter on a shared proxy expression leaves that expression running for its other waiters. Cancelling a whole `eval`/`execute_js` RPC closes its transport worker to avoid waiting forever on an unread large response; code already sent to EasyEDA can still finish. Invalid local input is rejected before dispatch and does not disconnect the session. `close()` is idempotent even when called concurrently and drains already accepted proxy calls, including binary argument encoding.
+
+## Verification
+
+See the [verification report](local-sdk-verification.md) for reproduced faults, fixes, runtime versions, live checks and coverage limits.
+
+In a source checkout, `npm run test:sdk --workspace=mcp` runs the SDK integration and production-broker suites after a build. They cover codecs, generated types, lifecycle, cancellation, wrong-document guards, concurrent clients and lost responses. `node mcp/scripts/check-sdk-live.mjs <test-pcb-uuid> [instance-id]` and `python mcp/scripts/check-sdk-live.py <test-pcb-uuid> [instance-id]` are **opt-in mutation tests**: each creates, modifies and removes one DOCUMENT-layer line and verifies the original line IDs. Run them sequentially, only on a user-authorized test PCB.

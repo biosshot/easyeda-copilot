@@ -7,6 +7,7 @@ import { mkdir, mkdtemp, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import ts from 'typescript';
+import { setTimeout as delay, setImmediate as nextTurn } from 'node:timers/promises';
 import { connect, listInstances, EPCB_LayerId } from '../dist/lib/node/index.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -27,7 +28,13 @@ const components = [new Component('C1'), new Component('R1')];
 const eda = {
     dmt_SelectControl: { getCurrentDocumentInfo: () => ({ uuid: documentUuid }) },
     pcb_PrimitiveComponent: { getAll: () => components, create: () => { creates++; return new Component('NEW'); } },
-    test: { echo: x => x, fail: () => { throw Error('test failure'); }, scalar: () => 42 },
+    test: { echo: x => x, fail: () => { throw Error('test failure'); }, scalar: () => 42,
+        switchDocument: () => { documentUuid = 'changed'; return 1; },
+        write: () => { creates++; return documentUuid; },
+        throwValue: value => { throw value; },
+        throwUnprintable: () => { throw Object.create(null); },
+        slow: async (ms, value) => { await delay(ms); return value; },
+    },
 };
 const server = new WebSocketServer({ port: 0, host: '127.0.0.1' });
 await once(server, 'listening');
@@ -116,8 +123,23 @@ try {
         await writeFile(script, 'return {value:inputs.value, count: (await eda.pcb_PrimitiveComponent.getAll()).length};');
         await writeFile(input, 'legacy');
         assert.deepEqual(await session.executeJs({ file_path: script, input_files: { value: { path: input } } }), { value: 'legacy', count: 2 });
+        assert.deepEqual(await session.executeJs({ code: 'return [inputs.__proto__, inputs.constructor, inputs.toString]',
+            input_files: Object.fromEntries(['__proto__', 'constructor', 'toString'].map(key => [key, { path: input }])) }), ['legacy', 'legacy', 'legacy']);
         assert(await session.executeJs({ code: 'return new Blob(["image"], {type:"image/png"});' }) instanceof Blob);
         await assert.rejects(session.executeJs({ code: '', file_path: script }), /exactly one/);
+    });
+    test('invalid scripts, UTF-8 files and overflowing timers fail before dispatch', async () => {
+        const bad = resolve(temp, 'invalid-utf8.txt');
+        await writeFile(bad, Buffer.from([0xff, 0xfe, 0xff]));
+        const before = dispatches;
+        for (const options of [{ code: '' }, { code: 123 }, { file_path: 'relative.js' }, { file_path: temp },
+            { code: 'return inputs.x', input_files: { x: { path: bad } } },
+            { code: 'return inputs.x', input_files: { x: { path: bad, encoding: 'base64' } } }]) {
+            await assert.rejects(session.executeJs(options));
+        }
+        for (const timeoutMs of [0, -1, Infinity, NaN, 2 ** 31, '100']) await assert.rejects(open({ timeoutMs }), /timeoutMs/);
+        assert.equal(dispatches, before);
+        assert.equal(await session.eda.test.scalar(), 42);
     });
     test('failed batches stop at the first error and expose the checkpoint', async () => {
         const before = creates;
@@ -185,7 +207,125 @@ await s.close();
         assert.equal(diagnostics.length, 0, ts.formatDiagnostics(diagnostics, { getCurrentDirectory: () => root, getCanonicalFileName: x => x, getNewLine: () => '\n' }));
         assert.equal(EPCB_LayerId.TOP, 1);
     });
-    for (const [name, fn] of cases) { await fn(); console.log(`PASS ${name}`); }
+    test('sparse arrays and negative zero survive both directions', async () => {
+        const values = [undefined, -0, , 3];
+        const result = await session.eda.test.echo(values);
+        assert.equal(result.length, 4);
+        assert(Object.is(result[1], -0));
+        assert.equal(result[2], undefined);
+        assert(Object.is(await session.eval('return -0'), -0));
+        assert.deepEqual(await session.eval('return new Array(3)'), [undefined, undefined, undefined]);
+    });
+    test('concurrent close is idempotent', async () => {
+        const s = await open();
+        await Promise.all([s.close(), s.close(), s.close()]);
+        await s.close();
+    });
+    test('close drains a dispatched batch still encoding its binary arguments', async () => {
+        const s = await open();
+        class SlowBlob extends Blob { async arrayBuffer() { await delay(60); return super.arrayBuffer(); } }
+        const pending = Promise.resolve(s.eda.test.echo(new SlowBlob(['slow'])));
+        const outcome = Promise.allSettled([pending]);
+        await nextTurn();
+        await nextTurn();
+        await s.close();
+        const [result] = await outcome;
+        assert.equal(result.status, 'fulfilled', result.reason?.message);
+        assert.equal(await result.value.text(), 'slow');
+    });
+    test('a document-changing dependency cannot run the outer write', async () => {
+        const s = await open();
+        const before = creates;
+        try {
+            await assert.rejects(Promise.resolve(s.eda.test.write(s.eda.test.switchDocument())), /document changed/);
+            assert.equal(creates, before, 'write ran in the wrong document');
+        } finally { documentUuid = 'test-board'; await s.close(); }
+    });
+    test('a document-changing eval input cannot run the script body', async () => {
+        const s = await open();
+        const before = creates;
+        try {
+            await assert.rejects(s.eval('return eda.test.write()', { value: s.eda.test.switchDocument() }), /document changed/);
+            assert.equal(creates, before, 'eval ran in the wrong document');
+        } finally { documentUuid = 'test-board'; await s.close(); }
+    });
+    test('failed expression arguments do not execute later write dependencies', async () => {
+        const before = creates;
+        await assert.rejects(Promise.resolve(session.eda.test.echo([session.eda.test.fail(), session.eda.test.write()])), /test failure/);
+        assert.equal(creates, before);
+        await assert.rejects(session.eval('return inputs', { a: session.eda.test.fail(), b: session.eda.test.write() }), /test failure/);
+        assert.equal(creates, before);
+    });
+    test('serializing a native accessor does not execute its getter twice', async () => {
+        const object = await session.eval('let n=0; return { get value(){ return ++n; } };');
+        assert.equal(await object.value, 1);
+        assert.equal(await object.value, 2);
+    });
+    test('thrown values without toString preserve the successful batch prefix', async () => {
+        const results = await Promise.allSettled([session.eda.test.scalar(), session.eda.test.throwUnprintable(), session.eda.test.scalar()]);
+        assert.equal(results[0].value, 42);
+        assert.equal(results[1].status, 'rejected');
+        assert.equal(results[1].reason.failedIndex, 1);
+        assert.equal(results[2].status, 'rejected');
+    });
+    test('all typed-array classes, empty binary and base64 padding boundaries', async () => {
+        const constructors = [Int8Array, Uint8Array, Uint8ClampedArray, Int16Array, Uint16Array, Int32Array, Uint32Array,
+            Float32Array, Float64Array, BigInt64Array, BigUint64Array];
+        const values = constructors.flatMap(C => [new C(), new C(C.name.startsWith('Big') ? [1n, 2n, 3n] : [1, 2, 3]).subarray(1)]);
+        values.push(new DataView(new ArrayBuffer(0)), new Blob([]), new File([], 'empty.bin'), Buffer.from([1, 2, 3]));
+        const result = await session.eda.test.echo(values);
+        for (let i = 0; i < values.length; i++) {
+            const a = values[i], b = result[i];
+            assert.equal(Object.prototype.toString.call(b), Object.prototype.toString.call(a));
+            if (a instanceof Blob) assert.deepEqual(await b.arrayBuffer(), await a.arrayBuffer());
+            else assert.deepEqual(Buffer.from(b.buffer, b.byteOffset, b.byteLength), Buffer.from(a.buffer, a.byteOffset, a.byteLength));
+        }
+        for (const size of [1, 2, 3, 4, 7, 31, 24575, 24576, 24577, 65537]) {
+            const bytes = Uint8Array.from({ length: size }, (_, i) => (i * 113 + 97) % 256);
+            assert.deepEqual(await session.eda.test.echo(bytes), bytes);
+        }
+    });
+    test('deep records, special property names and deterministic randomized values', async () => {
+        let seed = 12345;
+        const random = () => (seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0);
+        const value = depth => depth ? random() % 2 ? Array.from({ length: random() % 5 }, () => value(depth - 1))
+            : Object.fromEntries(Array.from({ length: random() % 5 }, (_, i) => [`key-${i}`, value(depth - 1)]))
+            : [undefined, null, false, '', '💡\u0000\u2028', random(), BigInt(random()), NaN, -Infinity, -0][random() % 10];
+        const records = Array.from({ length: 200 }, () => value(4));
+        records.push(JSON.parse('{"__proto__":{"polluted":true},"constructor":4,"prototype":5}'));
+        assert.deepEqual(await session.eda.test.echo(records), records);
+        assert.equal({}.polluted, undefined);
+    });
+    test('unknown classes and cyclic remote graphs remain usable through handles', async () => {
+        const map = await session.eval('return new Map([["a", 42]])');
+        assert.equal(await map.get('a'), 42);
+        const cycle = await session.eval('const x={n:42};x.self=x;return x');
+        assert.equal(cycle.n, 42);
+        assert.equal(await cycle.self.n, 42);
+        const fn = await session.eval('return x => x + 1');
+        assert.equal(await fn(4), 5);
+    });
+    test('expiry and editor reload reject stale references without recreating sessions', async () => {
+        const s = await open();
+        const [component] = await s.eda.pcb_PrimitiveComponent.getAll();
+        const originalNow = Date.now;
+        try {
+            const future = originalNow() + 31 * 60_000;
+            Date.now = () => future;
+            await assert.rejects(Promise.resolve(component.getState_Designator()), /expired/);
+        } finally { Date.now = originalNow; await s.close(); }
+        const fresh = await open();
+        try {
+            await fresh.executeJs({ code: 'delete globalThis.__easyedaCopilotLocalSdkV1; return true;' });
+            await assert.rejects(Promise.resolve(fresh.eda.test.scalar()), /expired/);
+        } finally { await fresh.close(); }
+    });
+    let failures = 0;
+    for (const [name, fn] of cases) {
+        try { await fn(); console.log(`PASS ${name}`); }
+        catch (error) { failures++; console.error(`FAIL ${name}\n${error.stack}`); }
+    }
+    assert.equal(failures, 0, `${failures} SDK checks failed`);
 } finally {
     await session?.close();
     for (const socket of server.clients) socket.terminate();
