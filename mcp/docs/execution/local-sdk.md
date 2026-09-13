@@ -2,7 +2,7 @@
 
 Use this SDK when a task benefits from local libraries, calculations or file processing while calling the native EasyEDA API. It ships with MCP; do not install a separate SDK from npm or pip. The existing extension and `execute_js` MCP tool keep their behavior.
 
-Read [execution instructions](instructions.md) and the relevant [API declarations](easyeda-api/references/_index.md). Native PCB coordinates remain in mil. A remote call does not add missing API methods or change native commit semantics such as `done()`.
+Read [execution instructions](instructions.md) and the relevant [API declarations](easyeda-api/references/_index.md). Ordinary PCB primitives use mil, with [field-specific exceptions](pcb-units.md), including filled-pour geometry. A remote call does not add missing API methods or change native commit semantics such as `done()`.
 
 ## Locate and run
 
@@ -82,6 +82,9 @@ SDK setup methods use Python names (`list_instances`, `document_uuid`, `instance
 
 ## Execution and types
 
+For one baseline across dependent requests, use [checkpoint scopes](checkpoint-scopes.md)
+in Python or Node.js. This optional mode requires an updated extension.
+
 Property access builds an expression. A method call builds a lazy awaitable. `await` dispatches it through the existing broker's `execute-js` event. Merely constructing a call does not execute it. Await all edits before closing.
 
 `Promise.all` / `asyncio.gather` automatically collect calls waiting in the same event-loop turn into one execution. Calls execute in order inside EasyEDA. On failure, the successful prefix remains applied and subsequent calls in that group are skipped. This is not an atomic transaction or rollback. Use `Promise.allSettled` / `gather(return_exceptions=True)` when you need every individual result. There is no separate batch mode to configure.
@@ -100,6 +103,10 @@ Node declarations are generated from the pinned native type source at build time
 Local callbacks, constructors, subscriptions, symbols and proxy assignment cannot be transported as ordinary arguments. Callback parameters are typed `never` where represented by native function types. Use `session.eval` or `executeJs` to create and consume such values inside EasyEDA; do not leave background tasks/subscriptions running after an execution. Mutating an API object still requires its native setter/modify/done methods. An unknown runtime type becomes a remote reference rather than being silently converted into an empty object.
 
 ## Binary and large values
+
+For PCB calculations, read [field-specific units](pcb-units.md) and the optional
+[Shapely geometry examples](shapely-geometry.md). Native API unit conventions can
+change and require a basic check on the connected editor.
 
 The proxy/eval codec preserves nested `Blob`, `File`, `ArrayBuffer`, `DataView` and numeric typed arrays. In Node.js these are actual local binary objects, ready for filesystem, image or math libraries. `File` retains its name, MIME type and last-modified time. Typed-array views transmit only the view's bytes and preserve the element type; shared backing-buffer identity is not preserved.
 
@@ -147,7 +154,7 @@ Use one session for a bounded phase and always close it in `finally` or an async
 
 Changing the active document invalidates a bound session. References do not survive closing, expiration or editor reload. After a document save/close/reopen or external state replacement, reconnect and obtain fresh objects; document UUID checks are not revision tracking and do not lock the editor.
 
-Every underlying `execute-js`, including reads and session housekeeping, still creates a checkpoint. Keep `session.lastCheckpoint` / `session.last_checkpoint` immediately after the edit of interest; later reads produce new checkpoints. The extension's checkpoint cost remains unchanged.
+Outside an explicit checkpoint scope, every underlying `execute-js`, including reads and session housekeeping, creates a checkpoint. Inside a scope, calls reuse its named baseline. Keep `scope.checkpointId` / `scope.checkpoint_id` or the edit's `session.lastCheckpoint` / `session.last_checkpoint`; later ordinary reads create newer checkpoints.
 
 `SdkError` includes the checkpoint when available, `failedIndex` (`failed_index`) for a grouped call, and `outcomeUnknown` (`outcome_unknown`) for transport failures. A timeout/disconnect closes the SDK connection but does not cancel JavaScript already running in EasyEDA. Do not automatically retry a mutation or restore while its outcome is unknown; follow [execution recovery](instructions.md#errors-and-timeout). Other MCP connections and the broker remain running.
 

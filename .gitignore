@@ -13,3 +13,5 @@
 /extension/iframe/
 /extension/node_modules/
 /extension/*.tsbuildinfo
+__pycache__/
+*.pyc

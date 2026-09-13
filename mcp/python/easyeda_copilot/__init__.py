@@ -12,7 +12,7 @@ import shutil
 import uuid
 from dataclasses import dataclass
 
-__all__ = ['connect', 'list_instances', 'Session', 'SdkError', 'Blob', 'File', 'ArrayBuffer', 'TypedArray', 'UNDEFINED']
+__all__ = ['connect', 'list_instances', 'Session', 'CheckpointScope', 'SdkError', 'Blob', 'File', 'ArrayBuffer', 'TypedArray', 'UNDEFINED']
 
 
 class SdkError(RuntimeError):
@@ -177,6 +177,7 @@ class Session:
         self._flush_task = None
         self._closed = False
         self._close_task = None
+        self._scope = None
         self.last_checkpoint = None
         self.id = None
         self.instance_id = None
@@ -220,6 +221,9 @@ class Session:
 
     def _enqueue(self, expression):
         future = asyncio.get_running_loop().create_future()
+        if self._scope is not None and (not self._scope._entered or self._scope._close_task is not None):
+            future.set_exception(SdkError('Checkpoint scope is opening or closing'))
+            return future
         self._pending.append((expression, future))
         if self._flush_task is None:
             self._flush_task = asyncio.create_task(self._flush())
@@ -240,9 +244,11 @@ class Session:
                 if not future.done(): future.set_exception(error)
 
     async def eval(self, code, inputs=None):
+        self._assert_scope_ready()
         return _decode(await self._rpc('packet', {'action': 'eval', 'code': code, 'inputs': _encode(inputs if inputs is not None else {}, self)}), self)
 
     async def execute_js(self, *, code=None, file_path=None, inputs=None, input_files=None):
+        self._assert_scope_ready()
         options = {k: v for k, v in {'code': code, 'file_path': str(file_path) if file_path is not None else None,
                    'inputs': inputs, 'input_files': input_files}.items() if v is not None}
         return _decode(await self._rpc('executeJs', options), self)
@@ -254,6 +260,13 @@ class Session:
                 raise SdkError('Expected an object from this session')
             ids.append(obj._expr['id'])
         await self._rpc('packet', {'action': 'release', 'ids': ids})
+
+    def checkpoint_scope(self, name):
+        return CheckpointScope(self, name)
+
+    def _assert_scope_ready(self):
+        if self._scope is not None and (not self._scope._entered or self._scope._close_task is not None):
+            raise SdkError('Checkpoint scope is opening or closing')
 
     async def close(self):
         if self._close_task is None:
@@ -271,6 +284,55 @@ class Session:
 
     async def __aenter__(self): return self
     async def __aexit__(self, *args): await self.close()
+
+
+class CheckpointScope:
+    """One checkpoint for this session. No automatic rollback, save or edit isolation."""
+    def __init__(self, session, name):
+        self._session = session
+        self._name = name
+        self._entered = False
+        self._close_task = None
+        self.checkpoint_id = None
+
+    @property
+    def eda(self):
+        if not self._entered or self._close_task is not None:
+            raise SdkError('Checkpoint scope is not active')
+        return self._session.eda
+
+    async def __aenter__(self):
+        session = self._session
+        if self._entered or session._scope is not None:
+            raise SdkError('Nested or reused checkpoint scopes are unsupported')
+        session._scope = self
+        try:
+            if session._flush_task is not None: await session._flush_task
+            result = await session._rpc('beginCheckpointScope', {'name': self._name})
+            self.checkpoint_id = result['checkpointId']
+            self._entered = True
+            return self
+        except BaseException:
+            session._scope = None
+            raise
+
+    async def _finish_close(self):
+        try:
+            if self._session._flush_task is not None: await self._session._flush_task
+            if not self._session._closed: await self._session._rpc('endCheckpointScope')
+        finally:
+            if self._session._scope is self: self._session._scope = None
+
+    async def close(self):
+        if not self._entered: return
+        if self._close_task is None: self._close_task = asyncio.create_task(self._finish_close())
+        await asyncio.shield(self._close_task)
+
+    async def __aexit__(self, exc_type, exc, tb):
+        if exc_type is None: await self.close()
+        else:
+            try: await self.close()
+            except BaseException: pass  # Preserve the original failure/cancellation; never replay edits.
 
 
 async def _worker(node=None):

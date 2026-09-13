@@ -15,6 +15,7 @@ const checkpointsDb = new AppDBClient(false).init('checkpoints', {
 });
 
 let lastCheckpoint: Checkpoint | undefined;
+const pinned = new Map<string, number>();
 
 const generateInsecureToken = (length = 16) => {
     return (Math.random().toString(36).substring(2) +
@@ -24,7 +25,7 @@ const generateInsecureToken = (length = 16) => {
 };
 
 const getCurrentPageId = async () => {
-    const page = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+    const page = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
     return page?.uuid;
 }
 
@@ -54,6 +55,8 @@ async function saveCheckpoint(minor: boolean, name?: string) {
             if (allCheckpoints.length >= 512) {
                 const sorted = allCheckpoints.sort((a, b) => a.timestamp! - b.timestamp!);
                 for (const item of sorted.slice(0, sorted.length - 99)) {
+                    if ((pinned.get(item._id!) ?? 0) > Date.now()) continue;
+                    pinned.delete(item._id!);
                     await db.checkpoints.remove({ _id: item._id });
                 }
             }
@@ -146,6 +149,8 @@ async function readCheckpoint(id: string) {
 }
 
 export const checkpointer = {
+    pin: (id: string, expiresAt: number) => { pinned.set(id, expiresAt); },
+    unpin: (id: string) => { pinned.delete(id); },
     restore: restoreCheckpoint,
     save: saveCheckpoint,
     list: listCheckpoints,

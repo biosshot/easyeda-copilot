@@ -33,7 +33,7 @@ function load(rows: Saved[]) {
         require: (id: string) => id === 'appdb' ? AppDB : {},
         ESYS_ToastMessageType: { WARNING: 1, SUCCESS: 2, ERROR: 3, INFO: 4 },
         eda: {
-            dmt_Schematic: { getCurrentSchematicPageInfo: async () => ({ uuid: state.pageId }) },
+            dmt_SelectControl: { getCurrentDocumentInfo: async () => ({ uuid: state.pageId, documentType: 3 }) },
             sys_FileManager: {
                 getDocumentSource: async () => state.content,
                 setDocumentSource: async (content: string) => { state.content = content; return true; },
@@ -88,4 +88,18 @@ test('legacy save calls and blank names work; invalid names do not save', async 
     assert.ok(await checkpointer.save(true, 'Temporary checkpoint'));
     assert.equal(rows.length, 2);
     assert.equal(await checkpointer.restore(undefined, true), true);
+});
+
+test('active scope baselines survive history pruning, expired pins do not', async () => {
+    const rows: Saved[]=Array.from({length:512},(_,i)=>({_id:`cp-${i}`,timestamp:i,content:'source',pageId:'page-1'}));
+    const {checkpointer}=load(rows);
+    checkpointer.pin('cp-0',Date.now()+60000);
+    checkpointer.pin('cp-1',Date.now()-1);
+    await checkpointer.save(false);
+    assert.ok(rows.some(r=>r._id==='cp-0'));
+    assert.ok(!rows.some(r=>r._id==='cp-1'));
+    checkpointer.unpin('cp-0');
+    while(rows.length<512) rows.push({_id:`new-${rows.length}`,timestamp:Date.now(),content:'source'});
+    await checkpointer.save(false);
+    assert.ok(!rows.some(r=>r._id==='cp-0'));
 });

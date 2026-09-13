@@ -6,7 +6,8 @@ import {
     type RoutingCopperApplication,
 } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
-import { executeJavaScript } from './eda/execute-js';
+import { CheckpointScopes } from './eda/checkpoint-scopes';
+const checkpointScopes = new CheckpointScopes(checkpointer);
 import { checkPcbDrc } from './eda/drc';
 import { previewPcb } from './eda/pcb-preview';
 import type { PreviewPcbInput } from '@copilot/shared/types/pcb/preview';
@@ -1366,7 +1367,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             const inputs = body.inputs ?? {};
             if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
                 || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
-            reply(true, await executeJavaScript(body.code, eda, () => checkpointer.save(false, 'Before JavaScript execution'), inputs as Record<string, string>));
+            reply(true, await checkpointScopes.execute({ code: body.code, inputs: inputs as Record<string, string>, checkpointScope: body.checkpointScope }, eda, connectionEpoch));
             return;
         }
 

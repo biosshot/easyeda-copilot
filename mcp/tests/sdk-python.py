@@ -57,6 +57,34 @@ async def main():
         assert isinstance((await asyncio.gather(first, return_exceptions=True))[0], asyncio.CancelledError)
         assert await second == 'shared'
         assert await s.eda.test.scalar() == 42
+        async with s.checkpoint_scope('Python scope') as scope:
+            cp=scope.checkpoint_id
+            assert await scope.eda.test.scalar()==42 and s.last_checkpoint==cp
+            assert await s.eval('return 7')==7 and s.last_checkpoint==cp
+            assert await s.execute_js(code='return 8')==8 and s.last_checkpoint==cp
+            try:
+                async with s.checkpoint_scope('nested'): pass
+                assert False
+            except SdkError: pass
+        assert await s.eda.test.scalar()==42 and s.last_checkpoint!=cp
+        try:
+            async with s.checkpoint_scope('Python failure') as scope:
+                cp=scope.checkpoint_id
+                await scope.eda.test.fail()
+        except SdkError as error:
+            assert error.checkpoint==cp
+        await asyncio.gather(scope.close(),scope.close())
+        entered=asyncio.Event()
+        async def interrupted_scope():
+            async with s.checkpoint_scope('cancel local calculation') as scope:
+                await scope.eda.test.scalar()
+                entered.set()
+                await asyncio.sleep(30)
+        task=asyncio.create_task(interrupted_scope())
+        await entered.wait();task.cancel()
+        assert isinstance((await asyncio.gather(task,return_exceptions=True))[0],asyncio.CancelledError)
+        assert s._scope is None
+        assert await s.eda.test.scalar()==42
         # Invalid local inputs must not break a healthy session.
         try:
             await s.execute_js(code='return inputs.x', inputs={'x': object()})

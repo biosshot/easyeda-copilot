@@ -13,10 +13,10 @@ import { connect, listInstances } from '../dist/lib/node/index.mjs';
 const root = fileURLToPath(new URL('../', import.meta.url));
 await mkdir(join(root, '.test-data'), { recursive: true });
 const temp = await mkdtemp(join(root, '.test-data/sdk-broker-'));
-await build({ entryPoints: { bridge: join(root, 'src/bridge/index.ts'), executor: join(root, '../extension/src/eda/execute-js.ts') },
+await build({ entryPoints: { bridge: join(root, 'src/bridge/index.ts'), executor: join(root, '../extension/src/eda/checkpoint-scopes.ts') },
     outdir: temp, outExtension: { '.js': '.mjs' }, bundle: true, platform: 'node', format: 'esm', external: ['ws'], logLevel: 'silent' });
 const { startBridge } = await import(pathToFileURL(join(temp, 'bridge.mjs')));
-const { executeJavaScript } = await import(pathToFileURL(join(temp, 'executor.mjs')));
+const { CheckpointScopes } = await import(pathToFileURL(join(temp, 'executor.mjs')));
 const probe = createServer().listen(0, '127.0.0.1');
 await once(probe, 'listening');
 const port = probe.address().port;
@@ -29,7 +29,8 @@ const test = async (name, fn) => { await fn(); passed++; console.log(`PASS ${nam
 const open = async (id, options = {}) => { const s = await connect({ url, instanceId: id, ...options }); sessions.push(s); return s; };
 async function editor(id) {
     const socket = new WebSocket(url);
-    const state = { id, writes: 0, executions: 0, delayed: 0, drop: false, socket };
+    const state = { id, writes: 0, executions: 0, saves:0, delayed: 0, drop: false, socket };
+    const scopes=new CheckpointScopes({save:async()=>`cp-${id}-${++state.saves}`,pin:()=>{},unpin:()=>{}});
     const api = { dmt_SelectControl: { getCurrentDocumentInfo: () => ({ uuid: `board-${id}` }) },
         test: { read: () => id, write: async () => { await delay(state.delayed); return ++state.writes; }, echo: x => x } };
     let queue = Promise.resolve();
@@ -45,7 +46,7 @@ async function editor(id) {
             const body = JSON.parse(encoded);
             queue = queue.then(async () => {
                 state.executions++;
-                const result = await executeJavaScript(body.code, api, async () => `cp-${id}-${state.executions}`, body.inputs);
+                const result = await scopes.execute(body, api, 1);
                 if (state.drop) { state.drop = false; socket.terminate(); return; }
                 send(event, { id: body.id, ok: true, result });
             });
@@ -95,6 +96,16 @@ try {
         await assert.rejects(Promise.resolve(s.eda.test.write()), /closed or disconnected/);
         await s.close();
         assert.equal(await sB.eda.test.read(), 'B');
+    });
+    await test('production broker forwards checkpoint scopes without leaking between clients',async()=>{
+        const before=a.saves;
+        await sA.checkpointScope('A edits',async scope=>{
+            await scope.eda.test.write();await scope.eda.test.write();
+            assert.equal(sA.lastCheckpoint,scope.checkpointId);
+            await sB.eda.test.write();
+            assert.notEqual(sB.lastCheckpoint,scope.checkpointId);
+        });
+        assert.equal(a.saves-before,1);
     });
     await test('lost reply after mutation is reported as unknown, without replay on reconnect', async () => {
         const s = await open('A');

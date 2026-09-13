@@ -1,6 +1,7 @@
 import type { API } from './api.mjs';
 export type { API } from './api.mjs';
 export * from './constants.mjs';
+export * from './units.mjs';
 
 /** Lazy remote call. Await it, or use Promise.all to coalesce calls automatically. */
 export interface RemoteCall<T> extends PromiseLike<T> {}
@@ -38,6 +39,14 @@ export declare class Session {
     eval<T = unknown>(code: string, inputs?: unknown): Promise<T>;
     executeJs<T = unknown>(options: ExecuteJsOptions): Promise<T>;
     release(...objects: object[]): Promise<void>;
+    beginCheckpointScope(name: string): Promise<CheckpointScope>;
+    checkpointScope<T>(name: string, fn: (scope: CheckpointScope) => Promise<T>): Promise<T>;
+    close(): Promise<void>;
+}
+export declare class CheckpointScope {
+    private constructor();
+    readonly eda: API.EDA;
+    readonly checkpointId: string;
     close(): Promise<void>;
 }
 export declare function listInstances(options?: Pick<ConnectOptions, 'url'>): Promise<EasyEdaInstance[]>;

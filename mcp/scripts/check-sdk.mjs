@@ -17,6 +17,14 @@ const runtimeFile = resolve(temp, 'executor.mjs');
 await build({ entryPoints: [resolve(root, '../extension/src/eda/execute-js.ts')], outfile: runtimeFile,
     bundle: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
 const { executeJavaScript } = await import(pathToFileURL(runtimeFile));
+const scopesFile = resolve(temp, 'scopes.mjs');
+await build({ entryPoints: [resolve(root, '../extension/src/eda/checkpoint-scopes.ts')], outfile: scopesFile,
+    bundle: true, platform: 'browser', format: 'esm', logLevel: 'silent' });
+const { CheckpointScopes } = await import(pathToFileURL(scopesFile));
+let saves = 0, legacyExtension = false;
+const pins = new Map();
+const scopes = new CheckpointScopes({ save: async () => { saves++; return `checkpoint-${dispatches}`; },
+    pin: (id, until) => pins.set(id, until), unpin: id => pins.delete(id) });
 let documentUuid = 'test-board', dispatches = 0, creates = 0, ignored = false, instances = 1;
 class Component {
     constructor(name) { this.name = name; }
@@ -53,7 +61,8 @@ server.on('connection', socket => {
         if (ignored) return;
         tail = tail.then(async () => {
             dispatches++;
-            reply(await executeJavaScript(body.body.code, eda, async () => `checkpoint-${dispatches}`, body.body.inputs));
+            reply(legacyExtension ? await executeJavaScript(body.body.code, eda, async () => `checkpoint-${dispatches}`, body.body.inputs)
+                : await scopes.execute(body.body, eda, 1));
         });
     });
 });
@@ -182,13 +191,22 @@ try {
     test('generated Node types check return values, arguments, overloads and enums', async () => {
         const consumer = resolve(temp, 'consumer.mts');
         // Use a relative module specifier so tsc tests normal on-disk module resolution on both platforms.
-        await writeFile(consumer, `import {connect,EPCB_LayerId,type API} from '../../dist/lib/node/index.mjs';
+        await writeFile(consumer, `import {connect,EPCB_LayerId,milToMm,assertUnitScale,type API} from '../../dist/lib/node/index.mjs';
 const s=await connect();
 const components: API.IPCB_PrimitiveComponent[]=await s.eda.pcb_PrimitiveComponent.getAll(EPCB_LayerId.TOP);
 const one: API.IPCB_PrimitiveComponent|undefined=await s.eda.pcb_PrimitiveComponent.get('id');
 const many: API.IPCB_PrimitiveComponent[]=await s.eda.pcb_PrimitiveComponent.get(['id']);
 const names: (string|undefined)[]=await Promise.all(components.map(c=>c.getState_Designator()));
 const image: Blob|undefined=await s.eda.dmt_EditorControl.getCurrentRenderedAreaImage();
+const scopeResult: number=await s.checkpointScope('typed',async scope=>{
+  const scoped: API.IPCB_PrimitiveComponent[]=await scope.eda.pcb_PrimitiveComponent.getAll();
+  const cp: string=scope.checkpointId;
+  return scoped.length;
+});
+const explicit=await s.beginCheckpointScope('explicit');await explicit.close();
+const mm: number=milToMm(10);assertUnitScale(10,.254,.0254,.001);
+// @ts-expect-error conversion input must be numeric
+milToMm('10');
 if(image) { const bytes: ArrayBuffer=await image.arrayBuffer(); }
 await s.eda.pcb_PrimitiveComponent.modify(components[0], {x:1,y:2});
 // @ts-expect-error misspelled API method
@@ -319,6 +337,71 @@ await s.close();
             await fresh.executeJs({ code: 'delete globalThis.__easyedaCopilotLocalSdkV1; return true;' });
             await assert.rejects(Promise.resolve(fresh.eda.test.scalar()), /expired/);
         } finally { await fresh.close(); }
+    });
+    test('checkpoint scope shares one baseline across dependent Node calls and legacy bodies', async () => {
+        const s = await open();
+        const before = saves;
+        await s.checkpointScope('Ground repair', async scope => {
+            const cp = scope.checkpointId;
+            assert.equal(await scope.eda.test.scalar(), 42);
+            assert.equal(s.lastCheckpoint, cp);
+            await s.eval('return eda.test.write()');
+            await s.executeJs({ code: 'return 123' });
+            assert.equal(s.lastCheckpoint, cp);
+            await assert.rejects(s.beginCheckpointScope('nested'), /Nested/);
+        });
+        assert.equal(saves-before, 1);
+        assert.equal(pins.size, 0);
+        await s.eda.test.scalar(); assert.equal(saves-before, 2);
+        await s.close();
+    });
+    test('checkpoint scope failures keep edits and return baseline; close is idempotent', async () => {
+        const s=await open(); const n=creates; let cp;
+        await assert.rejects(s.checkpointScope('failure', async scope => {
+            cp=scope.checkpointId;
+            await scope.eda.test.write();
+            await scope.eda.test.fail();
+        }), e => e.checkpoint===cp && /test failure/.test(e.message));
+        assert.equal(creates,n+1); assert.equal(pins.size,0);
+        const scope=await s.beginCheckpointScope('close');
+        const work=Promise.resolve(scope.eda.test.slow(20,42));
+        await nextTurn();
+        await Promise.all([scope.close(),scope.close()]);
+        assert.equal(await work,42);
+        assert.throws(()=>scope.eda,/closed/);
+        await s.close();
+    });
+    test('scope document checks also protect legacy executeJs and session close unpins', async () => {
+        const s=await open(); const scope=await s.beginCheckpointScope('bound');const n=creates;
+        documentUuid='other-board';
+        try { await assert.rejects(s.executeJs({code:'return eda.test.write()'}),/document changed/); }
+        finally { documentUuid='test-board'; }
+        assert.equal(creates,n);
+        await s.close(); assert.equal(pins.size,0); await scope.close();
+    });
+    test('old extension fails scope negotiation before user code, ordinary execution remains available', async () => {
+        const s=await open(); let called=false;
+        legacyExtension=true;
+        try {
+            await assert.rejects(s.checkpointScope('unsupported',async()=>{called=true}),/update the extension/);
+            assert.equal(called,false);
+            assert.equal(await s.eda.test.scalar(),42);
+        } finally {legacyExtension=false;await s.close();}
+    });
+    test('ending a scope drains eval binary encoding before releasing its baseline',async()=>{
+        const s=await open(); const scope=await s.beginCheckpointScope('binary drain');const before=saves;
+        const blob=new Blob(['x']); const original=blob.arrayBuffer.bind(blob);
+        blob.arrayBuffer=async()=>{await delay(30);return original()};
+        const work=s.eval('return inputs.blob',{blob});
+        await scope.close();assert.equal(await (await work).text(),'x');assert.equal(saves,before);
+        await s.close();
+    });
+    test('session close during scope entry releases any created pin',async()=>{
+        const s=await open();
+        const opening=s.beginCheckpointScope('closing during entry');
+        const results=await Promise.allSettled([opening,s.close()]);
+        assert.equal(results[1].status,'fulfilled');
+        assert.equal(pins.size,0);
     });
     let failures = 0;
     for (const [name, fn] of cases) {

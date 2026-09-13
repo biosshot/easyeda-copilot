@@ -9,7 +9,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = resolve(root, 'dist/lib/node');
 const require = createRequire(import.meta.url);
 await mkdir(out, { recursive: true });
-await build({ entryPoints: { index: resolve(root, 'src/lib/index.ts'), worker: resolve(root, 'src/lib/worker.ts') },
+await build({ entryPoints: { index: resolve(root, 'src/lib/index.ts'), worker: resolve(root, 'src/lib/worker.ts'), units: resolve(root, 'src/lib/units.ts') },
     outdir: out, outExtension: { '.js': '.mjs' }, bundle: true, platform: 'node', format: 'esm',
     target: 'es2022', external: ['ws'], logLevel: 'warning' });
 await appendFile(resolve(out, 'index.mjs'), "\nexport * from './constants.mjs';\n");
@@ -69,6 +69,12 @@ const version = JSON.parse(await readFile(resolve(dirname(nativePath), 'package.
 await writeFile(resolve(out, 'api.d.mts'), `// Generated from @jlceda/pro-api-types ${version} (Apache-2.0). Do not edit.\n/// <reference lib="dom" />\nimport type { RemoteCall } from './index.mjs';\ndeclare namespace API ${namespace}\nexport type { API };\n`);
 await writeFile(resolve(out, 'constants.d.mts'), `import type { API } from './api.mjs';\n${enums.map(n => `export declare const ${n.name.text}: typeof API.${n.name.text};`).join('\n')}\n`);
 await cp(resolve(root, 'src/lib/public.d.ts'), resolve(out, 'index.d.mts'));
+const unitFile = resolve(root, 'src/lib/units.ts');
+const unitProgram = ts.createProgram([unitFile], { declaration: true, emitDeclarationOnly: true, target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext, skipLibCheck: true });
+const unitDeclarations = [];
+const unitEmit = unitProgram.emit(undefined, (path, content) => { if (path.endsWith('.d.ts')) unitDeclarations.push(content); });
+if (unitEmit.emitSkipped || unitDeclarations.length !== 1) throw Error('Could not generate units declarations');
+await writeFile(resolve(out, 'units.d.mts'), unitDeclarations[0]);
 await cp(resolve(dirname(nativePath), 'LICENSE'), resolve(out, 'API-LICENSE'));
 await writeFile(resolve(out, 'package.json'), JSON.stringify({ private: true, type: 'module', main: './index.mjs', types: './index.d.mts' }, null, 2) + '\n');
 console.log(`Local SDK: Node.js + Python, API declarations ${version}.`);

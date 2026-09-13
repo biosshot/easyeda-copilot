@@ -61,11 +61,13 @@ const installedDocs = join(consumer, 'node_modules/easyeda-copilot-mcp/docs');
 const installedSdk = join(consumer, 'node_modules/easyeda-copilot-mcp/dist/lib');
 const sdkSmoke = join(consumer, 'sdk-smoke.mjs');
 writeFileSync(sdkSmoke, `import assert from 'node:assert/strict';
-import {connect,EPCB_LayerId} from './node_modules/easyeda-copilot-mcp/dist/lib/node/index.mjs';
+import {connect,EPCB_LayerId,Session,milToMm} from './node_modules/easyeda-copilot-mcp/dist/lib/node/index.mjs';
+assert.equal(milToMm(100),2.54); assert.equal(typeof Session.prototype.checkpointScope,'function');
 assert.equal(typeof connect, 'function'); assert.equal(EPCB_LayerId.TOP, 1);
 console.log('Packaged SDK imports without source checkout or editor types.');`);
 process.stdout.write(run([sdkSmoke], consumer, cleanEnv));
 for (const file of ['node/index.d.mts', 'node/api.d.mts', 'node/worker.mjs', 'node/API-LICENSE',
+  'node/units.mjs','node/units.d.mts', 'python/easyeda_copilot/units.py',
   'python/easyeda_copilot/__init__.py', 'python/easyeda_copilot/constants.py']) {
   assert.ok(readFileSync(join(installedSdk, file)).length > 0, 'Missing packaged SDK file: ' + file);
 }

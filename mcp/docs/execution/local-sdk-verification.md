@@ -19,7 +19,7 @@ Audit of the SDK introduced in commit `47506f9`, on branch `feat/local-eda-sdk`.
 
 ## Automated coverage
 
-`npm run test:sdk --workspace=mcp` runs two suites:
+The original audit ran two suites (the scope/geometry additions are recorded below):
 
 - **24 SDK integration groups:** native objects and receivers, lazy expressions and at-most-once execution, batching and failure prefixes, file inputs, validation, generated TypeScript signatures/overloads/enums, session isolation/release/expiry/reload, shutdown races, document guards, cancellation, numeric edge cases, unknown classes and cyclic returned graphs. Binary checks include every supported typed-array class, byte offsets, empty values, base64 padding/chunk boundaries, File metadata and a Blob exceeding 2 MiB. Nested-data checks include 200 deterministic randomized records. Python runs against the same broker and executor, including its actual Node worker.
 - **8 production-broker groups:** two editors with explicit targeting, simultaneous request correlation, 30 connect/close cycles, 10 concurrent SDK sessions with 1000 writes, a mutation finishing after timeout, a lost reply after a completed mutation, owner shutdown without SDK promotion, and handshake rejection with socket cleanup.
@@ -51,3 +51,46 @@ The opt-in scripts `mcp/scripts/check-sdk-live.mjs` and `mcp/scripts/check-sdk-l
 - The scripts retained checkpoints and wrote local reports under `mcp/.test-data/sdk-live`.
 
 These tests validate the transport and representative native PCB APIs. They do not establish exhaustive coverage of every EasyEDA method. Native browser callbacks and streaming/zero-copy binary transfer remain outside the SDK contract described in [local-sdk.md](local-sdk.md).
+
+## Checkpoint scopes, units and Shapely follow-up — 2026-09-13
+
+The updated distribution provides checkpoint scopes in Node and Python, length
+helpers in both languages, and optional Shapely examples. Ordinary execution keeps
+its existing checkpoint behavior. Scopes require the updated editor extension.
+
+- **30 SDK integration groups**, including callback/explicit scopes, original error
+  preservation, Python context cancellation, scope transitions, Node binary-encoding
+  drain, generated TypeScript scope/unit declarations, and old-extension negotiation.
+  The final SDK suite passed on Node 20.19.0 with its actual Python worker; Node
+  26.5.0 ran the full MCP gate and the earlier 29-group revision.
+- **9 production-broker groups**, including scope metadata forwarding and client isolation.
+- **19 extension tests**, including token ownership/document/expiry/reconnect checks,
+  controls that do not execute supplied scripts, and pinned-baseline history pruning.
+- **6 Python/Shapely test groups** plus Node unit checks: unit mismatches, signed
+  arcs, curve approximation, holes/nested islands, strokes, pose, and explicit
+  invalid-contour repair with reported non-area residues.
+- Full MCP check passed with ngspice required and no optional Shapely skip. The
+  isolated installed-package test passed, including SDK scope methods, conversion
+  exports and packaged unit files. The extension `.eext` build passed.
+
+Live tests ran sequentially on PCB `b988759eb94f13da` after the user installed the
+updated extension; editor version **3.2.149.88089769**:
+
+| Language | Scope checkpoint | In-scope baseline count | Original line IDs | Final native DRC |
+|---|---|---|---|---|
+| Node | `1jjgcxnsl8i0zqu3` | 1 | Preserved | Empty |
+| Python | `qir8yhi6tmm8oean` | 1 | Preserved | Empty |
+
+Each script created/modified/deleted its own DOCUMENT-layer marker and obtained a
+native Blob. Normal checkpoint creation resumed outside the scope. Test-body times
+were approximately 6.1 and 6.2 seconds; they are not a controlled before/after benchmark.
+Use `scripts/check-sdk-scopes-live.mjs` or `.py` with an explicitly authorized test
+PCB UUID to repeat them; the scripts perform temporary edits.
+
+The shipped read-only `inspect_copper.py` example ran against 153 top-layer and 21
+bottom-layer native fill records. Strict conversion identified one invalid contour.
+Explicit repair reported a self-intersection and a discarded LineString residue;
+that contour's area was unchanged within floating-point precision. Repaired top
+copper area was about 1276.6613 mm², bottom area 1864.5573 mm². These are approximate
+geometric summaries, not a connectivity or fabrication certificate. The example
+retains strict failure as its default and requires an explicit scale argument.

@@ -7,6 +7,7 @@ export const EXECUTE_JS_MAX_WIRE_BYTES = 12 * (EXECUTE_JS_MAX_CODE_BYTES + EXECU
 /** Internal bridge payload; binary data and serialized JSON never go straight to MCP. */
 export type ExecuteJsWireResult = {
     checkpoint: string | null;
+    checkpointScope?: { token: string; sessionId: string; documentUuid: string; checkpointId: string; expiresAt: number };
     result:
         | { kind: 'json'; json: string }
         | { kind: 'binary'; base64: string; mime_type: string }

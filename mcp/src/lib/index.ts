@@ -5,6 +5,7 @@ import { isAbsolute } from 'node:path';
 import { ProxyBridge, type EasyEdaInstance } from '../bridge/index';
 import { EXECUTE_JS_MAX_CODE_BYTES, EXECUTE_JS_MAX_INPUT_BYTES, type ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
 import { remoteRuntime } from './runtime';
+export * from './units';
 
 type Expression = { k: 'root' } | { k: 'ref'; id: string; sessionId: string }
     | { k: 'get'; target: Expression; key: string | number }
@@ -99,6 +100,9 @@ export class Session {
     private tail: Promise<unknown> = Promise.resolve();
     private pending: { expression: Promise<Expression>; resolve: (v: any) => void; reject: (e: any) => void }[] = [];
     private scheduled?: ReturnType<typeof setImmediate>;
+    private scope?: CheckpointScope;
+    private scopeTransition = false;
+    private scopeReply?: ExecuteJsWireResult['checkpointScope'];
     constructor(private bridge: ProxyBridge, readonly instanceId: string, private timeoutMs: number) {
         this.eda = this.proxy({ k: 'root' }, false);
     }
@@ -140,6 +144,7 @@ export class Session {
         return proxy;
     }
     private enqueue(expression: Promise<Expression>) {
+        if (this.scopeTransition) return Promise.reject(new SdkError('Checkpoint scope is opening or closing; await the transition'));
         if (this.closing || this.closed || this.broken) return Promise.reject(new SdkError('SDK session is closed or disconnected; reconnect explicitly'));
         return new Promise((resolve, reject) => {
             this.pending.push({ expression, resolve, reject });
@@ -170,38 +175,44 @@ export class Session {
         this.tail = result.catch(() => undefined);
         return result;
     }
-    private async wire(code: string, inputs: Record<string, string> = {}) {
+    private async wire(code: string, inputs: Record<string, string> = {}, scopeRequest?: Record<string, unknown>) {
         if (this.closed || this.broken) throw new SdkError('SDK session is closed or disconnected; reconnect explicitly');
         if (typeof code !== 'string' || !code.trim()) throw new SdkError('JavaScript code must be a nonempty string');
         if (Buffer.byteLength(code) > EXECUTE_JS_MAX_CODE_BYTES) throw new SdkError('JavaScript exceeds 64 MiB');
         if (Object.values(inputs).reduce((size, value) => size + Buffer.byteLength(value), 0) > EXECUTE_JS_MAX_INPUT_BYTES) throw new SdkError('SDK inputs exceed 512 MiB');
         let reply: ExecuteJsWireResult;
         try {
-            reply = await this.bridge.requestEasyEda('execute-js', { code, inputs }, this.timeoutMs, this.instanceId) as ExecuteJsWireResult;
+            const checkpointScope = scopeRequest ?? (this.scope ? { action: 'use', sessionId: this.id, token: this.scope.token } : undefined);
+            reply = await this.bridge.requestEasyEda('execute-js', { code, inputs, ...(checkpointScope ? { checkpointScope } : {}) }, this.timeoutMs, this.instanceId) as ExecuteJsWireResult;
         } catch (error) {
             this.broken = true;
             this.bridge.close();
             throw new SdkError(`${String(error)}. Execution may still be running; do not automatically retry.`, null, true);
         }
         this.lastCheckpoint = reply.checkpoint;
+        this.scopeReply = reply.checkpointScope;
         if (reply.error) throw new SdkError(`${reply.error.phase}: ${reply.error.message}`, reply.checkpoint);
         if (!reply.result) throw new SdkError('Empty execute-js result', reply.checkpoint);
         return reply.result;
     }
     /** Internal wire-level entry point shared with Python; does not start a broker. */
     request(packet: Record<string, unknown>): Promise<any> {
-        return this.serialize(async () => {
-            const code = `return await (${remoteRuntime.toString()})(eda, JSON.parse(inputs.packet));`;
-            const result = await this.wire(code, { packet: JSON.stringify({ ...packet, sessionId: this.id }) });
-            if (result.kind !== 'json') throw new SdkError('Unexpected SDK envelope');
-            return JSON.parse(result.json);
-        });
+        return this.serialize(() => this.packetWire(packet));
+    }
+    private async packetWire(packet: Record<string, unknown>): Promise<any> {
+        const code = `return await (${remoteRuntime.toString()})(eda, JSON.parse(inputs.packet));`;
+        const result = await this.wire(code, { packet: JSON.stringify({ ...packet, sessionId: this.id }) });
+        if (result.kind !== 'json') throw new SdkError('Unexpected SDK envelope');
+        return JSON.parse(result.json);
     }
     async eval(code: string, inputs: unknown = {}) {
-        return decode(await this.request({ action: 'eval', code, inputs: await resolveExpressions(await encode(inputs, this)) }), this);
+        this.assertAvailable();
+        return this.serialize(async () => decode(await this.packetWire({ action: 'eval', code, inputs: await resolveExpressions(await encode(inputs, this)) }), this));
     }
     /** Existing EasyEDA script semantics, including inputs[name] strings. Returns data, not MCP file artifacts. */
     async executeJs(options: ExecuteJsOptions): Promise<any> {
+        this.assertAvailable();
+        return this.serialize(async () => {
         if ((options.code !== undefined) === (options.file_path !== undefined)) throw new SdkError('Provide exactly one of code or file_path');
         const code = options.code ?? await readInput(options.file_path!, EXECUTE_JS_MAX_CODE_BYTES);
         const inputs: Record<string, string> = Object.assign(Object.create(null), options.inputs);
@@ -214,19 +225,65 @@ export class Session {
             inputs[name] = await readInput(file.path, EXECUTE_JS_MAX_INPUT_BYTES - size);
             size += Buffer.byteLength(inputs[name]);
         }
-        return this.serialize(async () => {
             const result = await this.wire(code, inputs);
             return result.kind === 'json' ? JSON.parse(result.json)
                 : new Blob([Buffer.from(result.base64, 'base64')], { type: result.mime_type });
         });
     }
     async release(...objects: object[]) {
+        this.assertAvailable();
         const ids = objects.map(obj => {
             const ref = remote.get(obj);
             if (!ref || ref.session !== this || ref.expression.k !== 'ref') throw new SdkError('Expected an object from this session');
             return ref.expression.id;
         });
         await this.request({ action: 'release', ids });
+    }
+    private assertAvailable() {
+        if (this.scopeTransition || this.closing || this.closed || this.broken) throw new SdkError('Session is closed, disconnected or changing checkpoint scope');
+    }
+    private async drain() {
+        if (this.scheduled) { clearImmediate(this.scheduled); this.scheduled = undefined; }
+        await this.startFlush();
+        await Promise.all(this.flushing);
+        await this.tail;
+    }
+    /** One baseline for all requests on this session until close; no rollback or isolation. */
+    async beginCheckpointScope(name: string): Promise<CheckpointScope> {
+        this.assertAvailable();
+        if (this.scope) throw new SdkError('Nested checkpoint scopes are unsupported');
+        if (!this.documentUuid) throw new SdkError('Checkpoint scope requires a bound document');
+        if (typeof name !== 'string' || !name.trim() || name.trim().length > 200) throw new SdkError('Checkpoint scope name must contain 1 to 200 characters');
+        this.scopeTransition = true;
+        try {
+            await this.drain();
+            return await this.serialize(async () => {
+                await this.wire('return null;', {}, { action: 'begin', sessionId: this.id, documentUuid: this.documentUuid, name });
+                const info = this.scopeReply;
+                if (!info?.token || info.sessionId !== this.id || info.documentUuid !== this.documentUuid || info.checkpointId !== this.lastCheckpoint) {
+                    throw new SdkError('Connected extension does not support checkpoint scopes; update the extension. No scope body was executed.', this.lastCheckpoint);
+                }
+                return this.scope = new CheckpointScope(this, info.token, info.checkpointId);
+            });
+        } finally { this.scopeTransition = false; }
+    }
+    async checkpointScope<T>(name: string, fn: (scope: CheckpointScope) => Promise<T>): Promise<T> {
+        const scope = await this.beginCheckpointScope(name);
+        let result: T;
+        try { result = await fn(scope); }
+        catch (error) { await scope.close().catch(() => undefined); throw error; }
+        await scope.close();
+        return result;
+    }
+    /** Internal lifecycle entry point shared by callback scopes and the Python worker. */
+    async endCheckpointScope(scope: CheckpointScope): Promise<void> {
+        if (this.scope !== scope) return;
+        if (this.scopeTransition) throw new SdkError('Checkpoint scope transition already running');
+        this.scopeTransition = true;
+        try {
+            await this.drain();
+            if (!this.broken && !this.closed) await this.serialize(() => this.wire('return null;', {}, { action: 'end', sessionId: this.id, token: scope.token }));
+        } finally { this.scope = undefined; this.scopeTransition = false; }
     }
     close(): Promise<void> {
         return this.closing ??= this.finishClose();
@@ -237,8 +294,21 @@ export class Session {
         await this.startFlush();
         await Promise.all(this.flushing);
         try { if (!this.broken) await this.request({ action: 'close' }); }
-        finally { this.closed = true; this.bridge.close(); }
+        finally {
+            try { if (this.scope) await this.scope.close(); }
+            finally { this.closed = true; this.bridge.close(); }
+        }
     }
+}
+
+export class CheckpointScope {
+    private closing?: Promise<void>;
+    constructor(private session: Session, readonly token: string, readonly checkpointId: string) {}
+    get eda(): any {
+        if (this.closing) throw new SdkError('Checkpoint scope is closed');
+        return this.session.eda;
+    }
+    close(): Promise<void> { return this.closing ??= this.session.endCheckpointScope(this); }
 }
 
 async function resolveExpressions(value: any): Promise<any> {

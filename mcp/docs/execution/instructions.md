@@ -33,7 +33,12 @@ Do not turn a local correction into whole-board regeneration. A placement/routin
 
 ## PCB coordinates and component edits
 
-Placement/routing DSL dimensions are in millimeters. Native PCB/footprint API coordinates use **mil**: `1 mil = 0.0254 mm`. Schematic/symbol coordinates use a different scale: one coordinate unit spans `0.01 inch`. Check the specific API before copying coordinates.
+Read the [field-specific unit table and compatibility checks](pcb-units.md): filled
+pour paths currently differ by a factor of ten from ordinary primitive coordinates.
+For local calculations see [Shapely examples](shapely-geometry.md). These observations
+require basic verification when the connected EasyEDA API changes.
+
+Placement/routing DSL dimensions are in millimeters. Ordinary native PCB/footprint primitive coordinates use **mil**: `1 mil = 0.0254 mm`; filled-pour paths and some fields use other scales listed in [PCB units](pcb-units.md). Schematic/symbol coordinates use a different scale: one coordinate unit spans `0.01 inch`. Check the specific API before copying coordinates.
 
 Use native readback as the basis for native edits. Conversion of units alone does not establish the same origin, Y direction or bottom-side rotation convention as a DSL, normalized PCB export or preview. Do not negate Y or mirror a bottom-side component by guesswork.
 
