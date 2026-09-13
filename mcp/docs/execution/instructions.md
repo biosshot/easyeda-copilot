@@ -2,7 +2,7 @@
 
 Use `execute_js` for a focused native API inspection, a specific correction after Copilot placement/routing, or an operation without a suitable dedicated tool. The tool name is `execute_js`; a `.js` file is one way to supply its code. Scripts run with extension permissions, without a sandbox or automatic rollback.
 
-For local Python/Node.js computation, use the bundled [local SDK](local-sdk.md). It exposes awaitable native API proxies through the existing broker, supports binary values, and keeps the ordinary JavaScript execution path available.
+For local Python/Node.js computation combined with native API calls, prefer the bundled [local SDK](local-sdk.md#when-to-use-the-sdk). Keep reading the board, calculating locally and applying a scoped change in one script instead of repeatedly exporting JSON and generating separate `execute_js` bodies. It exposes awaitable native API proxies through the existing broker, supports binary values, and keeps the ordinary JavaScript execution path available. A self-contained edit that needs no local runtime can still use `execute_js` directly.
 
 ## Select the action
 
@@ -10,6 +10,7 @@ For local Python/Node.js computation, use the bundled [local SDK](local-sdk.md).
 |---|---|
 | Generate or substantially revise placement/routing | The placement or routing DSL workflow first, unless the user requests another approach. |
 | Inspect a net, component neighborhood or rendered PCB | `inspect_net`, `inspect_component`, or `preview_pcb`; use JavaScript for missing native details. |
+| Compute geometry with Python/Node.js, process native binary results, or iterate through local read–calculate–apply cycles | The [local SDK](local-sdk.md#when-to-use-the-sdk), using local libraries and awaitable native API calls in one script. |
 | Correct a few known component positions/rotations | A focused script after verifying native poses, neighbors and allowed scope. |
 | Repair selected routing | A scoped router transaction; use JavaScript when an exact native-object correction is clearly simpler or the DSL cannot express it. |
 | Add a local copper keepout absent from the DSL | A focused native region edit with the required layer and exclusion rules, followed by refill and verification. |

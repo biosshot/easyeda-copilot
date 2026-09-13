@@ -7,7 +7,7 @@ description: Create, modify, place, route, or review EasyEDA schematics and PCBs
 
 Complete only the stage requested by the user. A schematic task does not authorize PCB work; placement does not authorize routing.
 
-For overall schematic organization, PCB placement and routing, start with Copilot's dedicated tools and verify their result. Improve that result with scoped refinement; use `execute_js` when a direct local correction is clearly simpler, the DSL cannot express it, or attempts have stalled. Use a different approach when the user explicitly requests it. Access to JavaScript does not expand the authorized task.
+For overall schematic organization, PCB placement and routing, start with Copilot's dedicated tools and verify their result. Improve that result with scoped refinement; use native API edits when a direct local correction is clearly simpler, the DSL cannot express it, or attempts have stalled. For a self-contained edit inside EasyEDA, use `execute_js`. When refinement needs local Python/Node.js geometry, libraries or repeated read–calculate–apply cycles, prefer the [local SDK](execution/local-sdk.md#when-to-use-the-sdk) so calculations and API calls stay in one script. Reassess this choice when local computation enters an existing MCP workflow. Use a different approach when the user explicitly requests it. Native API access does not expand the authorized task.
 
 ## Start
 

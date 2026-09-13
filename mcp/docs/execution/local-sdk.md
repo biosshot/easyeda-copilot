@@ -4,6 +4,21 @@ Use this SDK when a task benefits from local libraries, calculations or file pro
 
 Read [execution instructions](instructions.md) and the relevant [API declarations](easyeda-api/references/_index.md). Ordinary PCB primitives use mil, with [field-specific exceptions](pcb-units.md), including filled-pour geometry. A remote call does not add missing API methods or change native commit semantics such as `done()`.
 
+## When to use the SDK
+
+Use the placement/routing DSL for overall layout intent and scoped routing passes. Choose the SDK for native analysis or corrections that combine EasyEDA access with local Python/Node.js work: geometry libraries, file or binary processing, or repeated read–calculate–apply cycles. A typical transition is a routing pass that leaves a diagnosed local clearance or ground-connection problem requiring geometric calculation. Prefer one SDK script over repeatedly exporting board JSON, calculating in another process and generating a separate `execute_js` body for each repair.
+
+Keep `execute_js` for a self-contained operation inside EasyEDA that does not benefit from a local runtime. Starting with MCP does not require finishing through the same execution path. The SDK uses the existing broker and native API; it does not add a routing algorithm, fix native API limitations or make edits atomic.
+
+For example, a local ground-connection repair can follow this workflow:
+
+1. Open the intended PCB and bind an SDK session to its instance and document UUID. Retain an explicit baseline checkpoint; use [checkpoint scopes](checkpoint-scopes.md) when several dependent requests need one baseline.
+2. Read the affected pads, nets, nearby copper and current filled regions through `session.eda`. Confirm [units and coordinates](pcb-units.md) before local calculations.
+3. Use local geometry libraries to propose a short connection and via positions. The [Shapely examples](shapely-geometry.md) show how to bring native geometry into local calculations.
+4. Recheck the document and target preconditions before writing. Apply only the diagnosed correction, await all mutations and retain the checkpoint ID. Re-read objects when the editor splits or replaces primitives.
+5. Rebuild affected pours and check native connectivity, DRC and geometry using [refill and DRC](pcb-refill-and-drc.md) and [routing verification](../pcb-routing/verification.md). A successful API call or local geometric calculation alone does not verify the repair.
+6. Report a compact before/after result and close the session, including on failure. If an execution outcome is unknown, resolve it before retrying or restoring.
+
 ## Locate and run
 
 The MCP tool description gives the absolute docs path. Its parent is the MCP package root, called `MCP_ROOT` below. The distribution contains:
