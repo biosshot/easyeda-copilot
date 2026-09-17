@@ -20,12 +20,12 @@ function load(relative: string, imports: Record<string, unknown>, globals: Recor
     return exports;
 }
 
-function editor(options: { version?: number; changePage?: boolean; failWires?: boolean; missingPin?: boolean; duplicate?: boolean; staleOnce?: boolean } = {}) {
+function editor(options: { version?: number; changePage?: boolean; failWires?: boolean; missingPin?: boolean; duplicate?: boolean; staleOnce?: boolean; subPartName?: string } = {}) {
     let pageReads = 0, netReads = 0, wireReads = 0;
     const calls: string[] = [];
     const raw = (id: string, designator: string, x: number, kind = 'component') => ({
         getState_PrimitiveId: () => id, getState_Designator: () => designator,
-        getState_ComponentType: () => kind, getState_SubPartName: () => '',
+        getState_ComponentType: () => kind, getState_SubPartName: () => id === 'r' ? options.subPartName ?? '' : '',
         getState_X: () => x, getState_Y: () => options.version === 2 ? -50 : 50,
     });
     const primitives = [raw('r', 'R1', 0), raw('c', options.duplicate ? 'R1' : 'C1', 20), raw('flag', '3V3|flag', 1e6, 'flag')];
@@ -67,6 +67,16 @@ test('live adapter excludes flags, reads the whole page without selection or lib
         const e = editor({ version });
         assert.equal(JSON.stringify(await e.run()), JSON.stringify(expected));
         assert.deepEqual(e.calls, ['components', 'pins:r', 'pins:c']);
+        assert.deepEqual(e.counts(), { netReads: 1, wireReads: 1 });
+    }
+});
+
+test('live adapter preserves a lone numeric or named section without changing netlist/wire references', async () => {
+    for (const version of [2, 3]) for (const subPartName of ['2', 'B']) {
+        const e = editor({ version, subPartName });
+        assert.equal(JSON.stringify(await e.run()), JSON.stringify({
+            maybe_blocks: [`C1 R1.${subPartName}`], wires: expected.wires,
+        }));
         assert.deepEqual(e.counts(), { netReads: 1, wireReads: 1 });
     }
 });

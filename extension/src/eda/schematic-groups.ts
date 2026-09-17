@@ -2,7 +2,7 @@ import type { SchematicGroups } from '@copilot/shared/types/schematic-groups';
 
 type Point = { x: number; y: number };
 type Pin = Point & { number: string; net: string | null };
-type Component = Point & { designator: string; pins: Pin[] };
+type Component = Point & { designator: string; subPartName?: string; pins: Pin[] };
 type Box = { minX: number; minY: number; maxX: number; maxY: number };
 
 /** Plain-data input for reproducible offline tests; not an MCP input parameter. */
@@ -82,6 +82,7 @@ async function collectSnapshot(): Promise<SchematicGroupsSnapshot> {
             if (!Array.isArray(pins)) throw new Error(`Could not read pins of ${designator}.`);
             return {
                 designator,
+                subPartName: primitive.getState_SubPartName() || undefined,
                 // Pin and wire coordinates already share a frame. Only the v2 symbol origin is inverted.
                 ...checkedPoint(primitive.getState_X(), normWireY(primitive.getState_Y())),
                 pins: pins.map(pin => {
@@ -345,14 +346,16 @@ function findMaybeBlocks(components: Component[], graph: WireGraph): string[] {
         for (const other of active.values()) offer(other, merged);
         active.set(merged.id, merged);
     }
-    // Separate symbol units can occupy different local groups. Do not invent one huge bounding box
-    // or claim two exclusive owners for the same designator in this deliberately compact contract.
+    // Block membership identifies a symbol section, not its shared physical package.
+    // Keep base designators unchanged for netlist lookups, wire pins and net prevalence.
+    const refs = components.map(c => c.subPartName
+        ? `${c.designator}.${token(c.subPartName, 'sub-part name')}` : c.designator);
     const membership = new Map<string, Set<number>>();
     for (const cluster of active.values()) for (const i of cluster.members) {
-        const ref = components[i].designator, ids = membership.get(ref) ?? new Set<number>();
+        const ref = refs[i], ids = membership.get(ref) ?? new Set<number>();
         ids.add(cluster.id); membership.set(ref, ids);
     }
-    return [...active.values()].map(cluster => sorted(cluster.members.map(i => components[i].designator)
+    return [...active.values()].map(cluster => sorted(cluster.members.map(i => refs[i])
         .filter(ref => membership.get(ref)!.size === 1)))
         .filter(refs => refs.length > 1).map(refs => refs.join(' ')).sort(compare);
 }
