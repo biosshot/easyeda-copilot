@@ -228,12 +228,58 @@ test('repeated supply pins do not multiply common-net evidence', async () => {
     assert.deepEqual((await getSchematicGroups(input)).maybe_blocks, expected.maybe_blocks);
 });
 
-test('multipart symbols do not create a bounding box across the sheet or duplicate block ownership', async () => {
-    const input: Snapshot = { components: [passive('U1', 0, 0, ['A', 'GND']), passive('C1', 0, 50, ['A', 'GND']),
-        passive('U1', 3000, 0, ['B', 'GND']), passive('C2', 3000, 50, ['B', 'GND'])], wires: [] };
+test('multipart sections stay in their local blocks without merging distant geometry', async () => {
+    for (const [first, second] of [['1', '2'], ['A', 'B']]) {
+        const input: Snapshot = { components: [
+            { ...passive('U1', 0, 0, ['A', 'GND']), subPartName: first },
+            passive('C1', 0, 50, ['A', 'GND']),
+            { ...component('U1', 3000, 0, [pin('5', 2975, 0, 'B'), pin('7', 3025, 0, 'GND')]), subPartName: second },
+            passive('C2', 3000, 50, ['B', 'GND']),
+        ], wires: [] };
+        const expected = { maybe_blocks: [`C1 U1.${first}`, `C2 U1.${second}`], wires: [] };
+        assert.deepEqual(await getSchematicGroups(input), expected);
+        input.components.reverse();
+        assert.deepEqual(await getSchematicGroups(input), expected);
+    }
+});
+
+test('different sections in one block are not collapsed into the base designator', async () => {
+    const result = await getSchematicGroups({ components: [
+        { ...passive('U1', 0, 0, ['S', 'GND']), subPartName: '1' },
+        { ...component('U1', 0, 50, [pin('5', -25, 50, 'S'), pin('7', 25, 50, 'GND')]), subPartName: '2' },
+        passive('R1', 0, 100, ['S', 'GND']),
+    ], wires: [] });
+    assert.deepEqual(result, { maybe_blocks: ['R1 U1.1 U1.2'], wires: [] });
+});
+
+test('second amplifier sections survive remote first sections; wires keep physical pin numbers', async () => {
+    const input: Snapshot = { components: [
+        { ...component('U21', 0, 0, [pin('6', -25, -10, 'FB'), pin('5', -25, 10, 'AINB'), pin('7', 25, 0, 'BUFFER')]), subPartName: '2' },
+        { ...component('U22', 100, 0, [pin('6', 75, -10, 'PWM'), pin('5', 75, 0, 'BUFFER'), pin('7', 125, 0, 'TRIGB')]), subPartName: '2' },
+        passive('R13', 0, 50, ['FB', 'BUFFER']),
+        { ...passive('U21', 2000, 0, ['AINA', 'OUTA']), subPartName: '1' },
+        { ...passive('U22', 4000, 0, ['PWMA', 'TRIGA']), subPartName: '1' },
+    ], wires: [
+        wire('BUFFER', [25, 0, 75, 0], [25, 0, 25, 50]),
+        wire('FB', [-25, -10, -50, -10], [-50, -10, -50, 50], [-50, 50, -25, 50]),
+    ] };
+    const expected = { maybe_blocks: ['R13 U21.2 U22.2'], wires: [
+        { net: 'FB', pins: 'R13.1 U21.6' },
+        { net: 'BUFFER', pins: 'R13.2 U21.7 U22.5' },
+    ] };
+    assert.deepEqual(await getSchematicGroups(input), expected);
+    // Section suffixes must remain even when the other units live on a different page.
+    input.components = input.components.slice(0, 3);
+    assert.deepEqual(await getSchematicGroups(input), expected);
+});
+
+test('section names do not change shared-net prevalence or clustering', async () => {
+    const input = usb();
+    const expected = await getSchematicGroups(input);
+    input.components[0].subPartName = 'B';
     const result = await getSchematicGroups(input);
-    assert.ok(result.maybe_blocks.every(b => !b.split(' ').includes('U1')));
-    assert.ok(!result.maybe_blocks.some(b => b.includes('C1') && b.includes('C2')));
+    assert.deepEqual(result.wires, expected.wires);
+    assert.deepEqual(result.maybe_blocks, expected.maybe_blocks.map(b => b.replace(/\bU12\b/g, 'U12.B')));
 });
 
 test('invalid geometry/identifiers fail explicitly', async () => {

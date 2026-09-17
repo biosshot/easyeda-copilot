@@ -11,6 +11,7 @@ export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
             title: 'Get EasyEDA Schematic Groups',
             description: 'Read the whole current schematic page. Returns {maybe_blocks: string[], wires: {net: string|null, pins: string}[]}. '
                 + 'Block strings contain space-separated designators and are suggestions, not proven functional blocks; singleton/ambiguous components may be omitted. '
+                + 'Multipart block members use designator.section (U21.2); wires still use physical pins (U21.7). '
                 + 'Each wires entry contains space-separated references such as U6.5 C8.1 on one continuous drawn wire island. '
                 + 'Equal net names do not join separate islands. Ports/power flags are not components. Use with get_current_page_schematic for values and pin names.',
             inputSchema: z.object({}),
