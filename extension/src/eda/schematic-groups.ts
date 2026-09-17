@@ -30,7 +30,7 @@ const netName = (value: string | null | undefined) => {
     return name && !/^(?:NC|N\/C)$/i.test(name) ? name : null;
 };
 
-class InconsistentSnapshot extends Error {}
+class InconsistentSnapshot extends Error { }
 
 function token(value: string, kind: string) {
     if (!value || /\s/.test(value)) throw new Error(`Schematic groups: invalid ${kind}: ${JSON.stringify(value)}`);
@@ -64,14 +64,16 @@ function diagnostics() {
             );
         } catch { /* Logging must not discard a partial result. */ }
     };
-    return { report, result: (): Pick<SchematicGroups, 'errors'> => {
-        if (!messages.size) return {};
-        const entries = [...messages];
-        const errors = (entries.length > 10 ? entries.slice(0, 9) : entries)
-            .map(message => message.replace(/\s+/g, ' ').slice(0, 200));
-        if (entries.length > 10) errors.push(`${entries.length - 9} additional errors; see editor log.`);
-        return { errors };
-    } };
+    return {
+        report, result: (): Pick<SchematicGroups, 'errors'> => {
+            if (!messages.size) return {};
+            const entries = [...messages];
+            const errors = (entries.length > 10 ? entries.slice(0, 9) : entries)
+                .map(message => message.replace(/\s+/g, ' ').slice(0, 200));
+            if (entries.length > 10) errors.push(`${entries.length - 9} additional errors; see editor log.`);
+            return { errors };
+        }
+    };
 }
 
 async function collectSnapshot(report: Report): Promise<SchematicGroupsSnapshot> {
@@ -199,16 +201,18 @@ function prepareSnapshot(input: SchematicGroupsSnapshot, report: Report): Schema
             report(`Wire ${i + 1}: unreadable geometry omitted; wire groups may be incomplete.`);
             return { ...wire, segments: [] };
         }
-        return { ...wire, segments: wire.segments.filter(segment => {
-            try {
-                if (segment.length !== 4) throw new Error('Expected four-coordinate wire segment.');
-                checkedPoint(segment[0], segment[1]); checkedPoint(segment[2], segment[3]);
-                return true;
-            } catch (error) {
-                report(`Wire ${i + 1}: invalid segments omitted; wire groups may be incomplete.`, error);
-                return false;
-            }
-        }) };
+        return {
+            ...wire, segments: wire.segments.filter(segment => {
+                try {
+                    if (segment.length !== 4) throw new Error('Expected four-coordinate wire segment.');
+                    checkedPoint(segment[0], segment[1]); checkedPoint(segment[2], segment[3]);
+                    return true;
+                } catch (error) {
+                    report(`Wire ${i + 1}: invalid segments omitted; wire groups may be incomplete.`, error);
+                    return false;
+                }
+            })
+        };
     });
     return { components, wires };
 }
@@ -449,16 +453,32 @@ function findMaybeBlocks(components: Component[], graph: WireGraph, report: Repo
         const a = active.get(item.value[0]), b = active.get(item.value[1]);
         if (!a || !b) continue; // Discard stale candidates after a merge.
         active.delete(a.id); active.delete(b.id);
-        const merged = { id: nextId++, members: [...a.members, ...b.members].sort((i, j) => i - j),
-            box: union(a.box, b.box), largest: Math.max(a.largest, b.largest) };
+        const merged = {
+            id: nextId++, members: [...a.members, ...b.members].sort((i, j) => i - j),
+            box: union(a.box, b.box), largest: Math.max(a.largest, b.largest)
+        };
         for (const other of active.values()) offer(other, merged);
         active.set(merged.id, merged);
     }
     // Block membership identifies a symbol section, not its shared physical package.
     // Keep base designators unchanged for netlist lookups, wire pins and net prevalence.
+    const partCounts = new Map<string, number>();
+
+    for (const c of components) {
+        partCounts.set(c.designator, (partCounts.get(c.designator) ?? 0) + 1);
+    }
+
     const refs = components.map(c => {
         const suffix = getPartSuffix(c.subPartName);
-        return suffix && !c.designator.endsWith(`.${suffix}`) ? `${c.designator}.${suffix}` : c.designator;
+        const hasSeveralParts = (partCounts.get(c.designator) ?? 0) > 1;
+
+        if (!suffix || (suffix === '1' && !hasSeveralParts)) {
+            return c.designator;
+        }
+
+        return c.designator.endsWith(`.${suffix}`)
+            ? c.designator
+            : `${c.designator}.${suffix}`;
     });
     const membership = new Map<string, Set<number>>();
     for (const cluster of active.values()) for (const i of cluster.members) {
