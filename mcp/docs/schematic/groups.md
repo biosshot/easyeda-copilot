@@ -19,15 +19,3 @@ interface SchematicGroups {
 - Power flags, net labels and ports are not output components or pins. Shared resolved nets through these symbols can strengthen a **block** suggestion, but never create a direct **wire** connection.
 
 No page IDs, scores, geometry, library UUIDs or duplicated pin names are returned. Empty results retain the same shape: `{"maybe_blocks":[],"wires":[]}`. A read failure is an error, not an empty successful result.
-
-## Implementation notes
-
-`extension/src/eda/schematic-groups.ts` owns collection and analysis; the MCP client only dispatches to it. No library searches, editor writes, saved grouping state or backend service are required. The existing schematic reader supplies resolved nets without part UUID extraction. Wire geometry is normalized using the existing EasyEDA-version helper.
-
-Wire analysis splits segments at existing wire vertices and real pin contacts, including T-junctions and overlaps. It deliberately does not add a junction at an interior/interior crossing, even when both wires have the same net name. A connected crossing must be represented by a vertex/contact in the editor geometry. Geometry not representing that distinction needs live-editor verification; net equality alone cannot establish it. Numerical tolerance is `1e-4` native coordinate units, not the drawing grid. Conflicting resolved names on a physical path cause one fresh read and then an error, rather than invented connectivity.
-
-Grouping uses symbol/pin bounding boxes, bounded shortest drawn-wire paths and shared resolved nets. Shared-net evidence is counted once per net and reduced by the number of distinct attached components; ground and supply names have smaller, nonzero weights. It does not recognize USB or any specific part number. A scale derived from typical symbol size makes spacing relative to the drawing.
-
-Agglomerative merging uses symmetric mean nearest-link support, a spatial-growth penalty and a maximum local extent. This supports peripheral components connected by ports while limiting single-link chains and long global power lines. Coefficients are initial heuristics, not calibrated probabilities. Multi-part symbols retain separate geometry and section-specific block references read from the editor; sharing a base designator neither removes their membership nor merges distant sections. Wire connectivity and shared-net prevalence continue to use base physical designators.
-
-Offline fixtures cover adjacent button circuits, a USB connector with disconnected-by-ports peripheral parts, wire segmentation/crossings, stale net names, layout transforms, chain growth and 330 components. These are synthetic fixtures based on the examples, not captures of actual editor primitives. Check representative real pages in EasyEDA before treating this first-version grouping as tuned for all schematic styles.
