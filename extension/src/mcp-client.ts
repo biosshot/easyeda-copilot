@@ -19,6 +19,7 @@ import {
     inspectNet,
 } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
+import { getSchematicGroups } from './eda/schematic-groups';
 import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
@@ -1368,6 +1369,11 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
                 || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
             reply(true, await checkpointScopes.execute({ code: body.code, inputs: inputs as Record<string, string>, checkpointScope: body.checkpointScope }, eda, connectionEpoch));
+            return;
+        }
+
+        if (message.event === 'get-schematic-groups') {
+            reply(true, await getSchematicGroups());
             return;
         }
 
