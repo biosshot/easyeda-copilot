@@ -7,6 +7,7 @@ import { startBridge } from './bridge/index';
 import { registerPcbTools } from './tools/pcb/index';
 import { registerCheckpointTools } from './tools/checkpoint';
 import { registerCircuitTools } from './tools/circuit';
+import { registerSchematicGroupTools } from './tools/schematic-groups';
 import { registerDesignatorTools } from './tools/designators';
 import { registerDocsTools } from './tools/docs';
 import { registerDrcTools } from './tools/drc';
@@ -79,6 +80,7 @@ async function main() {
     registerPcbTools(server, bridge);
     registerCheckpointTools(server, bridge);
     registerCircuitTools(server, bridge);
+    registerSchematicGroupTools(server, bridge);
     registerDesignatorTools(server, bridge);
     registerDocsTools(server, bridge);
     registerDrcTools(server, bridge);
