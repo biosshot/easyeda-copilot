@@ -150,9 +150,14 @@ test('missing/conflicting wire names stay null when no resolved net is available
     assert.equal(result.wires[0].net, null);
 });
 
-test('contradictory resolved nets fail rather than fabricate a connection', async () => {
-    await assert.rejects(getSchematicGroups({ components: [endpoint('A1', 0, 0, 'A'), endpoint('A2', 50, 0, 'B')],
-        wires: [wire(null, [0, 0, 50, 0])] }), /Conflicting resolved nets/);
+test('contradictory resolved nets omit only the affected path and preserve other groups', async () => {
+    const result = await getSchematicGroups({ components: [endpoint('A1', 0, 0, 'A'), endpoint('A2', 50, 0, 'B'),
+        endpoint('C1', 1000, 0, 'OK'), endpoint('C2', 1020, 0, 'OK')],
+        wires: [wire(null, [0, 0, 50, 0]), wire('OK', [1000, 0, 1020, 0])] });
+    assert.deepEqual(result.wires, [{ net: 'OK', pins: 'C1.1 C2.1' }]);
+    assert.ok(result.maybe_blocks.includes('C1 C2'));
+    assert.ok(!result.maybe_blocks.some(b => b.includes('A1') && b.includes('A2')));
+    assert.match(result.errors!.join(' '), /Conflicting resolved nets.*path omitted/);
 });
 
 test('adjacent EN/boot button circuits form one possible block; lower straps remain separate', async () => {
@@ -231,9 +236,9 @@ test('repeated supply pins do not multiply common-net evidence', async () => {
 test('multipart sections stay in their local blocks without merging distant geometry', async () => {
     for (const [first, second] of [['1', '2'], ['A', 'B']]) {
         const input: Snapshot = { components: [
-            { ...passive('U1', 0, 0, ['A', 'GND']), subPartName: first },
+            { ...passive('U1', 0, 0, ['A', 'GND']), subPartName: `MAX942CSA+.${first}` },
             passive('C1', 0, 50, ['A', 'GND']),
-            { ...component('U1', 3000, 0, [pin('5', 2975, 0, 'B'), pin('7', 3025, 0, 'GND')]), subPartName: second },
+            { ...component('U1', 3000, 0, [pin('5', 2975, 0, 'B'), pin('7', 3025, 0, 'GND')]), subPartName: `MAX942CSA+.${second}` },
             passive('C2', 3000, 50, ['B', 'GND']),
         ], wires: [] };
         const expected = { maybe_blocks: [`C1 U1.${first}`, `C2 U1.${second}`], wires: [] };
@@ -245,8 +250,8 @@ test('multipart sections stay in their local blocks without merging distant geom
 
 test('different sections in one block are not collapsed into the base designator', async () => {
     const result = await getSchematicGroups({ components: [
-        { ...passive('U1', 0, 0, ['S', 'GND']), subPartName: '1' },
-        { ...component('U1', 0, 50, [pin('5', -25, 50, 'S'), pin('7', 25, 50, 'GND')]), subPartName: '2' },
+        { ...passive('U1', 0, 0, ['S', 'GND']), subPartName: 'MAX942CSA+.1' },
+        { ...component('U1', 0, 50, [pin('5', -25, 50, 'S'), pin('7', 25, 50, 'GND')]), subPartName: 'MAX942CSA+.2' },
         passive('R1', 0, 100, ['S', 'GND']),
     ], wires: [] });
     assert.deepEqual(result, { maybe_blocks: ['R1 U1.1 U1.2'], wires: [] });
@@ -254,11 +259,11 @@ test('different sections in one block are not collapsed into the base designator
 
 test('second amplifier sections survive remote first sections; wires keep physical pin numbers', async () => {
     const input: Snapshot = { components: [
-        { ...component('U21', 0, 0, [pin('6', -25, -10, 'FB'), pin('5', -25, 10, 'AINB'), pin('7', 25, 0, 'BUFFER')]), subPartName: '2' },
-        { ...component('U22', 100, 0, [pin('6', 75, -10, 'PWM'), pin('5', 75, 0, 'BUFFER'), pin('7', 125, 0, 'TRIGB')]), subPartName: '2' },
+        { ...component('U21', 0, 0, [pin('6', -25, -10, 'FB'), pin('5', -25, 10, 'AINB'), pin('7', 25, 0, 'BUFFER')]), subPartName: 'MAX942CSA+.2' },
+        { ...component('U22', 100, 0, [pin('6', 75, -10, 'PWM'), pin('5', 75, 0, 'BUFFER'), pin('7', 125, 0, 'TRIGB')]), subPartName: 'MAX942CSA+.2' },
         passive('R13', 0, 50, ['FB', 'BUFFER']),
-        { ...passive('U21', 2000, 0, ['AINA', 'OUTA']), subPartName: '1' },
-        { ...passive('U22', 4000, 0, ['PWMA', 'TRIGA']), subPartName: '1' },
+        { ...passive('U21', 2000, 0, ['AINA', 'OUTA']), subPartName: 'MAX942CSA+.1' },
+        { ...passive('U22', 4000, 0, ['PWMA', 'TRIGA']), subPartName: 'MAX942CSA+.1' },
     ], wires: [
         wire('BUFFER', [25, 0, 75, 0], [25, 0, 25, 50]),
         wire('FB', [-25, -10, -50, -10], [-50, -10, -50, 50], [-50, 50, -25, 50]),
@@ -276,16 +281,20 @@ test('second amplifier sections survive remote first sections; wires keep physic
 test('section names do not change shared-net prevalence or clustering', async () => {
     const input = usb();
     const expected = await getSchematicGroups(input);
-    input.components[0].subPartName = 'B';
+    input.components[0].subPartName = 'USB.B';
     const result = await getSchematicGroups(input);
     assert.deepEqual(result.wires, expected.wires);
     assert.deepEqual(result.maybe_blocks, expected.maybe_blocks.map(b => b.replace(/\bU12\b/g, 'U12.B')));
 });
 
-test('invalid geometry/identifiers fail explicitly', async () => {
-    await assert.rejects(getSchematicGroups({ components: [endpoint('R 1', 0, 0)], wires: [] }), /invalid designator/);
-    await assert.rejects(getSchematicGroups({ components: [endpoint('R1', NaN, 0)], wires: [] }), /non-finite/);
-    await assert.rejects(getSchematicGroups({ components: [], wires: [wire(null, [0, 1, 2])] }), /four-coordinate/);
+test('invalid geometry and identities are local errors, not a failed whole-page read', async () => {
+    const input: Snapshot = { components: [endpoint('A1', 0, 0, 'OK'), endpoint('A2', 20, 0, 'OK'),
+        endpoint('R 1', 1000, 0), endpoint('R2', NaN, 0)],
+        wires: [wire('OK', [0, 0, 20, 0]), wire(null, [0, 1, 2])] };
+    const result = await getSchematicGroups(input);
+    assert.deepEqual(result.maybe_blocks, ['A1 A2']);
+    assert.deepEqual(result.wires, [{ net: 'OK', pins: 'A1.1 A2.1' }]);
+    assert.match(result.errors!.join(' '), /omitted.*incomplete/);
 });
 
 test('300+ components return the whole compact result without pagination or per-component metadata', async () => {
@@ -302,4 +311,74 @@ test('300+ components return the whole compact result without pagination or per-
     assert.equal(result.wires.length, 110);
     assert.ok(result.wires.every(w => Object.keys(w).join(' ') === 'net pins'));
     assert.ok(JSON.stringify(result).length < 15000);
+});
+
+
+test('part suffix uses only the last dot, accepting ASCII letters/digits without treating .1 as multipart proof', async () => {
+    const names: [string | undefined, string][] = [
+        ['MAX942CSA+.2', 'R1.2'], ['MAX942CSA+.1', 'R1.1'], ['MAX942CSA+.B', 'R1.B'],
+        ['FRC0603J104 TS.1', 'R1.1'], ['470uF 25V 8*12.1', 'R1.1'], ['prefix.1.extra.B2', 'R1.B2'],
+        ['part.12', 'R1.12'], ['part.a9', 'R1.a9'], ['part.', 'R1'], ['part.A B', 'R1'],
+        ['part.B+', 'R1'], ['part.B_2', 'R1'], ['part.2\n', 'R1'], ['part. 2', 'R1'],
+        ['part.2 ', 'R1'], ['part.2.invalid-tail', 'R1'], ['part.Б', 'R1'], ['2', 'R1'],
+        ['B', 'R1'], ['plain name', 'R1'], ['', 'R1'], [undefined, 'R1'],
+    ];
+    for (const [subPartName, ref] of names) {
+        const result = await getSchematicGroups({ components: [
+            { ...passive('R1', 0, 0, ['S', 'GND']), subPartName }, passive('C1', 0, 50, ['S', 'GND']),
+        ], wires: [wire('S', [-25, 0, -25, 50])] });
+        assert.deepEqual(result, { maybe_blocks: [`C1 ${ref}`], wires: [{ net: 'S', pins: 'C1.1 R1.1' }] }, String(subPartName));
+    }
+});
+
+test('already qualified block reference is not suffixed twice', async () => {
+    const result = await getSchematicGroups({ components: [
+        { ...passive('U1.2', 0, 0, ['S', 'GND']), subPartName: 'MAX942CSA+.2' },
+        passive('R1', 0, 50, ['S', 'GND']),
+    ], wires: [] });
+    assert.deepEqual(result, { maybe_blocks: ['R1 U1.2'], wires: [] });
+});
+
+test('bad segments are skipped atomically; valid segments of the same wire remain usable', async () => {
+    const result = await getSchematicGroups({ components: [endpoint('A1', 0, 0), endpoint('A2', 20, 0)],
+        wires: [wire(null, [0, 0, 10, 0], [10, 0, NaN, 0], [0, 1, 2], [10, 0, 20, 0])] });
+    assert.deepEqual(result.wires, [{ net: null, pins: 'A1.1 A2.1' }]);
+    assert.equal(result.errors!.length, 1); // Same problem on the same wire is deduplicated.
+    assert.match(result.errors![0], /wire groups may be incomplete/);
+});
+
+test('one bad pin does not discard a component or its other pins; origin can fall back to real pins', async () => {
+    const result = await getSchematicGroups({ components: [
+        component('A1', NaN, 0, [pin('1', 0, 0, 'S'), pin('2', NaN, 10), pin('bad number', 0, 20)]),
+        endpoint('A2', 20, 0, 'S'),
+    ], wires: [wire('S', [0, 0, 20, 0])] });
+    assert.deepEqual(result.maybe_blocks, ['A1 A2']);
+    assert.deepEqual(result.wires, [{ net: 'S', pins: 'A1.1 A2.1' }]);
+    assert.equal(result.errors!.length, 2);
+});
+
+test('ambiguous duplicate instances do not create invented pin connections', async () => {
+    const result = await getSchematicGroups({ components: [endpoint('R1', 0, 0), endpoint('R1', 50, 0),
+        endpoint('C1', 1000, 0, 'S'), endpoint('C2', 1020, 0, 'S')],
+        wires: [wire(null, [0, 0, 50, 0]), wire('S', [1000, 0, 1020, 0])] });
+    assert.deepEqual(result.maybe_blocks, ['C1 C2']);
+    assert.deepEqual(result.wires, [{ net: 'S', pins: 'C1.1 C2.1' }]);
+    assert.equal(result.errors!.length, 1);
+    assert.match(result.errors![0], /R1: duplicate/);
+});
+
+test('ten diagnostics maximum, bounded messages and processing continues past the cap', async () => {
+    for (const count of [10, 11, 30]) {
+        const input: Snapshot = { components: Array.from({ length: count }, (_, i) => endpoint(`bad ref ${i}`, i * 10, 0)), wires: [] };
+        input.components.push(endpoint('A1', 5000, 0, 'S'), endpoint('A2', 5020, 0, 'S'));
+        input.wires.push(wire('S', [5000, 0, 5020, 0]));
+        const result = await getSchematicGroups(input);
+        assert.equal(result.errors!.length, 10);
+        if (count > 10) assert.equal(result.errors![9], `${count - 9} additional errors; see editor log.`);
+        assert.deepEqual(result.maybe_blocks, ['A1 A2']);
+        assert.equal(result.wires.length, 1);
+    }
+    const result = await getSchematicGroups({ components: [endpoint('A1', 0, 0, 'X'.repeat(2000)), endpoint('A2', 20, 0, 'Y')],
+        wires: [wire(null, [0, 0, 20, 0])] });
+    assert.ok(result.errors!.every(e => e.length <= 200));
 });

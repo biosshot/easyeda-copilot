@@ -26,7 +26,7 @@ const JOIN_SCORE = 0.30;
 const compare = new Intl.Collator('en', { numeric: true }).compare;
 const sorted = (values: Iterable<string>) => [...new Set(values)].sort((a, b) => compare(a, b) || (a < b ? -1 : a > b ? 1 : 0));
 const netName = (value: string | null | undefined) => {
-    const name = value?.trim();
+    const name = typeof value === 'string' ? value.trim() : '';
     return name && !/^(?:NC|N\/C)$/i.test(name) ? name : null;
 };
 
@@ -42,7 +42,39 @@ function checkedPoint(x: number, y: number): Point {
     return { x: Math.round(x / EPSILON) * EPSILON, y: Math.round(y / EPSILON) * EPSILON };
 }
 
-async function collectSnapshot(): Promise<SchematicGroupsSnapshot> {
+// A suffix is a display hint, not proof of multipart: even a single-part resistor may end in .1.
+function getPartSuffix(name?: string): string | undefined {
+    if (typeof name !== 'string') return undefined;
+    const dot = name.lastIndexOf('.');
+    if (dot < 0) return undefined;
+    const suffix = name.slice(dot + 1);
+    return suffix && !/[^A-Za-z0-9]/.test(suffix) ? suffix : undefined;
+}
+
+type Report = (message: string, cause?: unknown) => void;
+function diagnostics() {
+    const messages = new Set<string>();
+    const report: Report = (message, cause) => {
+        if (messages.has(message)) return;
+        messages.add(message);
+        try {
+            if (typeof eda !== 'undefined') eda.sys_Log.add(
+                `[schematic-groups] ${message}${cause ? ` ${cause instanceof Error ? cause.stack ?? cause.message : String(cause)}` : ''}`,
+                ESYS_LogType.WARNING,
+            );
+        } catch { /* Logging must not discard a partial result. */ }
+    };
+    return { report, result: (): Pick<SchematicGroups, 'errors'> => {
+        if (!messages.size) return {};
+        const entries = [...messages];
+        const errors = (entries.length > 10 ? entries.slice(0, 9) : entries)
+            .map(message => message.replace(/\s+/g, ' ').slice(0, 200));
+        if (entries.length > 10) errors.push(`${entries.length - 9} additional errors; see editor log.`);
+        return { errors };
+    } };
+}
+
+async function collectSnapshot(report: Report): Promise<SchematicGroupsSnapshot> {
     const document = await eda.dmt_SelectControl.getCurrentDocumentInfo();
     if (document?.documentType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
         throw new Error('Open a schematic page before requesting schematic groups.');
@@ -50,62 +82,134 @@ async function collectSnapshot(): Promise<SchematicGroupsSnapshot> {
     // Lazy imports keep the deterministic analysis usable without the editor globals.
     const { getSchematic } = await import('./schematic');
     const { normalizeWireLine, normWireY } = await import('./utils');
-    const primitives = (await eda.sch_PrimitiveComponent.getAll())
-        .filter(component => component.getState_ComponentType() === ESCH_PrimitiveComponentType.COMPONENT);
-    const seen = new Map<string, Set<string>>();
-    for (const primitive of primitives) {
-        const ref = token(primitive.getState_Designator().trim(), 'designator');
-        const part = primitive.getState_SubPartName() ?? '';
-        const parts = seen.get(ref) ?? new Set<string>();
-        if (parts.has(part) || (parts.size && (!part || parts.has('')))) {
-            throw new Error(`Duplicate designator ${ref}; annotate the schematic before requesting groups.`);
-        }
-        parts.add(part);
-        seen.set(ref, parts);
-    }
-    // Reuse the existing resolved-netlist reader, without library/MPN/footprint requests.
-    const circuit = primitives.length ? await getSchematic(primitives.map(p => p.getState_PrimitiveId()), {
-        disableExtractPartUuid: true, disableExtractPos: true,
-    }) : { components: [] };
+    // No usable component list means no trustworthy page context: this read remains fatal.
+    const primitives = (await eda.sch_PrimitiveComponent.getAll()).filter((component, i) => {
+        try { return component.getState_ComponentType() === ESCH_PrimitiveComponentType.COMPONENT; }
+        catch (error) { report(`Component ${i + 1}: unreadable type; component omitted.`, error); return false; }
+    });
     const nets = new Map<string, string | null>();
-    for (const component of circuit.components) {
-        for (const pin of component.pins) {
+    let netlistAvailable = false;
+    try {
+        // Reuse resolved-netlist reading, never fetch library metadata to interpret a suffix.
+        const circuit = primitives.length ? await getSchematic(primitives.map(p => p.getState_PrimitiveId()), {
+            disableExtractPartUuid: true, disableExtractPos: true,
+        }) : { components: [] };
+        for (const component of circuit.components) for (const pin of component.pins) {
             nets.set(`${component.designator}.${pin.pin_number}`, netName(pin.signal_name));
         }
+        netlistAvailable = true;
+    } catch (error) {
+        nets.clear();
+        report('Netlist unavailable; common-net evidence disabled, wire names use available metadata.', error);
     }
     const components: Component[] = [];
-    // Read-only, bounded batches; do not fan out hundreds of editor API calls at once.
+    // Read-only, bounded batches; a failed component/pin must not reject the other reads.
     for (let start = 0; start < primitives.length; start += 16) {
-        components.push(...await Promise.all(primitives.slice(start, start + 16).map(async primitive => {
-            const designator = primitive.getState_Designator().trim();
-            const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitive.getState_PrimitiveId());
-            if (!Array.isArray(pins)) throw new Error(`Could not read pins of ${designator}.`);
-            return {
-                designator,
-                subPartName: primitive.getState_SubPartName() || undefined,
-                // Pin and wire coordinates already share a frame. Only the v2 symbol origin is inverted.
-                ...checkedPoint(primitive.getState_X(), normWireY(primitive.getState_Y())),
-                pins: pins.map(pin => {
-                    const number = token(String(pin.getState_PinNumber()), 'pin number');
-                    const ref = `${designator}.${number}`;
-                    if (!nets.has(ref)) throw new Error(`Could not resolve schematic pin ${ref}; refresh and retry.`);
-                    return { number, net: nets.get(ref) ?? null,
-                        ...checkedPoint(pin.getState_X(), pin.getState_Y()) };
-                }),
-            };
-        })));
+        const batch = await Promise.all(primitives.slice(start, start + 16).map(async (primitive, i) => {
+            let designator = `Component ${start + i + 1}`;
+            try {
+                designator = token(primitive.getState_Designator().trim(), 'designator');
+                let subPartName: string | undefined;
+                try { subPartName = primitive.getState_SubPartName() || undefined; }
+                catch (error) { report(`${designator}: part name unavailable; using base reference.`, error); }
+                let position = { x: NaN, y: NaN };
+                try { position = { x: primitive.getState_X(), y: normWireY(primitive.getState_Y()) }; }
+                catch (error) { report(`${designator}: origin unavailable; using valid pins if possible.`, error); }
+                const pins: Pin[] = [];
+                try {
+                    const rawPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(primitive.getState_PrimitiveId());
+                    if (!Array.isArray(rawPins)) throw new Error('Invalid pin list.');
+                    for (const pin of rawPins) {
+                        try {
+                            const number = token(String(pin.getState_PinNumber() ?? ''), 'pin number');
+                            const ref = `${designator}.${number}`;
+                            if (netlistAvailable && !nets.has(ref)) report(`${designator}: some pin nets unavailable; common-net evidence incomplete.`);
+                            pins.push({ number, net: nets.get(ref) ?? null, x: pin.getState_X(), y: pin.getState_Y() });
+                        } catch (error) { report(`${designator}: unreadable pin omitted; wires may be incomplete.`, error); }
+                    }
+                } catch (error) { report(`${designator}: pins unavailable; keeping position only, connections omitted.`, error); }
+                return { designator, subPartName, ...position, pins };
+            } catch (error) {
+                report(`${designator}: component unreadable; omitted from groups and pins.`, error);
+                return undefined;
+            }
+        }));
+        components.push(...batch.filter((c): c is NonNullable<typeof c> => c !== undefined));
     }
-    // Use a fresh editor read, not the assembly-only wire-snap cache.
-    const wires = (await eda.sch_PrimitiveWire.getAll()).map(wire => {
-        const raw = wire.getState_Line();
-        const segments = normalizeWireLine(raw);
-        if (!segments.length && raw?.length) throw new Error('Unsupported schematic wire geometry.');
-        return { net: netName(wire.getState_Net()), segments };
-    });
+    const wires: SchematicGroupsSnapshot['wires'] = [];
+    try {
+        // Fresh editor read, not the assembly-only wire-snap cache.
+        const rawWires = await eda.sch_PrimitiveWire.getAll();
+        for (const [i, wire] of rawWires.entries()) {
+            try {
+                const raw = wire.getState_Line();
+                if (!Array.isArray(raw)) throw new Error('Missing wire geometry.');
+                const segments = normalizeWireLine(raw);
+                if (!segments.length && raw?.length) throw new Error('Unsupported wire geometry.');
+                if (Array.isArray(raw?.[0]) && segments.length !== raw.length) {
+                    report(`Wire ${i + 1}: invalid segments omitted; wire groups may be incomplete.`);
+                }
+                let net: string | null = null;
+                try { net = netName(wire.getState_Net()); }
+                catch (error) { report(`Wire ${i + 1}: name unavailable; using pin nets if known.`, error); }
+                wires.push({ net, segments });
+            } catch (error) { report(`Wire ${i + 1}: unreadable geometry omitted; wire groups may be incomplete.`, error); }
+        }
+    } catch (error) { report('Wires unavailable; direct-wire evidence disabled and wires is incomplete.', error); }
     const current = await eda.dmt_SelectControl.getCurrentDocumentInfo();
-    if (current?.uuid !== document.uuid || current?.tabId !== document.tabId) {
+    if (current?.uuid !== document.uuid || current?.tabId !== document.tabId
+        || current?.documentType !== document.documentType) {
         throw new Error('Schematic page changed while reading groups; retry on the intended page.');
     }
+    return { components, wires };
+}
+
+// Validate locally before graph construction, for both live reads and offline fixtures.
+function prepareSnapshot(input: SchematicGroupsSnapshot, report: Report): SchematicGroupsSnapshot {
+    const candidates: Component[] = [];
+    for (const [i, c] of input.components.entries()) {
+        try {
+            token(c.designator, 'designator');
+            const pins: Pin[] = [];
+            if (!Array.isArray(c.pins)) report(`${c.designator}: pins unavailable; keeping position only, connections omitted.`);
+            for (const pin of Array.isArray(c.pins) ? c.pins : []) {
+                try { pins.push({ ...pin, number: token(pin.number, 'pin number'), ...checkedPoint(pin.x, pin.y) }); }
+                catch (error) { report(`${c.designator}: invalid pin omitted; wires may be incomplete.`, error); }
+            }
+            let position: Point;
+            try { position = checkedPoint(c.x, c.y); }
+            catch (error) {
+                if (!pins.length) throw error;
+                position = { x: pins[0].x, y: pins[0].y };
+                report(`${c.designator}: invalid origin; grouping uses valid pin coordinates.`, error);
+            }
+            candidates.push({ ...c, ...position, pins });
+        } catch (error) { report(`Component ${i + 1}: invalid identity/geometry; omitted from groups and pins.`, error); }
+    }
+    const identity = (c: Component) => JSON.stringify([c.designator, c.subPartName ?? '']);
+    const counts = new Map<string, number>();
+    for (const c of candidates) counts.set(identity(c), (counts.get(identity(c)) ?? 0) + 1);
+    const components = candidates.filter(c => {
+        if (counts.get(identity(c)) === 1) return true;
+        report(`${c.designator}: duplicate component/section identity; ambiguous instances omitted from groups and pins.`);
+        return false;
+    });
+    const wires = input.wires.map((wire, i) => {
+        if (!Array.isArray(wire.segments)) {
+            report(`Wire ${i + 1}: unreadable geometry omitted; wire groups may be incomplete.`);
+            return { ...wire, segments: [] };
+        }
+        return { ...wire, segments: wire.segments.filter(segment => {
+            try {
+                if (segment.length !== 4) throw new Error('Expected four-coordinate wire segment.');
+                checkedPoint(segment[0], segment[1]); checkedPoint(segment[2], segment[3]);
+                return true;
+            } catch (error) {
+                report(`Wire ${i + 1}: invalid segments omitted; wire groups may be incomplete.`, error);
+                return false;
+            }
+        }) };
+    });
     return { components, wires };
 }
 
@@ -116,7 +220,7 @@ function onSegment(p: Point, a: Point, b: Point) {
         && Math.abs((p.x - a.x) * dy - (p.y - a.y) * dx) <= EPSILON * Math.hypot(dx, dy);
 }
 
-function buildWireGraph(snapshot: SchematicGroupsSnapshot): WireGraph {
+function buildWireGraph(snapshot: SchematicGroupsSnapshot, report: Report, retryConflicts = false): WireGraph {
     const points: Point[] = [], edges: Map<number, number>[] = [], contacts: Contact[][] = [];
     const names: Set<string>[] = [], indices = new Map<string, number>();
     const starts: number[][] = snapshot.components.map(() => []);
@@ -184,7 +288,11 @@ function buildWireGraph(snapshot: SchematicGroupsSnapshot): WireGraph {
             }
         }
         if (pinNames.size > 1) {
-            throw new InconsistentSnapshot(`Conflicting resolved nets on a wire path: ${sorted(pinNames).join(', ')}. Refresh the schematic and retry.`);
+            if (retryConflicts) throw new InconsistentSnapshot('Resolved nets need a fresh read.');
+            report(`Conflicting resolved nets (${sorted(pinNames).join(', ')}); affected wire path omitted, wires is incomplete.`);
+            // A disputed path must not reappear as direct-wire evidence in the block score.
+            for (const id of queue) edges[id].clear();
+            continue;
         }
         // Resolved pin nets take precedence over possibly stale Wire.net metadata.
         const net = pinNames.size ? [...pinNames][0] : wireNames.size === 1 ? [...wireNames][0] : null;
@@ -307,7 +415,7 @@ function pairScores(components: Component[], boxes: Box[], graph: WireGraph, sca
     return scores;
 }
 
-function findMaybeBlocks(components: Component[], graph: WireGraph): string[] {
+function findMaybeBlocks(components: Component[], graph: WireGraph, report: Report): string[] {
     if (components.length < 2) return [];
     const boxes = components.map(c => bounds([c, ...c.pins]));
     const sizes = boxes.map(span).filter(size => size > EPSILON).sort((a, b) => a - b);
@@ -348,12 +456,17 @@ function findMaybeBlocks(components: Component[], graph: WireGraph): string[] {
     }
     // Block membership identifies a symbol section, not its shared physical package.
     // Keep base designators unchanged for netlist lookups, wire pins and net prevalence.
-    const refs = components.map(c => c.subPartName
-        ? `${c.designator}.${token(c.subPartName, 'sub-part name')}` : c.designator);
+    const refs = components.map(c => {
+        const suffix = getPartSuffix(c.subPartName);
+        return suffix && !c.designator.endsWith(`.${suffix}`) ? `${c.designator}.${suffix}` : c.designator;
+    });
     const membership = new Map<string, Set<number>>();
     for (const cluster of active.values()) for (const i of cluster.members) {
         const ref = refs[i], ids = membership.get(ref) ?? new Set<number>();
         ids.add(cluster.id); membership.set(ref, ids);
+    }
+    for (const [ref, ids] of membership) if (ids.size > 1) {
+        report(`${ref}: ambiguous block reference; omitted from maybe_blocks.`);
     }
     return [...active.values()].map(cluster => sorted(cluster.members.map(i => refs[i])
         .filter(ref => membership.get(ref)!.size === 1)))
@@ -363,15 +476,19 @@ function findMaybeBlocks(components: Component[], graph: WireGraph): string[] {
 /** The only runtime entry point. Omit snapshot to read the complete current EasyEDA page. */
 export async function getSchematicGroups(snapshot?: SchematicGroupsSnapshot): Promise<SchematicGroups> {
     for (let attempt = 0; ; attempt++) {
-        const input = snapshot ?? await collectSnapshot();
+        const issues = diagnostics();
+        const input = prepareSnapshot(snapshot ?? await collectSnapshot(issues.report), issues.report);
         // Stable input order makes both tie-breaking and compact output independent of API enumeration.
         const components = [...input.components].sort((a, b) => compare(a.designator, b.designator) || a.x - b.x || a.y - b.y);
         try {
-            const graph = buildWireGraph({ ...input, components });
-            return { maybe_blocks: findMaybeBlocks(components, graph), wires: graph.wires };
+            const graph = buildWireGraph({ ...input, components }, issues.report, !snapshot && attempt === 0);
+            let maybe_blocks: string[] = [];
+            try { maybe_blocks = findMaybeBlocks(components, graph, issues.report); }
+            catch (error) { issues.report('Block grouping failed; maybe_blocks unavailable, wire results preserved.', error); }
+            return { maybe_blocks, wires: graph.wires, ...issues.result() };
         } catch (error) {
-            if (snapshot || attempt || !(error instanceof InconsistentSnapshot)) throw error;
-            // One fresh read for EasyEDA's asynchronous net refresh; never return fabricated connectivity.
+            if (!(error instanceof InconsistentSnapshot)) throw error;
+            // One fresh read for asynchronous nets, then omit only the disputed paths.
             await new Promise(resolve => setTimeout(resolve, 200));
         }
     }
