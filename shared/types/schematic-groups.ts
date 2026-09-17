@@ -5,4 +5,6 @@ export interface SchematicGroups {
         net: string | null;
         pins: string;
     }[];
+    /** At most 10 short diagnostics; omitted on a complete, successful read. */
+    errors?: string[];
 }
