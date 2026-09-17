@@ -1,4 +1,5 @@
 import type { SchematicGroups } from '@copilot/shared/types/schematic-groups';
+import { shortSymbolsMap } from './types';
 
 type Point = { x: number; y: number };
 type Pin = Point & { number: string; net: string | null };
@@ -364,11 +365,8 @@ const gap = (a: Box, b: Box) => Math.hypot(
 // Naming roles match backend circuit-layout/{ground,power}.ts. They change weights,
 // never electrical identity; keeping this tiny predicate local avoids bundling the backend.
 function netRoleWeight(name: string) {
-    if (/gnd/i.test(name) || /(^|[_+\-/])GROUND(?:$|[_+\-/])/i.test(name) || /^PGMD$/i.test(name)) return 0.15;
-    if (/^BATTERY$/i.test(name) || /^USB_[V\d]/i.test(name)
-        || /^V(?:CC|DD|BAT|IN|OUT|REF|REG|PP|SS|EE|BUS|[0-9])/i.test(name)
-        || /^[AVDG]?V(?:DD|CC)/i.test(name) || /^[+-]?V[+-]?$/i.test(name)
-        || /^[+-]?\d+(?:\.\d+)?V/i.test(name) || /^\d+V\d+$/i.test(name)) return 0.6;
+    if (shortSymbolsMap.GND.is(name)) return 0.15;
+    if (shortSymbolsMap.VCC.is(name)) return 0.6;
     return 1;
 }
 
@@ -505,7 +503,13 @@ export async function getSchematicGroups(snapshot?: SchematicGroupsSnapshot): Pr
             let maybe_blocks: string[] = [];
             try { maybe_blocks = findMaybeBlocks(components, graph, issues.report); }
             catch (error) { issues.report('Block grouping failed; maybe_blocks unavailable, wire results preserved.', error); }
-            return { maybe_blocks, wires: graph.wires, ...issues.result() };
+            return {
+                maybe_blocks,
+                wires: graph.wires.filter(
+                    wire => wire.net?.trim().toUpperCase() !== 'GND'
+                ),
+                ...issues.result(),
+            };
         } catch (error) {
             if (!(error instanceof InconsistentSnapshot)) throw error;
             // One fresh read for asynchronous nets, then omit only the disputed paths.
