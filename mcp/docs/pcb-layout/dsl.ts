@@ -375,6 +375,7 @@ interface ComponentBuilder {
   /**
    * Lock this component to an exact board position. Allowed for any component role.
    * Use only when the position is genuinely fixed/mechanically known; ordinary electrical components should normally be placed by blocks and placement constraints.
+   * Fixed passive R/C/L and local support components produce one aggregate report warning because they block electrical placement optimization.
    * A component explicitly seeded by block(..., { localLayout }) cannot also use fixed(), edgeMount(), or edgePlace().
    */
   fixed(options: FixedPlacementOptions): ComponentBuilder;
@@ -519,7 +520,8 @@ interface CoreIslandOptions extends CriticalPairOptions {
  */
 declare function criticalPair(source: PinTargetRef, target: PinTargetRef, options?: CriticalPairOptions): void;
 /**
- * Self-contained placement constraint for one critical ordered signal chain, especially an RF or high-speed path through series matching/filter parts.
+ * Self-contained placement constraint for any known ordered electrical path whose physical implementation is much more important than ordinary connectivity.
+ * This includes RF, analog measurement/trigger chains, clocks, each ordered differential leg, long board-spanning priority signals, and series matching/filtering/termination paths.
  * Each tuple is one pad-to-pad segment; adjacent tuples meet on the same pass-through component using different entry/exit pins.
  * Explicit signal-path segments receive priority in bounded route-aware candidate reranking. The estimator may account for obstacles, detours, bends,
  * layer changes, and temporary congestion from earlier higher-priority route jobs, but it remains a placement estimator.

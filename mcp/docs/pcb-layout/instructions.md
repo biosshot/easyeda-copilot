@@ -38,7 +38,7 @@ Placement and routing are one coupled physical problem. Do not write placement D
 
 For each power IC, regulator, MOSFET, driver, high-power LED/resistor, and exposed pad, explicitly decide whether it needs `primitive.thermalPad(...)`, external copper/via space to be implemented during routing, or no thermal action. Base the decision on the datasheet and credible dissipation assumptions; do not silently omit the thermal review.
 
-Use the topology analysis selectively. One critical ordered chain may justify `signalPath`; one isolated dominant hop may justify `criticalPair`. Do not convert every reviewed connection into a placement constraint.
+Use the topology analysis selectively. Any known ordered path that is substantially more important than ordinary connectivity may justify `signalPath`; one isolated dominant hop may justify `criticalPair`. The path can be RF, analog, clock, differential-leg, or a board-spanning priority signal. Do not convert every reviewed connection into a placement constraint.
 
 ## Run
 
@@ -80,16 +80,18 @@ Do not reassemble an older `layoutId` after live corrections: it can overwrite t
 - Do not repeat a satellite in a module that already contains its parent block; the parent family already owns that satellite.
 - Use `criticalPair` for one isolated dominant pad-to-pad hop that is not part of a longer declared path.
 - Use `corePairs` for several independent dominant pairs inside one block, not for the consecutive segments of a signal chain.
-- Use `signalPath` only for a physically critical ordered chain, especially RF or high-speed signals through series matching, filtering, or termination parts. It is self-contained: do not repeat its segments with `criticalPair` or `corePairs`, because overlapping attraction rules can over-constrain the placer.
-- Do not use `signalPath` for ordinary control/digital nets, a single isolated hop, or every connection on the board. It guides placement only; routing and impedance intent remain separate.
+- Use `signalPath` for any known ordered electrical path whose physical implementation is much more important than ordinary connectivity. It is not limited to RF or high-speed nets: use it for analog measurement and trigger chains, clocks, each ordered leg of a differential path, long board-spanning priority signals, and series matching/filtering/termination chains when their component order and routable geometry matter.
+- Do not use `signalPath` for ordinary low-priority connectivity, a single isolated hop, or every connection on the board. It is self-contained: do not repeat its segments with `criticalPair` or `corePairs`, because overlapping attraction rules can over-constrain the placer. It guides placement only; differential-pair, routing, return-path, and impedance intent remain separate.
 - Use `capCluster` for two or more capacitors sharing supply and return; use `bypass`, `veryNear`, or `criticalPair` for a single capacitor.
 - Use `fixed` only for a true mechanical coordinate.
+- `fixed()` is generally not recommended for passive R/C/L components or local support parts because it blocks electrical placement optimization. The report emits one aggregate warning rather than listing every passive designator. Keep a passive fixed only when it has a real mechanical requirement.
 - Use `constraintRegion` for placement exclusion; it is not a copper keepout.
 
 Current examples:
 
 - `examples/esp32c3-devboard.js`: edge mechanics, power clusters, both USB differential legs continued across protection and series resistors, and a diagnostic-justified refinement group.
 - `examples/rf-amplifier.js`: a straight critical RF path between edge-mounted connectors and a separate power section.
+- `examples/analog-trigger-pwm.js`: an analog input/buffer/comparator trigger path plus a separate PWM-derived threshold path, with local feedback and bypass placement.
 
 Example for one critical RF chain:
 
@@ -103,9 +105,9 @@ signalPath("RF_ANT", [
 
 ## Post-placement refinement
 
-The solver already tries safe 180-degree rotations and swaps for eligible movable components within their block. Do not add `refineGroup` by default.
+The solver already applies safe 180-degree rotations and swaps for eligible movable components within their block. Do not add `refineGroup` by default.
 
-Use `refineGroup` only when a `post_place_opportunity` diagnostic suggests it, or when named equivalent fixed/preserved components are intentionally allowed to exchange their final poses or rotate 180 degrees. It is permission for a final polish, not a placement command: it creates no coordinates, does not replace blocks or constraints, and may accept no move.
+Use `refineGroup` when a `post_place_opportunity` diagnostic reports a safe improvement blocked only by fixed/preserved placement, or when named equivalent fixed/preserved components are intentionally allowed to exchange their final poses or rotate 180 degrees. The diagnostic explains that the candidate was not applied because fixed mechanics must be preserved. `refineGroup` is explicit permission for that final polish, not a placement command: it creates no coordinates, does not replace blocks or constraints, and may accept no move.
 
 ```js
 refineGroup("headers", ["H1", "H2"], { swap: true, rotateBy: [180] });
