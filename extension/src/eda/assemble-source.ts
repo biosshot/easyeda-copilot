@@ -17,6 +17,7 @@ import {
     serializeDocumentSource,
     SourceRecord,
 } from "./source-document";
+import { normalizeMultipartSourceDesignators } from "./multipart-source-designator";
 
 type AssemblyComponent = CircuitAssembly['components'][number];
 type PrimitiveComponent = ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
@@ -2010,10 +2011,25 @@ export async function assembleCircuitSourceTask(
         const templates = collectComponentTemplates(records, groups, projectUuid, seededKeys);
         const componentResult = cloneComponentsIntoSource(source, records, groups, templates);
 
-        if (componentResult.addedCount) {
-            await setSourceAndRefresh(componentResult.source, 'bulk component');
-            source = componentResult.source;
+        source = componentResult.source;
+        records = parseDocumentSource(source);
+        const multipartDesignators = normalizeMultipartSourceDesignators(records, plans.map(plan => ({
+            designator: plan.input.designator,
+            primitiveId: plan.primitiveId,
+            partUuid: plan.input.part_uuid,
+            subPartName: plan.input.sub_part_name,
+        })));
+
+        if (componentResult.addedCount || multipartDesignators.changedAttributes) {
+            source = serializeDocumentSource(records);
+            await setSourceAndRefresh(source, 'bulk component/multi-part designator');
             records = parseDocumentSource(source);
+        }
+        if (multipartDesignators.normalizedComponents) {
+            eda.sys_Log.add(
+                `[source-assemble] Normalized ${multipartDesignators.normalizedComponents} multi-part component designators`,
+                ESYS_LogType.INFO,
+            );
         }
 
         eda.sys_Log.add('[source-assemble] Stage: load pins', ESYS_LogType.INFO);
