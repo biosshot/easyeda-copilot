@@ -1,9 +1,11 @@
 # Changelog
 
-## 1.2.0 - Unreleased
+## 1.2.0 - 2026-09-19
 
 - Use separately published backend and router packages, with native backend binaries and local dependency switching for development.
 - Move the editor extension into its own workspace while retaining root build commands.
+- Include the root README, changelog, logo and banner metadata in the packaged
+  `.eext` archive for extension registries.
 - Add checkpoint-backed `execute_js` with local input files and bounded tool-result artifacts.
 - Add local Node.js and Python EasyEDA proxy SDKs with checkpoint scopes, unit helpers and Shapely geometry examples.
 - Add named checkpoints without migrating existing checkpoint records.

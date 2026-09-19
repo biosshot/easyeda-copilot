@@ -54,7 +54,7 @@ Backend `0.1.0` и router `0.3.1` опубликованы в npm. Основн�
 
 ## CI и будущая публикация
 
-Backend имеет собственные `ci.yml` и `publish.yml`: сборка/проверка Windows x64, Linux x64 (glibc, Ubuntu 22.04), macOS Intel/Apple Silicon, сбор всех бинарников в один npm-пакет. Публикация запускается только новым `v*`-тегом в репозитории backend через настроенный npm Trusted Publisher (OIDC): `biosshot/eda-copilot-backend`, workflow `publish.yml`. Первая версия `0.1.0` опубликована вручную; реальная публикация через OIDC ещё не проверена.
+Backend имеет собственные `ci.yml` и `publish.yml`: сборка/проверка Windows x64, Linux x64 (glibc, Ubuntu 22.04), macOS Intel/Apple Silicon, сбор всех бинарников в один npm-пакет. Публикация запускается только новым `v*`-тегом в репозитории backend через настроенный npm Trusted Publisher (OIDC): `biosshot/eda-copilot-backend`, workflow `publish.yml`. Версия `0.2.0` успешно опубликована через OIDC с provenance.
 
 EasyEDA Copilot проверяет интеграцию на тех же четырёх платформах и Node 20/24. В локальном режиме CI клонирует соседние backend/router и собирает их; в релизном устанавливает обычные npm-зависимости. Сборка Rust для релизных потребителей MCP не выполняется.
 

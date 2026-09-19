@@ -23,7 +23,7 @@ npm run check --workspace=mcp
 
 The existing `compile`, `build:vite`, `dev:export-reused` and `eslint` commands also remain available at the root. To pass workspace-specific arguments, use `npm run dev --workspace=@copilot/extension -- --port 4002`.
 
-Generated JavaScript and UI files stay in `extension/dist/` and `extension/iframe/`. The final archive retains its existing root location: `build/dist/easyeda-copilot_v<VERSION>.eext`. Its internal paths remain `extension.json`, `dist/`, `iframe/`, `images/`, `locales/` and `LICENSE`, so installed extension URLs do not change. The packager uses this explicit list and validates required outputs; `.edaignore` is no longer used. Source files, workspace dependencies and MCP are excluded.
+Generated JavaScript and UI files stay in `extension/dist/` and `extension/iframe/`. The final archive retains its existing root location: `build/dist/easyeda-copilot_v<VERSION>.eext`. Its internal paths remain `extension.json`, `dist/`, `iframe/`, `images/`, `locales/`, `LICENSE`, `README.md` and `CHANGELOG.md`, so installed extension URLs do not change. The root README and changelog are included for extension registries such as GLX. The packager validates required outputs and verifies that every logo/banner path declared by `extension.json` resolves to a PNG inside the archive; `.edaignore` is no longer used. Source files, workspace dependencies and MCP are excluded.
 
 `npm run build` builds and packages the extension; it does not build or publish MCP. `npm run check --workspace=mcp` builds and checks MCP. CI builds the extension and runs editor tests on Windows x64, Linux x64 and both macOS architectures with Node 20/24. No release is triggered without a version tag.
 

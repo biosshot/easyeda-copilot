@@ -12,6 +12,10 @@ const outputRoot = join(repositoryRoot, 'build', 'dist');
 
 async function main() {
     assert.match(extensionConfig.uuid, /^[a-z0-9]{32}$/, 'Extension UUID must be stable and valid');
+    const metadataImages = Object.entries(extensionConfig.images).map(([kind, path]) => {
+        assert.match(path, /^\.\/images\/[^/]+\.png$/, `Invalid extension ${kind} image path: ${path}`);
+        return path.slice(2);
+    });
     const zip = new JSZip();
     async function addDirectory(directory: string) {
         for (const entry of await readdir(join(extensionRoot, directory), { withFileTypes: true })) {
@@ -22,8 +26,10 @@ async function main() {
     }
     for (const directory of ['dist', 'iframe', 'images', 'locales']) await addDirectory(directory);
     zip.file('extension.json', await readFile(join(extensionRoot, 'extension.json')));
-    zip.file('LICENSE', await readFile(join(repositoryRoot, 'LICENSE')));
-    for (const required of ['extension.json', 'dist/index.js', 'iframe/index.html', 'iframe/graph.html', 'iframe/reused.html', 'images/logo.png', 'images/banner.png', 'LICENSE']) {
+    for (const file of ['LICENSE', 'README.md', 'CHANGELOG.md']) {
+        zip.file(file, await readFile(join(repositoryRoot, file)));
+    }
+    for (const required of ['extension.json', 'dist/index.js', 'iframe/index.html', 'iframe/graph.html', 'iframe/reused.html', ...metadataImages, 'LICENSE', 'README.md', 'CHANGELOG.md']) {
         assert.ok(zip.file(required), `Missing extension artifact: ${required}`);
     }
     const contents = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 1 } });
