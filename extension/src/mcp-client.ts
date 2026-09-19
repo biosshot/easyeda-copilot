@@ -19,7 +19,7 @@ import {
     inspectNet,
 } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
-import { getSchematicGroups } from './eda/schematic-groups';
+import { getSchematicGroups, mergeSchematicGroups } from './eda/schematic-groups';
 import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
@@ -1332,6 +1332,29 @@ async function openSchematic() {
     await new Promise(resolve => setTimeout(resolve, 400));
 }
 
+async function readAllSchematicPages<T>(readPage: () => Promise<T>): Promise<T[]> {
+    const originalDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
+    const results: T[] = [];
+    try {
+        await openSchematic();
+        const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo().catch(() => undefined);
+        if (!allPages?.length) throw new Error('Not open any sch or is empty sch');
+
+        for (const page of allPages) {
+            await eda.dmt_EditorControl.openDocument(page.uuid);
+            await delay(400);
+            results.push(await readPage());
+        }
+        return results;
+    } finally {
+        const currentDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
+        if (originalDocument?.uuid && currentDocument?.uuid !== originalDocument.uuid) {
+            await eda.dmt_EditorControl.openDocument(originalDocument.uuid);
+            await delay(400);
+        }
+    }
+}
+
 async function handleMessage(message: McpMessage, connectionEpoch: number) {
     if (connectionEpoch !== state.connectionEpoch) return;
     state.heartbeatAwaitingPong = false;
@@ -1373,7 +1396,10 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
         }
 
         if (message.event === 'get-schematic-groups') {
-            reply(true, await getSchematicGroups());
+            const result = body.get_full_schematic_groups === true
+                ? mergeSchematicGroups(await readAllSchematicPages(() => getSchematicGroups()))
+                : await getSchematicGroups();
+            reply(true, result);
             return;
         }
 
@@ -1392,27 +1418,14 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
         }
 
         if (message.event === 'get-multi-page-schematic') {
-            const originalDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
             const fullSch: ExplainCircuit = { components: [] };
-            try {
-                await openSchematic();
-                const extractFootprintUuid = !!body.extractFootprintUuid;
-                const allPages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo().catch(() => undefined);
-                if (!allPages || !allPages.length) throw new Error('Not open any sch or is empty sch');
-
-                for (const page of allPages) {
-                    await eda.dmt_EditorControl.openDocument(page.uuid);
-                    await delay(400);
-                    const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
-                    const schematic = await getSchematic([...primitiveIds], { extractFootprintUuid, disableExtractPos: true });
-                    fullSch.components.push(...schematic.components);
-                }
-            } finally {
-                const currentDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
-                if (originalDocument?.uuid && currentDocument?.uuid !== originalDocument.uuid) {
-                    await eda.dmt_EditorControl.openDocument(originalDocument.uuid);
-                    await delay(400);
-                }
+            const extractFootprintUuid = !!body.extractFootprintUuid;
+            const pages = await readAllSchematicPages(async () => {
+                const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
+                return getSchematic([...primitiveIds], { extractFootprintUuid, disableExtractPos: true });
+            });
+            for (const schematic of pages) {
+                fullSch.components.push(...schematic.components);
             }
             reply(true, fullSch);
             return;

@@ -9,19 +9,19 @@ export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
         'get_current_page_schematic_groups',
         {
             title: 'Get EasyEDA Schematic Groups',
-            description: 'Read the whole current schematic page. Returns {maybe_blocks: string[], wires: {net: string|null, pins: string}[], errors?: string[]}. '
-                + 'Block strings contain space-separated designators and are suggestions, not proven functional blocks; singleton/ambiguous components may be omitted. '
-                + 'Block suffixes use the last alphanumeric part-name suffix (U21.2); .1 does not prove multipart. Wires use physical pins (U21.7). '
-                + 'Each wires entry contains space-separated references such as U6.5 C8.1 on one continuous drawn wire island. '
-                + 'Partial reads include at most 10 short errors; omitted wires do not prove isolation. '
-                + 'Equal net names do not join separate islands. Ports/power flags are not components. Use with get_current_page_schematic for values and pin names.',
-            inputSchema: z.object({}),
+            description: 'Read the current schematic page and return heuristic component groups plus direct non-ground wire islands. '
+                + 'Set get_full_schematic_groups to concatenate page-local results from every schematic page. '
+                + 'maybe_blocks and wires[].pins contain space-separated references; groups may omit singleton or ambiguous components. '
+                + 'errors contains non-fatal diagnostics when the result is partial. Use get_schematic for values, pin names and the electrical netlist.',
+            inputSchema: z.object({
+                get_full_schematic_groups: z.boolean().default(false)
+                    .describe('Read and concatenate schematic groups from every page in the current schematic.'),
+            }),
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async () => {
-            const result = await bridge.requestEasyEda('get-schematic-groups', {}, 120_000) as SchematicGroups;
-            // Keep the agreed compact response inline, without pretty-printing or a duplicate payload.
-            return textResult(JSON.stringify(result));
+        async ({ get_full_schematic_groups }) => {
+            const result = await bridge.requestEasyEda('get-schematic-groups', { get_full_schematic_groups }, 120_000) as SchematicGroups;
+            return textResult(result);
         },
     );
 }

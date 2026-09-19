@@ -1,4 +1,4 @@
-/** Compact, read-only context for the current schematic page. */
+/** Compact, read-only context for one schematic page or concatenated page-local results. */
 export interface SchematicGroups {
     maybe_blocks: string[];
     wires: {

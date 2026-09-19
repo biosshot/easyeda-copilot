@@ -50,6 +50,10 @@ function editor(options: { version?: number; changePage?: boolean; failWires?: b
         } },
     };
     const module = load('../src/eda/schematic-groups.ts', {
+        './types': { shortSymbolsMap: {
+            GND: { is: (name: string) => name.toLowerCase().includes('gnd') },
+            VCC: { is: (name: string) => /^(?:V|USB_V|BATTERY)/i.test(name) },
+        } },
         './schematic': { getSchematic: async (ids: string[], settings: unknown) => {
             netReads++;
             if (options.failNetlist) throw new Error("netlist read failed");
@@ -116,35 +120,48 @@ test('live adapter takes a fresh snapshot once after inconsistent resolved nets'
     assert.deepEqual(e.counts(), { netReads: 2, wireReads: 2 });
 });
 
-test('MCP registration is read-only, forwards one request and returns only compact JSON', async () => {
+test('MCP registration is read-only, forwards the full-schematic flag and returns only compact JSON', async () => {
+    let textResultInput: unknown;
     const module = load('../../mcp/src/tools/schematic-groups.ts', {
-        'zod/v4': { object: (shape: unknown) => shape },
-        '../utils/tool-result': { textResult: (text: string) => ({ content: [{ type: 'text', text }] }) },
+        'zod/v4': {
+            object: (shape: unknown) => shape,
+            boolean: () => ({ default: (value: boolean) => ({
+                default: value, describe: () => ({ default: value }),
+            }) }),
+        },
+        '../utils/tool-result': { textResult: (value: unknown) => {
+            textResultInput = value;
+            return { content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) }] };
+        } },
     });
-    let handler: (() => Promise<any>) | undefined;
-    let registrations = 0, requests = 0;
-    module.registerSchematicGroupTools({ registerTool: (name: string, config: any, callback: () => Promise<any>) => {
+    let handler: ((input: { get_full_schematic_groups: boolean }) => Promise<any>) | undefined;
+    let registrations = 0;
+    const requests: unknown[] = [];
+    module.registerSchematicGroupTools({ registerTool: (name: string, config: any, callback: typeof handler) => {
         registrations++;
         assert.equal(name, 'get_current_page_schematic_groups');
-        assert.equal(JSON.stringify(config.inputSchema), '{}');
+        assert.equal(JSON.stringify(config.inputSchema), '{"get_full_schematic_groups":{"default":false}}');
         assert.equal(config.annotations.readOnlyHint, true);
         handler = callback;
     } }, { requestEasyEda: async (event: string, body: unknown, timeout: number) => {
-        requests++;
         assert.equal(event, 'get-schematic-groups');
-        assert.equal(JSON.stringify(body), '{}');
+        requests.push(body);
         assert.equal(timeout, 120000);
         return expected;
     } });
-    const result = await handler!();
-    assert.equal(registrations, 1); assert.equal(requests, 1);
+    const result = await handler!({ get_full_schematic_groups: false });
+    await handler!({ get_full_schematic_groups: true });
+    assert.equal(registrations, 1);
+    assert.equal(JSON.stringify(requests), '[{"get_full_schematic_groups":false},{"get_full_schematic_groups":true}]');
+    assert.equal(textResultInput, expected);
     assert.equal(JSON.stringify(result), JSON.stringify({ content: [{ type: 'text', text: JSON.stringify(expected) }] }));
 });
 
 test('entry points register and dispatch the new tool without embedding analysis in the MCP client', () => {
     const client = readFileSync(resolve(__dirname, '../src/mcp-client.ts'), 'utf8');
     const server = readFileSync(resolve(__dirname, '../../mcp/src/index.ts'), 'utf8');
-    assert.match(client, /if \(message.event === 'get-schematic-groups'\) \{\s*reply\(true, await getSchematicGroups\(\)\);\s*return;\s*\}/);
+    assert.match(client, /body\.get_full_schematic_groups === true/);
+    assert.match(client, /mergeSchematicGroups\(await readAllSchematicPages\(\(\) => getSchematicGroups\(\)\)\)/);
     assert.match(server, /registerSchematicGroupTools\(server, bridge\);/);
 });
 
@@ -152,7 +169,7 @@ test('entry points register and dispatch the new tool without embedding analysis
 test('live adapter accepts real single-part library names, with no library API available', async () => {
     for (const subPartName of ['FRC0603J104 TS.1', '470uF 25V 8*12.1']) {
         const result = await editor({ subPartName }).run();
-        assert.equal(JSON.stringify(result), JSON.stringify({ ...expected, maybe_blocks: ['C1 R1.1'] }));
+        assert.equal(JSON.stringify(result), JSON.stringify(expected));
     }
 });
 

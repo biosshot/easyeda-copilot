@@ -180,14 +180,15 @@ Schematic beautification covers the complete current page and preserves componen
 PCB placement, routing, inspection, and DRC are provided through the MCP interface.
 
 1. Synchronize the schematic with its linked PCB document.
-2. Inspect the current board outline, footprints, placement, copper layers, and DRC rules.
-3. Describe mechanical, functional, and electrical intent in the placement DSL.
-4. Review the mechanical preview and the final placement preview.
-5. Assemble the approved placement in the opened EasyEDA PCB document.
-6. Define stack, routing rules, net classes, planes, special nets, fanout, and via stitching in the routing DSL.
-7. Apply the routing program as one checkpoint-backed transaction.
-8. Inspect critical nets, remaining connections, copper, and native DRC results.
-9. Keep the result, apply a focused repair, or restore the previous checkpoint.
+2. Inspect schematic groups and complete connectivity to identify provisional functional blocks and local passive ownership.
+3. Inspect the current board outline, footprints, placement, copper layers, and DRC rules.
+4. Describe mechanical, functional, and electrical intent in the placement DSL.
+5. Review the mechanical preview and the final placement preview.
+6. Assemble the approved placement in the opened EasyEDA PCB document.
+7. Define stack, routing rules, net classes, planes, special nets, fanout, and via stitching in the routing DSL.
+8. Apply the routing program as one checkpoint-backed transaction.
+9. Inspect critical nets, remaining connections, copper, and native DRC results.
+10. Keep the result, apply a focused repair, or restore the previous checkpoint.
 
 Existing placement can be retained with `preserve(...)`. Placement assembly preserves existing copper and unrelated board objects. Existing routing is preserved unless the routing DSL explicitly calls `clearRouting(...)` for a selected scope.
 

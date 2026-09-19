@@ -53,6 +53,14 @@ function getPartSuffix(name?: string): string | undefined {
 }
 
 type Report = (message: string, cause?: unknown) => void;
+function boundedDiagnostics(messages: Iterable<string>) {
+    const entries = [...new Set(messages)];
+    const errors = (entries.length > 10 ? entries.slice(0, 9) : entries)
+        .map(message => message.replace(/\s+/g, ' ').slice(0, 200));
+    if (entries.length > 10) errors.push(`${entries.length - 9} additional errors; see editor log.`);
+    return errors;
+}
+
 function diagnostics() {
     const messages = new Set<string>();
     const report: Report = (message, cause) => {
@@ -68,13 +76,19 @@ function diagnostics() {
     return {
         report, result: (): Pick<SchematicGroups, 'errors'> => {
             if (!messages.size) return {};
-            const entries = [...messages];
-            const errors = (entries.length > 10 ? entries.slice(0, 9) : entries)
-                .map(message => message.replace(/\s+/g, ' ').slice(0, 200));
-            if (entries.length > 10) errors.push(`${entries.length - 9} additional errors; see editor log.`);
-            return { errors };
+            return { errors: boundedDiagnostics(messages) };
         }
     };
+}
+
+/** Concatenate page-local results without inventing cross-page groups or wire islands. */
+export function mergeSchematicGroups(pages: readonly SchematicGroups[]): SchematicGroups {
+    const result: SchematicGroups = {
+        maybe_blocks: pages.flatMap(page => page.maybe_blocks),
+        wires: pages.flatMap(page => page.wires),
+    };
+    const errors = boundedDiagnostics(pages.flatMap(page => page.errors ?? []));
+    return errors.length ? { ...result, errors } : result;
 }
 
 async function collectSnapshot(report: Report): Promise<SchematicGroupsSnapshot> {
@@ -505,9 +519,7 @@ export async function getSchematicGroups(snapshot?: SchematicGroupsSnapshot): Pr
             catch (error) { issues.report('Block grouping failed; maybe_blocks unavailable, wire results preserved.', error); }
             return {
                 maybe_blocks,
-                wires: graph.wires.filter(
-                    wire => wire.net?.trim().toUpperCase() !== 'GND'
-                ),
+                wires: graph.wires.filter(wire => wire.net === null || !shortSymbolsMap.GND.is(wire.net)),
                 ...issues.result(),
             };
         } catch (error) {

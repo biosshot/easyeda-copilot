@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { getSchematicGroups, type SchematicGroupsSnapshot as Snapshot } from '../src/eda/schematic-groups';
+import { getSchematicGroups, mergeSchematicGroups, type SchematicGroupsSnapshot as Snapshot } from '../src/eda/schematic-groups';
 
 type Component = Snapshot['components'][number];
 const pin = (number: string, x: number, y: number, net: string | null = null) => ({ number, x, y, net });
@@ -68,6 +68,18 @@ test('empty page: only the two agreed keys', async () => {
     assert.deepEqual(await getSchematicGroups({ components: [], wires: [] }), { maybe_blocks: [], wires: [] });
 });
 
+test('full-schematic results concatenate page-local groups and wires without cross-page inference', () => {
+    const merged = mergeSchematicGroups([
+        { maybe_blocks: ['C1 U1'], wires: [{ net: '3V3', pins: 'C1.1 U1.1' }], errors: ['page warning'] },
+        { maybe_blocks: ['C2 U2'], wires: [{ net: '5V', pins: 'C2.1 U2.1' }], errors: ['page warning', 'other warning'] },
+    ]);
+    assert.deepEqual(merged, {
+        maybe_blocks: ['C1 U1', 'C2 U2'],
+        wires: [{ net: '3V3', pins: 'C1.1 U1.1' }, { net: '5V', pins: 'C2.1 U2.1' }],
+        errors: ['page warning', 'other warning'],
+    });
+});
+
 test('chained Wire objects, unnamed intermediate segment and pin in segment interior', async () => {
     const result = await getSchematicGroups({
         components: [endpoint('U6', 0, 0, '5V'), endpoint('C8', 50, 0, '5V'), endpoint('C9', 100, 0, '5V')],
@@ -90,7 +102,17 @@ test('mere crossings stay separate, even when both paths have the same net name'
             endpoint('B1', 0, -50, 'GND'), endpoint('B2', 0, 50, 'GND')],
         wires: [wire('GND', [-50, 0, 50, 0]), wire('GND', [0, -50, 0, 50])],
     });
-    assert.deepEqual(result.wires, [{ net: 'GND', pins: 'A1.1 A2.1' }, { net: 'GND', pins: 'B1.1 B2.1' }]);
+    assert.deepEqual(result.wires, []);
+});
+
+test('all recognized ground wire islands are omitted', async () => {
+    for (const net of ['GND', 'AGND', 'DGND', 'PGND', 'gnd']) {
+        const result = await getSchematicGroups({
+            components: [endpoint('A1', 0, 0, net), endpoint('A2', 50, 0, net)],
+            wires: [wire(net, [0, 0, 50, 0])],
+        });
+        assert.deepEqual(result.wires, [], net);
+    }
 });
 
 test('an explicit vertex at a crossing connects its branches', async () => {
@@ -191,7 +213,7 @@ test('one long ground wire does not force remote groups to merge', async () => {
         wires: [wire('GND', [25, 0, 25, -150], [25, -150, 2025, -150], [2025, -150, 2025, 0])] };
     const result = await getSchematicGroups(input);
     assert.deepEqual(blocks(result.maybe_blocks), blocks(['U1 C1', 'U2 C2']));
-    assert.ok(result.wires.some(w => w.pins === 'U1.2 U2.2'));
+    assert.ok(!result.wires.some(w => w.pins === 'U1.2 U2.2'));
 });
 
 test('wire path length, not just endpoint distance, affects possible grouping', async () => {
@@ -316,8 +338,8 @@ test('300+ components return the whole compact result without pagination or per-
 
 test('part suffix uses only the last dot, accepting ASCII letters/digits without treating .1 as multipart proof', async () => {
     const names: [string | undefined, string][] = [
-        ['MAX942CSA+.2', 'R1.2'], ['MAX942CSA+.1', 'R1.1'], ['MAX942CSA+.B', 'R1.B'],
-        ['FRC0603J104 TS.1', 'R1.1'], ['470uF 25V 8*12.1', 'R1.1'], ['prefix.1.extra.B2', 'R1.B2'],
+        ['MAX942CSA+.2', 'R1.2'], ['MAX942CSA+.1', 'R1'], ['MAX942CSA+.B', 'R1.B'],
+        ['FRC0603J104 TS.1', 'R1'], ['470uF 25V 8*12.1', 'R1'], ['prefix.1.extra.B2', 'R1.B2'],
         ['part.12', 'R1.12'], ['part.a9', 'R1.a9'], ['part.', 'R1'], ['part.A B', 'R1'],
         ['part.B+', 'R1'], ['part.B_2', 'R1'], ['part.2\n', 'R1'], ['part. 2', 'R1'],
         ['part.2 ', 'R1'], ['part.2.invalid-tail', 'R1'], ['part.Б', 'R1'], ['2', 'R1'],

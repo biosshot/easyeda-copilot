@@ -2,7 +2,7 @@
 
 Use this workflow without continuing to PCB work unless the user explicitly asks for it.
 
-For local context missing from the netlist, use [schematic groups](groups.md): `get_current_page_schematic_groups` returns likely blocks and actual drawn wire islands without changing the page.
+For local context missing from the netlist, use [schematic groups](groups.md): `get_current_page_schematic_groups` returns likely blocks and direct non-ground wire islands for the current page, or concatenated page-local results for the full schematic.
 
 ## Create or modify
 
