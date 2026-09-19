@@ -20,6 +20,7 @@ import {
 } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import { getSchematicGroups, mergeSchematicGroups } from './eda/schematic-groups';
+import { assertMcpDocumentContext } from './eda/mcp-document-context';
 import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
@@ -1385,6 +1386,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
     try {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
+        await assertMcpDocumentContext(message.event, body);
 
         if (message.event === 'execute-js') {
             if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
