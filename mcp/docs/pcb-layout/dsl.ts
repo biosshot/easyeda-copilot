@@ -4,6 +4,21 @@ type Layer = "top" | "bottom";
 type BlockRole = "power" | "mcu" | "analog" | "rf" | "connector" | "sensor" | "generic";
 type BlockPlacement = "main" | "satellite";
 type ComponentRole = "connector" | "main_ic" | "decoupling_cap" | "crystal" | "passive" | "indicator";
+
+type LocalLayoutSeed = {
+  /** Approximate block-local X coordinate in mm. The completed block may later translate/rotate as one rigid placement primitive. */
+  x: number;
+  /** Approximate block-local Y coordinate in mm. */
+  y: number;
+  /** Optional requested component rotation in degrees. When omitted, the component keeps its current/default orientation. */
+  rotate?: number;
+};
+
+/**
+ * Sparse approximate topology for selected direct members of a block.
+ * Components omitted from this map are still placed normally by the block solver around the seeded topology.
+ */
+type LocalLayout = Record<string, LocalLayoutSeed>;
 type MechanicalFaceDirection = "left" | "right" | "top" | "bottom" | "board.left" | "board.right" | "board.top" | "board.bottom";
 type BoardEdge = "left" | "right" | "top" | "bottom";
 type BoardPadLayer = "top" | "bottom" | "multi";
@@ -26,8 +41,16 @@ interface BlockOptions {
   attachTo?: string;
   /** Soft near relation from the satellite block to this target, usually a pin(...) on the parent IC. */
   anchor?: TargetRef;
-  /** Escape hatch for small same-role placement groups that intentionally do not share a non-GND net. This creates no spatial attachment; use satellite/attachTo/anchor or an external near/veryNear/criticalPair. */
+  /** Escape hatch for small same-role placement groups that intentionally do not share a non-GND net, e.g. USB DP/DM series resistor pairs or repeated indicators. This permits disconnected topology but creates no spatial attachment; use satellite/attachTo/anchor or an external near/veryNear/criticalPair. */
   allowDisconnected?: boolean;
+  /**
+   * Optional sparse approximate local topology for this block.
+   * Keys must be direct component members of this block. x/y are approximate block-local coordinates in mm, not absolute board coordinates.
+   * The solver applies the requested seed poses, legalizes seeded members that violate real footprint collision/clearance constraints,
+   * then combines the seeded topology into one rigid macro while omitted members continue through normal block placement.
+   * A component explicitly listed here cannot also use fixed(), edgeMount(), or edgePlace().
+   */
+  localLayout?: LocalLayout;
 }
 
 interface ModuleOptions {
@@ -347,9 +370,13 @@ interface ComponentBuilder {
   faceTo(direction: MechanicalFaceDirection): ComponentBuilder;
   /** Mount a mechanical component on a board edge. Computes fixed center, face direction, and board overflow from the real footprint bbox after rotation. Prefer this for USB/ports/buttons on edges instead of fixed()+offset+boardOverflow. */
   edgeMount(edge: BoardEdge, options?: EdgeMountOptions): ComponentBuilder;
-  /** Place a mechanical component near one or more board edges while keeping it inside the board. Every component in its block must also use edgePlace; put ordinary support components in separate blocks linked with near(), veryNear(), or criticalPair(). Multiple edgePlace components may share a board-level block. Use for buttons/LEDs/side controls. Runtime normally detects the mechanical face; use faceAt0(...) only to correct a verified wrong inference. */
+  /** Place a mechanical component near one or more board edges while keeping it inside the board. Every component in its block must also use edgePlace; put ordinary support components in separate blocks linked with near(), veryNear(), or criticalPair(). Use for buttons/LEDs/side controls. Runtime normally detects the mechanical face; use faceAt0(...) only to correct a verified wrong inference. */
   edgePlace(edgeOrEdges: BoardEdge | BoardEdge[], options?: EdgePlaceOptions): ComponentBuilder;
-  /** Lock this component to an exact board position. Allowed only for role("connector") mechanical parts; normal components must be placed by blocks/hints. */
+  /**
+   * Lock this component to an exact board position. Allowed for any component role.
+   * Use only when the position is genuinely fixed/mechanically known; ordinary electrical components should normally be placed by blocks and placement constraints.
+   * A component explicitly seeded by block(..., { localLayout }) cannot also use fixed(), edgeMount(), or edgePlace().
+   */
   fixed(options: FixedPlacementOptions): ComponentBuilder;
   /** Alias for fixed(). */
   place(options: FixedPlacementOptions): ComponentBuilder;
@@ -424,10 +451,13 @@ interface EdgePlaceOptions {
   layer?: Layer;
 }
 
-/** Place mechanical components near board edge(s) but inside the board. Every component in each affected block must also use edgePlace; put ordinary support components in separate blocks linked with near(), veryNear(), or criticalPair(). Multiple edgePlace components may share a board-level block. Use for buttons, LEDs, side-access connectors, and edge controls. Not for USB/ports that must overhang; use edgeMount for those. */
+/** Place mechanical components near board edge(s) but inside the board. Use for buttons, LEDs, side-access connectors, and edge controls. Not for USB/ports that must overhang; use edgeMount for those. */
 declare function edgePlace(designators: string | string[], options: EdgePlaceOptions): void;
 
-/** Lock a component to an exact/anchor-relative board position. Allowed only for role("connector") mechanical parts. */
+/**
+ * Lock any component to an exact/anchor-relative board position.
+ * Prefer normal automatic placement unless the position is genuinely fixed. A component explicitly listed in block.localLayout cannot also use fixed().
+ */
 declare function fixed(designator: string, options: FixedPlacementOptions): void;
 /** Global helper equivalent to component(designator).edgeMount(edge, options). */
 declare function edgeMount(designator: string, edge: BoardEdge, options?: EdgeMountOptions): void;
@@ -439,7 +469,11 @@ declare function pin(designator: string, pin_number: string | number): TargetRef
 /** Target a board anchor such as "board.left" or "board.center". */
 declare function anchor(anchor: BoardAnchor): TargetRef;
 
-/** Softly attract two targets. For electrical intent, prefer pin(...) targets over comp(...) targets. */
+/**
+ * Softly attract two targets. For electrical intent, prefer pin(...) targets over comp(...) targets.
+ * Routine shared non-GND nets already contribute weak automatic board-level attraction, so do not mirror every electrical connection with near().
+ * Ordinary nets spanning more than 8 placement primitives are ignored by that weak affinity; power nets use only 0.1x weight.
+ */
 declare function near(source: TargetRef, target: TargetRef, priority?: Priority): void;
 /** Strongly attract two targets. Use sparingly, mainly for truly short electrical paths. Prefer pin(...) to pin(...); avoid comp(...) here unless only a rough grouping is needed. */
 declare function veryNear(source: TargetRef, target: TargetRef, priority?: Priority): void;
@@ -478,9 +512,19 @@ interface CoreIslandOptions extends CriticalPairOptions {
   pairs?: Array<[PinTargetRef, PinTargetRef]>;
 }
 
-/** One isolated dominant pad-to-pad constraint, such as buck switch-node-to-inductor. Do not duplicate a segment already covered by signalPath(). */
+/**
+ * One isolated dominant pad-to-pad constraint, such as buck switch-node-to-inductor. Do not duplicate a segment already covered by signalPath().
+ * Explicit critical/high-priority electrical relations are evaluated before sampled ordinary nets by the bounded route-aware placement reranker.
+ * This affects placement scoring only and does not create copper.
+ */
 declare function criticalPair(source: PinTargetRef, target: PinTargetRef, options?: CriticalPairOptions): void;
-/** Self-contained placement constraint for one critical ordered signal chain, especially an RF or high-speed path through series matching/filter parts. Each tuple is one pad-to-pad segment; adjacent tuples meet on the same pass-through component using different entry/exit pins. Use only when physical path order matters. Do not duplicate its segments with criticalPair() or corePairs(). This does not create copper or guarantee impedance. */
+/**
+ * Self-contained placement constraint for one critical ordered signal chain, especially an RF or high-speed path through series matching/filter parts.
+ * Each tuple is one pad-to-pad segment; adjacent tuples meet on the same pass-through component using different entry/exit pins.
+ * Explicit signal-path segments receive priority in bounded route-aware candidate reranking. The estimator may account for obstacles, detours, bends,
+ * layer changes, and temporary congestion from earlier higher-priority route jobs, but it remains a placement estimator.
+ * Use only when physical path order matters. Do not duplicate its segments with criticalPair() or corePairs(). This does not create copper or guarantee impedance.
+ */
 declare function signalPath(name: string, segments: SignalPathSegment[], options?: SignalPathOptions): void;
 /** Permit atomic post-placement swap/180-degree variants inside this named group. Positions always come from the completed global placement; this does not create new coordinates. Fixed members are never changed without this explicit permission. */
 declare function refineGroup(name: string, components: string[], options: RefineGroupOptions): void;
@@ -536,7 +580,7 @@ declare function capCluster(capacitors: string[], options: CapClusterOptions): v
 interface SolverOptions {
   /** Placement grid in mm. Larger values are faster and cleaner; smaller values allow tighter placement. For complex boards, 1mm is a good starting point. */
   grid?: number;
-  /** Signals ignored during placement ratsnest scoring, usually ["GND"]. */
+  /** Signals ignored during placement ratsnest scoring, usually ["GND"]. They are also excluded from ordinary-net board attraction. */
   ignoredSignals?: string[];
   /** "normal" keeps balanced electrical/aesthetic placement. "high" heavily prefers minimum block/module/board occupied size for very compact boards. Default "normal". */
   compactness?: "normal" | "high";
