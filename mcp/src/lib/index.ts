@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { Blob, File } from 'node:buffer';
-import { isAbsolute } from 'node:path';
+import { basename, isAbsolute } from 'node:path';
 import { ProxyBridge, type EasyEdaInstance } from '../bridge/index';
 import { EXECUTE_JS_MAX_CODE_BYTES, EXECUTE_JS_MAX_INPUT_BYTES, type ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
 import { remoteRuntime } from './runtime';
@@ -23,6 +23,8 @@ export interface ConnectOptions {
     /** Omit to bind to the current document; null explicitly permits document switching. */
     documentUuid?: string | null;
     timeoutMs?: number;
+    /** One checkpoint for the whole Node.js script by default. false keeps checkpoint-per-request behavior. */
+    checkpointScope?: string | false;
 }
 export interface ExecuteJsOptions {
     code?: string;
@@ -101,12 +103,22 @@ export class Session {
     private pending: { expression: Promise<Expression>; resolve: (v: any) => void; reject: (e: any) => void }[] = [];
     private scheduled?: ReturnType<typeof setImmediate>;
     private scope?: CheckpointScope;
+    private automaticScope = false;
     private scopeTransition = false;
     private scopeReply?: ExecuteJsWireResult['checkpointScope'];
     constructor(private bridge: ProxyBridge, readonly instanceId: string, private timeoutMs: number) {
         this.eda = this.proxy({ k: 'root' }, false);
     }
-    async initialize(documentUuid?: string | null) {
+    async initialize(documentUuid?: string | null, checkpointScope?: string | false) {
+        if (checkpointScope !== false && documentUuid !== null) {
+            const name = checkpointScope ?? defaultCheckpointScopeName();
+            const scope = await this.openCheckpointScope(name, documentUuid);
+            this.scope = scope;
+            this.automaticScope = true;
+            const result = await this.request({ action: 'init', documentUuid: this.documentUuid });
+            this.documentUuid = result.documentUuid;
+            return;
+        }
         const result = await this.request({ action: 'init', documentUuid });
         this.documentUuid = result.documentUuid;
     }
@@ -251,19 +263,29 @@ export class Session {
     /** One baseline for all requests on this session until close; no rollback or isolation. */
     async beginCheckpointScope(name: string): Promise<CheckpointScope> {
         this.assertAvailable();
-        if (this.scope) throw new SdkError('Nested checkpoint scopes are unsupported');
+        if (typeof name !== 'string' || !name.trim() || name.trim().length > 200) throw new SdkError('Checkpoint scope name must contain 1 to 200 characters');
+        if (this.scope) {
+            if (this.automaticScope) return new CheckpointScope(this, this.scope.token, this.scope.checkpointId, false);
+            throw new SdkError('Nested checkpoint scopes are unsupported');
+        }
         if (!this.documentUuid) throw new SdkError('Checkpoint scope requires a bound document');
+        const scope = await this.openCheckpointScope(name, this.documentUuid);
+        this.scope = scope;
+        return scope;
+    }
+    private async openCheckpointScope(name: string, documentUuid?: string): Promise<CheckpointScope> {
         if (typeof name !== 'string' || !name.trim() || name.trim().length > 200) throw new SdkError('Checkpoint scope name must contain 1 to 200 characters');
         this.scopeTransition = true;
         try {
             await this.drain();
             return await this.serialize(async () => {
-                await this.wire('return null;', {}, { action: 'begin', sessionId: this.id, documentUuid: this.documentUuid, name });
+                await this.wire('return null;', {}, { action: 'begin', sessionId: this.id, ...(documentUuid ? { documentUuid } : {}), name });
                 const info = this.scopeReply;
-                if (!info?.token || info.sessionId !== this.id || info.documentUuid !== this.documentUuid || info.checkpointId !== this.lastCheckpoint) {
+                if (!info?.token || info.sessionId !== this.id || (documentUuid && info.documentUuid !== documentUuid) || info.checkpointId !== this.lastCheckpoint) {
                     throw new SdkError('Connected extension does not support checkpoint scopes; update the extension. No scope body was executed.', this.lastCheckpoint);
                 }
-                return this.scope = new CheckpointScope(this, info.token, info.checkpointId);
+                this.documentUuid = info.documentUuid;
+                return new CheckpointScope(this, info.token, info.checkpointId);
             });
         } finally { this.scopeTransition = false; }
     }
@@ -283,7 +305,7 @@ export class Session {
         try {
             await this.drain();
             if (!this.broken && !this.closed) await this.serialize(() => this.wire('return null;', {}, { action: 'end', sessionId: this.id, token: scope.token }));
-        } finally { this.scope = undefined; this.scopeTransition = false; }
+        } finally { this.scope = undefined; this.automaticScope = false; this.scopeTransition = false; }
     }
     close(): Promise<void> {
         return this.closing ??= this.finishClose();
@@ -303,12 +325,12 @@ export class Session {
 
 export class CheckpointScope {
     private closing?: Promise<void>;
-    constructor(private session: Session, readonly token: string, readonly checkpointId: string) {}
+    constructor(private session: Session, readonly token: string, readonly checkpointId: string, private ownsSessionScope = true) {}
     get eda(): any {
         if (this.closing) throw new SdkError('Checkpoint scope is closed');
         return this.session.eda;
     }
-    close(): Promise<void> { return this.closing ??= this.session.endCheckpointScope(this); }
+    close(): Promise<void> { return this.closing ??= this.ownsSessionScope ? this.session.endCheckpointScope(this) : Promise.resolve(); }
 }
 
 async function resolveExpressions(value: any): Promise<any> {
@@ -330,6 +352,11 @@ async function readInput(path: string, limit: number) {
 function url(options: ConnectOptions) {
     return options.url ?? `ws://${process.env.EASYEDA_COPILOT_MCP_WS_HOST || '127.0.0.1'}:${process.env.EASYEDA_COPILOT_MCP_WS_PORT || '8787'}`;
 }
+function defaultCheckpointScopeName() {
+    const file = process.argv[1];
+    const name = file ? `Node SDK file: ${basename(file)}` : 'Node SDK script';
+    return name.slice(0, 200);
+}
 export async function listInstances(options: Pick<ConnectOptions, 'url'> = {}): Promise<EasyEdaInstance[]> {
     const bridge = new ProxyBridge(url(options), () => undefined);
     try { await bridge.connect(); return await bridge.listEasyEdaInstances(); }
@@ -339,14 +366,19 @@ export async function connect(options: ConnectOptions = {}): Promise<Session> {
     const timeout = options.timeoutMs ?? 60_000;
     if (!Number.isFinite(timeout) || timeout <= 0 || timeout > 2_147_482_647) throw new SdkError('timeoutMs must be positive and fit a JavaScript timer');
     const bridge = new ProxyBridge(url(options), () => undefined);
+    let session: Session | undefined;
     try {
         await bridge.connect();
         const instances = await bridge.listEasyEdaInstances();
         const instance = options.instanceId ? instances.find(i => i.instanceId === options.instanceId)
             : instances.length === 1 ? instances[0] : undefined;
         if (!instance) throw new SdkError('Select a connected instanceId; use listInstances()');
-        const session = new Session(bridge, instance.instanceId, timeout);
-        await session.initialize(options.documentUuid);
+        session = new Session(bridge, instance.instanceId, timeout);
+        await session.initialize(options.documentUuid, options.checkpointScope);
         return session;
-    } catch (error) { bridge.close(); throw error; }
+    } catch (error) {
+        await session?.close().catch(() => undefined);
+        bridge.close();
+        throw error;
+    }
 }

@@ -35,15 +35,17 @@ export class CheckpointScopes {
             const request = raw as Record<string, unknown>;
             if (typeof request.sessionId !== 'string' || !request.sessionId || request.sessionId.length > 200) throw Error('Invalid checkpoint scope session');
             if (request.action === 'begin') {
-                if (typeof request.documentUuid !== 'string' || !request.documentUuid) throw Error('Checkpoint scope requires a bound document');
+                if (request.documentUuid !== undefined && (typeof request.documentUuid !== 'string' || !request.documentUuid)) throw Error('Invalid checkpoint scope document');
                 if (typeof request.name !== 'string' || !request.name.trim() || request.name.trim().length > 200) throw Error('Checkpoint scope name must contain 1 to 200 characters');
                 if ([...this.scopes.values()].some(s => s.sessionId === request.sessionId)) throw Error('Nested checkpoint scopes are unsupported');
                 if (this.scopes.size >= 256) throw Error('Too many active checkpoint scopes');
                 const doc = await api.dmt_SelectControl.getCurrentDocumentInfo();
-                if (doc?.uuid !== request.documentUuid) throw Error('Checkpoint scope document is not active');
+                const documentUuid = request.documentUuid ?? doc?.uuid;
+                if (typeof documentUuid !== 'string' || !documentUuid) throw Error('Checkpoint scope requires an active document');
+                if (doc?.uuid !== documentUuid) throw Error('Checkpoint scope document is not active');
                 const checkpointId = await this.store.save(false, request.name.trim());
                 if (!checkpointId) throw Error('Could not create checkpoint scope baseline');
-                scope = { token: this.token(), sessionId: request.sessionId, documentUuid: request.documentUuid, checkpointId, expiresAt: this.now() + this.ttlMs };
+                scope = { token: this.token(), sessionId: request.sessionId, documentUuid, checkpointId, expiresAt: this.now() + this.ttlMs };
                 this.scopes.set(scope.token, scope);
                 this.store.pin(checkpointId, scope.expiresAt);
                 if ((await api.dmt_SelectControl.getCurrentDocumentInfo())?.uuid !== scope.documentUuid) {

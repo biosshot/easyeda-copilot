@@ -7,7 +7,14 @@ save, or isolation from manual edits and other clients.
 
 Both the MCP SDK distribution **and the EasyEDA extension** need this feature.
 Older extensions reject scope negotiation in the SDK before the callback/context
-body is entered; ordinary `execute_js` and SDK calls remain compatible.
+body is entered. Python ordinary calls remain compatible; Node.js must pass
+`checkpointScope: false` to `connect()` when temporarily using an older extension.
+
+Node.js `connect()` opens this scope automatically for the lifetime of the session,
+using the entry script filename as its history label. Explicit scope wrappers reuse
+that baseline, so older generated scripts remain valid. Pass `checkpointScope: false`
+to `connect()` only when checkpoint-per-request behavior is intentional. Python keeps
+the explicit context-manager API shown below.
 
 ## Python
 
@@ -52,7 +59,9 @@ return values are preserved. TypeScript declarations include both interfaces.
   `eval` and legacy execution. Do not run unrelated workflows concurrently on the
   same session. Use separate sessions. `Promise.all` / `asyncio.gather` batching
   within the workflow remains supported.
-- Nested scopes on a session are rejected. Await entry/exit before starting more
+- Nested explicit scopes on a session are rejected. An explicit Node wrapper inside
+  its automatic file-level scope is a compatibility view of that same baseline.
+  Await entry/exit before starting more
   work, and await edits before leaving the block. Lazy expressions execute when
   awaited, not when constructed; saved remote objects can be used after the scope
   under the session's ordinary checkpoint policy.

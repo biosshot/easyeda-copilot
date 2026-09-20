@@ -68,7 +68,7 @@ server.on('connection', socket => {
 });
 const cases = [];
 const test = (name, fn) => cases.push([name, fn]);
-const open = options => connect({ url, ...options });
+const open = options => connect({ url, checkpointScope: false, ...options });
 let session;
 try {
     session = await open();
@@ -354,6 +354,25 @@ await s.close();
         assert.equal(pins.size, 0);
         await s.eda.test.scalar(); assert.equal(saves-before, 2);
         await s.close();
+    });
+    test('Node connect automatically shares one file-level checkpoint without explicit LLM code', async () => {
+        const before = saves;
+        const s = await connect({ url });
+        const cp = s.lastCheckpoint;
+        assert.ok(cp);
+        assert.equal(saves - before, 1);
+        assert.equal(await s.eda.test.scalar(), 42);
+        await s.eval('return eda.test.write()');
+        await s.executeJs({ code: 'return 123' });
+        assert.equal(s.lastCheckpoint, cp);
+        await assert.rejects(s.beginCheckpointScope(''), /1 to 200/);
+        await s.checkpointScope('legacy explicit wrapper', async scope => {
+            assert.equal(scope.checkpointId, cp);
+            await scope.eda.test.write();
+        });
+        assert.equal(saves - before, 1);
+        await s.close();
+        assert.equal(pins.size, 0);
     });
     test('checkpoint scope failures keep edits and return baseline; close is idempotent', async () => {
         const s=await open(); const n=creates; let cp;

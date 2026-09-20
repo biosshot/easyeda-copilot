@@ -12,7 +12,7 @@ Keep `execute_js` for a self-contained operation inside EasyEDA that does not be
 
 For example, a local ground-connection repair can follow this workflow:
 
-1. Open the intended PCB and bind an SDK session to its instance and document UUID. Retain an explicit baseline checkpoint; use [checkpoint scopes](checkpoint-scopes.md) when several dependent requests need one baseline.
+1. Open the intended PCB and bind an SDK session to its instance and document UUID. Node.js automatically retains one baseline checkpoint for the session; Python can use [checkpoint scopes](checkpoint-scopes.md) when several dependent requests need one baseline.
 2. Read the affected pads, nets, nearby copper and current filled regions through `session.eda`. Confirm [units and coordinates](pcb-units.md) before local calculations.
 3. Use local geometry libraries to propose a short connection and via positions. The [Shapely examples](shapely-geometry.md) show how to bring native geometry into local calculations.
 4. Recheck the document and target preconditions before writing. Apply only the diagnosed correction, await all mutations and retain the checkpoint ID. Re-read objects when the editor splits or replaces primitives.
@@ -73,6 +73,8 @@ For portable scripts, import using `await import(pathToFileURL(resolve(process.e
 
 `connect()` selects the only connected instance or fails if selection is ambiguous. Use `listInstances()` to obtain actual IDs. Omitting `documentUuid` binds the session to the current document. Passing a UUID verifies it is active; it does not open it. Open the intended document first. `documentUuid: null` explicitly permits switching documents, useful for document-management scripts.
 
+In Node.js, `connect()` opens one checkpoint scope automatically and names it after the entry `.js`/`.mjs` file. Every SDK call on that session reuses the same baseline until `session.close()`, so generated scripts do not need to remember `checkpointScope()`. Set `checkpointScope: 'Custom name'` to override its history label, or `checkpointScope: false` to opt into the old checkpoint-per-request behavior. A document-switching session (`documentUuid: null`) cannot have a single document baseline and therefore does not open an automatic scope. Existing explicit `checkpointScope()` wrappers reuse the automatic baseline for compatibility.
+
 The default broker is `ws://127.0.0.1:8787`; `EASYEDA_COPILOT_MCP_WS_HOST` and `EASYEDA_COPILOT_MCP_WS_PORT` override it. `connect({url, timeoutMs})` also accepts an explicit URL and execution timeout. The SDK never becomes broker owner or reconnects automatically.
 
 ## Python
@@ -97,8 +99,8 @@ SDK setup methods use Python names (`list_instances`, `document_uuid`, `instance
 
 ## Execution and types
 
-For one baseline across dependent requests, use [checkpoint scopes](checkpoint-scopes.md)
-in Python or Node.js. This optional mode requires an updated extension.
+Node.js uses one baseline automatically. In Python, use [checkpoint scopes](checkpoint-scopes.md)
+across dependent requests. This mode requires an updated extension; Node.js can temporarily opt out with `checkpointScope: false` when connecting to an older extension.
 
 Property access builds an expression. A method call builds a lazy awaitable. `await` dispatches it through the existing broker's `execute-js` event. Merely constructing a call does not execute it. Await all edits before closing.
 
@@ -169,7 +171,7 @@ Use one session for a bounded phase and always close it in `finally` or an async
 
 Changing the active document invalidates a bound session. References do not survive closing, expiration or editor reload. After a document save/close/reopen or external state replacement, reconnect and obtain fresh objects; document UUID checks are not revision tracking and do not lock the editor.
 
-Outside an explicit checkpoint scope, every underlying `execute-js`, including reads and session housekeeping, creates a checkpoint. Inside a scope, calls reuse its named baseline. Keep `scope.checkpointId` / `scope.checkpoint_id` or the edit's `session.lastCheckpoint` / `session.last_checkpoint`; later ordinary reads create newer checkpoints.
+In Node.js, the automatic file-level scope makes every underlying `execute-js`, including reads and session housekeeping, reuse one baseline. With `checkpointScope: false`, or in Python outside an explicit scope, every execution creates a checkpoint. Keep `scope.checkpointId` / `scope.checkpoint_id` or the edit's `session.lastCheckpoint` / `session.last_checkpoint`.
 
 `SdkError` includes the checkpoint when available, `failedIndex` (`failed_index`) for a grouped call, and `outcomeUnknown` (`outcome_unknown`) for transport failures. A timeout/disconnect closes the SDK connection but does not cancel JavaScript already running in EasyEDA. Do not automatically retry a mutation or restore while its outcome is unknown; follow [execution recovery](instructions.md#errors-and-timeout). Other MCP connections and the broker remain running.
 

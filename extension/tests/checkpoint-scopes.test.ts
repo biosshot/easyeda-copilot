@@ -20,6 +20,12 @@ test('ordinary execution saves each time; control messages do not execute suppli
     await f.run({action:'end',sessionId:'a',token});assert.equal(f.pins.size,0);assert.equal(f.writes,7);
     assert.ok((await f.run({action:'use',sessionId:'a',token})).error);assert.equal(f.writes,7);
 });
+test('begin without a document UUID binds the active document',async()=>{
+    const f=fixture();
+    const begin=await f.run({action:'begin',sessionId:'a',name:'Automatic Node SDK scope'});
+    assert.equal(begin.checkpointScope?.documentUuid,'pcb');
+    assert.equal(f.count,1);assert.equal(f.writes,0);
+});
 test('wrong session, wrong document, expired and reconnect tokens cannot execute',async()=>{
     for(const mode of ['owner','document','expiry','epoch']) {
         const f=fixture();const b=await f.run({action:'begin',sessionId:'a',name:'Edit',documentUuid:'pcb'});

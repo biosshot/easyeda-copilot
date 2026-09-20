@@ -16,7 +16,7 @@ input.on('line', line => {
                 case 'list': result = await listInstances(request.params); break;
                 case 'connect':
                     if (session) throw Error('Already connected');
-                    session = await connect(request.params);
+                    session = await connect({ ...request.params, checkpointScope: false });
                     result = { sessionId: session.id, instanceId: session.instanceId, documentUuid: session.documentUuid };
                     break;
                 case 'packet':

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { connect, EPCB_LayerId } from '../dist/lib/node/index.mjs';
 const [documentUuid,instanceId]=process.argv.slice(2);
 if(!documentUuid)throw Error('Usage: node check-sdk-scopes-live.mjs <test-pcb-uuid> [instance-id]');
-const s=await connect({documentUuid,instanceId});
+const s=await connect({documentUuid,instanceId,checkpointScope:false});
 let marker; const started=Date.now();
 try {
     const ids=await s.eda.pcb_PrimitiveLine.getAllPrimitiveId();

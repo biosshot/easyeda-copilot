@@ -26,7 +26,7 @@ const owner = await startBridge({ host: '127.0.0.1', port });
 const sessions = [], editors = [];
 let passed = 0;
 const test = async (name, fn) => { await fn(); passed++; console.log(`PASS ${name}`); };
-const open = async (id, options = {}) => { const s = await connect({ url, instanceId: id, ...options }); sessions.push(s); return s; };
+const open = async (id, options = {}) => { const s = await connect({ url, instanceId: id, checkpointScope: false, ...options }); sessions.push(s); return s; };
 async function editor(id) {
     const socket = new WebSocket(url);
     const state = { id, writes: 0, executions: 0, saves:0, delayed: 0, drop: false, socket };

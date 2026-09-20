@@ -11,6 +11,8 @@ export interface ConnectOptions {
     /** Omit to bind the active document. null explicitly allows switching documents. */
     documentUuid?: string | null;
     timeoutMs?: number;
+    /** One checkpoint for the whole Node.js script by default. false keeps checkpoint-per-request behavior. */
+    checkpointScope?: string | false;
 }
 export interface EasyEdaInstance {
     instanceId: string;
