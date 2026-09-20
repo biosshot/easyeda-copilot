@@ -86,7 +86,9 @@ try {
     assert.equal((await json(a, 'call', 'list_easyeda_instances')).instances.length, 2, 'Omitted input must become {}');
     await json(a, 'call', 'select_easyeda_instance', ...input({ instanceId: 'window-a' }));
     await json(b, 'call', 'select_easyeda_instance', ...input({ instanceId: 'window-b' }));
-    assert.equal((await json(a, 'call', 'get_current_project_info')).project_name, 'window-a');
+    const cliResult = await run(a, 'call', 'get_current_project_info');
+    assert.equal(JSON.parse(cliResult.stdout).project_name, 'window-a');
+    assert.match(cliResult.stderr, /extension version is unknown/);
     assert.equal((await json(b, 'call', 'get_current_project_info')).project_name, 'window-b');
     const raw = await json(a, 'call', 'get_current_project_info', '--raw');
     assert.equal(raw.content[0].type, 'text');

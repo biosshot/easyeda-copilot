@@ -265,6 +265,9 @@ async function main() {
     let result = response.result;
     if (body.command === 'call' && !raw) {
         const mcp = result as { structuredContent?: unknown; content?: Array<{ type: string; text?: string }> };
+        for (const warning of mcp.content?.slice(1) ?? []) {
+            if (warning.type === 'text' && warning.text) console.error(warning.text);
+        }
         if (mcp.structuredContent !== undefined) result = mcp.structuredContent;
         else if (mcp.content?.[0]?.type === 'text') {
             const value = mcp.content[0].text!;
