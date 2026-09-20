@@ -7,6 +7,7 @@ import {
 } from './eda/pcb-assemble';
 import { checkpointer } from './eda/checkpointer';
 import { CheckpointScopes } from './eda/checkpoint-scopes';
+import { interruptJavaScriptExecution } from './eda/execute-js-control';
 const checkpointScopes = new CheckpointScopes(checkpointer);
 import { checkPcbDrc } from './eda/drc';
 import { previewPcb } from './eda/pcb-preview';
@@ -1698,6 +1699,14 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             return;
         }
 
+        if (message.event === 'interrupt-execute-js') {
+            const reason = typeof body.reason === 'string' && body.reason.trim()
+                ? body.reason.trim()
+                : 'Interrupted by MCP client';
+            reply(true, interruptJavaScriptExecution(reason));
+            return;
+        }
+
         if (message.event === 'create-schematic') {
             const boardName = typeof body.boardName === 'string' ? body.boardName : undefined;
             const schematicFirstPageUuid = await eda.dmt_Schematic.createSchematic(boardName);
@@ -2034,7 +2043,8 @@ function tryConnectMcp(showErrors = false) {
                 const data = typeof event.data === 'string' ? event.data : String(event.data);
                 const message = JSON.parse(data) as McpMessage;
 
-                if (message.event === 'connected' || message.event === 'pong') {
+                if (message.event === 'connected' || message.event === 'pong'
+                    || message.event === 'interrupt-execute-js') {
                     await handleMessage(message, connectionEpoch);
                     return;
                 }

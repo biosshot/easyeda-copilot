@@ -2,6 +2,8 @@
 
 Use `execute_js` for a focused native API inspection, a specific correction after Copilot placement/routing, or an operation without a suitable dedicated tool. The tool name is `execute_js`; a `.js` file is one way to supply its code. Scripts run with extension permissions, without a sandbox or automatic rollback.
 
+An executing script receives `control` in addition to `eda` and `inputs`. Long-running cooperative scripts should periodically inspect `control.cancelled` or call `control.throwIfCancelled()`. `interrupt_execute_js` requests cancellation immediately without entering the normal EasyEDA command queue. It cannot preempt synchronous JavaScript or an EasyEDA API call that has not returned; the executor also checks cancellation after checkpoint creation, after the script resolves, and after Blob reads.
+
 For local Python/Node.js computation combined with native API calls, prefer the bundled [local SDK](local-sdk.md#when-to-use-the-sdk). Keep reading the board, calculating locally and applying a scoped change in one script instead of repeatedly exporting JSON and generating separate `execute_js` bodies. It exposes awaitable native API proxies through the existing broker, supports binary values, and keeps the ordinary JavaScript execution path available. A self-contained edit that needs no local runtime can still use `execute_js` directly.
 
 ## Select the action

@@ -1,4 +1,5 @@
 import type { ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
+import { beginJavaScriptExecution } from './execute-js-control';
 
 function isBlob(value: unknown): value is Blob {
     if (!value || typeof value !== 'object') return false;
@@ -50,20 +51,25 @@ export async function executeJavaScript(
 ): Promise<ExecuteJsWireResult> {
     let checkpoint: string | null = null;
     let phase: NonNullable<ExecuteJsWireResult['error']>['phase'] = 'checkpoint';
+    const execution = beginJavaScriptExecution();
     try {
         checkpoint = await createCheckpoint();
         if (!checkpoint) throw new Error('Could not create a checkpoint; JavaScript was not executed.');
+        execution.control.throwIfCancelled();
 
         phase = 'execute';
         const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
         // Compilation itself reports syntax errors; no separate parser or preflight execution.
-        const result: unknown = await new AsyncFunction('eda', 'inputs', code)(api, inputs);
+        const result: unknown = await new AsyncFunction('eda', 'inputs', 'control', code)(api, inputs, execution.control);
+        execution.control.throwIfCancelled();
 
         phase = 'serialize';
         if (isBlob(result)) {
+            const bytes = new Uint8Array(await result.arrayBuffer());
+            execution.control.throwIfCancelled();
             return { checkpoint, result: {
                 kind: 'binary',
-                base64: base64(new Uint8Array(await result.arrayBuffer())),
+                base64: base64(bytes),
                 mime_type: result.type || 'application/octet-stream',
             } };
         }
@@ -90,5 +96,7 @@ export async function executeJavaScript(
         return { checkpoint, result: { kind: 'json', json: json ?? 'null' } };
     } catch (error) {
         return { checkpoint, result: null, error: { phase, message: errorMessage(error) } };
+    } finally {
+        execution.finish();
     }
 }
