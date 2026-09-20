@@ -9,6 +9,7 @@ import { checkpointer } from './eda/checkpointer';
 import { CheckpointScopes } from './eda/checkpoint-scopes';
 const checkpointScopes = new CheckpointScopes(checkpointer);
 import { checkPcbDrc } from './eda/drc';
+import { deleteBoardWithDocuments } from './eda/delete-board';
 import { previewPcb } from './eda/pcb-preview';
 import type { PreviewPcbInput } from '@copilot/shared/types/pcb/preview';
 import {
@@ -1771,8 +1772,14 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
 
         if (message.event === 'delete-doc') {
             if (typeof body.board_name === 'string') {
-                const success = await eda.dmt_Board.deleteBoard(body.board_name);
-                reply(true, { success });
+                return reply(true, await deleteBoardWithDocuments(body.board_name, {
+                    boards: () => eda.dmt_Board.getAllBoardsInfo(),
+                    schematics: () => eda.dmt_Schematic.getAllSchematicsInfo(),
+                    pcbs: () => eda.dmt_Pcb.getAllPcbsInfo(),
+                    deleteBoard: name => eda.dmt_Board.deleteBoard(name),
+                    deleteSchematic: uuid => eda.dmt_Schematic.deleteSchematic(uuid),
+                    deletePcb: uuid => eda.dmt_Pcb.deletePcb(uuid),
+                }));
             }
 
             const uuid = body.uuid;
