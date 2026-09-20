@@ -129,4 +129,16 @@ export function registerExecuteJsTools(server: McpServer, bridge: Bridge) {
             + `For local Python/Node.js computation with await eda.* proxies and native binary values, read ${DOCS_DIR}/execution/local-sdk.md.`,
         inputSchema: ExecuteJsInputSchema,
     }, input => executeJs(bridge, input));
+
+    server.registerTool('interrupt_execute_js', {
+        title: 'Interrupt JavaScript in EasyEDA',
+        description: 'Request cooperative cancellation of the active execute_js call. The script can inspect control.cancelled or call control.throwIfCancelled(). This does not forcibly terminate synchronous JavaScript.',
+        inputSchema: z.object({
+            reason: z.string().trim().min(1).max(500).optional(),
+        }),
+    }, async ({ reason }) => textResult(await bridge.requestEasyEda(
+        'interrupt-execute-js',
+        { reason: reason ?? 'Interrupted by interrupt_execute_js' },
+        10_000,
+    )));
 }

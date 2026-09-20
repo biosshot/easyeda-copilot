@@ -36,7 +36,10 @@ const dispatches = [];
 const api = { edits: 0 };
 const bridge = {
     async requestEasyEda(event, body, timeout) {
-        dispatches.push({ event, code: body.code, timeout });
+        dispatches.push({ event, code: body.code, reason: body.reason, timeout });
+        if (event === 'interrupt-execute-js') {
+            return { interrupted: true, status: 'cancel_requested', executionId: 7 };
+        }
         // Exercise the real executor and the JSON bridge boundary, not just a result fixture.
         return JSON.parse(JSON.stringify(await executeJavaScript(body.code, api, save, JSON.parse(JSON.stringify(body.inputs ?? {})))));
     },
@@ -354,8 +357,24 @@ test('execute_js works through the ordinary MCP SDK transport', async () => {
     try {
         const listed = await client.listTools();
         assert.ok(listed.tools.some(tool => tool.name === 'execute_js'));
+        assert.ok(listed.tools.some(tool => tool.name === 'interrupt_execute_js'));
         const small = await client.callTool({ name: 'execute_js', arguments: { code: 'return 42' } });
         assert.equal(payload(small).result, 42);
+        const interrupted = await client.callTool({
+            name: 'interrupt_execute_js',
+            arguments: { reason: 'operator requested stop' },
+        });
+        assert.deepEqual(payload(interrupted), {
+            interrupted: true,
+            status: 'cancel_requested',
+            executionId: 7,
+        });
+        assert.deepEqual(dispatches.at(-1), {
+            event: 'interrupt-execute-js',
+            code: undefined,
+            reason: 'operator requested stop',
+            timeout: 10_000,
+        });
         for (const code of ['return "x".repeat(50000)', 'return new Blob(["x"])', 'throw Error("x".repeat(50000))']) {
             const result = await client.callTool({ name: 'execute_js', arguments: { code } });
             bounded(result);
