@@ -20,6 +20,7 @@ import {
 } from './eda/pcb';
 import { getSchematic } from './eda/schematic';
 import { getSchematicGroups, mergeSchematicGroups } from './eda/schematic-groups';
+import { searchComponentLibraries } from './eda/library-search';
 import { assertMcpDocumentContext } from './eda/mcp-document-context';
 import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
@@ -1695,6 +1696,11 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
             const pcb = await getPcb();
             const result = await inspectComponent(pcb, designator, radius);
             reply(true, result);
+            return;
+        }
+
+        if (message.event === 'component-library-search') {
+            reply(true, await searchComponentLibraries(body));
             return;
         }
 
