@@ -13,10 +13,12 @@ function load(relative: string, imports: Record<string, unknown>, globals: Recor
         compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS }, fileName: file,
     }).outputText;
     const exports: Record<string, any> = {};
-    runInNewContext(code, { exports, require: (name: string) => {
-        if (!(name in imports)) throw new Error(`Unexpected dependency: ${name}`);
-        return imports[name];
-    }, setTimeout, ...globals }, { filename: file });
+    runInNewContext(code, {
+        exports, require: (name: string) => {
+            if (!(name in imports)) throw new Error(`Unexpected dependency: ${name}`);
+            return imports[name];
+        }, setTimeout, ...globals
+    }, { filename: file });
     return exports;
 }
 
@@ -40,30 +42,38 @@ function editor(options: { version?: number; changePage?: boolean; failWires?: b
                 return [{ getState_PinNumber: () => '1', getState_X: () => id === 'r' ? 0 : 20, getState_Y: () => 50 }];
             },
         },
-        sch_PrimitiveWire: { getAll: async () => {
-            wireReads++;
-            if (options.failWires) throw new Error('wire read failed');
-            return [
-                ...(options.badWire ? [{ getState_Line: () => { throw new Error('bad wire'); }, getState_Net: () => '' }] : []),
-                { getState_Line: () => [0, 50, 20, 50], getState_Net: () => 'stale-wire-name' },
-            ];
-        } },
+        sch_PrimitiveWire: {
+            getAll: async () => {
+                wireReads++;
+                if (options.failWires) throw new Error('wire read failed');
+                return [
+                    ...(options.badWire ? [{ getState_Line: () => { throw new Error('bad wire'); }, getState_Net: () => '' }] : []),
+                    { getState_Line: () => [0, 50, 20, 50], getState_Net: () => 'stale-wire-name' },
+                ];
+            }
+        },
     };
     const module = load('../src/eda/schematic-groups.ts', {
-        './types': { shortSymbolsMap: {
-            GND: { is: (name: string) => name.toLowerCase().includes('gnd') },
-            VCC: { is: (name: string) => /^(?:V|USB_V|BATTERY)/i.test(name) },
-        } },
-        './schematic': { getSchematic: async (ids: string[], settings: unknown) => {
-            netReads++;
-            if (options.failNetlist) throw new Error("netlist read failed");
-            assert.equal(JSON.stringify(ids), '["r","c"]');
-            assert.equal(JSON.stringify(settings), '{"disableExtractPartUuid":true,"disableExtractPos":true}');
-            return { components: [
-                { designator: 'R1', pins: [{ pin_number: '1', signal_name: '3V3' }] },
-                { designator: 'C1', pins: options.missingPin ? [] : [{ pin_number: '1', signal_name: options.conflicting || options.staleOnce && netReads === 1 ? 'WRONG' : '3V3' }] },
-            ] };
-        } },
+        './types': {
+            shortSymbolsMap: {
+                GND: { is: (name: string) => name.toLowerCase().includes('gnd') },
+                VCC: { is: (name: string) => /^(?:V|USB_V|BATTERY)/i.test(name) },
+            }
+        },
+        './schematic': {
+            getSchematic: async (ids: string[], settings: unknown) => {
+                netReads++;
+                if (options.failNetlist) throw new Error("netlist read failed");
+                assert.equal(JSON.stringify(ids), '["r","c"]');
+                assert.equal(JSON.stringify(settings), '{"disableExtractPartUuid":true,"disableExtractPos":true}');
+                return {
+                    components: [
+                        { designator: 'R1', pins: [{ pin_number: '1', signal_name: '3V3' }] },
+                        { designator: 'C1', pins: options.missingPin ? [] : [{ pin_number: '1', signal_name: options.conflicting || options.staleOnce && netReads === 1 ? 'WRONG' : '3V3' }] },
+                    ]
+                };
+            }
+        },
         './utils': { normalizeWireLine: (line: number[]) => [line], normWireY: (y: number) => options.version === 2 ? -y : y },
     }, { eda: api, EDMT_EditorDocumentType: { SCHEMATIC_PAGE: 'sheet' }, ESCH_PrimitiveComponentType: { COMPONENT: 'component' } });
     return { api, run: module.getSchematicGroups, calls, counts: () => ({ netReads, wireReads }) };
@@ -125,30 +135,38 @@ test('MCP registration is read-only, forwards the full-schematic flag and return
     const module = load('../../mcp/src/tools/schematic-groups.ts', {
         'zod/v4': {
             object: (shape: unknown) => shape,
-            boolean: () => ({ default: (value: boolean) => ({
-                default: value, describe: () => ({ default: value }),
-            }) }),
+            boolean: () => ({
+                default: (value: boolean) => ({
+                    default: value, describe: () => ({ default: value }),
+                })
+            }),
         },
-        '../utils/tool-result': { textResult: (value: unknown) => {
-            textResultInput = value;
-            return { content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) }] };
-        } },
+        '../utils/tool-result': {
+            textResult: (value: unknown) => {
+                textResultInput = value;
+                return { content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) }] };
+            }
+        },
     });
     let handler: ((input: { get_full_schematic_groups: boolean }) => Promise<any>) | undefined;
     let registrations = 0;
     const requests: unknown[] = [];
-    module.registerSchematicGroupTools({ registerTool: (name: string, config: any, callback: typeof handler) => {
-        registrations++;
-        assert.equal(name, 'get_current_page_schematic_groups');
-        assert.equal(JSON.stringify(config.inputSchema), '{"get_full_schematic_groups":{"default":false}}');
-        assert.equal(config.annotations.readOnlyHint, true);
-        handler = callback;
-    } }, { requestEasyEda: async (event: string, body: unknown, timeout: number) => {
-        assert.equal(event, 'get-schematic-groups');
-        requests.push(body);
-        assert.equal(timeout, 120000);
-        return expected;
-    } });
+    module.registerSchematicGroupTools({
+        registerTool: (name: string, config: any, callback: typeof handler) => {
+            registrations++;
+            assert.equal(name, 'get_schematic_groups');
+            assert.equal(JSON.stringify(config.inputSchema), '{"get_full_schematic_groups":{"default":false}}');
+            assert.equal(config.annotations.readOnlyHint, true);
+            handler = callback;
+        }
+    }, {
+        requestEasyEda: async (event: string, body: unknown, timeout: number) => {
+            assert.equal(event, 'get-schematic-groups');
+            requests.push(body);
+            assert.equal(timeout, 120000);
+            return expected;
+        }
+    });
     const result = await handler!({ get_full_schematic_groups: false });
     await handler!({ get_full_schematic_groups: true });
     assert.equal(registrations, 1);

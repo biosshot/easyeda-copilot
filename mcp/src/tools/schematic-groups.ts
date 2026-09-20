@@ -6,7 +6,7 @@ import { textResult } from '../utils/tool-result';
 
 export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
     server.registerTool(
-        'get_current_page_schematic_groups',
+        'get_schematic_groups',
         {
             title: 'Get EasyEDA Schematic Groups',
             description: 'Read the current schematic page and return heuristic component groups plus direct non-ground wire islands. '

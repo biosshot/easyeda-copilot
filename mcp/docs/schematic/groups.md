@@ -1,6 +1,6 @@
 # Schematic groups
 
-Call `get_current_page_schematic_groups({})` on the intended schematic page to inspect likely component groupings and direct non-ground wire connections. Set `get_full_schematic_groups: true` to read every page and concatenate their page-local results. The full mode restores the previously active document and does not invent cross-page groups or wire islands. The tool is read-only. Use it alongside `get_schematic`, which supplies values, pin names and the electrical netlist.
+Call `get_schematic_groups({})` on the intended schematic page to inspect likely component groupings and direct non-ground wire connections. Set `get_full_schematic_groups: true` to read every page and concatenate their page-local results. The full mode restores the previously active document and does not invent cross-page groups or wire islands. The tool is read-only. Use it alongside `get_schematic`, which supplies values, pin names and the electrical netlist.
 
 ```ts
 interface SchematicGroups {
