@@ -11,6 +11,7 @@ export const ROOT_DIR = dirname(findUp.sync('package.json', {
     cwd: __dirname
 })!);
 const packageMetadata = JSON.parse(readFileSync(join(ROOT_DIR, 'package.json'), 'utf8'));
+export const MCP_VERSION = packageMetadata.version as string;
 export const DOCS_DIR = join(ROOT_DIR, packageMetadata.easyedaCopilotDocs ?? 'docs');
 export const SKILL_DOC_PATH = join(DOCS_DIR, 'SKILL.md');
 const require = createRequire(import.meta.url);

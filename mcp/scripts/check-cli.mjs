@@ -90,6 +90,7 @@ try {
     assert.equal((await json(b, 'call', 'get_current_project_info')).project_name, 'window-b');
     const raw = await json(a, 'call', 'get_current_project_info', '--raw');
     assert.equal(raw.content[0].type, 'text');
+    assert.match(raw.content[1].text, /extension version is unknown/);
     await assert.rejects(run(a, 'call', 'wait_operation'), error => error.code === 1 && /operation_id/.test(error.stdout));
     await assert.rejects(run(a, 'tools', 'help', 'does_not_exist'), /Unknown tool/);
     await assert.rejects(run(a, 'call', 'does_not_exist'), error => error.code === 1);

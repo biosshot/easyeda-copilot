@@ -266,7 +266,7 @@ async function main() {
     if (body.command === 'call' && !raw) {
         const mcp = result as { structuredContent?: unknown; content?: Array<{ type: string; text?: string }> };
         if (mcp.structuredContent !== undefined) result = mcp.structuredContent;
-        else if (mcp.content?.length === 1 && mcp.content[0].type === 'text') {
+        else if (mcp.content?.[0]?.type === 'text') {
             const value = mcp.content[0].text!;
             try { result = JSON.parse(value); } catch { result = value; }
         }

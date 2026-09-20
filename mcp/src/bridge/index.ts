@@ -10,6 +10,7 @@ type WsMessage = {
 export type EasyEdaInstance = {
     instanceId: string;
     projectName: string;
+    extensionVersion?: string;
     connectedAt: number;
     lastSeenAt: number;
 };
@@ -19,6 +20,7 @@ export type Bridge = {
     listEasyEdaInstances(): Promise<EasyEdaInstance[]>;
     selectEasyEdaInstance(instanceId: string): Promise<EasyEdaInstance>;
     getSelectedEasyEdaInstance(): Promise<EasyEdaInstance | undefined>;
+    getVersionWarning(mcpVersion: string): Promise<string | undefined>;
     enterBrokerOnlyMode(): boolean;
     close(): Promise<void>;
 };
@@ -137,6 +139,7 @@ class OwnerBroker {
         return [...this.easyEdaClients.values()].map(client => ({
             instanceId: client.instanceId,
             projectName: client.projectName,
+            extensionVersion: client.extensionVersion,
             connectedAt: client.connectedAt,
             lastSeenAt: client.lastSeenAt,
         }));
@@ -279,6 +282,9 @@ class OwnerBroker {
         const projectName = typeof value.projectName === 'string' && value.projectName.trim()
             ? value.projectName.trim()
             : 'Untitled EasyEDA project';
+        const extensionVersion = typeof value.extensionVersion === 'string' && value.extensionVersion.trim()
+            ? value.extensionVersion.trim()
+            : undefined;
 
         const previousInstanceId = socket[INSTANCE_ID];
         if (previousInstanceId && previousInstanceId !== instanceId) {
@@ -303,6 +309,7 @@ class OwnerBroker {
         this.easyEdaClients.set(instanceId, {
             instanceId,
             projectName,
+            extensionVersion,
             socket,
             connectedAt: existing?.connectedAt ?? now,
             lastSeenAt: now,
@@ -825,6 +832,25 @@ class MeshBridge implements Bridge {
         if (!this.selectedEasyEdaInstanceId) return undefined;
         const instances = await this.listEasyEdaInstances();
         return instances.find(item => item.instanceId === this.selectedEasyEdaInstanceId);
+    }
+
+    async getVersionWarning(mcpVersion: string) {
+        try {
+            const instances = await this.listEasyEdaInstances();
+            const instance = this.selectedEasyEdaInstanceId
+                ? instances.find(item => item.instanceId === this.selectedEasyEdaInstanceId)
+                : instances.length === 1 ? instances[0] : undefined;
+            if (!instance) return undefined;
+            if (!instance.extensionVersion) {
+                return `WARNING: EasyEDA Copilot extension version is unknown. MCP is ${mcpVersion}; update the extension to avoid compatibility issues.`;
+            }
+            if (instance.extensionVersion !== mcpVersion) {
+                return `WARNING: EasyEDA Copilot version mismatch: MCP ${mcpVersion}, extension ${instance.extensionVersion}. Compatibility issues may occur; update the extension.`;
+            }
+        } catch {
+            // Version diagnostics must never turn a successful tool call into an error.
+        }
+        return undefined;
     }
 
     private async becomeOwnerOrProxy(afterFailure: boolean) {

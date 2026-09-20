@@ -11,7 +11,7 @@ import { registerEasyEdaInstancesTools } from './tools/easyeda-instances';
 import { registerOperationTools } from './tools/operations';
 import { registerProjectTools } from './tools/projects';
 import { registerExecuteJsTools } from './tools/execute-js';
-import { DOCS_DIR, SKILL_DOC_PATH } from './utils/dirs';
+import { DOCS_DIR, MCP_VERSION, SKILL_DOC_PATH } from './utils/dirs';
 
 const SKILL_DOC_URI = 'easyeda-copilot-mcp://local-docs/SKILL.md';
 
@@ -27,8 +27,19 @@ function localSkillDocText() {
 export function createServer(bridge: Bridge) {
     const server = new McpServer({
         name: 'easyeda-copilot',
-        version: '1.2.0',
+        version: MCP_VERSION,
     });
+
+    const registerTool = server.registerTool.bind(server);
+    server.registerTool = ((name: string, config: unknown, handler: (...args: unknown[]) => unknown) =>
+        registerTool(name, config as never, async (...args: unknown[]) => {
+            const result = await handler(...args) as { content?: unknown[] };
+            const warning = await bridge.getVersionWarning(MCP_VERSION);
+            if (warning && Array.isArray(result?.content)) {
+                result.content.push({ type: 'text', text: warning });
+            }
+            return result as never;
+        })) as typeof server.registerTool;
 
     server.registerResource(
         'easyeda_copilot_mcp_skill',

@@ -24,8 +24,7 @@ assert.equal(registry.packages[0].version, mcp.version);
 assert.equal(read('package.json').version, mcp.version);
 assert.equal(read('extension/extension.json').version, mcp.version);
 assert.equal(read('extension/package.json').version, mcp.version);
-const runtime = readFileSync(new URL('mcp/src/server.ts', root), 'utf8').match(/name: 'easyeda-copilot',\s*version: '([^']+)'/);
-assert.equal(runtime?.[1], mcp.version, 'MCP runtime version differs');
+assert.match(readFileSync(new URL('mcp/src/server.ts', root), 'utf8'), /version: MCP_VERSION/, 'MCP runtime must use the package version');
 if (process.env.GITHUB_REF?.startsWith('refs/tags/')) assert.equal(process.env.GITHUB_REF, 'refs/tags/v' + mcp.version);
 const require = createRequire(new URL('mcp/package.json', root));
 for (const [name, target] of Object.entries(config)) {

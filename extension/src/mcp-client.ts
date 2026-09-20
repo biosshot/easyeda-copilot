@@ -34,6 +34,7 @@ import {
     type PcbDrcNetRule,
     type PcbDrcNetRuleEntry,
 } from '@copilot/shared/types/pcb/drc';
+import extension from '../extension.json';
 
 type DesiredDifferentialPair = {
     name: string;
@@ -1282,6 +1283,7 @@ async function sendEasyEdaHello(connectionEpoch: number) {
     send('easyeda:hello', {
         instanceId: state.instanceId,
         projectName,
+        extensionVersion: extension.version,
     });
 
     try {
@@ -1296,6 +1298,7 @@ async function sendEasyEdaHello(connectionEpoch: number) {
     send('easyeda:hello', {
         instanceId: state.instanceId,
         projectName,
+        extensionVersion: extension.version,
     });
 }
 
