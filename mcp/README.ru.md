@@ -1,5 +1,12 @@
 [English](README.md) | [简体中文](README.zh-CN.md) | Русский
 # easyeda-copilot-mcp
+
+## CLI и готовый скилл
+
+Существующая установка MCP ниже не меняется. Дополнительно доступен `easyeda-copilot-cli`: вызовите `start`, сохраните четырёхсимвольный ID, затем используйте `<id> tools list`, `<id> tools help <tool>` и `<id> call <tool> [--input file.json]`. Без входных аргументов передаётся `{}`. Команды `<id> status` / `<id> stop` управляют вашим фоновым runtime; системная служба не устанавливается.
+
+Локальная сборка из исходников и установка архива под нужную платформу описаны в [install-guide.md](docs/install-guide.md). Команда `npm run build:skill` создаёт игнорируемую корневую `skill/` из актуального runtime MCP и `mcp/docs`; код упаковки также находится внутри `mcp/`. [Команды CLI и сборка](docs/cli.md).
+
 MCP-сервер для EasyEDA Copilot.
 
 Он подключает MCP-клиенты, такие как Codex или Claude Code, к EasyEDA Desktop через расширение EasyEDA Copilot. Поддерживается работа со схемами, поиск компонентов, размещение на печатной плате, сборка, трассировка, инспекция и DRC.

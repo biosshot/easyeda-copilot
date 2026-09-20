@@ -52,6 +52,12 @@ function errorMessage(error: unknown) {
 export class OperationManager {
     readonly #operations = new Map<string, ManagedOperation>();
 
+    runningIds() {
+        return [...this.#operations.values()]
+            .filter(operation => operation.status === 'running' || operation.applyStatus === 'applying')
+            .map(operation => operation.id);
+    }
+
     start<T>(
         kind: OperationKind,
         runner: (context: OperationContext) => Promise<T>,

@@ -7,7 +7,9 @@
 
 /mcp/node_modules/
 /mcp/.artifacts/
+/mcp/.skill-build-*/
 /.artifacts/
+/skill/
 
 /extension/dist/
 /extension/iframe/

@@ -6,6 +6,10 @@
 
 基于 MCP 的工程自动化工具，直接操作 EasyEDA Pro 和嘉立创 EDA 原生文档。
 
+## 技能与 CLI
+
+运行 `npm ci && npm run build:skill`，从当前 MCP 生成 `skill/`，然后按 [install-guide.md](mcp/docs/install-guide.md) 安装运行时依赖。生成目录不提交到仓库。也可从 Releases 下载与平台匹配且已包含依赖的技能压缩包。现有 MCP 安装方式保持不变。
+
 EasyEDA Copilot 将支持 MCP 的 AI 智能体连接到真实的原理图和 PCB 数据。它支持原理图生成与重组、元器件解析、约束驱动的 PCB 布局、基于检查点的布线事务、结构化设计检查、恢复以及 EasyEDA 原生 DRC。
 
 <p align="center">

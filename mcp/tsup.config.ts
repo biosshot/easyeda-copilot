@@ -11,6 +11,7 @@ const sdkEsmPath = (...parts: string[]) =>
 export default defineConfig({
     entry: [
         'src/index.ts',
+        'src/cli.ts',
         'src/pcb-preview/cli.ts',
         'src/pcb-preview/index.ts',
         'src/operations/manager.ts',

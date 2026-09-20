@@ -1,9 +1,13 @@
 ---
-name: easyeda-copilot-mcp
-description: Create, modify, place, route, or review EasyEDA schematics and PCBs with EasyEDA Copilot MCP tools. Execute JavaScript for focused API edits and operations not covered by the standard tools.
+name: easyeda-copilot
+description: Create, modify, place, route, or review EasyEDA schematics and PCBs with EasyEDA Copilot, using direct MCP tools when available or the generated standalone CLI skill.
 ---
 
-# EasyEDA Copilot MCP
+# EasyEDA Copilot
+
+Use the direct MCP tools when they are available. A generated standalone skill contains `build-info.json` and `scripts/easyeda-copilot-cli.js`; in that mode read [the CLI guide](cli.md), resolve the launcher's absolute path, and run it with Node.js >=20.19. Before first use, read `build-info.json`: an `npm` distribution requires `npm install --omit=dev` in `scripts/runtime/`, while a matching-platform `bundled` distribution does not. Stop if `installationBlockers` is nonempty.
+
+In CLI mode, run `node <absolute-launcher-path> start` once, retain the returned four-character daemon ID, and translate each tool invocation below to `<launcher> <id> call <tool>`. Omitted arguments are `{}`; use `<id> tools help <tool>` for the current JSON Schema rather than inferring arguments. Keep the same ID for a task and its long operations, then stop it when finished.
 
 Complete only the stage requested by the user. A schematic task does not authorize PCB work; placement does not authorize routing.
 

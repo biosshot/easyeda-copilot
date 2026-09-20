@@ -1,5 +1,12 @@
 [English](README.md) | 简体中文 | [Русский](README.ru.md)
 # easyeda-copilot-mcp
+
+## CLI 与可安装技能
+
+下方现有 MCP 安装方式保持不变。也可使用 `easyeda-copilot-cli`：运行 `start` 获取四字符 ID，然后运行 `<id> tools list`、`<id> tools help <tool>` 或 `<id> call <tool> [--input file.json]`。省略参数时使用 `{}`。通过 `<id> status` 和 `<id> stop` 管理后台进程，无需系统服务。
+
+本地源码构建及匹配平台的发布压缩包安装方法见 [install-guide.md](docs/install-guide.md)。`npm run build:skill` 会从当前 MCP 运行时代码和 `mcp/docs` 生成被 Git 忽略的根目录 `skill/`；打包代码也位于 `mcp/` 内。参见 [CLI 命令与构建](docs/cli.md)。
+
 EasyEDA Copilot 的 MCP 服务器。
 
 它通过 EasyEDA Copilot 扩展将 Codex 或 Claude Code 等 MCP 客户端连接到 EasyEDA Desktop。支持原理图设计、元器件搜索、PCB 布局、组装、布线、检查以及 DRC。

@@ -6,6 +6,7 @@
 	"license": "MIT",
 	"homepage": "https://echosystem.ru/",
 	"scripts": {
+		"build:skill": "npm run build:skill --workspace=easyeda-copilot-mcp",
 		"dev": "npm run dev --workspace=@copilot/extension",
 		"dev:export-reused": "npm run dev:export-reused --workspace=@copilot/extension",
 		"build:vite": "npm run build:vite --workspace=@copilot/extension",

@@ -6,6 +6,10 @@ Extension sources, UI, resources and build configuration live in `extension/`; `
 
 MCP-based engineering automation for native EasyEDA Pro and JLCEDA documents.
 
+## Skill and CLI
+
+Build `skill/` from the current MCP with `npm ci && npm run build:skill`, then install its runtime dependencies as described in [install-guide.md](mcp/docs/install-guide.md). The generated folder is not committed. Alternatively, download a matching-platform bundled skill archive from Releases. Existing MCP installation is unchanged.
+
 EasyEDA Copilot connects MCP-capable AI agents to real schematic and PCB data. It supports schematic generation and reorganization, component resolution, constraint-driven PCB placement, checkpoint-backed routing transactions, structured design inspection, recovery, and native EasyEDA DRC.
 
 <p align="center">
