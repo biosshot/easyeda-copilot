@@ -33,7 +33,7 @@ const bounded = result => assert.ok(size(result) <= MAX_INLINE_RESPONSE_BYTES, '
 const save = async () => 'checkpoint-test';
 const runtime = (code, api = {}, checkpoint = save) => executeJavaScript(code, api, checkpoint);
 const dispatches = [];
-const api = { edits: 0 };
+const api = { state: { edits: 0 } };
 const bridge = {
     async requestEasyEda(event, body, timeout) {
         dispatches.push({ event, code: body.code, timeout });
@@ -122,13 +122,13 @@ test('serialization failures retain checkpoint and report already-applied change
     for (const expression of ['1n', '(()=>{})', 'Symbol("x")',
         '(()=>{ const x={};x.x=x;return x; })()', '{blob: new Blob(["x"])}',
         '{data:new Uint8Array([1])}', '{ get value() { throw new Error("getter failed"); } }']) {
-        const result = await executeJs(bridge, { code: `eda.edits++; return ${expression};` });
+        const result = await executeJs(bridge, { code: `eda.state.edits++; return ${expression};` });
         bounded(result);
         assert.equal(result.isError, true);
         assert.equal(payload(result).checkpoint, 'checkpoint-test');
         assert.equal(payload(result).result.error.phase, 'serialize');
     }
-    assert.equal(api.edits, 7);
+    assert.equal(api.state.edits, 7);
 });
 
 test('thrown primitives and errors with broken string conversion are reported', async () => {
@@ -185,10 +185,10 @@ test('named UTF-8 inputs remain data across transport, including BOM and code-li
     const path = join(temp, 'source data.txt');
     const value = '\uFEFFПривет\r\n` ${eda.edits++} \\" \\u0000';
     await writeFile(path, value);
-    const before = api.edits;
+    const before = api.state.edits;
     const result = await executeJs(bridge, { code: 'return inputs.source;', input_files: { source: { path, encoding: 'utf8' } } });
     assert.equal(payload(result).result, value);
-    assert.equal(api.edits, before);
+    assert.equal(api.state.edits, before);
     const script = join(temp, 'with-input.js');
     await writeFile(script, 'return inputs.source.length;');
     assert.equal(payload(await executeJs(bridge, { file_path: script, input_files: { source: { path } } })).result, value.length);

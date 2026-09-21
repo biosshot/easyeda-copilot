@@ -26,6 +26,7 @@ import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
 import { ExplainCircuit } from '@copilot/shared/types/circuit';
 import PQueue from 'p-queue';
+import { mcpCommandTimeoutMs, MCP_TIMEOUT_MESSAGE } from './mcp-command-timeout';
 import {
     type PcbDrcBundle,
     type PcbDrcDifferentialPairRule,
@@ -1359,7 +1360,7 @@ async function readAllSchematicPages<T>(readPage: () => Promise<T>): Promise<T[]
     }
 }
 
-async function handleMessage(message: McpMessage, connectionEpoch: number) {
+async function handleMessage(message: McpMessage, connectionEpoch: number, signal?: AbortSignal) {
     if (connectionEpoch !== state.connectionEpoch) return;
     state.heartbeatAwaitingPong = false;
     state.heartbeatMisses = 0;
@@ -1377,8 +1378,10 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
     const body = parseBody<{ id?: string } & Record<string, unknown>>(message);
     const id = body.id;
 
+    let replied = false;
     const reply = (ok: boolean, result?: unknown, error?: unknown) => {
-        if (!id || connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+        if (replied || signal?.aborted || !id || connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+        replied = true;
         send(`${message.event}:result`, {
             id,
             ok,
@@ -1390,13 +1393,14 @@ async function handleMessage(message: McpMessage, connectionEpoch: number) {
     try {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
         await assertMcpDocumentContext(message.event, body);
+        signal?.throwIfAborted();
 
         if (message.event === 'execute-js') {
             if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
             const inputs = body.inputs ?? {};
             if (!inputs || typeof inputs !== 'object' || Array.isArray(inputs)
                 || Object.values(inputs).some(value => typeof value !== 'string')) throw new Error('JavaScript inputs must be named strings.');
-            reply(true, await checkpointScopes.execute({ code: body.code, inputs: inputs as Record<string, string>, checkpointScope: body.checkpointScope }, eda, connectionEpoch));
+            reply(true, await checkpointScopes.execute({ code: body.code, inputs: inputs as Record<string, string>, checkpointScope: body.checkpointScope }, eda, connectionEpoch, signal));
             return;
         }
 
@@ -1988,7 +1992,17 @@ async function handleQueuedMcpMessage(message: McpMessage, connectionEpoch: numb
         return;
     }
 
-    await handleMessage(message, connectionEpoch);
+    try {
+        await withTimeout(
+            signal => handleMessage(message, connectionEpoch, signal),
+            mcpCommandTimeoutMs(message.event, deadlineAt),
+            MCP_TIMEOUT_MESSAGE,
+        );
+    } catch (error) {
+        const detail = error instanceof Error ? error.message : String(error);
+        eda.sys_Log.add(`MCP event timeout: ${message.event}: ${detail}`, ESYS_LogType.ERROR);
+        replyMcpError(message, detail, connectionEpoch);
+    }
 }
 
 function clearConnectTimeout() {

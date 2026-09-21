@@ -25,12 +25,13 @@ export class CheckpointScopes {
         this.epoch = epoch;
     }
 
-    async execute(body: { code: string; inputs?: Record<string, string>; checkpointScope?: unknown }, api: any, epoch: number): Promise<ExecuteJsWireResult> {
+    async execute(body: { code: string; inputs?: Record<string, string>; checkpointScope?: unknown }, api: any, epoch: number, signal?: AbortSignal): Promise<ExecuteJsWireResult> {
         this.sweep(epoch);
         const raw = body.checkpointScope;
-        if (raw === undefined) return executeJavaScript(body.code, api, () => this.store.save(false, 'Before JavaScript execution'), body.inputs);
+        if (raw === undefined) return executeJavaScript(body.code, api, () => this.store.save(false, 'Before JavaScript execution'), body.inputs, { signal });
         let scope: Scope | undefined;
         try {
+            signal?.throwIfAborted();
             if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw Error('Invalid checkpoint scope request');
             const request = raw as Record<string, unknown>;
             if (typeof request.sessionId !== 'string' || !request.sessionId || request.sessionId.length > 200) throw Error('Invalid checkpoint scope session');
@@ -40,10 +41,12 @@ export class CheckpointScopes {
                 if ([...this.scopes.values()].some(s => s.sessionId === request.sessionId)) throw Error('Nested checkpoint scopes are unsupported');
                 if (this.scopes.size >= 256) throw Error('Too many active checkpoint scopes');
                 const doc = await api.dmt_SelectControl.getCurrentDocumentInfo();
+                signal?.throwIfAborted();
                 const documentUuid = request.documentUuid ?? doc?.uuid;
                 if (typeof documentUuid !== 'string' || !documentUuid) throw Error('Checkpoint scope requires an active document');
                 if (doc?.uuid !== documentUuid) throw Error('Checkpoint scope document is not active');
                 const checkpointId = await this.store.save(false, request.name.trim());
+                signal?.throwIfAborted();
                 if (!checkpointId) throw Error('Could not create checkpoint scope baseline');
                 scope = { token: this.token(), sessionId: request.sessionId, documentUuid, checkpointId, expiresAt: this.now() + this.ttlMs };
                 this.scopes.set(scope.token, scope);
@@ -65,9 +68,12 @@ export class CheckpointScopes {
                 return { checkpoint: scope.checkpointId, result: { kind: 'json', json: 'null' } };
             }
             if ((await api.dmt_SelectControl.getCurrentDocumentInfo())?.uuid !== scope.documentUuid) throw Error('Checkpoint scope document changed');
+            signal?.throwIfAborted();
             scope.expiresAt = this.now() + this.ttlMs;
             this.store.pin(scope.checkpointId, scope.expiresAt);
-            const result = await executeJavaScript(body.code, api, async () => scope!.checkpointId, body.inputs);
+            const result = await executeJavaScript(body.code, api, async () => scope!.checkpointId, body.inputs, { signal });
+            if (result.error) return result;
+            signal?.throwIfAborted();
             if ((await api.dmt_SelectControl.getCurrentDocumentInfo())?.uuid !== scope.documentUuid && !result.error) {
                 return { checkpoint: scope.checkpointId, result: null, error: { phase: 'execute', message: 'Checkpoint scope document changed during execution; changes may remain' } };
             }

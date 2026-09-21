@@ -1,4 +1,6 @@
-import type { ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
+import { EXECUTE_JS_TIMEOUT_MS, type ExecuteJsWireResult } from '@copilot/shared/types/execute-js';
+import { MCP_TIMEOUT_MESSAGE } from '../mcp-command-timeout';
+import { withTimeout } from '../timeout';
 
 function isBlob(value: unknown): value is Blob {
     if (!value || typeof value !== 'object') return false;
@@ -41,54 +43,73 @@ function errorMessage(error: unknown): string {
     }
 }
 
-/** Runs in the existing extension command queue. No timeout race may release that queue. */
+/** Timeout releases the caller, but cannot cancel already-started native actions. */
 export async function executeJavaScript(
     code: string,
     api: unknown,
     createCheckpoint: () => Promise<string | null>,
     inputs: Record<string, string> = {},
+    options: { signal?: AbortSignal; timeoutMs?: number } = {},
 ): Promise<ExecuteJsWireResult> {
     let checkpoint: string | null = null;
     let phase: NonNullable<ExecuteJsWireResult['error']>['phase'] = 'checkpoint';
+    let executionSignal: AbortSignal | undefined;
+    let scopeApi: object | undefined;
+    const clearScope = () => {
+        // Shallow cleanup only: nested namespaces belong to the real editor API.
+        // Saved references and native calls already in flight are not revoked.
+        if (scopeApi) for (const key of Reflect.ownKeys(scopeApi)) Reflect.deleteProperty(scopeApi, key);
+    };
     try {
-        checkpoint = await createCheckpoint();
-        if (!checkpoint) throw new Error('Could not create a checkpoint; JavaScript was not executed.');
+        return await withTimeout(async signal => {
+            executionSignal = signal;
+            signal.addEventListener('abort', clearScope, { once: true });
+            checkpoint = await createCheckpoint();
+            signal.throwIfAborted();
+            if (!checkpoint) throw new Error('Could not create a checkpoint; JavaScript was not executed.');
 
-        phase = 'execute';
-        const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-        // Compilation itself reports syntax errors; no separate parser or preflight execution.
-        const result: unknown = await new AsyncFunction('eda', 'inputs', code)(api, inputs);
+            phase = 'execute';
+            scopeApi = { ...(api as object) };
+            const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+            // Compilation itself reports syntax errors; no separate parser or preflight execution.
+            const result: unknown = await new AsyncFunction('eda', 'inputs', code)(scopeApi, inputs);
+            signal.throwIfAborted();
 
-        phase = 'serialize';
-        if (isBlob(result)) {
-            return { checkpoint, result: {
-                kind: 'binary',
-                base64: base64(new Uint8Array(await result.arrayBuffer())),
-                mime_type: result.type || 'application/octet-stream',
-            } };
-        }
-        if (isArrayBuffer(result) || ArrayBuffer.isView(result)) {
-            const bytes = isArrayBuffer(result)
-                ? new Uint8Array(result)
-                : new Uint8Array(result.buffer, result.byteOffset, result.byteLength);
-            return { checkpoint, result: {
-                kind: 'binary', base64: base64(bytes), mime_type: 'application/octet-stream',
-            } };
-        }
-        if (typeof result === 'function' || typeof result === 'symbol') {
-            throw new Error('Return JSON-compatible data, a Blob, an ArrayBuffer or a typed array.');
-        }
-        const json = JSON.stringify(result, (_key, value: unknown) => {
-            if (isBlob(value) || isArrayBuffer(value) || ArrayBuffer.isView(value)) {
-                throw new Error('Return binary data directly, not nested inside a JSON object.');
+            phase = 'serialize';
+            if (isBlob(result)) {
+                const buffer = await result.arrayBuffer();
+                signal.throwIfAborted();
+                return { checkpoint, result: {
+                    kind: 'binary',
+                    base64: base64(new Uint8Array(buffer)),
+                    mime_type: result.type || 'application/octet-stream',
+                } };
             }
-            if (typeof value === 'function' || typeof value === 'symbol') {
-                throw new Error('Return plain JSON data; functions and symbols cannot be serialized.');
+            if (isArrayBuffer(result) || ArrayBuffer.isView(result)) {
+                const bytes = isArrayBuffer(result)
+                    ? new Uint8Array(result)
+                    : new Uint8Array(result.buffer, result.byteOffset, result.byteLength);
+                return { checkpoint, result: {
+                    kind: 'binary', base64: base64(bytes), mime_type: 'application/octet-stream',
+                } };
             }
-            return value;
-        });
-        return { checkpoint, result: { kind: 'json', json: json ?? 'null' } };
+            if (typeof result === 'function' || typeof result === 'symbol') {
+                throw new Error('Return JSON-compatible data, a Blob, an ArrayBuffer or a typed array.');
+            }
+            const json = JSON.stringify(result, (_key, value: unknown) => {
+                if (isBlob(value) || isArrayBuffer(value) || ArrayBuffer.isView(value)) {
+                    throw new Error('Return binary data directly, not nested inside a JSON object.');
+                }
+                if (typeof value === 'function' || typeof value === 'symbol') {
+                    throw new Error('Return plain JSON data; functions and symbols cannot be serialized.');
+                }
+                return value;
+            });
+            return { checkpoint, result: { kind: 'json', json: json ?? 'null' } };
+        }, Math.min(options.timeoutMs ?? EXECUTE_JS_TIMEOUT_MS, EXECUTE_JS_TIMEOUT_MS), MCP_TIMEOUT_MESSAGE, options.signal);
     } catch (error) {
         return { checkpoint, result: null, error: { phase, message: errorMessage(error) } };
+    } finally {
+        executionSignal?.removeEventListener('abort', clearScope);
     }
 }

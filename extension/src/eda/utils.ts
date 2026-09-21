@@ -1,4 +1,5 @@
 import { sch_PrimitiveWireSnap } from "./wire-snap";
+export { withTimeout } from '../timeout';
 
 export const to2 = (x: number) => {
     return Math.round(x / 5) * 5;
@@ -22,32 +23,6 @@ export function chunkArray(arr: unknown[], size: number) {
         chunkedArr.push(arr.slice(i, i + size));
     }
     return chunkedArr;
-}
-
-export function withTimeout<T>(
-    promise: T,
-    timeout_ms: number,
-    errorMessage = 'Operation timeout'
-): Promise<T> {
-    let timeoutId: number;
-
-    const timeoutPromise = new Promise<never>((_, reject) => {
-        // @ts-ignore
-        timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeout_ms);
-    });
-
-    // @ts-ignore
-    const safePromise = promise.then((result) => {
-        if (timeoutId) clearTimeout(timeoutId);
-        return result;
-
-        // @ts-ignore
-    }).catch((err) => {
-        if (timeoutId) clearTimeout(timeoutId);
-        throw err;
-    });
-
-    return Promise.race([safePromise, timeoutPromise]);
 }
 
 export async function getBBox(components: (ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1)[]): Promise<{
