@@ -177,9 +177,13 @@ test('MCP registration is read-only, forwards the full-schematic flag and return
 
 test('entry points register and dispatch the new tool without embedding analysis in the MCP client', () => {
     const client = readFileSync(resolve(__dirname, '../src/mcp-client.ts'), 'utf8');
-    const server = readFileSync(resolve(__dirname, '../../mcp/src/index.ts'), 'utf8');
+    const stdioEntry = readFileSync(resolve(__dirname, '../../mcp/src/index.ts'), 'utf8');
+    const cliEntry = readFileSync(resolve(__dirname, '../../mcp/src/cli.ts'), 'utf8');
+    const server = readFileSync(resolve(__dirname, '../../mcp/src/server.ts'), 'utf8');
     assert.match(client, /body\.get_full_schematic_groups === true/);
     assert.match(client, /mergeSchematicGroups\(await readAllSchematicPages\(\(\) => getSchematicGroups\(\)\)\)/);
+    assert.match(stdioEntry, /createServer\(bridge\)/);
+    assert.match(cliEntry, /createServer\(bridge\)/);
     assert.match(server, /registerSchematicGroupTools\(server, bridge\);/);
 });
 
