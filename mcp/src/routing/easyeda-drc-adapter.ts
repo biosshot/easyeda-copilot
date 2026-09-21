@@ -202,6 +202,43 @@ function maximumTrackWidth(values: RoutingRuleValues) {
     return Math.max(values.minTrackWidthMm, values.preferredTrackWidthMm) + TRACK_MAX_WIDTH_MARGIN_MM;
 }
 
+function updateTrackPreset(candidate: JsonRecord | undefined, values: RoutingRuleValues, required = false) {
+    const formData = record(record(candidate?.form)?.data);
+    const widthEntry = formData && (record(formData['1']) ?? Object.values(formData).map(record).find(Boolean));
+    if (!widthEntry) {
+        if (required) throw new TypeError('EasyEDA Track preset does not expose form.data width fields.');
+        return;
+    }
+    widthEntry.minValue = values.minTrackWidthMm;
+    widthEntry.defaultValue = values.preferredTrackWidthMm;
+    widthEntry.maxValue = maximumTrackWidth(values);
+}
+
+function updateViaPreset(candidate: JsonRecord | undefined, values: RoutingRuleValues) {
+    if (!candidate) return;
+    replaceNamedValues(candidate, {
+        viaOuterdiameterMin: values.via.minDiameterMm,
+        viaOuterdiameterDefault: values.via.preferredDiameterMm,
+        viaOuterdiameterMax: Math.max(values.via.minDiameterMm, values.via.preferredDiameterMm),
+        viaInnerdiameterMin: values.via.minDrillMm,
+        viaInnerdiameterDefault: values.via.preferredDrillMm,
+        viaInnerdiameterMax: Math.max(values.via.minDrillMm, values.via.preferredDrillMm),
+    });
+}
+
+function updateSpacingPreset(candidate: unknown, clearanceMm: number) {
+    if (Array.isArray(candidate)) {
+        for (const child of candidate) updateSpacingPreset(child, clearanceMm);
+        return;
+    }
+    const item = record(candidate);
+    if (!item) return;
+    for (const [key, child] of Object.entries(item)) {
+        if (key === 'content') item[key] = rewriteNumbers(child, clearanceMm);
+        else updateSpacingPreset(child, clearanceMm);
+    }
+}
+
 function copyFields(source: PcbDrcNetRule | RelationRule, targets: readonly PcbDrcNetRule[], fields = PHYSICAL_FIELDS) {
     for (const target of targets) for (const field of fields) {
         if (source[field] === undefined) delete target[field];
@@ -215,43 +252,31 @@ function assignPhysicalPresets(
     values: RoutingRuleValues,
     prefix: string,
 ) {
-    const track = createPreset(configuration, 'Physics', 'Track', `${prefix}_track`, preset => {
-        const formData = record(record(preset.form)?.data);
-        const widthEntry = formData && (record(formData['1']) ?? Object.values(formData).map(record).find(Boolean));
-        if (!widthEntry) throw new TypeError('EasyEDA Track preset does not expose form.data width fields.');
-        widthEntry.minValue = values.minTrackWidthMm;
-        widthEntry.defaultValue = values.preferredTrackWidthMm;
-        widthEntry.maxValue = maximumTrackWidth(values);
-    });
+    const track = createPreset(
+        configuration,
+        'Physics',
+        'Track',
+        `${prefix}_track`,
+        preset => updateTrackPreset(preset, values, true),
+    );
     rule.Track = track.name;
 
-    const via = createPreset(configuration, 'Physics', 'Via Size', `${prefix}_via`, preset => {
-        replaceNamedValues(preset, {
-            viaOuterdiameterMin: values.via.minDiameterMm,
-            viaOuterdiameterDefault: values.via.preferredDiameterMm,
-            viaOuterdiameterMax: Math.max(values.via.minDiameterMm, values.via.preferredDiameterMm),
-            viaInnerdiameterMin: values.via.minDrillMm,
-            viaInnerdiameterDefault: values.via.preferredDrillMm,
-            viaInnerdiameterMax: Math.max(values.via.minDrillMm, values.via.preferredDrillMm),
-        });
-    });
+    const via = createPreset(
+        configuration,
+        'Physics',
+        'Via Size',
+        `${prefix}_via`,
+        preset => updateViaPreset(preset, values),
+    );
     rule['Via Size'] = via.name;
 
-    const spacing = createPreset(configuration, 'Spacing', 'Safe Spacing', `${prefix}_spacing`, preset => {
-        const rewriteContent = (value: unknown) => {
-            if (Array.isArray(value)) {
-                for (const child of value) rewriteContent(child);
-                return;
-            }
-            const item = record(value);
-            if (!item) return;
-            for (const [key, child] of Object.entries(item)) {
-                if (key === 'content') item[key] = rewriteNumbers(child, values.clearanceMm);
-                else rewriteContent(child);
-            }
-        };
-        rewriteContent(preset);
-    });
+    const spacing = createPreset(
+        configuration,
+        'Spacing',
+        'Safe Spacing',
+        `${prefix}_spacing`,
+        preset => updateSpacingPreset(preset, values.clearanceMm),
+    );
     rule['Safe Spacing'] = spacing.name;
 }
 
@@ -810,37 +835,9 @@ export function summarizeEasyEdaDrcBundle(source: PcbDrcBundle): CompactPcbDrcRu
 }
 
 function updateDefaultPhysicalPresets(configuration: JsonRecord, values: RoutingRuleValues) {
-    const track = preset(configuration, 'Physics', 'Track', undefined);
-    const formData = record(record(track?.form)?.data);
-    const widthEntry = formData && (record(formData['1']) ?? Object.values(formData).map(record).find(Boolean));
-    if (widthEntry) {
-        widthEntry.minValue = values.minTrackWidthMm;
-        widthEntry.defaultValue = values.preferredTrackWidthMm;
-        widthEntry.maxValue = maximumTrackWidth(values);
-    }
-    const via = preset(configuration, 'Physics', 'Via Size', undefined);
-    if (via) replaceNamedValues(via, {
-        viaOuterdiameterMin: values.via.minDiameterMm,
-        viaOuterdiameterDefault: values.via.preferredDiameterMm,
-        viaOuterdiameterMax: Math.max(values.via.minDiameterMm, values.via.preferredDiameterMm),
-        viaInnerdiameterMin: values.via.minDrillMm,
-        viaInnerdiameterDefault: values.via.preferredDrillMm,
-        viaInnerdiameterMax: Math.max(values.via.minDrillMm, values.via.preferredDrillMm),
-    });
-    const spacing = preset(configuration, 'Spacing', 'Safe Spacing', undefined);
-    const updateContent = (candidate: unknown) => {
-        if (Array.isArray(candidate)) {
-            for (const child of candidate) updateContent(child);
-            return;
-        }
-        const item = record(candidate);
-        if (!item) return;
-        for (const [key, child] of Object.entries(item)) {
-            if (key === 'content') item[key] = rewriteNumbers(child, values.clearanceMm);
-            else updateContent(child);
-        }
-    };
-    updateContent(spacing);
+    updateTrackPreset(preset(configuration, 'Physics', 'Track', undefined), values);
+    updateViaPreset(preset(configuration, 'Physics', 'Via Size', undefined), values);
+    updateSpacingPreset(preset(configuration, 'Spacing', 'Safe Spacing', undefined), values.clearanceMm);
 }
 
 /** Translate fully materialized EDA-neutral rules to native EasyEDA DRC trees. */

@@ -168,6 +168,12 @@ async function mcpCommandStep<T>(signal: AbortSignal | undefined, action: () => 
     return result;
 }
 
+async function saveRequiredCheckpoint(name: string, purpose: string, signal?: AbortSignal) {
+    const checkpointId = await mcpCommandStep(signal, () => checkpointer.save(false, name));
+    if (!checkpointId) throw new Error(`Failed to create ${purpose} checkpoint.`);
+    return checkpointId;
+}
+
 const BEAUTIFY_AUXILIARY_COMPONENT_TYPES = new Set<ESCH_PrimitiveComponentType>([
     ESCH_PrimitiveComponentType.NET_FLAG,
     ESCH_PrimitiveComponentType.NET_PORT,
@@ -1453,11 +1459,11 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
 
                     // DRC, selective copper deletion, new geometry, refill, and native
                     // verification share one recovery boundary.
-                    const checkpointId = await mcpCommandStep(
+                    const checkpointId = await saveRequiredCheckpoint(
+                        'Before PCB routing',
+                        'routing transaction',
                         signal,
-                        () => checkpointer.save(false, 'Before PCB routing'),
                     );
-                    if (!checkpointId) throw new Error('Failed to create routing transaction checkpoint.');
                     try {
                         const rules = bundle === undefined ? undefined : await mcpCommandStep(signal, () => (
                             routingTransactionStep('DRC rule application', () => applyPcbDrcRules(bundle))
@@ -1785,11 +1791,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');
 
-            const checkpointId = await mcpCommandStep(
-                signal,
-                () => checkpointer.save(false, 'Before schematic assembly'),
-            );
-            if (!checkpointId) throw new Error('Failed to create schematic assembly checkpoint.');
+            await saveRequiredCheckpoint('Before schematic assembly', 'schematic assembly', signal);
             await mcpCommandStep(
                 signal,
                 () => assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0], signal),
@@ -1895,11 +1897,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
             const board = body.boardAssemble ?? body.board ?? body.pcb_board_assemble;
             if (!board) throw new Error('Missing board assemble payload in assemble-board body');
 
-            const checkpointId = await mcpCommandStep(
-                signal,
-                () => checkpointer.save(false, 'Before PCB placement'),
-            );
-            if (!checkpointId) throw new Error('Failed to create PCB placement checkpoint.');
+            await saveRequiredCheckpoint('Before PCB placement', 'PCB placement', signal);
             await mcpCommandStep(
                 signal,
                 () => assembleBoard(board as Parameters<typeof assembleBoard>[0], signal),
