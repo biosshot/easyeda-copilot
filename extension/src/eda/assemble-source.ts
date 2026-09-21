@@ -21,8 +21,8 @@ import { normalizeMultipartSourceDesignators } from "./multipart-source-designat
 
 type AssemblyComponent = CircuitAssembly['components'][number];
 type PrimitiveComponent = ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
-type LegacyAssembler = (circuit: CircuitAssembly) => Promise<void>;
-type LegacyBlockDrawer = (blocks: CircuitAssembly['blocks_rect'], offset: Offset) => Promise<void>;
+type LegacyAssembler = (circuit: CircuitAssembly, signal?: AbortSignal) => Promise<void>;
+type LegacyBlockDrawer = (blocks: CircuitAssembly['blocks_rect'], offset: Offset, signal?: AbortSignal) => Promise<void>;
 
 interface PlannedComponent {
     input: AssemblyComponent;
@@ -1954,46 +1954,56 @@ export async function assembleCircuitSourceTask(
     circuit: CircuitAssembly,
     legacyAssembler: LegacyAssembler,
     legacyBlockDrawer: LegacyBlockDrawer,
+    signal?: AbortSignal,
 ): Promise<void> {
+    const step = async <T>(action: () => Promise<T>) => {
+        signal?.throwIfAborted();
+        const result = await action();
+        signal?.throwIfAborted();
+        return result;
+    };
     const fallbackReason = requiresLegacyAssembler(circuit);
     if (fallbackReason) {
         eda.sys_Log.add(`[source-assemble] Legacy fallback: ${fallbackReason}`, ESYS_LogType.INFO);
-        return legacyAssembler(circuit);
+        return legacyAssembler(circuit, signal);
     }
 
     const startedAt = Date.now();
     eda.sys_Message.showToastMessage('Assemble circuit from source...', ESYS_ToastMessageType.INFO);
     eda.sys_Log.add('[source-assemble] Start', ESYS_LogType.INFO);
-    const checkpointCreated = Boolean(await eda.checkpointer?.save(true));
+    if (!eda.checkpointer) throw new Error('Checkpointer is unavailable');
+    const checkpointCreated = Boolean(await step(() => eda.checkpointer!.save(true)));
+    if (!checkpointCreated) throw new Error('Failed to create schematic assembly checkpoint');
     let detachedNets: AddedNet[] = [];
 
     try {
         const workingCircuit = createSourceWorkingCircuit(circuit);
-        const currentDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+        const currentDocument = await step(() => eda.dmt_SelectControl.getCurrentDocumentInfo());
         if (!currentDocument) throw new Error('Current schematic document info not found');
         const projectUuid = currentDocument.parentProjectUuid ?? currentDocument.uuid;
 
         const removalPlan = await buildSourceRemovalPlan(workingCircuit);
         if (removalPlan.componentIds.size || removalPlan.points.length) {
-            const currentSource = await eda.sys_FileManager.getDocumentSource();
+            const currentSource = await step(() => eda.sys_FileManager.getDocumentSource());
             if (!currentSource) throw new Error('Document source is empty before source removals');
             const removalResult = removeSourceObjects(currentSource, removalPlan);
             if (removalResult.removedRecords) {
-                await setSourceAndRefresh(removalResult.source, 'rm_components/rm_net');
-                detachedNets = await resolveDetachedNets(removalResult.detachedNets);
+                await step(() => setSourceAndRefresh(removalResult.source, 'rm_components/rm_net'));
+                detachedNets = await step(() => resolveDetachedNets(removalResult.detachedNets));
                 eda.sys_Log.add(`[source-assemble] Removed ${removalResult.removedRecords} source records`);
             }
         }
 
-        const offset = await getAssemblyOffset(workingCircuit);
+        const offset = await step(() => getAssemblyOffset(workingCircuit));
         const plans = planComponents(workingCircuit, offset);
-        await resolveMultipartSubPartNames(plans);
-        let source = await eda.sys_FileManager.getDocumentSource();
+        await step(() => resolveMultipartSubPartNames(plans));
+        let source = await step(() => eda.sys_FileManager.getDocumentSource());
         if (!source) throw new Error('Document source is empty before component placement');
-        await bindReplacementPlans(workingCircuit, plans, source);
+        const initialSource = source;
+        await step(() => bindReplacementPlans(workingCircuit, plans, initialSource));
         const groups = groupPlans(plans);
         let records = parseDocumentSource(source);
-        const pageCachedVariants = await cacheTemplatesFromCurrentPage(groups, projectUuid, records);
+        const pageCachedVariants = await step(() => cacheTemplatesFromCurrentPage(groups, projectUuid, records));
         const cachedVariants = [...groups.keys()].filter(key =>
             componentTemplateCache.has(getTemplateCacheKey(projectUuid, key)),
         ).length;
@@ -2003,9 +2013,9 @@ export async function assembleCircuitSourceTask(
         );
 
         eda.sys_Log.add('[source-assemble] Stage: component seeds', ESYS_LogType.INFO);
-        const seededKeys = await placeSeeds(groups, projectUuid);
+        const seededKeys = await step(() => placeSeeds(groups, projectUuid));
 
-        source = await eda.sys_FileManager.getDocumentSource();
+        source = await step(() => eda.sys_FileManager.getDocumentSource());
         if (!source) throw new Error('Document source is empty after component seed placement');
         records = parseDocumentSource(source);
         const templates = collectComponentTemplates(records, groups, projectUuid, seededKeys);
@@ -2022,7 +2032,8 @@ export async function assembleCircuitSourceTask(
 
         if (componentResult.addedCount || multipartDesignators.changedAttributes) {
             source = serializeDocumentSource(records);
-            await setSourceAndRefresh(source, 'bulk component/multi-part designator');
+            const updatedSource = source;
+            await step(() => setSourceAndRefresh(updatedSource, 'bulk component/multi-part designator'));
             records = parseDocumentSource(source);
         }
         if (multipartDesignators.normalizedComponents) {
@@ -2033,18 +2044,18 @@ export async function assembleCircuitSourceTask(
         }
 
         eda.sys_Log.add('[source-assemble] Stage: load pins', ESYS_LogType.INFO);
-        await loadPins(plans);
+        await step(() => loadPins(plans));
         const replacementOccupied = plans.some(plan => plan.replacement)
             ? await getOccupiedWireSegments([])
             : [];
         const replacementBridges = validateSourceReplacements(plans, replacementOccupied);
         if (plans.some(plan => plan.replacement)) {
-            source = await eda.sys_FileManager.getDocumentSource();
+            source = await step(() => eda.sys_FileManager.getDocumentSource());
             if (!source) throw new Error('Document source is empty before source replacements');
             const replacedSource = applySourceReplacements(source, plans);
-            await setSourceAndRefresh(replacedSource, 'replace_components');
+            await step(() => setSourceAndRefresh(replacedSource, 'replace_components'));
             for (const plan of plans) plan.pins = undefined;
-            await loadPins(plans);
+            await step(() => loadPins(plans));
             eda.sys_Log.add(
                 `[source-assemble] Replaced ${plans.filter(plan => plan.replacement).length} component units`,
                 ESYS_LogType.INFO,
@@ -2060,16 +2071,16 @@ export async function assembleCircuitSourceTask(
             ...replacementBridges,
         ];
         eda.sys_Log.add('[source-assemble] Stage: bulk net ports', ESYS_LogType.INFO);
-        const attachmentResult = await bulkAddNetAttachments(extraNets, plans, projectUuid, circuitWireSpecs);
+        const attachmentResult = await step(() => bulkAddNetAttachments(extraNets, plans, projectUuid, circuitWireSpecs));
         const wireSpecs = normalizeWireSpecs([...circuitWireSpecs, ...attachmentResult.wireSpecs]);
         eda.sys_Log.add('[source-assemble] Stage: bulk wires', ESYS_LogType.INFO);
-        const wireCount = await bulkAddWires(wireSpecs);
+        const wireCount = await step(() => bulkAddWires(wireSpecs));
         if (workingCircuit.assembly_options?.draw_blocks) {
             eda.sys_Log.add('[source-assemble] Stage: legacy block drawing', ESYS_LogType.INFO);
-            await legacyBlockDrawer(workingCircuit.blocks_rect, offset);
+            await step(() => legacyBlockDrawer(workingCircuit.blocks_rect, offset, signal));
         }
         eda.sys_Log.add('[source-assemble] Stage: short-symbol cleanup', ESYS_LogType.INFO);
-        const removedShortSymbols = await removeUnusedShortSymbols();
+        const removedShortSymbols = await step(() => removeUnusedShortSymbols());
         if (attachmentResult.unresolved) {
             eda.sys_Message.showToastMessage(
                 `${attachmentResult.unresolved} net ports could not be placed; see source-assemble log.`,
@@ -2077,7 +2088,7 @@ export async function assembleCircuitSourceTask(
             );
         }
 
-        const saved = await eda.sch_Document.save();
+        const saved = await step(() => eda.sch_Document.save());
         if (!saved) throw new Error('Failed to save source-assembled schematic');
 
         const duration = Date.now() - startedAt;
@@ -2091,7 +2102,7 @@ export async function assembleCircuitSourceTask(
         eda.sys_Message.showToastMessage('Assemble complete.', ESYS_ToastMessageType.SUCCESS);
     } catch (error) {
         eda.sys_Log.add(`[source-assemble] Failed: ${(error as Error).message}`, ESYS_LogType.ERROR);
-        if (checkpointCreated) {
+        if (checkpointCreated && !signal?.aborted) {
             const restored = await eda.checkpointer?.restore(undefined, true).catch(() => false);
             if (!restored) eda.sys_Log.add('[source-assemble] Checkpoint rollback failed', ESYS_LogType.ERROR);
         }

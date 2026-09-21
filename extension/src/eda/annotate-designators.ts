@@ -28,20 +28,22 @@ const PAGE_SETTLE_MS = 400;
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-async function openDocument(documentUuid: string) {
+async function openDocument(documentUuid: string, signal?: AbortSignal) {
+    signal?.throwIfAborted();
     const opened = await eda.dmt_EditorControl.openDocument(documentUuid);
+    signal?.throwIfAborted();
     if (!opened) throw new Error(`Failed to open document: ${documentUuid}`);
     await delay(PAGE_SETTLE_MS);
 }
 
-async function ensureSchematicPage() {
+async function ensureSchematicPage(signal?: AbortSignal) {
     const current = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
     if (current?.documentType === EDMT_EditorDocumentType.SCHEMATIC_PAGE) return;
 
     const board = await eda.dmt_Board.getCurrentBoardInfo().catch(() => undefined);
     const pageUuid = board?.schematic?.page?.[0]?.uuid;
     if (!pageUuid) throw new Error('Open a schematic page or a PCB linked to a schematic before annotation.');
-    await openDocument(pageUuid);
+    await openDocument(pageUuid, signal);
 }
 
 async function readCurrentPageUnits(page: IDMT_SchematicPageItem, pageIndex: number) {
@@ -65,10 +67,10 @@ async function readCurrentPageUnits(page: IDMT_SchematicPageItem, pageIndex: num
     });
 }
 
-async function readSchematicUnits(pages: IDMT_SchematicPageItem[]) {
+async function readSchematicUnits(pages: IDMT_SchematicPageItem[], signal?: AbortSignal) {
     const result: AnnotatableComponentUnit[] = [];
     for (const [pageIndex, page] of pages.entries()) {
-        await openDocument(page.uuid);
+        await openDocument(page.uuid, signal);
         result.push(...await readCurrentPageUnits(page, pageIndex));
     }
     return result;
@@ -85,14 +87,16 @@ async function applyPlan(
     pages: IDMT_SchematicPageItem[],
     plan: DesignatorAnnotationPlan,
     checkpoints: Map<string, string>,
+    signal?: AbortSignal,
 ) {
     const expectedByUnit = assignmentByUnit(plan);
     const changedPageUuids = new Set(plan.changed.flatMap(item => item.component.units.map(unit => unit.pageUuid)));
 
     for (const page of pages) {
         if (!changedPageUuids.has(page.uuid)) continue;
-        await openDocument(page.uuid);
+        await openDocument(page.uuid, signal);
         const checkpointId = await checkpointer.save(false, 'Before component annotation');
+        signal?.throwIfAborted();
         if (!checkpointId) throw new Error(`Failed to create annotation checkpoint for page: ${page.name}`);
         checkpoints.set(page.uuid, checkpointId);
 
@@ -100,6 +104,7 @@ async function applyPlan(
             component.getState_ComponentType() === ESCH_PrimitiveComponentType.COMPONENT
         ));
         for (const component of components) {
+            signal?.throwIfAborted();
             const key = `${page.uuid}:${component.getState_PrimitiveId()}`;
             const expected = expectedByUnit.get(key);
             const actual = componentBaseDesignator(
@@ -109,12 +114,13 @@ async function applyPlan(
             if (expected === undefined || actual === expected) continue;
             component.setState_Designator(expected);
             await component.done();
+            signal?.throwIfAborted();
         }
     }
 }
 
-async function verifyPlan(pages: IDMT_SchematicPageItem[], plan: DesignatorAnnotationPlan) {
-    const actual = await readSchematicUnits(pages);
+async function verifyPlan(pages: IDMT_SchematicPageItem[], plan: DesignatorAnnotationPlan, signal?: AbortSignal) {
+    const actual = await readSchematicUnits(pages, signal);
     const actualByUnit = new Map(actual.map(unit => [
         `${unit.pageUuid}:${unit.primitiveId}`,
         componentBaseDesignator(unit.designator, unit.subPartName),
@@ -153,22 +159,23 @@ async function rollbackPages(pages: IDMT_SchematicPageItem[], checkpoints: Map<s
     return failed;
 }
 
-export async function annotateDesignators(mode: DesignatorAnnotationMode): Promise<DesignatorAnnotationResult> {
+export async function annotateDesignators(mode: DesignatorAnnotationMode, signal?: AbortSignal): Promise<DesignatorAnnotationResult> {
     const originalDocument = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
     let pages: IDMT_SchematicPageItem[] = [];
     const checkpoints = new Map<string, string>();
 
     try {
-        await ensureSchematicPage();
+        await ensureSchematicPage(signal);
         pages = await eda.dmt_Schematic.getCurrentSchematicAllSchematicPagesInfo();
         if (!pages.length) throw new Error('The current schematic has no pages.');
 
-        const units = await readSchematicUnits(pages);
+        const units = await readSchematicUnits(pages, signal);
         const plan = planDesignatorAnnotation(units, mode);
         try {
-            await applyPlan(pages, plan, checkpoints);
-            await verifyPlan(pages, plan);
+            await applyPlan(pages, plan, checkpoints, signal);
+            await verifyPlan(pages, plan, signal);
         } catch (error) {
+            if (signal?.aborted) throw error;
             const rollbackFailed = await rollbackPages(pages, checkpoints);
             const message = error instanceof Error ? error.message : String(error);
             throw new Error(rollbackFailed.length
@@ -199,9 +206,11 @@ export async function annotateDesignators(mode: DesignatorAnnotationMode): Promi
             }),
         };
     } finally {
-        const current = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
-        if (originalDocument?.uuid && current?.uuid !== originalDocument.uuid) {
-            await openDocument(originalDocument.uuid);
+        if (!signal?.aborted) {
+            const current = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
+            if (originalDocument?.uuid && current?.uuid !== originalDocument.uuid) {
+                await openDocument(originalDocument.uuid);
+            }
         }
     }
 }

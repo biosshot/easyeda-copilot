@@ -1,6 +1,7 @@
 import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import PQueue from "p-queue";
 import { VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
+import { runAssemblyQueueTask } from './assembly-queue';
 
 const assembleBoardQueue = new PQueue({ concurrency: 1 });
 const MM_TO_MIL = 1000 / 25.4;
@@ -337,7 +338,8 @@ async function createCommittedFill(args: {
     );
 }
 
-async function drawBoardOutline(board: BoardAssemble["board"]) {
+async function drawBoardOutline(board: BoardAssemble["board"], signal?: AbortSignal) {
+    signal?.throwIfAborted();
     if (!board) return;
 
     const points = normalizePolygonPoints(board.polygon).map(pointMmToPcbMil);
@@ -353,18 +355,21 @@ async function drawBoardOutline(board: BoardAssemble["board"]) {
     }
 
     const oldOutlineLines = await eda.pcb_PrimitiveLine.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE);
+    signal?.throwIfAborted();
     if (oldOutlineLines.length) {
         const deleted = await eda.pcb_PrimitiveLine.delete(oldOutlineLines);
         if (!deleted) throw new Error("Failed to delete existing board outline lines");
     }
 
     const oldOutlineArcs = await eda.pcb_PrimitiveArc.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE);
+    signal?.throwIfAborted();
     if (oldOutlineArcs.length) {
         const deleted = await eda.pcb_PrimitiveArc.delete(oldOutlineArcs);
         if (!deleted) throw new Error("Failed to delete existing board outline arcs");
     }
 
     const oldOutlinePolylines = await eda.pcb_PrimitivePolyline.getAll(undefined, EPCB_LayerId.BOARD_OUTLINE);
+    signal?.throwIfAborted();
     if (oldOutlinePolylines.length) {
         const deleted = await eda.pcb_PrimitivePolyline.delete(oldOutlinePolylines);
         if (!deleted) throw new Error("Failed to delete existing board outline polylines");
@@ -384,7 +389,7 @@ async function drawBoardOutline(board: BoardAssemble["board"]) {
     eda.sys_Log.add(`PCB board outline polyline created: ${points.length} points`, ESYS_LogType.INFO);
 }
 
-async function placeComponents(components: BoardAssemble["components"]) {
+async function placeComponents(components: BoardAssemble["components"], signal?: AbortSignal) {
     if (!components?.length) return;
 
     const primitives = await eda.pcb_PrimitiveComponent.getAll().catch(error => {
@@ -401,6 +406,7 @@ async function placeComponents(components: BoardAssemble["components"]) {
     }
 
     for (const component of components) {
+        signal?.throwIfAborted();
         const designator = component.designator.trim();
         const primitive = byDesignator.get(designator.toUpperCase());
 
@@ -420,12 +426,14 @@ async function placeComponents(components: BoardAssemble["components"]) {
                 }),
                 "modify returned undefined",
             );
+            signal?.throwIfAborted();
 
             eda.sys_Log.add(
                 `PCB component placed: ${designator} at ${component.x}mm ${component.y}mm rot: ${normalizeRotation(component.rotate)} layer: ${component.layer}`,
                 ESYS_LogType.INFO,
             );
         } catch (error) {
+            if (signal?.aborted) throw error;
             warning(`PCB component placement failed ${component.designator}: ${(error as Error).message}`);
         }
 
@@ -479,7 +487,7 @@ async function placeComponents(components: BoardAssemble["components"]) {
     }
 }
 
-async function drawTracks(tracks: BoardAssemble["tracks"]) {
+async function drawTracks(tracks: BoardAssemble["tracks"], signal?: AbortSignal) {
     if (!tracks?.length) return;
 
     for (const track of tracks) {
@@ -496,6 +504,7 @@ async function drawTracks(tracks: BoardAssemble["tracks"]) {
         const width = validLengthMmToMil(track.width, DEFAULT_POUR_LINE_WIDTH_MM);
 
         for (let i = 0; i < points.length - 1; i++) {
+            signal?.throwIfAborted();
             const start = points[i];
             const end = points[i + 1];
             if (samePoint(start, end)) continue;
@@ -514,6 +523,7 @@ async function drawTracks(tracks: BoardAssemble["tracks"]) {
                     "create returned undefined",
                 );
             } catch (error) {
+                if (signal?.aborted) throw error;
                 warning(`PCB track failed ${net}: ${(error as Error).message}`);
             }
 
@@ -551,10 +561,11 @@ async function createMechanicalHole(via: NonNullable<BoardAssemble["vias"]>[numb
     );
 }
 
-async function drawVias(vias: BoardAssemble["vias"]) {
+async function drawVias(vias: BoardAssemble["vias"], signal?: AbortSignal) {
     if (!vias?.length) return;
 
     for (let i = 0; i < vias.length; i++) {
+        signal?.throwIfAborted();
         const via = vias[i];
         const net = safeNetName(via.net);
         const drill = validLengthMmToMil(via.drill, MIN_COPPER_WIDTH_MM);
@@ -580,6 +591,7 @@ async function drawVias(vias: BoardAssemble["vias"]) {
                 await createMechanicalHole(via, i);
             }
         } catch (error) {
+            if (signal?.aborted) throw error;
             warning(`PCB via failed ${net || "mechanical"}: ${(error as Error).message}`);
         }
 
@@ -652,11 +664,12 @@ async function deleteOldBoardPads() {
     eda.sys_Log.add(`PCB old Copilot pads deleted: ${copilotPads.length}`, ESYS_LogType.INFO);
 }
 
-async function drawPads(pads: BoardAssemble["pads"]) {
+async function drawPads(pads: BoardAssemble["pads"], signal?: AbortSignal) {
     if (!pads?.length) return;
     await deleteOldBoardPads();
 
     for (let i = 0; i < pads.length; i++) {
+        signal?.throwIfAborted();
         const pad = pads[i];
         const name = safePrimitiveName(COPILOT_PAD_PREFIX, pad.name.trim() || `P${i + 1}`);
         const hole = boardPadHole(pad);
@@ -664,6 +677,7 @@ async function drawPads(pads: BoardAssemble["pads"]) {
 
         try {
             for (const layer of layers) {
+                signal?.throwIfAborted();
                 await createBoardPad(pad, name, layer, hole);
             }
 
@@ -672,6 +686,7 @@ async function drawPads(pads: BoardAssemble["pads"]) {
                 ESYS_LogType.INFO,
             );
         } catch (error) {
+            if (signal?.aborted) throw error;
             warning(`PCB pad failed ${name}: ${(error as Error).message}`);
         }
 
@@ -679,10 +694,11 @@ async function drawPads(pads: BoardAssemble["pads"]) {
     }
 }
 
-async function drawPolygons(polygons: BoardAssemble["polygons"]) {
+async function drawPolygons(polygons: BoardAssemble["polygons"], signal?: AbortSignal) {
     if (!polygons?.length) return;
 
     for (let i = 0; i < polygons.length; i++) {
+        signal?.throwIfAborted();
         const item = polygons[i];
         const points = normalizePolygonPoints(item.points);
         if (points.length < 3) continue;
@@ -704,6 +720,7 @@ async function drawPolygons(polygons: BoardAssemble["polygons"]) {
                 lineWidth: mmToMil(DEFAULT_POUR_LINE_WIDTH_MM),
             });
         } catch (error) {
+            if (signal?.aborted) throw error;
             warning(`PCB fill polygon failed ${net}: ${(error as Error).message}`);
         }
 
@@ -1011,7 +1028,7 @@ async function refreshPcbState(strict = false) {
     }
 }
 
-async function assembleBoardTask(board: BoardAssemble) {
+async function assembleBoardTask(board: BoardAssemble, signal?: AbortSignal) {
     if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
     const startTimeTotal = Date.now();
     const logTiming = (label: string, startTime: number) => {
@@ -1020,11 +1037,13 @@ async function assembleBoardTask(board: BoardAssemble) {
         eda.sys_Log.add(`Time for PCB ${label}: ${duration}ms (total: ${totalElapsed}ms)`, ESYS_LogType.INFO);
     };
     const runStep = async <T>(label: string, fn: () => Promise<T>) => {
+        signal?.throwIfAborted();
         const startedAt = Date.now();
         eda.sys_Log.add(`Assemble PCB step start: ${label}`, ESYS_LogType.INFO);
 
         try {
             const result = await fn();
+            signal?.throwIfAborted();
             logTiming(label, startedAt);
             eda.sys_Log.add(`Assemble PCB step done: ${label}`, ESYS_LogType.INFO);
             return result;
@@ -1038,23 +1057,21 @@ async function assembleBoardTask(board: BoardAssemble) {
     eda.sys_Log.add("Assemble PCB...", ESYS_LogType.INFO);
 
     await runStep("Checkpoint save", async () => {
-        if (eda.checkpointer) await eda.checkpointer.save(true);
-        else {
-            eda.sys_Log.add("Checkpointer is null", ESYS_LogType.WARNING);
-            eda.sys_Message.showToastMessage("Checkpointer is null", ESYS_ToastMessageType.WARNING);
-        }
+        if (!eda.checkpointer) throw new Error('Checkpointer is unavailable');
+        const checkpointId = await eda.checkpointer.save(true);
+        if (!checkpointId) throw new Error('Failed to create PCB assembly checkpoint');
     });
 
     for (const message of board.warnings ?? []) {
         eda.sys_Log.add(`PCB assemble warning: ${message}`, ESYS_LogType.WARNING);
     }
 
-    await runStep("Draw board outline", () => drawBoardOutline(board.board));
-    await runStep("Place components", () => placeComponents(board.components));
-    await runStep("Draw pads", () => drawPads(board.pads));
-    await runStep("Draw tracks", () => drawTracks(board.tracks));
-    await runStep("Draw vias", () => drawVias(board.vias));
-    await runStep("Draw copper fills", () => drawPolygons(board.polygons));
+    await runStep("Draw board outline", () => drawBoardOutline(board.board, signal));
+    await runStep("Place components", () => placeComponents(board.components, signal));
+    await runStep("Draw pads", () => drawPads(board.pads, signal));
+    await runStep("Draw tracks", () => drawTracks(board.tracks, signal));
+    await runStep("Draw vias", () => drawVias(board.vias, signal));
+    await runStep("Draw copper fills", () => drawPolygons(board.polygons, signal));
     await runStep("Refresh PCB state", refreshPcbState);
     await runStep("Post-assemble settle", yieldToEventLoop);
 
@@ -1063,6 +1080,11 @@ async function assembleBoardTask(board: BoardAssemble) {
     eda.sys_Log.add(`PCB assemble complete. Total time: ${totalDuration}ms`, ESYS_LogType.INFO);
 }
 
-export function assembleBoard(...args: Parameters<typeof assembleBoardTask>) {
-    return assembleBoardQueue.add(() => assembleBoardTask(...args));
+export function assembleBoard(board: BoardAssemble, parentSignal?: AbortSignal) {
+    return runAssemblyQueueTask(
+        assembleBoardQueue,
+        'PCB',
+        parentSignal,
+        signal => assembleBoardTask(board, signal),
+    );
 }

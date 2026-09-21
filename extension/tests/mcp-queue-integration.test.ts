@@ -19,7 +19,7 @@ const runtime = buildSync({
     external: ['./eda/*', '@copilot/shared/types/eda', 'p-queue'],
 }).outputFiles[0].text;
 
-function fixture(save: () => Promise<string>) {
+function fixture(save: () => Promise<string | null>, assembleBoard = async () => {}) {
     const replies: any[] = [];
     const module = { exports: {} as any };
     runInNewContext(runtime, {
@@ -33,6 +33,7 @@ function fixture(save: () => Promise<string>) {
             if (id === 'p-queue') return PQueue;
             if (id === './eda/checkpoint-scopes') return { CheckpointScopes };
             if (id === './eda/checkpointer') return { checkpointer: { save } };
+            if (id === './eda/pcb-assemble') return { assembleBoard };
             if (id === './eda/utils') return { withTimeout };
             if (id === './eda/mcp-document-context') return { assertMcpDocumentContext: async () => {} };
             return {};
@@ -40,8 +41,8 @@ function fixture(save: () => Promise<string>) {
     });
     const { state, queue, run } = module.exports.testQueue;
     state.isRegistered = true;
-    const enqueue = (id: string, deadline = Date.now() + 1000) => queue.add(() => run({
-        event: 'checkpoint-save', body: JSON.stringify({ id, __easyedaCopilotDeadlineAt: deadline }),
+    const enqueue = (id: string, deadline = Date.now() + 1000, event = 'checkpoint-save', body = {}) => queue.add(() => run({
+        event, body: JSON.stringify({ ...body, id, __easyedaCopilotDeadlineAt: deadline }),
     }, state.connectionEpoch));
     return { enqueue, replies, state };
 }
@@ -62,6 +63,29 @@ test('actual MCP handler releases its queue and suppresses the late success repl
     complete('late');
     await new Promise(resolve => setImmediate(resolve));
     assert.equal(f.replies.length, 2);
+});
+
+test('a command that times out while checkpointing cannot start a late board mutation', async () => {
+    let complete!: (value: string) => void;
+    let mutations = 0;
+    const f = fixture(
+        () => new Promise(resolve => { complete = resolve; }),
+        async () => { mutations++; },
+    );
+    await f.enqueue('assembly', Date.now() + 30, 'assemble-board', { board: {} });
+    assert.equal(f.replies[0].ok, false);
+    complete('late-checkpoint');
+    await new Promise(resolve => setImmediate(resolve));
+    assert.equal(mutations, 0);
+});
+
+test('board assembly fails closed when its checkpoint cannot be saved', async () => {
+    let mutations = 0;
+    const f = fixture(async () => null, async () => { mutations++; });
+    await f.enqueue('assembly', Date.now() + 1000, 'assemble-board', { board: {} });
+    assert.equal(f.replies[0].ok, false);
+    assert.match(f.replies[0].error, /Failed to create PCB placement checkpoint/);
+    assert.equal(mutations, 0);
 });
 
 test('actual MCP handler never starts a request whose deadline expired in the queue', async () => {

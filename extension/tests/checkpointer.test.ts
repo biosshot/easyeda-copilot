@@ -13,7 +13,7 @@ const runtime = buildSync({
 type Saved = { _id: string; timestamp: number; content: string; pageId?: string; name?: string };
 
 function load(rows: Saved[]) {
-    const state = { pageId: 'page-1', content: 'current source' };
+    const state = { pageId: 'page-1', content: 'current source', documentInfoError: false };
     const module = { exports: {} as any };
     class AppDB {
         async init(name: string, indexes: unknown) {
@@ -33,7 +33,10 @@ function load(rows: Saved[]) {
         require: (id: string) => id === 'appdb' ? AppDB : {},
         ESYS_ToastMessageType: { WARNING: 1, SUCCESS: 2, ERROR: 3, INFO: 4 },
         eda: {
-            dmt_SelectControl: { getCurrentDocumentInfo: async () => ({ uuid: state.pageId, documentType: 3 }) },
+            dmt_SelectControl: { getCurrentDocumentInfo: async () => {
+                if (state.documentInfoError) throw new Error('document metadata unavailable');
+                return { uuid: state.pageId, documentType: 3 };
+            } },
             sys_FileManager: {
                 getDocumentSource: async () => state.content,
                 setDocumentSource: async (content: string) => { state.content = content; return true; },
@@ -88,6 +91,26 @@ test('legacy save calls and blank names work; invalid names do not save', async 
     assert.ok(await checkpointer.save(true, 'Temporary checkpoint'));
     assert.equal(rows.length, 2);
     assert.equal(await checkpointer.restore(undefined, true), true);
+});
+
+test('a checkpoint is not saved without a stable document UUID', async () => {
+    const rows: Saved[] = [];
+    const { checkpointer, state } = load(rows);
+    state.documentInfoError = true;
+    assert.equal(await checkpointer.save(false, 'unsafe'), null);
+    assert.equal(rows.length, 0);
+    state.documentInfoError = false;
+    const id = await checkpointer.save(false, 'safe');
+    assert.ok(id);
+    assert.equal(rows[0].pageId, 'page-1');
+});
+
+test('legacy checkpoints without a document UUID cannot be restored', async () => {
+    const rows: Saved[] = [{ _id: 'legacy', timestamp: 1, content: 'other source' }];
+    const { checkpointer, state } = load(rows);
+    assert.equal(await checkpointer.restore('legacy', true), false);
+    assert.equal(state.content, 'current source');
+    assert.equal((await checkpointer.list())[0].isCurrentPage, false);
 });
 
 test('active scope baselines survive history pruning, expired pins do not', async () => {

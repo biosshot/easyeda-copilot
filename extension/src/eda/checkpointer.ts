@@ -25,8 +25,9 @@ const generateInsecureToken = (length = 16) => {
 };
 
 const getCurrentPageId = async () => {
-    const page = await eda.dmt_SelectControl.getCurrentDocumentInfo().catch(() => undefined);
-    return page?.uuid;
+    const page = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+    if (!page?.uuid) throw new Error('Current document UUID is unavailable');
+    return page.uuid;
 }
 
 async function saveCheckpoint(minor: boolean, name?: string) {
@@ -34,6 +35,7 @@ async function saveCheckpoint(minor: boolean, name?: string) {
         if (name !== undefined && (typeof name !== 'string' || name.trim().length > 200)) {
             throw new Error('Checkpoint name must be a string of at most 200 characters');
         }
+        const pageId = await getCurrentPageId();
         const content = await eda.sys_FileManager.getDocumentSource();
         if (!content) {
             eda.sys_Message.showToastMessage('Failed insert checkpoint to db: not found content', ESYS_ToastMessageType.WARNING);
@@ -45,8 +47,12 @@ async function saveCheckpoint(minor: boolean, name?: string) {
             timestamp: Date.now(),
             content,
             ...(name?.trim() ? { name: name.trim() } : {}),
-            pageId: await getCurrentPageId()
+            pageId
         };
+
+        if (await getCurrentPageId() !== pageId) {
+            throw new Error('Current document changed while creating checkpoint');
+        }
 
         if (!minor) {
             const db = await checkpointsDb;
@@ -79,7 +85,8 @@ const confirmationMessage = (...args: Parameters<typeof eda.sys_Dialog.showConfi
     })
 }
 
-async function restoreCheckpoint(id?: string, allAgree = false) {
+async function restoreCheckpoint(id?: string, allAgree = false, signal?: AbortSignal) {
+    signal?.throwIfAborted();
     let checkpoint: Checkpoint | undefined;
 
     if (!id) {
@@ -89,13 +96,19 @@ async function restoreCheckpoint(id?: string, allAgree = false) {
         const db = await checkpointsDb;
         checkpoint = await db.checkpoints.find({ _id: id }).then(r => r[0]).catch(() => undefined) as Checkpoint | undefined;
     }
+    signal?.throwIfAborted();
 
     if (!checkpoint) {
         eda.sys_Message.showToastMessage('Not found checkpoint to restore', ESYS_ToastMessageType.INFO);
         return false;
     }
 
-    if (checkpoint.pageId && checkpoint.pageId !== await getCurrentPageId()) {
+    if (!checkpoint.pageId) {
+        eda.sys_Message.showToastMessage('This legacy checkpoint has no document UUID and cannot be restored safely.', ESYS_ToastMessageType.ERROR);
+        return false;
+    }
+
+    if (checkpoint.pageId !== await getCurrentPageId()) {
         eda.sys_Message.showToastMessage('This checkpoint was not created for this page.', ESYS_ToastMessageType.ERROR);
         return false;
     }
@@ -103,6 +116,8 @@ async function restoreCheckpoint(id?: string, allAgree = false) {
     if (!allAgree)
         if (!await confirmationMessage('Are you sure you want to restore this checkpoint? Current changes may be lost.', 'Restore'))
             return false;
+
+    signal?.throwIfAborted();
 
     if (checkpoint === lastCheckpoint) {
         lastCheckpoint = undefined;
@@ -129,7 +144,7 @@ async function listCheckpoints() {
             timestamp: checkpoint.timestamp,
             name: checkpoint.name == null ? `Unnamed — ${new Date(checkpoint.timestamp).toISOString()}` : String(checkpoint.name),
             pageId: checkpoint.pageId,
-            isCurrentPage: !checkpoint.pageId || checkpoint.pageId === currentPageId,
+            isCurrentPage: Boolean(checkpoint.pageId) && checkpoint.pageId === currentPageId,
         }))
         .sort((a, b) => b.timestamp - a.timestamp);
 }
