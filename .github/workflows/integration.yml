@@ -72,14 +72,7 @@ jobs:
         run: npm run check:release
       - name: Build extension
         run: npm run build
-      - name: Build and verify bundled skill
-        if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
-        run: |
-          npm run pack:skill --workspace=easyeda-copilot-mcp -- --bundled
-          node mcp/scripts/check-cli.mjs skill/scripts/easyeda-copilot-cli.js skill/scripts/runtime/dist/index.js
-          mkdir -p .artifacts
-          tar -czf .artifacts/easyeda-copilot-skill-linux-x64.tar.gz skill
-      - name: Collect exact release archives
+      - name: Collect MCP and extension release archives
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         run: node -e "const fs=require('node:fs');const p=require('./mcp/package.json');const e=require('./extension/extension.json');fs.mkdirSync('.artifacts',{recursive:true});const m=p.name+'-'+p.version+'.tgz';const x=e.name+'_v'+e.version+'.eext';fs.copyFileSync('mcp/.artifacts/'+m,'.artifacts/'+m);fs.copyFileSync('build/dist/'+x,'.artifacts/'+x)"
       - uses: actions/upload-artifact@v7

@@ -55,10 +55,10 @@ The default `skill/` contains compiled MCP/CLI files, documentation, and a minim
 
 To repackage an already-built MCP use `npm run pack:skill --workspace=easyeda-copilot-mcp`. The generated folder is ignored by Git to avoid maintaining a second copy of MCP code and documentation. Rebuild it after changing MCP runtime code, docs, the launcher, or the installation guide.
 
-For a full release build, run `npm run pack:skill --workspace=easyeda-copilot-mcp -- --bundled`. It regenerates the same root `skill/` with production dependencies included. Native assets make this output platform-specific.
+For a self-contained local build, run `npm run pack:skill --workspace=easyeda-copilot-mcp -- --bundled`. It regenerates the same root `skill/` with production dependencies included. Native assets make this output platform-specific.
 
-CI packages the bundled Linux x64 output as `easyeda-copilot-skill-linux-x64.tar.gz`, containing `skill/`. Successful builds upload it as an Actions artifact; on `v*` tags the release step attaches it after preceding checks and publication succeed. Publish separately built and tested archives for other targets.
+Release CI does not publish skill archives. Users build the skill from the repository so its generated runtime and documentation match the selected source revision. The optional `--bundled` mode remains available for a self-contained local build and is platform-specific because it includes native dependencies.
 
 ## Installation and updates
 
-The single installation reference is [install-guide.md](install-guide.md), also copied to the root of a generated skill. It covers local builds, matching-OS release archives, updates, and troubleshooting. Existing stdio MCP installation and updates are unchanged.
+The single installation reference is [install-guide.md](install-guide.md), also copied to the root of a generated skill. It covers lightweight and bundled local builds, updates, and troubleshooting. Existing stdio MCP installation and updates are unchanged.

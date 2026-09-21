@@ -2,13 +2,7 @@
 
 # <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
 
-扩展代码、界面、资源和构建配置位于 `extension/`，与 `mcp/`、`shared/` 工作区并列。开发和构建命令仍从仓库根目录运行，`.eext` 输出仍位于 `build/dist/`。参见[扩展开发](extension/README.md)。
-
 基于 MCP 的工程自动化工具，直接操作 EasyEDA Pro 和嘉立创 EDA 原生文档。
-
-## 技能与 CLI
-
-运行 `npm ci && npm run build:skill`，从当前 MCP 生成 `skill/`，然后按 [install-guide.md](mcp/docs/install-guide.md) 安装运行时依赖。生成目录不提交到仓库。也可从 Releases 下载与平台匹配且已包含依赖的技能压缩包。现有 MCP 安装方式保持不变。
 
 EasyEDA Copilot 将支持 MCP 的 AI 智能体连接到真实的原理图和 PCB 数据。它支持原理图生成与重组、元器件解析、约束驱动的 PCB 布局、基于检查点的布线事务、结构化设计检查、恢复以及 EasyEDA 原生 DRC。
 
@@ -126,6 +120,17 @@ claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 通用 MCP 配置和本地构建说明请参阅 [MCP 软件包文档](mcp/README.zh-CN.md)。
+
+若要使用独立技能而不是配置 MCP 客户端，请从此仓库构建。Releases 不发布技能压缩包：
+
+```bash
+npm ci
+npm run build:skill
+cd skill/scripts/runtime
+npm install --omit=dev
+```
+
+然后按照[技能安装指南](mcp/docs/install-guide.md)安装生成的 `skill/` 目录。
 
 ### 3. 打开项目
 
@@ -346,6 +351,8 @@ EasyEDA 扩展、MCP 桥接服务、文档应用逻辑、检查点系统、设�
 - [从 AI 智能体组装电路](docs/assembling-circuits.md)
 
 ## 开发
+
+扩展代码、界面、资源和构建配置位于 `extension/`，与 `mcp/`、`shared/` 工作区并列。开发和构建命令从仓库根目录运行，`.eext` 输出到 `build/dist/`。参见[扩展开发](extension/README.md)。
 
 从源代码构建扩展和 MCP 软件包：
 

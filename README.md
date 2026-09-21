@@ -2,13 +2,7 @@ English | [简体中文](README.zh-CN.md) | [Русский](README.ru.md)
 
 # <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
 
-Extension sources, UI, resources and build configuration live in `extension/`; `mcp/` and `shared/` are sibling workspaces. Root build/dev commands remain the entry point. The `.eext` output remains in `build/dist/`. See [extension development](extension/README.md).
-
 MCP-based engineering automation for native EasyEDA Pro and JLCEDA documents.
-
-## Skill and CLI
-
-Build `skill/` from the current MCP with `npm ci && npm run build:skill`, then install its runtime dependencies as described in [install-guide.md](mcp/docs/install-guide.md). The generated folder is not committed. Alternatively, download a matching-platform bundled skill archive from Releases. Existing MCP installation is unchanged.
 
 EasyEDA Copilot connects MCP-capable AI agents to real schematic and PCB data. It supports schematic generation and reorganization, component resolution, constraint-driven PCB placement, checkpoint-backed routing transactions, structured design inspection, recovery, and native EasyEDA DRC.
 
@@ -126,6 +120,17 @@ claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
 For generic MCP configuration and local builds, see the [MCP package documentation](mcp/README.md).
+
+To use the standalone skill instead of MCP client configuration, build it from this repository. Skill archives are not published in Releases:
+
+```bash
+npm ci
+npm run build:skill
+cd skill/scripts/runtime
+npm install --omit=dev
+```
+
+Then install the generated `skill/` directory as described in the [skill installation guide](mcp/docs/install-guide.md).
 
 ### 3. Open a project
 
@@ -346,6 +351,8 @@ The standalone [`eda-copilot-backend`](https://github.com/biosshot/eda-copilot-b
 - [Assembling circuits from an AI agent](docs/assembling-circuits.md)
 
 ## Development
+
+Extension sources, UI, resources and build configuration live in `extension/`; `mcp/` and `shared/` are sibling workspaces. Root build and development commands remain the entry point. The `.eext` output is written to `build/dist/`. See [extension development](extension/README.md).
 
 Build the extension and MCP package from source:
 

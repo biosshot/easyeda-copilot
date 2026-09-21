@@ -6,18 +6,16 @@ Install the complete generated `skill/` directory as one skill named `easyeda-co
 
 - Node.js >=20.19 on the machine running the agent.
 - EasyEDA with the EasyEDA Copilot extension and **External Interactions** enabled for design work.
-- For a lightweight source build: npm and registry access during installation.
-- For a bundled release: the archive's `build-info.json` platform must match `node -p "process.platform + '-' + process.arch"`.
+- npm and registry access during installation of a lightweight build.
+- For an optional bundled local build: its `build-info.json` platform must match `node -p "process.platform + '-' + process.arch"`.
 
 The generated `build-info.json` declares `distribution`, `platform`, the MCP version, packaged dependencies, and any installation blockers. Do not mix files from different builds or platforms.
 
-## Obtain a generated skill
+## Build the generated skill
 
-### Release archive
+Skill archives are not published in GitHub Releases. Build the skill from the repository so its runtime and documentation match the source revision you selected.
 
-Download an `easyeda-copilot-skill-<platform>.tar.gz` asset from the selected GitHub release and extract it. The archive contains a top-level `skill/`. GitHub's automatic source archives and the extension `.eext` are not skill builds.
-
-### Local source build
+### Lightweight build
 
 The repository intentionally does not track generated skill contents. From a clean checkout:
 
@@ -27,6 +25,8 @@ npm run build:skill
 ```
 
 This creates a lightweight `skill/` beside `mcp/` from the current MCP source, compiled runtime, and `mcp/docs/`. Do not edit the generated folder; change MCP sources and rebuild it.
+
+### Self-contained local build
 
 To produce a platform-specific build with dependencies included, first build MCP and then package it:
 
@@ -60,7 +60,7 @@ The CLI does not silently install packages, add global commands, or create a sys
 
 ## Update
 
-Build or extract the new candidate separately and validate its `build-info.json`, dependencies, platform, and launcher before replacing the installed copy. Finish active operations and stop daemons using the old installation. Move the previous skill outside the skills search path as a backup, install the complete new folder without overlaying it, verify the launcher, and re-read `SKILL.md`. Keep the backup until verification succeeds.
+Build the new candidate separately and validate its `build-info.json`, dependencies, platform, and launcher before replacing the installed copy. Finish active operations and stop daemons using the old installation. Move the previous skill outside the skills search path as a backup, install the complete new folder without overlaying it, verify the launcher, and re-read `SKILL.md`. Keep the backup until verification succeeds.
 
 Do not reset local source changes, interrupt another task's daemon, or use `stop --force` without authorization. A daemon that owns the shared bridge may remain as a broker while EasyEDA is connected; defer replacement until processes using that runtime have exited.
 
