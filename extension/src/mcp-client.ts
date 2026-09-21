@@ -21,6 +21,7 @@ import {
 import { getSchematic } from './eda/schematic';
 import { getSchematicGroups, mergeSchematicGroups } from './eda/schematic-groups';
 import { assertMcpDocumentContext } from './eda/mcp-document-context';
+import { serializeProjectInfo } from './eda/project-info';
 import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
@@ -1120,65 +1121,7 @@ function startHeartbeat(connectionEpoch: number) {
 async function getProjectInfo() {
     const projectInfo = await eda.dmt_Project.getCurrentProjectInfo();
     if (!projectInfo) throw new Error('Current project info not found');
-
-    const project_data = [];
-
-    const filterSchPage = (page: IDMT_SchematicPageItem) => {
-        return {
-            name: page.name,
-            itemType: page.itemType,
-            uuid: page.uuid
-        }
-    };
-
-    const filterSch = (sch: IDMT_SchematicItem) => {
-        return {
-            name: sch.name,
-            itemType: sch.itemType,
-            page: sch.page.map(filterSchPage),
-            uuid: sch.uuid
-        }
-    };
-
-    for (const item of projectInfo.data) {
-        if (item.itemType === EDMT_ItemType.BOARD) {
-
-            project_data.push({
-                name: item.name,
-                itemType: item.itemType,
-                schematic: filterSch(item.schematic),
-                pcb: {
-                    name: item.pcb.name,
-                    itemType: item.pcb.itemType,
-                    uuid: item.pcb.uuid,
-                    parentBoardName: item.pcb.parentBoardName
-                },
-            })
-        }
-        else if (item.itemType === EDMT_ItemType.SCHEMATIC) {
-            project_data.push({
-                name: item.name,
-                itemType: item.itemType,
-                page: filterSch(item).page,
-                uuid: item.uuid,
-                parentBoardUuid: item.parentBoardUuid
-            })
-        }
-        else if (item.itemType === EDMT_ItemType.PCB) {
-            project_data.push({
-                name: item.name,
-                itemType: item.itemType,
-                uuid: item.uuid,
-                parentBoardName: item.parentBoardName
-            })
-        }
-    }
-
-    return {
-        project_data,
-        project_name: projectInfo.friendlyName,
-        description: projectInfo.description
-    };
+    return serializeProjectInfo(projectInfo, EDMT_ItemType);
 }
 
 type ProjectTreeFolder = {
