@@ -1353,7 +1353,6 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
     try {
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
         await mcpCommandStep(signal, () => assertMcpDocumentContext(message.event, body));
-        signal?.throwIfAborted();
 
         if (message.event === 'execute-js') {
             if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
