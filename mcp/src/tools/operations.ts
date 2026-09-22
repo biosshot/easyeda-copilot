@@ -1,3 +1,4 @@
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import * as z from 'zod/v4';
 import { OPERATION_ID_PATTERN } from '../operations/id';
@@ -17,7 +18,7 @@ export function registerOperationTools(server: McpServer) {
             description: 'Wait for any running PCB layout or PCB router DSL operation. Running router responses include up to 10 recent log lines and their update time when available.',
             inputSchema: z.object({
                 operation_id: operationId,
-                wait_ms: z.number().int().min(1_000).max(55_000).default(30_000)
+                wait_ms: z.number().int().min(1_000).max(TIMEOUT_POLICY.operationWaitMaxMs).default(TIMEOUT_POLICY.operationWaitMs)
                     .describe('Wait below the common 60-second MCP request timeout.'),
             }),
         },

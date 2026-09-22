@@ -1,3 +1,4 @@
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import {
@@ -24,7 +25,7 @@ import {
 } from './easyeda-drc-adapter';
 
 const PCB_DOCUMENT_RESOURCE = 'current-pcb-document';
-const ROUTER_TIMEOUT_MS = 60 * 60 * 1000;
+const ROUTER_TIMEOUT_MS = TIMEOUT_POLICY.routerExecutionMs;
 const ROUTING_DIAGNOSTIC_LIMIT = 20;
 
 type JsonRecord = Record<string, unknown>;
@@ -84,7 +85,7 @@ async function executeRoutingOperation(
     context.signal.throwIfAborted();
 
     context.setStage('exporting');
-    const capture = record(await bridge.requestEasyEda('export-routing-input', {}, 300_000));
+    const capture = record(await bridge.requestEasyEda('export-routing-input', {}));
     const source = typeof capture?.text === 'string' ? capture.text : '';
     if (!capture || !source) throw new Error('EasyEDA returned empty autoroute JSON.');
     await writeFile(join(artifactsDirectory, 'easyeda-routing-input.json'), source);
@@ -177,7 +178,7 @@ async function executeRoutingOperation(
             operationId: context.id,
             application,
             ...(bundle ? { bundle } : {}),
-        }, 300_000));
+        }));
         if (!applied || applied.applied !== true) {
             throw new Error('EasyEDA did not confirm the routing transaction.');
         }
@@ -223,7 +224,7 @@ async function executeRoutingOperation(
 export async function runPcbRouterDsl(
     bridge: Bridge,
     dslFile: string,
-    waitMs = 30_000,
+    waitMs: number = TIMEOUT_POLICY.operationWaitMs,
 ) {
     const operationId = operationManager.start(
         'pcb-dsl',

@@ -29,7 +29,7 @@ export function registerDrcTools(server: McpServer, bridge: Bridge) {
             }),
         },
         async ({ limit }) => {
-            const result = await bridge.requestEasyEda('check-pcb-drc', { limit }, 300000);
+            const result = await bridge.requestEasyEda('check-pcb-drc', { limit });
             return textResult(result);
         },
     );

@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { createHash, randomBytes, randomInt } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { closeSync, openSync } from 'node:fs';
@@ -17,7 +18,7 @@ import { DOCS_DIR, ROOT_DIR } from './utils/dirs';
 
 const ID_PATTERN = /^[a-z0-9]{4}$/;
 const MAX_BYTES = 64 * 1024 * 1024;
-const REQUEST_TIMEOUT = 10 * 60_000;
+const REQUEST_TIMEOUT = TIMEOUT_POLICY.cliRequestMs;
 const ENTRY = fileURLToPath(import.meta.url);
 const STATE_DIR = resolve(process.env.EASYEDA_COPILOT_CLI_HOME || join(homedir(), '.easyeda-copilot', 'cli'));
 const namespace = createHash('sha256').update(STATE_DIR).digest('hex').slice(0, 16);

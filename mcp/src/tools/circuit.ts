@@ -131,7 +131,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
 
             const resolvedInputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
             const result = await extractCircuit({ circuit, inputCircuit: resolvedInputCircuit });
-            const assembled = await bridge.requestEasyEda('assemble-circuit', result as Record<string, unknown>, 300000);
+            const assembled = await bridge.requestEasyEda('assemble-circuit', result as Record<string, unknown>);
             const sheetSpace = sheetSpaceNotice(assembled);
             return textResult({
                 message: 'Circuit sent to EasyEDA for assembly.',
@@ -227,7 +227,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 circuit: assembly,
                 checkpointId,
                 expectedDesignators: [...components.keys()],
-            }, 300000);
+            });
 
             return textResult({
                 message: 'Current EasyEDA schematic page beautified.',

@@ -1,4 +1,6 @@
-export const EXECUTE_JS_TIMEOUT_MS = 60_000;
+import { TIMEOUT_POLICY } from '../timeout-policy';
+
+export const EXECUTE_JS_TIMEOUT_MS = TIMEOUT_POLICY.executeJsMs;
 export const EXECUTE_JS_MAX_CODE_BYTES = 64 * 1024 * 1024;
 export const EXECUTE_JS_MAX_INPUT_BYTES = 512 * 1024 * 1024;
 // Account for JSON escaping and the bridge's nested JSON body/envelopes.

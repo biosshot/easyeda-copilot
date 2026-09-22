@@ -1,3 +1,4 @@
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { createOperationId, parseOperationId, type OperationKind } from './id';
 
 type OperationStatus = 'running' | 'completed' | 'failed' | 'cancelled';
@@ -139,7 +140,7 @@ export class OperationManager {
         return id;
     }
 
-    async wait(operationId: string, waitMs = 30_000) {
+    async wait(operationId: string, waitMs: number = TIMEOUT_POLICY.operationWaitMs) {
         parseOperationId(operationId);
         const operation = this.#operations.get(operationId);
         if (!operation) throw new Error(`Operation not found: ${operationId}`);

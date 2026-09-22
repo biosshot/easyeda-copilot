@@ -1,3 +1,4 @@
+import { commandTimeoutMs, TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { randomUUID } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
 import { EXECUTE_JS_MAX_WIRE_BYTES } from '@copilot/shared/types/execute-js';
@@ -153,7 +154,7 @@ class OwnerBroker {
         return true;
     }
 
-    requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000, targetInstanceId?: string) {
+    requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = commandTimeoutMs(event), targetInstanceId?: string) {
         if (this.pendingEasyEdaRequests.size >= MAX_PENDING_REQUESTS) {
             throw new Error(`EasyEDA bridge has too many pending requests (${MAX_PENDING_REQUESTS}).`);
         }
@@ -558,20 +559,20 @@ export class ProxyBridge {
         this.socket = undefined;
     }
 
-    listEasyEdaInstances(timeoutMs = 120_000) {
+    listEasyEdaInstances(timeoutMs: number = TIMEOUT_POLICY.commandMs) {
         return this.requestOwner<EasyEdaInstance[]>('proxy:list-easyeda-instances', {}, timeoutMs);
     }
 
-    requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000, targetInstanceId?: string) {
+    requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = commandTimeoutMs(event), targetInstanceId?: string) {
         return this.requestOwner('proxy:request-easyeda', {
             event,
             body,
             timeoutMs,
             targetInstanceId,
-        }, timeoutMs + 1_000);
+        }, timeoutMs + TIMEOUT_POLICY.proxyResponseGraceMs);
     }
 
-    private requestOwner<T = unknown>(event: string, body: Record<string, unknown>, timeoutMs = 120_000) {
+    private requestOwner<T = unknown>(event: string, body: Record<string, unknown>, timeoutMs: number = TIMEOUT_POLICY.commandMs) {
         const socket = this.socket;
         if (!socket || socket.readyState !== WebSocket.OPEN) {
             throw new Error('EasyEDA bridge owner is not connected.');
@@ -771,7 +772,7 @@ class MeshBridge implements Bridge {
         });
     }
 
-    async requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = 120_000) {
+    async requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = commandTimeoutMs(event)) {
         await this.waitForRecoverableConnection();
 
         if (this.owner) {

@@ -20,7 +20,7 @@ export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
         async ({ get_full_schematic_groups }) => {
-            const result = await bridge.requestEasyEda('get-schematic-groups', { get_full_schematic_groups }, 120_000) as SchematicGroups;
+            const result = await bridge.requestEasyEda('get-schematic-groups', { get_full_schematic_groups }) as SchematicGroups;
             return textResult(result);
         },
     );

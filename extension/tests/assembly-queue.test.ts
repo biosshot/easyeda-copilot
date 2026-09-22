@@ -3,8 +3,8 @@ import test from 'node:test';
 import PQueue from 'p-queue';
 import { ASSEMBLY_QUEUE_TIMEOUT_MS, runAssemblyQueueTask } from '../src/eda/assembly-queue';
 
-test('assembly queues use the 120-second production timeout', () => {
-    assert.equal(ASSEMBLY_QUEUE_TIMEOUT_MS, 120_000);
+test('assembly queues use the 300-second production timeout', () => {
+    assert.equal(ASSEMBLY_QUEUE_TIMEOUT_MS, 300_000);
 });
 
 test('a timed-out assembly releases the queue and cannot start a later stage', async () => {

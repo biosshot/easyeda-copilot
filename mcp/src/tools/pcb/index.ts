@@ -33,7 +33,7 @@ export function registerPcbTools(server: McpServer, bridge: Bridge) {
         async ({ schematic_uuid }) => {
             const result = await bridge.requestEasyEda('import-pcb-changes', {
                 schematicUuid: schematic_uuid,
-            }, 300000);
+            });
             return textResult(result);
         },
     );

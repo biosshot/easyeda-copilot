@@ -18,7 +18,6 @@ export function registerDesignatorTools(server: McpServer, bridge: Bridge) {
         async ({ mode }) => textResult(await bridge.requestEasyEda(
             'annotate-designators',
             { mode },
-            300000,
         )),
     );
 }

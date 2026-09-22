@@ -110,7 +110,7 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         async ({ settle_ms }) => {
             const result = await bridge.requestEasyEda('sync-current-document', {
                 settleMs: settle_ms,
-            }, 300000);
+            });
             return textResult(result);
         },
     );

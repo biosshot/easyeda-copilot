@@ -1,3 +1,4 @@
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { Bridge } from "../../bridge";
@@ -67,7 +68,7 @@ type SavedPlacementDebugArtifacts = {
     debugArtifacts?: SavedPlacementDebugArtifact[];
 };
 
-const DEFAULT_PCB_LAYOUT_WAIT_MS = 30_000;
+const DEFAULT_PCB_LAYOUT_WAIT_MS = TIMEOUT_POLICY.operationWaitMs;
 const PCB_DOCUMENT_RESOURCE = 'current-pcb-document';
 
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
@@ -360,7 +361,7 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
             description: `Create PCB component placement from a JavaScript DSL file. Open the target PCB first so its outline and component positions are supplied as existingPlacement. Long work returns an operation_id for wait_operation. This tool does not assemble or route the board. For PCB layout docs, read: ${SKILL_DOC_PATH}`,
             inputSchema: z.object({
                 file: z.string().min(1).describe('Path to a JavaScript PCB layout DSL code file.'),
-                wait_ms: z.number().int().min(1_000).max(55_000).default(DEFAULT_PCB_LAYOUT_WAIT_MS)
+                wait_ms: z.number().int().min(1_000).max(TIMEOUT_POLICY.operationWaitMaxMs).default(DEFAULT_PCB_LAYOUT_WAIT_MS)
                     .describe('Initial synchronous wait before returning a pcb-layout operation_id.'),
             }),
         },
@@ -391,7 +392,7 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
 
             await bridge.requestEasyEda('assemble-board', {
                 boardAssemble: toEasyEdaBoardAssemble(layout.pcb),
-            }, 300000);
+            });
 
             return textResult({
                 content: 'PCB layout sent to EasyEDA for assembly.',

@@ -1,3 +1,4 @@
+import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { randomUUID } from 'node:crypto';
 import { readFile, stat } from 'node:fs/promises';
 import { Blob, File } from 'node:buffer';
@@ -363,7 +364,7 @@ export async function listInstances(options: Pick<ConnectOptions, 'url'> = {}): 
     finally { bridge.close(); }
 }
 export async function connect(options: ConnectOptions = {}): Promise<Session> {
-    const timeout = options.timeoutMs ?? 60_000;
+    const timeout = options.timeoutMs ?? TIMEOUT_POLICY.executeJsMs;
     if (!Number.isFinite(timeout) || timeout <= 0 || timeout > 2_147_482_647) throw new SdkError('timeoutMs must be positive and fit a JavaScript timer');
     const bridge = new ProxyBridge(url(options), () => undefined);
     let session: Session | undefined;

@@ -86,7 +86,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
             }),
         },
         async ({ net, drc_limit }) => {
-            const result = await bridge.requestEasyEda('inspect-net', { net, drc_limit }, 300000);
+            const result = await bridge.requestEasyEda('inspect-net', { net, drc_limit });
             return textResult(result);
         },
     );
@@ -102,7 +102,7 @@ export function registerPcbPreviewTools(server: McpServer, bridge: Bridge) {
             }),
         },
         async ({ designator, radius }) => {
-            const result = await bridge.requestEasyEda('inspect-component', { designator, radius }, 300000);
+            const result = await bridge.requestEasyEda('inspect-component', { designator, radius });
             return textResult(result);
         },
     );

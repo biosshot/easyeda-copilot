@@ -7,7 +7,7 @@ import { withTimeout } from '../src/timeout';
 test('command budgets preserve long operations and respect the remaining transport deadline', () => {
     assert.equal(mcpCommandTimeoutMs('get-schematic'), 120_000);
     assert.equal(mcpCommandTimeoutMs('execute-js'), 60_000);
-    for (const event of ['assemble-circuit', 'beautify-current-page', 'assemble-board', 'export-routing-input', 'apply-routing-result']) {
+    for (const event of ['assemble-circuit', 'beautify-current-page', 'assemble-board', 'export-routing-input', 'apply-routing-result', 'check-pcb-drc', 'inspect-net', 'inspect-component', 'annotate-designators', 'import-pcb-changes', 'sync-current-document']) {
         assert.equal(mcpCommandTimeoutMs(event), 300_000);
     }
     assert.equal(mcpCommandTimeoutMs('assemble-board', 1500, 1000), 500);
