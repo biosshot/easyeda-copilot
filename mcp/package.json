@@ -35,6 +35,7 @@
     "test:cli": "node scripts/check-cli.mjs",
     "router:info": "node scripts/router-info.mjs",
     "test:routing-adapter": "npm run build && node scripts/check-routing-adapter.mjs",
+    "test:cancellation": "node scripts/check-cancellation.mjs",
     "test:operations": "npm run build && node scripts/check-operation-manager.mjs",
     "test:projects": "npm run build && node scripts/check-project-tools.mjs",
     "test:execute-js": "npm run build && node scripts/check-execute-js.mjs",
@@ -44,7 +45,7 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && npm run test:tool-results && npm run test:api-docs && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && node scripts/check-project-tools.mjs && npm run test:cli && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-sdk.mjs && node scripts/check-sdk-broker.mjs && node scripts/check-sdk-geometry.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
+    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && npm run test:tool-results && npm run test:api-docs && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && npm run test:cancellation && node scripts/check-project-tools.mjs && npm run test:cli && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-sdk.mjs && node scripts/check-sdk-broker.mjs && node scripts/check-sdk-geometry.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
     "prepack": "node ../scripts/check-release.mjs && npm run build",
     "start": "node dist/index.js",
     "test:package": "node scripts/check-package.mjs"

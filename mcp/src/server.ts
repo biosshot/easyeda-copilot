@@ -1,3 +1,4 @@
+import { abortable, withExecutionSignal } from './operations/cancellation';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import type { Bridge } from './bridge/index';
 import { registerPcbTools } from './tools/pcb/index';
@@ -33,7 +34,11 @@ export function createServer(bridge: Bridge) {
     const registerTool = server.registerTool.bind(server);
     server.registerTool = ((name: string, config: unknown, handler: (...args: unknown[]) => unknown) =>
         registerTool(name, config as never, async (...args: unknown[]) => {
-            const result = await handler(...args) as { content?: unknown[] };
+            const extra = args[args.length - 1] as { signal: AbortSignal };
+            const result = await withExecutionSignal(extra.signal, () =>
+                abortable(Promise.resolve(handler(...args)), extra.signal),
+            ) as { content?: unknown[] };
+            extra.signal.throwIfAborted();
             const warning = await bridge.getVersionWarning(MCP_VERSION);
             if (warning && Array.isArray(result?.content)) {
                 result.content.push({ type: 'text', text: warning });

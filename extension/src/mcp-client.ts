@@ -26,7 +26,7 @@ import { estimateSchematicSheetSpace } from './eda/sheet-space';
 import { rmPartFromDesignator, withTimeout } from './eda/utils';
 import '@copilot/shared/types/eda';
 import { ExplainCircuit } from '@copilot/shared/types/circuit';
-import PQueue from 'p-queue';
+import { McpCommandQueue } from './mcp-command-queue';
 import { mcpCommandTimeoutMs, MCP_TIMEOUT_MESSAGE } from './mcp-command-timeout';
 import {
     type PcbDrcBundle,
@@ -62,7 +62,7 @@ const MCP_HEARTBEAT_TIMER_ID = 'easyeda-copilot-mcp-heartbeat';
 const MCP_CONNECT_TIMEOUT_TIMER_ID = 'easyeda-copilot-mcp-connect-timeout';
 const RETAINED_ROUTING_APPLICATIONS = 20;
 
-const mcpCommandQueue = new PQueue({ concurrency: 1 });
+const mcpCommandQueue = new McpCommandQueue();
 const routingApplicationCache = new Map<string, Promise<unknown>>();
 
 type McpClientState = {
@@ -1098,7 +1098,7 @@ function markMcpDisconnected(reason: string) {
     state.connectionEpoch++;
     state.isRegistered = false;
     state.isConnecting = false;
-    mcpCommandQueue.clear();
+    clearMcpCommands();
     clearConnectTimeout();
     stopHeartbeat();
     closeMcpSocket(reason);
@@ -1968,7 +1968,35 @@ function replyMcpQueueFull(message: McpMessage, connectionEpoch: number) {
     );
 }
 
-async function handleQueuedMcpMessage(message: McpMessage, connectionEpoch: number) {
+const commandControllers = new Map<string, AbortController>();
+
+function cancelMcpCommand(message: McpMessage) {
+    const { id } = parseBody<{ id?: string }>(message);
+    if (id) commandControllers.get(id)?.abort(new Error('MCP request cancelled'));
+}
+
+function clearMcpCommands() {
+    for (const controller of commandControllers.values()) controller.abort(new Error('MCP connection closed'));
+    commandControllers.clear();
+    mcpCommandQueue.clear();
+}
+
+function enqueueMcpCommand(message: McpMessage, connectionEpoch: number) {
+    const { id } = parseBody<{ id?: string }>(message);
+    if (!id || commandControllers.has(id)) return;
+    const controller = new AbortController();
+    commandControllers.set(id, controller);
+    return mcpCommandQueue.add(
+        () => handleQueuedMcpMessage(message, connectionEpoch, controller.signal),
+        { signal: controller.signal },
+    ).catch(error => {
+        if (!controller.signal.aborted) throw error;
+    }).finally(() => {
+        if (commandControllers.get(id) === controller) commandControllers.delete(id);
+    });
+}
+
+async function handleQueuedMcpMessage(message: McpMessage, connectionEpoch: number, parentSignal?: AbortSignal) {
     if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
 
     const body = parseBody<Record<string, unknown>>(message);
@@ -1984,10 +2012,11 @@ async function handleQueuedMcpMessage(message: McpMessage, connectionEpoch: numb
             signal => handleMessage(message, connectionEpoch, signal),
             mcpCommandTimeoutMs(message.event, deadlineAt),
             MCP_TIMEOUT_MESSAGE,
+            parentSignal,
         );
     } catch (error) {
         const detail = error instanceof Error ? error.message : String(error);
-        eda.sys_Log.add(`MCP event timeout: ${message.event}: ${detail}`, ESYS_LogType.ERROR);
+        eda.sys_Log.add(`MCP event stopped: ${message.event}: ${detail}`, ESYS_LogType.ERROR);
         replyMcpError(message, detail, connectionEpoch);
     }
 }
@@ -2019,7 +2048,7 @@ function tryConnectMcp(showErrors = false) {
         if (connectionEpoch !== state.connectionEpoch) return;
         state.connectionEpoch++;
         state.isConnecting = false;
-        mcpCommandQueue.clear();
+        clearMcpCommands();
         clearConnectTimeout();
         closeMcpSocket('MCP connect timeout');
 
@@ -2038,6 +2067,11 @@ function tryConnectMcp(showErrors = false) {
                 const data = typeof event.data === 'string' ? event.data : String(event.data);
                 const message = JSON.parse(data) as McpMessage;
 
+                if (message.event === 'cancel-command') {
+                    cancelMcpCommand(message);
+                    return;
+                }
+
                 if (message.event === 'connected' || message.event === 'pong') {
                     await handleMessage(message, connectionEpoch);
                     return;
@@ -2048,7 +2082,7 @@ function tryConnectMcp(showErrors = false) {
                     return;
                 }
 
-                void mcpCommandQueue.add(() => handleQueuedMcpMessage(message, connectionEpoch)).catch(error => {
+                void enqueueMcpCommand(message, connectionEpoch)?.catch(error => {
                     eda.sys_Log.add(`MCP queued command error: ${(error as Error).message}`, ESYS_LogType.ERROR);
                 });
             } catch (error) {
@@ -2118,7 +2152,7 @@ export function stopMcpScan(showToast = true) {
     state.isUserPaused = true;
     clearConnectTimeout();
     stopHeartbeat();
-    mcpCommandQueue.clear();
+    clearMcpCommands();
 
     clearMcpIntervalTimer(MCP_SCAN_TIMER_ID, state.scanTimer);
     state.scanTimer = undefined;

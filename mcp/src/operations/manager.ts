@@ -1,3 +1,4 @@
+import { abortable, currentSignal, withExecutionSignal } from './cancellation';
 import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { createOperationId, parseOperationId, type OperationKind } from './id';
 
@@ -64,6 +65,7 @@ export class OperationManager {
         runner: (context: OperationContext) => Promise<T>,
         options: StartOperationOptions = {},
     ) {
+        currentSignal()?.throwIfAborted();
         if (options.resource) {
             const active = [...this.#operations.values()].find(operation => (
                 operation.resource === options.resource && operation.status === 'running'
@@ -121,7 +123,8 @@ export class OperationManager {
 
         void Promise.resolve().then(() => {
             controller.signal.throwIfAborted();
-            return runner(context);
+            // Detach registered work from the MCP request that merely waits for it.
+            return withExecutionSignal(controller.signal, () => runner(context));
         }).then(result => {
             operation.result = result;
             operation.status = 'completed';
@@ -148,10 +151,10 @@ export class OperationManager {
         if (operation.status === 'running') {
             let timer: ReturnType<typeof setTimeout> | undefined;
             try {
-                await Promise.race([
+                await abortable(Promise.race([
                     operation.done,
                     new Promise<void>(resolve => { timer = setTimeout(resolve, waitMs); }),
-                ]);
+                ]), currentSignal());
             } finally {
                 if (timer) clearTimeout(timer);
             }
@@ -160,7 +163,7 @@ export class OperationManager {
         let progress = operation.progress;
         if (operation.status === 'running' && operation.readProgress) {
             // A missing or temporarily unreadable log must not fail the operation.
-            progress = await operation.readProgress().catch(() => progress);
+            progress = await abortable(operation.readProgress().catch(() => progress), currentSignal());
         }
 
         if (operation.status === 'completed') {
@@ -189,7 +192,7 @@ export class OperationManager {
         if (!operation) throw new Error(`Operation not found: ${operationId}`);
 
         let cancellationError: string | undefined;
-        if (operation.status === 'running') {
+        if (operation.status === 'running' || operation.applyStatus === 'applying') {
             operation.controller.abort(new Error(`Operation cancelled: ${operationId}`));
             if (operation.cancelHandler) {
                 try {
@@ -200,7 +203,7 @@ export class OperationManager {
             }
         }
         return {
-            status: operation.status === 'running' ? 'cancel_requested' as const : operation.status,
+            status: operation.status === 'running' || operation.applyStatus === 'applying' ? 'cancel_requested' as const : operation.status,
             operation_id: operationId,
             ...(cancellationError ? { cancellation_error: cancellationError } : {}),
         };
@@ -232,7 +235,7 @@ export class OperationManager {
         operation.applyStatus = 'applying';
         operation.applyError = undefined;
         try {
-            const result = await operation.applyHandler();
+            const result = await withExecutionSignal(operation.controller.signal, () => operation.applyHandler!());
             operation.applyResult = result;
             operation.applyStatus = 'applied';
             return result;

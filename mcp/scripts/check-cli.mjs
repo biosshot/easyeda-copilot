@@ -39,6 +39,7 @@ const client = new Client({ name: 'cli-regression', version: '1.0.0' });
 let connected = false;
 
 async function editor(instanceId) {
+    const cancelledRequests = new Set();
     const socket = new WebSocket(`ws://127.0.0.1:${port}`);
     editors.push(socket);
     await new Promise((ready, reject) => {
@@ -53,6 +54,7 @@ async function editor(instanceId) {
             }
             if (event === 'pong') { clearTimeout(deadline); ready(); return; }
             const body = JSON.parse(encoded);
+            if (event === 'cancel-command') { cancelledRequests.add(body.id); return; }
             let result;
             if (event === 'get-current-project-info') { await holdProject; result = { project_name: instanceId }; }
             else if (event === 'get-pcb-existing-placement') result = null;
@@ -61,7 +63,7 @@ async function editor(instanceId) {
             }; }
             else if (event === 'assemble-board') { assemblies.push(body.boardAssemble); result = { assembled: true }; }
             else throw new Error(`Unexpected fixture event: ${event}`);
-            if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ event, body: JSON.stringify({ id: body.id, ok: true, result }) }));
+            if (!cancelledRequests.has(body.id) && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ event, body: JSON.stringify({ id: body.id, ok: true, result }) }));
         });
     });
 }
