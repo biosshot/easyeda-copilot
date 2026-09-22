@@ -1866,6 +1866,8 @@ async function resolveDetachedNets(points: SourceRemovalResult['detachedNets']):
     const primitives = await eda.sch_PrimitiveComponent.getAll().catch(() => []);
     const result: AddedNet[] = [];
     for (const primitive of primitives) {
+        // Orphaned flags/ports must be cleaned up, not connected to another flag/port.
+        if (primitive.getState_ComponentType() !== ESCH_PrimitiveComponentType.COMPONENT) continue;
         const designator = primitive.getState_Designator?.();
         if (!designator) continue;
         const pins = await getPrimitiveComponentPins(primitive.getState_PrimitiveId()).catch(() => []);
