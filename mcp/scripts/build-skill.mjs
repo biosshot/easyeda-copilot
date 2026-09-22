@@ -116,6 +116,10 @@ try {
         await cp(join(mcpRoot, 'docs', entry), join(staging, entry), { recursive: true });
     }
     await cp(join(scriptsRoot, 'skill-launcher.mjs'), join(staging, 'scripts', 'easyeda-copilot-cli.js'));
+    await writeFile(join(staging, 'scripts', 'package.json'), JSON.stringify({
+        private: true,
+        type: 'module',
+    }, null, 2) + '\n');
     await writeFile(join(staging, 'build-info.json'), JSON.stringify({
         name: 'easyeda-copilot', version: rootPackage.version,
         distribution: bundled ? 'bundled' : 'npm', platform: bundled ? platform : null,

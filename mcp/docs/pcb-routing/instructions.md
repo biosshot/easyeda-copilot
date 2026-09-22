@@ -230,7 +230,7 @@ Continue targeted attempts while they produce measurable progress, such as fewer
 
 The routing apply step uses one EasyEDA checkpoint recovery boundary and restores automatically on an application exception. A useful incomplete result remains applied, as does a successfully applied result with non-catastrophic DRC diagnostics, until the agent chooses to keep, repair, or restore it after verification. EasyEDA currently applies through vias and copper zones without holes.
 
-Rely on the automatically created checkpoint; no separate pre-routing snapshot is needed. The compact router response currently does not expose its ID, so identify the matching checkpoint before a manual restore; do not guess its baseline from the latest checkpoint afterward.
+Rely on the automatically created checkpoint; no separate pre-routing snapshot is needed. Retain the `checkpointId` returned by the applied routing result and use that exact ID if a manual restore is later required. Do not substitute a newer checkpoint created by subsequent inspection or repair work.
 
 Ground-reference background: [TI, High-Speed Layout Guidelines (SCAA082A)](https://www.ti.com/lit/pdf/SCAA082A) explains why gaps in a reference plane disrupt signal return paths. Evaluate the final reference copper even when ground connectivity checks pass.
 

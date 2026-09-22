@@ -22,6 +22,7 @@ Group components by a completed function and local signal path, not by component
 `extract_circuit_on_current_page` can add and remove components and change external connections on the opened page.
 
 Pass circuit fields directly, or provide `file_path` to a UTF-8 JSON file containing the same circuit modification object. Do not combine both input modes.
+Omitted change lists are treated as empty, so include only the changes the call needs.
 
 - Replace a component by removing it and adding the replacement with the same base designator.
 - Use identical `signal_name` values for pins on the same net.

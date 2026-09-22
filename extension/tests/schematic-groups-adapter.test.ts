@@ -147,6 +147,7 @@ test('MCP registration is read-only, forwards the full-schematic flag and return
                 return { content: [{ type: 'text', text: typeof value === 'string' ? value : JSON.stringify(value) }] };
             }
         },
+        './handler': { toolHandler: (_bridge: unknown, callback: unknown) => callback },
     });
     let handler: ((input: { get_full_schematic_groups: boolean }) => Promise<any>) | undefined;
     let registrations = 0;

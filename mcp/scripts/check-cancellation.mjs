@@ -128,6 +128,12 @@ try {
             'beautify_schematic_on_current_page', 'execute_js', 'extract_circuit_on_current_page',
         ].sort(),
     );
+    const circuitSchema = catalog.find(t => t.name === 'extract_circuit_on_current_page').inputSchema.properties;
+    assert.deepEqual(circuitSchema.add_components.default, []);
+    assert.deepEqual(circuitSchema.add_reused_blocks.default, []);
+    assert.equal(circuitSchema.rm_components.default, null);
+    assert.equal(circuitSchema.external_rm_connect.default, null);
+    assert.equal(circuitSchema.external_connect.default, null);
     console.log('PASS every exposed tool has explicit effect annotations');
     const unpack = response => JSON.parse(response.content[0].text);
     const operationsBeforeCheckpoints = unpack(await client.callTool({ name: 'list_operations', arguments: {} })).operations;

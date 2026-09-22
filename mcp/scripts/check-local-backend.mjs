@@ -131,7 +131,7 @@ try {
   await assert.rejects(call('extract_circuit_on_current_page', {
     file_path: circuitFile, ...schematicInput.circuit,
   }), /either file_path or inline/);
-  await writeFile(circuitFile, '{}');
+  await writeFile(circuitFile, JSON.stringify({ add_components: 'invalid' }));
   const requestCount = requests.length;
   await assert.rejects(call('extract_circuit_on_current_page', { file_path: circuitFile }));
   assert.deepEqual(

@@ -158,18 +158,18 @@ export const ExplainCircuitStruct = () => z.object({
 export const CircuitModStruct = () => z.object({
     add_components: (z.array(BaseComponentSchema().omit({ part_uuid: true }).extend({
         part_uuid: LCSC_uuid().describe("part_uuid of the lcsc component")
-    })).describe('Components to add')),
-    add_reused_blocks: (z.array(CircuitReusedBlockSchema()).describe('reuded blocks to add')),
-    rm_components: ((z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit'))),
+    })).describe('Components to add').default([])),
+    add_reused_blocks: (z.array(CircuitReusedBlockSchema()).describe('reused blocks to add').default([])),
+    rm_components: ((z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit').default(null))),
     external_rm_connect: ((z.array(z.object({
         designator: z.string().describe('Target component designator'),
         pin_number: z.union([z.number(), z.string()]).describe('Target component pin number'),
-    })).nullable())).describe('Use only if you need to remove/break the connection from an external component\'s pin. Remember to remove external_rm_connect first and then add external_connect.'),
+    })).nullable().default(null))).describe('Use only if you need to remove/break the connection from an external component\'s pin. Remember to remove external_rm_connect first and then add external_connect.'),
     external_connect: ((z.array(z.object({
         designator: z.string().describe('Target component designator'),
         pin_number: z.union([z.number(), z.string()]).describe('Target component pin number'),
         signal_name: z.string().describe('Signal name'),
-    })).nullable())).describe('Use only when you need to connect to a pin of an external component that you have not modified and that does not have a signal_name')
+    })).nullable().default(null))).describe('Use only when you need to connect to a pin of an external component that you have not modified and that does not have a signal_name')
 });
 
 export type CircuitMod = z.infer<ReturnType<typeof CircuitModStruct>>;

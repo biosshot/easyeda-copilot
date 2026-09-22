@@ -55,6 +55,7 @@ const MCP_SCAN_INTERVAL_MS = 5000;
 const MCP_CONNECT_TIMEOUT_MS = 2000;
 const MCP_HEARTBEAT_INTERVAL_MS = 10000;
 const MCP_HEARTBEAT_MAX_MISSES = 3;
+const MCP_UNTITLED_PROJECT_NAME = 'Untitled EasyEDA project';
 const MCP_COMMAND_QUEUE_MAX_SIZE = 16;
 const MCP_DEADLINE_FIELD = '__easyedaCopilotDeadlineAt';
 const MCP_SCAN_TIMER_ID = 'easyeda-copilot-mcp-scan';
@@ -79,6 +80,8 @@ type McpClientState = {
     heartbeatTimeout?: ReturnType<typeof setTimeout>;
     heartbeatAwaitingPong: boolean;
     heartbeatMisses: number;
+    currentProjectName?: string;
+    metadataRefreshInFlight?: boolean;
 };
 
 function makeMcpInstanceId() {
@@ -105,6 +108,7 @@ const state = ((eda as typeof eda & {
 state.connectionEpoch ??= 0;
 state.heartbeatAwaitingPong ??= false;
 state.heartbeatMisses ??= 0;
+state.metadataRefreshInFlight ??= false;
 
 function parseBody<T = Record<string, unknown>>(message: McpMessage): T {
     return message.body ? JSON.parse(message.body) as T : {} as T;
@@ -1105,6 +1109,31 @@ function markMcpDisconnected(reason: string) {
     eda.sys_Log.add(`MCP disconnected: ${reason}`, ESYS_LogType.WARNING);
 }
 
+function sendEasyEdaMetadata(projectName: string) {
+    send('easyeda:hello', {
+        instanceId: state.instanceId,
+        projectName,
+        extensionVersion: extension.version,
+    });
+}
+
+async function refreshEasyEdaMetadata(connectionEpoch: number, force = false) {
+    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered || state.metadataRefreshInFlight) return;
+    state.metadataRefreshInFlight = true;
+    try {
+        const projectInfo = await eda.dmt_Project.getCurrentProjectInfo();
+        if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
+        const currentName = typeof projectInfo?.friendlyName === 'string' && projectInfo.friendlyName.trim()
+            ? projectInfo.friendlyName.trim()
+            : MCP_UNTITLED_PROJECT_NAME;
+        if (!force && currentName === state.currentProjectName) return;
+        state.currentProjectName = currentName;
+        sendEasyEdaMetadata(currentName);
+    } finally {
+        state.metadataRefreshInFlight = false;
+    }
+}
+
 function sendHeartbeatPing(connectionEpoch: number) {
     if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
 
@@ -1121,6 +1150,9 @@ function sendHeartbeatPing(connectionEpoch: number) {
 
     try {
         send('ping', { ts: Date.now() });
+        void refreshEasyEdaMetadata(connectionEpoch).catch(error => {
+            eda.sys_Log.add(`MCP metadata refresh failed: ${(error as Error).message}`, ESYS_LogType.WARNING);
+        });
     } catch (error) {
         markMcpDisconnected(`heartbeat send failed: ${(error as Error).message}`);
         return;
@@ -1239,28 +1271,12 @@ async function getAllProjectsTree(): Promise<ProjectTreeTeam[]> {
 
 async function sendEasyEdaHello(connectionEpoch: number) {
     if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
-    let projectName = 'Untitled EasyEDA project';
-
-    send('easyeda:hello', {
-        instanceId: state.instanceId,
-        projectName,
-        extensionVersion: extension.version,
-    });
-
+    sendEasyEdaMetadata(state.currentProjectName ?? MCP_UNTITLED_PROJECT_NAME);
     try {
-        projectName = (await getProjectInfo()).project_name || projectName;
+        await refreshEasyEdaMetadata(connectionEpoch, true);
     } catch {
         // The project may not be fully available immediately after EasyEDA startup.
-        return;
     }
-
-    if (connectionEpoch !== state.connectionEpoch || !state.isRegistered) return;
-
-    send('easyeda:hello', {
-        instanceId: state.instanceId,
-        projectName,
-        extensionVersion: extension.version,
-    });
 }
 
 const findDocWithUUID = (data: Awaited<ReturnType<typeof getProjectInfo>>['project_data'], uuid: string) => {

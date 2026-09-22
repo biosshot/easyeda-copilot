@@ -11,22 +11,33 @@ const src = join(__dirname, '../src');
 const runtime = buildSync({
     stdin: {
         contents: readFileSync(join(src, 'mcp-client.ts'), 'utf8')
-            + '\nexport const testQueue = { state, queue: mcpCommandQueue, run: handleQueuedMcpMessage, enqueue: enqueueMcpCommand, cancel: cancelMcpCommand };',
+            + '\nexport const testQueue = { state, queue: mcpCommandQueue, run: handleQueuedMcpMessage, enqueue: enqueueMcpCommand, cancel: cancelMcpCommand, refreshMetadata: refreshEasyEdaMetadata };',
         loader: 'ts', resolveDir: src,
     },
     bundle: true, write: false, platform: 'node', format: 'cjs',
     external: ['./eda/*', '@copilot/shared/types/eda', 'p-queue'],
 }).outputFiles[0].text;
 
-function fixture(save: () => Promise<string | null>, assembleBoard = async () => {}) {
+function fixture(
+    save: () => Promise<string | null>,
+    assembleBoard = async () => {},
+    getCurrentProjectInfo = async () => ({ friendlyName: 'Fixture project' }),
+) {
     const replies: any[] = [];
+    const events: any[] = [];
     const module = { exports: {} as any };
     runInNewContext(runtime, {
         module, exports: module.exports, setTimeout, clearTimeout, AbortController,
         ESCH_PrimitiveComponentType: {}, ESYS_LogType: {},
         eda: {
             sys_Log: { add() {} },
-            sys_WebSocket: { send(_id: string, value: string) { replies.push(JSON.parse(JSON.parse(value).body)); } },
+            sys_WebSocket: { send(_id: string, value: string) {
+                const message = JSON.parse(value);
+                const body = JSON.parse(message.body);
+                events.push({ event: message.event, body });
+                replies.push(body);
+            } },
+            dmt_Project: { getCurrentProjectInfo },
         },
         require(id: string) {
             if (id === './eda/checkpoint-scopes') return { CheckpointScopes };
@@ -37,13 +48,34 @@ function fixture(save: () => Promise<string | null>, assembleBoard = async () =>
             return {};
         },
     });
-    const { state, queue, enqueue: submit, cancel } = module.exports.testQueue;
+    const { state, queue, enqueue: submit, cancel, refreshMetadata } = module.exports.testQueue;
     state.isRegistered = true;
     const enqueue = (id: string, deadline = Date.now() + 1000, event = 'checkpoint-save', body = {}) => submit({
         event, body: JSON.stringify({ ...body, id, __easyedaCopilotDeadlineAt: deadline }),
     }, state.connectionEpoch);
-    return { enqueue, replies, state, queue, cancel: (id: string) => cancel({ body: JSON.stringify({ id }) }) };
+    return {
+        enqueue, replies, events, state, queue, refreshMetadata,
+        cancel: (id: string) => cancel({ body: JSON.stringify({ id }) }),
+    };
 }
+
+test('heartbeat metadata refresh updates the project name only when it changes', async () => {
+    let projectName = 'Project A';
+    const f = fixture(async () => 'checkpoint', async () => {}, async () => ({ friendlyName: projectName }));
+    await f.refreshMetadata(f.state.connectionEpoch);
+    assert.equal(f.events.at(-1).event, 'easyeda:hello');
+    assert.equal(f.events.at(-1).body.projectName, 'Project A');
+    assert.equal(f.events.at(-1).body.extensionVersion, '1.2.0');
+
+    const sent = f.events.length;
+    await f.refreshMetadata(f.state.connectionEpoch);
+    assert.equal(f.events.length, sent);
+
+    projectName = 'Project B';
+    await f.refreshMetadata(f.state.connectionEpoch);
+    assert.equal(f.events.at(-1).body.projectName, 'Project B');
+    assert.equal(f.events.at(-1).body.instanceId, f.state.instanceId);
+});
 
 test('actual MCP handler releases its queue and suppresses the late success reply', async () => {
     let complete!: (value: string) => void;

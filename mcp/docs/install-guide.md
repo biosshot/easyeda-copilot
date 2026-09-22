@@ -60,7 +60,11 @@ The CLI does not silently install packages, add global commands, or create a sys
 
 ## Update
 
-Build the new candidate separately and validate its `build-info.json`, dependencies, platform, and launcher before replacing the installed copy. Finish active operations and stop daemons using the old installation. Move the previous skill outside the skills search path as a backup, install the complete new folder without overlaying it, verify the launcher, and re-read `SKILL.md`. Keep the backup until verification succeeds.
+Read the installed skill's `build-info.json` before updating and compare its version with the version being installed. If they already match, no skill replacement is needed. Build the new candidate separately and validate its `build-info.json`, dependencies, platform, and launcher before replacing the installed copy.
+
+Finish active operations and stop daemons using the old installation. Move the previous skill outside the skills search path as a backup, install the complete new folder without overlaying it, verify the launcher, and re-read `SKILL.md`. Keep the backup until verification succeeds.
+
+After updating the skill, tell the user to update the EasyEDA Copilot extension to the same version. The skill, its packaged MCP runtime, and the EasyEDA extension must have matching versions for supported operation. Verify the installed skill and MCP version from `build-info.json` and CLI `status`; verify the extension version after EasyEDA reconnects.
 
 Do not reset local source changes, interrupt another task's daemon, or use `stop --force` without authorization. A daemon that owns the shared bridge may remain as a broker while EasyEDA is connected; defer replacement until processes using that runtime have exited.
 

@@ -109,13 +109,18 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             title: 'Extract Circuit',
             description: `Apply circuit changes to the current EasyEDA page. Every added component must include part_uuid. The result reports remaining current-sheet space and warns below 10%. Runs as a managed operation, waits up to 50 seconds, and always returns operation_id. For circuit modification docs, read: ${SKILL_DOC_PATH}`,
             annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
-            inputSchema: CircuitModStruct().partial().extend({
+            inputSchema: CircuitModStruct().extend({
                 file_path: z.string().min(1).optional()
                     .describe('Path to a UTF-8 JSON file containing CircuitMod. Provide either file_path or inline circuit fields.'),
             }),
         },
         managedMutationHandler(bridge, 'extract_circuit_on_current_page', async ({ file_path, ...inlineCircuit }) => {
-            if (file_path !== undefined && Object.values(inlineCircuit).some(value => value !== undefined)) {
+            const hasInlineChanges = inlineCircuit.add_components.length > 0
+                || inlineCircuit.add_reused_blocks.length > 0
+                || inlineCircuit.rm_components !== null
+                || inlineCircuit.external_rm_connect !== null
+                || inlineCircuit.external_connect !== null;
+            if (file_path !== undefined && hasInlineChanges) {
                 throw new Error('Provide either file_path or inline circuit fields, not both.');
             }
             const circuit = CircuitModStruct().parse(file_path !== undefined
