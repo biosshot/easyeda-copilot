@@ -135,6 +135,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             const sheetSpace = sheetSpaceNotice(assembled);
             return textResult({
                 message: 'Circuit sent to EasyEDA for assembly.',
+                checkpointId: (assembled as { checkpointId?: string }).checkpointId,
                 ...(sheetSpace ? { sheetSpace } : {}),
             });
         },

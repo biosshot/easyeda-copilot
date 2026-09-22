@@ -163,7 +163,7 @@ test('MCP registration is read-only, forwards the full-schematic flag and return
         requestEasyEda: async (event: string, body: unknown, timeout: number) => {
             assert.equal(event, 'get-schematic-groups');
             requests.push(body);
-            assert.equal(timeout, 120000);
+            assert.equal(timeout, undefined, 'bridge applies the shared command timeout policy');
             return expected;
         }
     });

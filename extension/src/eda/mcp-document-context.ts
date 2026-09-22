@@ -39,6 +39,11 @@ export function requiredMcpDocumentContext(event: string, body: Record<string, u
 
 /** Fail MCP commands before checkpoints or document-specific EasyEDA APIs hide the real problem. */
 export async function assertMcpDocumentContext(event: string, body: Record<string, unknown>) {
+    const expected = body.__easyedaCopilotDocumentUuid;
+    if (typeof expected === 'string') {
+        const current = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+        if (current?.uuid !== expected) throw new Error('Operation target document changed. Open the original document before applying its result.');
+    }
     const required = requiredMcpDocumentContext(event, body);
     if (!required) return;
 

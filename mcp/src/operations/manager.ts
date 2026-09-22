@@ -1,4 +1,4 @@
-import { abortable, currentSignal, withExecutionSignal } from './cancellation';
+import { abortable, currentSignal, withExecutionSignal, currentTarget, withTarget, type OperationTarget } from './cancellation';
 import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { createOperationId, parseOperationId, type OperationKind } from './id';
 
@@ -22,6 +22,8 @@ type ManagedOperation = {
     id: string;
     kind: OperationKind;
     resource?: string;
+    target?: OperationTarget;
+    tool?: string;
     status: OperationStatus;
     stage: string;
     progress?: unknown;
@@ -31,6 +33,7 @@ type ManagedOperation = {
     applyHandler?: ApplyHandler;
     applyStatus?: ApplyStatus;
     applyResult?: unknown;
+    applyPromise?: Promise<unknown>;
     applyError?: string;
     result?: unknown;
     error?: string;
@@ -42,6 +45,8 @@ type ManagedOperation = {
 
 export type StartOperationOptions = Readonly<{
     resource?: string;
+    target?: OperationTarget;
+    tool?: string;
     initialStage?: string;
 }>;
 
@@ -66,9 +71,11 @@ export class OperationManager {
         options: StartOperationOptions = {},
     ) {
         currentSignal()?.throwIfAborted();
+        const target = options.target ?? currentTarget();
+        if (target) options = { ...options, resource: `document:${target.instanceId}:${target.documentUuid ?? ''}` };
         if (options.resource) {
             const active = [...this.#operations.values()].find(operation => (
-                operation.resource === options.resource && operation.status === 'running'
+                operation.resource === options.resource && (operation.status === 'running' || operation.applyStatus === 'applying')
             ));
             if (active) {
                 throw new Error(
@@ -87,6 +94,8 @@ export class OperationManager {
             id,
             kind,
             resource: options.resource,
+            target: options.target ?? currentTarget(),
+            tool: options.tool,
             status: 'running',
             stage: options.initialStage ?? 'starting',
             controller,
@@ -124,11 +133,12 @@ export class OperationManager {
         void Promise.resolve().then(() => {
             controller.signal.throwIfAborted();
             // Detach registered work from the MCP request that merely waits for it.
-            return withExecutionSignal(controller.signal, () => runner(context));
+            return withTarget(operation.target, () => withExecutionSignal(controller.signal, () => runner(context)));
         }).then(result => {
             operation.result = result;
-            operation.status = 'completed';
-            operation.stage = 'completed';
+            const failed = Boolean((result as { tool_result?: { isError?: boolean } } | undefined)?.tool_result?.isError);
+            operation.status = failed ? 'failed' : 'completed';
+            operation.stage = operation.status;
         }).catch(error => {
             operation.status = controller.signal.aborted ? 'cancelled' : 'failed';
             operation.stage = operation.status;
@@ -148,11 +158,11 @@ export class OperationManager {
         const operation = this.#operations.get(operationId);
         if (!operation) throw new Error(`Operation not found: ${operationId}`);
 
-        if (operation.status === 'running') {
+        if (operation.status === 'running' || operation.applyStatus === 'applying') {
             let timer: ReturnType<typeof setTimeout> | undefined;
             try {
                 await abortable(Promise.race([
-                    operation.done,
+                    operation.status === 'running' ? operation.done : operation.applyPromise!,
                     new Promise<void>(resolve => { timer = setTimeout(resolve, waitMs); }),
                 ]), currentSignal());
             } finally {
@@ -166,12 +176,14 @@ export class OperationManager {
             progress = await abortable(operation.readProgress().catch(() => progress), currentSignal());
         }
 
+        if (operation.applyStatus === 'applying') return { status: 'running' as const, operation_id: operation.id, kind: operation.kind, stage: 'applying' };
         if (operation.status === 'completed') {
             return operation.result ?? {
                 status: 'completed' as const,
                 operation_id: operation.id,
             };
         }
+        if (operation.status === 'failed' && operation.result !== undefined) return operation.result;
         if (operation.status === 'failed' || operation.status === 'cancelled') {
             throw new Error(
                 `${operation.error || `${operation.kind} operation ${operation.status}`} (operation_id: ${operation.id})`,
@@ -209,7 +221,7 @@ export class OperationManager {
         };
     }
 
-    async apply(operationId: string) {
+    async apply(operationId: string, waitMs?: number) {
         parseOperationId(operationId);
         const operation = this.#operations.get(operationId);
         if (!operation) throw new Error(`Operation not found: ${operationId}`);
@@ -218,7 +230,16 @@ export class OperationManager {
         }
 
         const alreadyApplied = operation.applyStatus === 'applied';
-        const result = await this.#apply(operation);
+        const application = this.#apply(operation);
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        const running = Symbol('running');
+        let result: unknown;
+        try {
+            result = await abortable(waitMs === undefined ? application : Promise.race([
+                application, new Promise<typeof running>(resolve => { timer = setTimeout(() => resolve(running), waitMs); }),
+            ]), currentSignal());
+        } finally { clearTimeout(timer); }
+        if (result === running) return { status: 'running' as const, operation_id: operationId, stage: 'applying' };
         return {
             status: alreadyApplied ? 'already_applied' as const : 'applied' as const,
             operation_id: operationId,
@@ -226,30 +247,46 @@ export class OperationManager {
         };
     }
 
-    async #apply(operation: ManagedOperation) {
-        if (!operation.applyHandler) {
-            throw new Error(`Operation has no saved result to apply: ${operation.id}`);
+    #apply(operation: ManagedOperation): Promise<unknown> {
+        if (!operation.applyHandler) return Promise.reject(new Error(`Operation has no saved result to apply: ${operation.id}`));
+        if (operation.applyStatus === 'applied') return Promise.resolve(operation.applyResult);
+        if (operation.applyPromise) return operation.applyPromise;
+        if (operation.resource) {
+            const conflict = [...this.#operations.values()].find(other => other !== operation
+                && other.resource === operation.resource && (other.status === 'running' || other.applyStatus === 'applying'));
+            if (conflict) return Promise.reject(new Error(`Resource is in use by ${conflict.id}`));
         }
-        if (operation.applyStatus === 'applied') return operation.applyResult;
-
         operation.applyStatus = 'applying';
         operation.applyError = undefined;
-        try {
-            const result = await withExecutionSignal(operation.controller.signal, () => operation.applyHandler!());
+        operation.applyPromise = Promise.resolve().then(() => withTarget(operation.target, () =>
+            withExecutionSignal(operation.controller.signal, () => operation.applyHandler!()),
+        )).then(result => {
             operation.applyResult = result;
             operation.applyStatus = 'applied';
             return result;
-        } catch (error) {
-            if (operation.applyStatus === 'applied') return operation.applyResult;
+        }).catch(error => {
             operation.applyStatus = 'failed';
             operation.applyError = errorMessage(error);
             throw error;
-        }
+        }).finally(() => { operation.applyPromise = undefined; });
+        return operation.applyPromise;
+    }
+
+    list() {
+        return [...this.#operations.values()].map(operation => ({
+            operation_id: operation.id,
+            kind: operation.kind,
+            ...(operation.tool ? { tool: operation.tool } : {}),
+            status: operation.applyStatus === 'applying' ? 'running' : operation.status,
+            stage: operation.applyStatus === 'applying' ? 'applying' : operation.stage,
+            ...(operation.target ? { target: operation.target } : {}),
+            ...(operation.applyStatus ? { apply_status: operation.applyStatus } : {}),
+        }));
     }
 
     #trim() {
         const finished = [...this.#operations.values()]
-            .filter(operation => operation.status !== 'running')
+            .filter(operation => operation.status !== 'running' && operation.applyStatus !== 'applying')
             .sort((left, right) => left.createdAt - right.createdAt);
         while (this.#operations.size > RETAINED_OPERATION_LIMIT && finished.length) {
             this.#operations.delete(finished.shift()!.id);

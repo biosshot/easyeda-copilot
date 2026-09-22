@@ -16,7 +16,7 @@ For local Python/Node.js computation combined with native API calls, prefer the 
 | Add a local copper keepout absent from the DSL | A focused native region edit with the required layer and exclusion rules, followed by refill and verification. |
 | Inspect or edit File Source records | [File Source structure and edits](file-source.md); an available alternative within the same task scope. |
 | Wait for placement/routing | `wait_operation`, following [operations.md](../operations.md). |
-| Recover from an `execute_js` timeout | The [unknown-outcome procedure](#errors-and-timeout) below; this tool has no operation ID. |
+| Recover from an `execute_js` timeout | The [unknown-outcome procedure](#errors-and-timeout) below; use its operation ID, or recover it with `list_operations`. |
 
 A placement task includes local corrections within its scope. Do not ask for approval for every small move. Preserve approved mechanics and unrelated user work. Follow the [placement iteration loop](../pcb-layout/instructions.md#iterative-local-corrections): continue while measured progress justifies another correction, and change approach when attempts stall or oscillate.
 
@@ -145,7 +145,7 @@ For a ready-to-run PCB refill and native DRC example, see [pcb-refill-and-drc.md
 A small response is inline:
 
 ```json
-{ "checkpoint": "checkpoint-id", "result": { "count": 12 }, "artifacts": [] }
+{ "checkpoint": "checkpoint-id", "result": { "count": 12 }, "artifacts": [], "operation_id": "mutation:01234567" }
 ```
 
 Return plain JSON data, selecting properties instead of objects with methods. `undefined` becomes `null`. Circular values, BigInt, functions and symbols cause serialization errors; the script may already have made its changes.
@@ -189,7 +189,7 @@ The output limit bounds this tool's returned context, not arbitrary JavaScript m
 
 Execution errors return `result.error` and MCP `isError: true`. `checkpoint: null` means the checkpoint is unavailable or unconfirmed, not proof that the board was unchanged.
 
-The bridge waits up to 60 seconds after dispatch; connection recovery and local file I/O can add time. A timeout **does not cancel JavaScript**. The extension queue may remain occupied until it settles. This tool has no `operation_id`, `wait_operation`, `apply_operation` or hard cancellation. Do not queue restoration behind possibly running code.
+MCP `execute_js` registers a managed operation and waits initially for up to 50 seconds. Quick responses retain `{checkpoint,result,artifacts}` and add `operation_id`; otherwise use `wait_operation`. Recover a lost ID with `list_operations`. Cancelling the request only stops waiting; `cancel_operation` requests cooperative cancellation of the operation. The bridge execution budget remains 60 seconds after dispatch. Neither timeout nor cancellation guarantees that already-started JavaScript/native actions have stopped. There is no saved `apply_operation` result for JavaScript: never replay the script automatically. Do not queue restoration behind possibly running code.
 
 ## Checkpoint recovery
 
@@ -197,4 +197,4 @@ Keep the checkpoint associated with the specific edit, together with its documen
 
 A checkpoint covers the source of one document. It does not recover deleted projects/pages/libraries, other documents, changed project relationships, external files or network actions. It can be pruned and is not a permanent backup. For explicitly requested destructive work outside its coverage, verify a suitable backup/recovery method first; ask only for missing scope or acceptance of an unrecoverable action, not for permission already given.
 
-Before restoration, establish that execution is finished, the checkpoint belongs to the target document, and restoring it will preserve intervening user work. The current checkpointer does not enforce PCB document identity; `isCurrentPage` alone is insufficient evidence. Use `list_checkpoints` and an explicit `id` with `restore_checkpoint_for_current_page`. Reread and verify the restored document. If later user changes would be lost, prefer a precise repair; clarify only when what to retain is uncertain.
+Before restoration, establish that execution is finished, the checkpoint belongs to the target document, and restoring it will preserve intervening user work. The checkpointer verifies the document UUID and rejects mismatched or legacy checkpoints without identity. Still verify that the checkpoint is the intended baseline; `isCurrentPage` alone does not establish that. Use `list_checkpoints` and an explicit `id` with `restore_checkpoint_for_current_page`. Reread and verify the restored document. If later user changes would be lost, prefer a precise repair; clarify only when what to retain is uncertain.

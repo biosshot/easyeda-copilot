@@ -1354,6 +1354,13 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
         eda.sys_Log.add(`MCP event: ${message.event}`, ESYS_LogType.INFO);
         await mcpCommandStep(signal, () => assertMcpDocumentContext(message.event, body));
 
+        if (message.event === 'get-command-target') {
+            const document = await eda.dmt_SelectControl.getCurrentDocumentInfo();
+            if (!document?.uuid) throw new Error('Open the target document first.');
+            reply(true, { documentUuid: document.uuid });
+            return;
+        }
+
         if (message.event === 'execute-js') {
             if (typeof body.code !== 'string') throw new Error('JavaScript code must be a string.');
             const inputs = body.inputs ?? {};
@@ -1463,8 +1470,12 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
                         'routing transaction',
                         signal,
                     );
+                    const step = <T>(action: () => Promise<T>) => mcpCommandStep(signal, async () => {
+                        await assertMcpDocumentContext(message.event, body);
+                        return action();
+                    });
                     try {
-                        const rules = bundle === undefined ? undefined : await mcpCommandStep(signal, () => (
+                        const rules = bundle === undefined ? undefined : await step(() => (
                             routingTransactionStep('DRC rule application', () => applyPcbDrcRules(bundle))
                         ));
                         const hasBoardMutation = Boolean(
@@ -1475,19 +1486,20 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
                             || application.zones.length,
                         );
                         const copper = hasBoardMutation
-                            ? await mcpCommandStep(signal, () => (
+                            ? await step(() => (
                                 routingTransactionStep('board application', () => applyRoutingCopper(application))
                             ))
                             : undefined;
-                        await mcpCommandStep(signal, () => (
+                        await step(() => (
                             routingTransactionStep('document synchronization', () => syncCurrentDocument(500, signal))
                         ));
-                        const drc = await mcpCommandStep(signal, () => (
+                        const drc = await step(() => (
                             routingTransactionStep('native DRC verification', () => checkPcbDrc(1))
                         ));
                         const hasViolations = drc.some(category => category.list.some(group => group.list.length));
                         return {
                             applied: true,
+                            checkpointId,
                             rulesApplied: Boolean(rules),
                             boardApplied: Boolean(copper),
                             ...(copper?.zoneRebuild ? { pours: copper.zoneRebuild } : {}),
@@ -1790,7 +1802,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
             const circuit = body.circuit;
             if (!circuit) throw new Error('Missing circuit in assemble-circuit body');
 
-            await saveRequiredCheckpoint('Before schematic assembly', 'schematic assembly', signal);
+            const checkpointId = await saveRequiredCheckpoint('Before schematic assembly', 'schematic assembly', signal);
             await mcpCommandStep(
                 signal,
                 () => assembleCircuit(circuit as Parameters<typeof assembleCircuit>[0], signal),
@@ -1806,7 +1818,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
                 );
                 return undefined;
             });
-            reply(true, { assembled: true, ...(sheetSpace ? { sheetSpace } : {}) });
+            reply(true, { assembled: true, checkpointId, ...(sheetSpace ? { sheetSpace } : {}) });
             return;
         }
 
@@ -1896,12 +1908,12 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
             const board = body.boardAssemble ?? body.board ?? body.pcb_board_assemble;
             if (!board) throw new Error('Missing board assemble payload in assemble-board body');
 
-            await saveRequiredCheckpoint('Before PCB placement', 'PCB placement', signal);
+            const checkpointId = await saveRequiredCheckpoint('Before PCB placement', 'PCB placement', signal);
             await mcpCommandStep(
                 signal,
                 () => assembleBoard(board as Parameters<typeof assembleBoard>[0], signal),
             );
-            reply(true, { assembled: true });
+            reply(true, { assembled: true, checkpointId });
             return;
         }
 

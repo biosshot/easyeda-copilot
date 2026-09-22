@@ -123,7 +123,7 @@ export function registerExecuteJsTools(server: McpServer, bridge: Bridge) {
         title: 'Execute JavaScript in EasyEDA',
         description: 'Execute JavaScript in the selected EasyEDA window using code OR an absolute file_path. '
             + 'Code limit: 64 MiB. Optional input_files supplies named UTF-8 strings as inputs[name], up to 512 MiB combined. '
-            + 'Automatically checkpoints the current document before execution. Waits up to 60 seconds; timeout does NOT cancel code. '
+            + 'Automatically checkpoints the current document before execution. Execution budget is 60 seconds; native actions may outlive cancellation or timeout. '
             + 'Returns {checkpoint,result,artifacts}; binary and oversized results are saved as local files. '
             + `Read ${DOCS_DIR}/execution/instructions.md for the contract and API reference. `
             + `For local Python/Node.js computation with await eda.* proxies and native binary values, read ${DOCS_DIR}/execution/local-sdk.md.`,

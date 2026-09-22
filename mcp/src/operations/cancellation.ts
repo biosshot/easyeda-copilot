@@ -27,3 +27,10 @@ export function abortable<T>(promise: Promise<T>, signal?: AbortSignal, onAbort?
         promise.then(value => finish(() => resolve(value)), error => finish(() => reject(error)));
     });
 }
+
+export type OperationTarget = { instanceId: string; documentUuid?: string };
+const targetContext = new AsyncLocalStorage<OperationTarget>();
+export const currentTarget = () => targetContext.getStore();
+export function withTarget<T>(target: OperationTarget | undefined, action: () => T): T {
+    return target ? targetContext.run(target, action) : action();
+}

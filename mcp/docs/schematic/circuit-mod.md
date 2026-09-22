@@ -30,3 +30,5 @@ Pass circuit fields directly, or provide `file_path` to a UTF-8 JSON file contai
 - Do not add unrelated protection, filtering, or future signals unless requested or required by the selected proven block.
 - Combine known related changes, but do not force unrelated or risky work into one call merely to reduce tool count.
 - Read the returned `sheetSpace`. When it warns that less than `10%` remains, continue substantial new work on the appropriate functional page instead of packing more independent circuitry onto the current page.
+
+`extract_circuit_on_current_page` mutates the current schematic page as a managed operation. It waits up to 50 seconds and always includes `operation_id` after registration; use `wait_operation` while running and `list_operations` if the initial response was lost. Quick completed responses retain their previous fields and include `checkpointId`.

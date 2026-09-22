@@ -110,9 +110,26 @@ const hungApplyId = manager.start('pcb-dsl', async ({ setApplyHandler, applyResu
     return applyResult();
 });
 await hungApplyStarted;
-assert.equal((await manager.apply(hungApplyId)).status, 'applied');
+const concurrentApply = manager.apply(hungApplyId);
+const failedApply = assert.rejects(concurrentApply, /stale connection failed/);
+await new Promise(resolve => setImmediate(resolve));
+assert.equal(hungApplyAttempts, 1, 'concurrent application must share one execution');
 rejectHungApply(new Error('stale connection failed'));
-assert.deepEqual(await manager.wait(hungApplyId, 1000), { applied: true });
-assert.equal(hungApplyAttempts, 2);
+await failedApply;
+await assert.rejects(manager.wait(hungApplyId, 1000), /stale connection failed/);
+assert.equal((await manager.apply(hungApplyId)).status, 'applied');
+assert.equal(hungApplyAttempts, 2, 'retry only after the first application settled');
 
+let releaseApply;
+const lockedId = manager.start('pcb-dsl', async ({ setApplyHandler }) => {
+    setApplyHandler(() => new Promise(resolve => { releaseApply = resolve; }));
+    return { prepared: true };
+}, { resource: 'locked-board' });
+await manager.wait(lockedId, 1000);
+const lockedApply = manager.apply(lockedId);
+await new Promise(resolve => setImmediate(resolve));
+assert.throws(() => manager.start('pcb-dsl', async () => {}, { resource: 'locked-board' }), /already using/);
+assert.equal(manager.list().find(op => op.operation_id === lockedId).stage, 'applying');
+releaseApply({ applied: true });
+await lockedApply;
 process.stdout.write('Operation manager: ok\n');

@@ -195,6 +195,7 @@ async function executeRoutingOperation(
         operation: result.operation,
         operation_id: context.id,
         applied: applied?.applied === true,
+        checkpointId: applied?.checkpointId,
         copper: {
             tracks: application.tracks.length,
             vias: application.vias.length,
@@ -224,12 +225,12 @@ async function executeRoutingOperation(
 export async function runPcbRouterDsl(
     bridge: Bridge,
     dslFile: string,
-    waitMs: number = TIMEOUT_POLICY.operationWaitMs,
+    waitMs: number = TIMEOUT_POLICY.mutationWaitMs,
 ) {
     const operationId = operationManager.start(
         'pcb-dsl',
         context => executeRoutingOperation(bridge, dslFile, context),
-        { resource: PCB_DOCUMENT_RESOURCE },
+        { resource: PCB_DOCUMENT_RESOURCE, tool: 'run_pcb_router_dsl' },
     );
     return operationManager.wait(operationId, waitMs);
 }

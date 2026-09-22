@@ -56,12 +56,13 @@ async function editor(instanceId) {
             const body = JSON.parse(encoded);
             if (event === 'cancel-command') { cancelledRequests.add(body.id); return; }
             let result;
-            if (event === 'get-current-project-info') { await holdProject; result = { project_name: instanceId }; }
+            if (event === 'get-command-target') result = { documentUuid: `board-${instanceId}` };
+            else if (event === 'get-current-project-info') { await holdProject; result = { project_name: instanceId }; }
             else if (event === 'get-pcb-existing-placement') result = null;
             else if (event === 'get-multi-page-schematic') { await heldSnapshot; result = {
                 components: schematicInput.circuit.add_components.map(component => ({ ...component, footprint_uuid: FOOTPRINT_UUID })),
             }; }
-            else if (event === 'assemble-board') { assemblies.push(body.boardAssemble); result = { assembled: true }; }
+            else if (event === 'assemble-board') { assemblies.push(body.boardAssemble); result = { assembled: true, checkpointId: 'assembly-checkpoint' }; }
             else throw new Error(`Unexpected fixture event: ${event}`);
             if (!cancelledRequests.has(body.id) && socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ event, body: JSON.stringify({ id: body.id, ok: true, result }) }));
         });
@@ -122,7 +123,9 @@ try {
     assert.ok(layout.layoutId, JSON.stringify(layout));
     assert.deepEqual([...await readFile(layout.previewImagePath)].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
     assert.equal((await json(a, 'call', 'wait_operation', ...input({ operation_id: layout.operation_id }))).layoutId, layout.layoutId);
-    await json(a, 'call', 'assemble_pcb_layout_on_current_pcbdoc', ...input({ layoutId: layout.layoutId }));
+    const assembled = await json(a, 'call', 'assemble_pcb_layout_on_current_pcbdoc', ...input({ layoutId: layout.layoutId }));
+    assert.match(assembled.operation_id, /^mutation:[0-9a-f]{8}$/);
+    assert.equal(assembled.checkpointId, 'assembly-checkpoint');
     assert.deepEqual(assemblies[0].components.map(component => component.designator).sort(), ['R1', 'R2']);
 
     holdProject = new Promise(resolveProject => { releaseProject = resolveProject; });

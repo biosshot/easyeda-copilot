@@ -6,7 +6,7 @@ import { runPcbRouterDsl } from '../../routing/routing-operation';
 import { ROUTER_DSL_DOC_PATH, SKILL_DOC_PATH } from '../../utils/dirs';
 import { textResult } from '../../utils/tool-result';
 
-const DEFAULT_ROUTING_WAIT_MS = TIMEOUT_POLICY.operationWaitMs;
+const DEFAULT_ROUTING_WAIT_MS = TIMEOUT_POLICY.mutationWaitMs;
 
 export function registerPcbRoutingTools(server: McpServer, bridge: Bridge) {
     server.registerTool(

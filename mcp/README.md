@@ -111,3 +111,5 @@ Generic MCP config:
 MCP request cancellation is forwarded through the bridge to EasyEDA. Waiting commands are removed from the queue; active commands stop cooperatively. Already-started native actions or JavaScript may still finish, so cancellation does not authorize an automatic retry. Timeout watchdogs remain in place if cancellation cannot be delivered.
 
 Managed placement and routing operations have independent lifetimes. Cancelling their initial request or `wait_operation` stops only that wait. Use `cancel_operation` to stop the operation. Routing application has its own bridge timeout; it does not use the remaining time of a wait request.
+
+All tools expose explicit MCP effect annotations. Managed document mutations wait initially up to 50 seconds and return an operation ID; `list_operations` discovers retained work after a lost initial response. See [operation contracts](docs/operations.md) for exceptions and cancellation semantics.

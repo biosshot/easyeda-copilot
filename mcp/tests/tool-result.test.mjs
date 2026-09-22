@@ -9,11 +9,11 @@ const root = new URL('../', import.meta.url);
 const output = new URL(`.test-data/tool-result-${randomUUID()}.mjs`, root);
 await fs.mkdir(new URL('.test-data/', root), { recursive: true });
 await build({
-    entryPoints: [fileURLToPath(new URL('src/utils/tool-result.ts', root))],
+    stdin: { contents: "export * from './utils/tool-result'; export { operationToolResult } from './operations/tool-result';", resolveDir: fileURLToPath(new URL('src/', root)), loader: 'ts' },
     outfile: fileURLToPath(output),
     bundle: true, platform: 'node', format: 'esm', packages: 'external', logLevel: 'silent',
 });
-const { textResult, inlineTextResult, MAX_INLINE_RESPONSE_BYTES } = await import(output.href);
+const { textResult, inlineTextResult, MAX_INLINE_RESPONSE_BYTES, operationToolResult } = await import(output.href);
 const artifacts = [];
 after(async () => {
     await Promise.all([output, ...artifacts].map(path => fs.unlink(path)));
@@ -62,4 +62,19 @@ test('write failure returns a bounded error instead of leaking the oversized pay
     } finally {
         write.mock.restore();
     }
+});
+
+
+test('managed results retain operation IDs and error status when spilled to an artifact', async () => {
+    const payload = { checkpointId: 'baseline', details: 'x'.repeat(9000) };
+    const result = await operationToolResult({ operation_id: 'mutation:01234567', tool_result: {
+        ...inlineTextResult(payload), isError: true,
+    } });
+    assert.equal(result.isError, true);
+    const reference = JSON.parse(result.content[0].text);
+    assert.equal(reference.operation_id, 'mutation:01234567');
+    artifacts.push(reference.path);
+    const saved = JSON.parse(await fs.readFile(reference.path, 'utf8'));
+    assert.deepEqual(saved, { ...payload, operation_id: 'mutation:01234567' });
+    assert.ok(size(result) <= MAX_INLINE_RESPONSE_BYTES);
 });

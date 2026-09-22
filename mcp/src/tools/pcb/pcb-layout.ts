@@ -323,7 +323,7 @@ async function makePcbLayout(bridge: Bridge, file: string, waitMs: number) {
     const operationId = operationManager.start(
         'pcb-layout',
         context => runPcbLayout(bridge, file, context),
-        { resource: PCB_DOCUMENT_RESOURCE },
+        { resource: PCB_DOCUMENT_RESOURCE, tool: 'make_pcb_layout' },
     );
     return operationManager.wait(operationId, waitMs);
 }
@@ -390,12 +390,13 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
                 });
             }
 
-            await bridge.requestEasyEda('assemble-board', {
+            const assembled = await bridge.requestEasyEda('assemble-board', {
                 boardAssemble: toEasyEdaBoardAssemble(layout.pcb),
             });
 
             return textResult({
                 content: 'PCB layout sent to EasyEDA for assembly.',
+                checkpointId: (assembled as { checkpointId?: string }).checkpointId,
                 layoutId,
             });
         },

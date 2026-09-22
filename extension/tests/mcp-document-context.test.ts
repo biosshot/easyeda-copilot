@@ -6,7 +6,7 @@ import {
 } from '../src/eda/mcp-document-context.ts';
 
 const globals = globalThis as typeof globalThis & {
-    eda: { dmt_SelectControl: { getCurrentDocumentInfo: () => Promise<{ documentType: number } | undefined> } };
+    eda: { dmt_SelectControl: { getCurrentDocumentInfo: () => Promise<{ documentType: number; uuid?: string } | undefined> } };
     EDMT_EditorDocumentType: { SCHEMATIC_PAGE: number; PCB: number };
 };
 
@@ -62,4 +62,11 @@ test('allows multi-page schematic commands from a schematic or linked PCB', asyn
         assertMcpDocumentContext('get-multi-page-schematic', {}),
         { message: 'Open a schematic page or a PCB linked to a schematic first.' },
     );
+});
+
+
+test('rejects a different PCB UUID even when the document type matches', async () => {
+    globals.eda = { dmt_SelectControl: { getCurrentDocumentInfo: async () => ({ documentType: 2, uuid: 'board-B' }) } };
+    await assert.rejects(assertMcpDocumentContext('apply-routing-result', { __easyedaCopilotDocumentUuid: 'board-A' }), /target document changed/);
+    await assert.doesNotReject(assertMcpDocumentContext('apply-routing-result', { __easyedaCopilotDocumentUuid: 'board-B' }));
 });

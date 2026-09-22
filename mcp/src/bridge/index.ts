@@ -1,4 +1,4 @@
-import { abortable, currentSignal } from '../operations/cancellation';
+import { abortable, currentSignal, currentTarget } from '../operations/cancellation';
 import { commandTimeoutMs, TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { randomUUID } from 'node:crypto';
 import { WebSocket, WebSocketServer } from 'ws';
@@ -22,6 +22,7 @@ export type Bridge = {
     listEasyEdaInstances(): Promise<EasyEdaInstance[]>;
     selectEasyEdaInstance(instanceId: string): Promise<EasyEdaInstance>;
     getSelectedEasyEdaInstance(): Promise<EasyEdaInstance | undefined>;
+    getSelectedEasyEdaInstanceId?(): string | undefined;
     getVersionWarning(mcpVersion: string): Promise<string | undefined>;
     enterBrokerOnlyMode(): boolean;
     close(): Promise<void>;
@@ -811,19 +812,22 @@ class MeshBridge implements Bridge {
 
     async requestEasyEda(event: string, body: Record<string, unknown> = {}, timeoutMs = commandTimeoutMs(event), signal = currentSignal()) {
         signal?.throwIfAborted();
-        await abortable(this.waitForRecoverableConnection(signal), signal);
+        const target = currentTarget();
+        const instanceId = target?.instanceId ?? this.selectedEasyEdaInstanceId;
+        if (target?.documentUuid) body = { ...body, __easyedaCopilotDocumentUuid: target.documentUuid };
+        await abortable(this.waitForRecoverableConnection(signal, instanceId), signal);
         signal?.throwIfAborted();
 
         if (this.owner) {
-            return this.owner.requestEasyEda(event, body, timeoutMs, this.selectedEasyEdaInstanceId, signal);
+            return this.owner.requestEasyEda(event, body, timeoutMs, instanceId, signal);
         }
         if (this.proxy) {
-            return this.proxy.requestEasyEda(event, body, timeoutMs, this.selectedEasyEdaInstanceId, signal);
+            return this.proxy.requestEasyEda(event, body, timeoutMs, instanceId, signal);
         }
         throw new Error('EasyEDA bridge is not ready yet.');
     }
 
-    private async waitForRecoverableConnection(signal?: AbortSignal) {
+    private async waitForRecoverableConnection(signal?: AbortSignal, instanceId = this.selectedEasyEdaInstanceId) {
         const deadline = Date.now() + RECOVERY_WAIT_MS;
 
         while (Date.now() < deadline) {
@@ -840,8 +844,8 @@ class MeshBridge implements Bridge {
                     ? this.owner.listEasyEdaInstances()
                     : await this.proxy!.listEasyEdaInstances(Math.min(RECOVERY_PROBE_TIMEOUT_MS, remainingMs));
 
-                if (this.selectedEasyEdaInstanceId) {
-                    if (instances.some(instance => instance.instanceId === this.selectedEasyEdaInstanceId)) return;
+                if (instanceId) {
+                    if (instances.some(instance => instance.instanceId === instanceId)) return;
                 } else if (instances.length > 0) {
                     return;
                 }
@@ -868,6 +872,8 @@ class MeshBridge implements Bridge {
         this.selectedEasyEdaInstanceId = instanceId;
         return instance;
     }
+
+    getSelectedEasyEdaInstanceId() { return this.selectedEasyEdaInstanceId; }
 
     async getSelectedEasyEdaInstance() {
         if (!this.selectedEasyEdaInstanceId) return undefined;

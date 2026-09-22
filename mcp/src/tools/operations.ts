@@ -1,3 +1,4 @@
+import { operationToolResult } from '../operations/tool-result';
 import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import * as z from 'zod/v4';
@@ -11,18 +12,23 @@ const operationId = z.string().regex(
 );
 
 export function registerOperationTools(server: McpServer) {
+    server.registerTool('list_operations', {
+        title: 'List Operations',
+        description: 'Discover active and recently completed operations in this MCP process, including IDs lost when an initial wait was cancelled. Returns compact status, stage and target metadata.',
+        inputSchema: z.object({}),
+    }, async () => textResult({ operations: operationManager.list() }));
     server.registerTool(
         'wait_operation',
         {
             title: 'Wait Operation',
-            description: 'Wait for any running PCB layout or PCB router DSL operation. Running router responses include up to 10 recent log lines and their update time when available.',
+            description: 'Wait for a running mutation, PCB layout or PCB router DSL operation. Running router responses include up to 10 recent log lines and their update time when available.',
             inputSchema: z.object({
                 operation_id: operationId,
                 wait_ms: z.number().int().min(1_000).max(TIMEOUT_POLICY.operationWaitMaxMs).default(TIMEOUT_POLICY.operationWaitMs)
                     .describe('Wait below the common 60-second MCP request timeout.'),
             }),
         },
-        async ({ operation_id, wait_ms }) => textResult(
+        async ({ operation_id, wait_ms }) => operationToolResult(
             await operationManager.wait(operation_id, wait_ms),
         ),
     );
@@ -31,7 +37,7 @@ export function registerOperationTools(server: McpServer) {
         'cancel_operation',
         {
             title: 'Cancel Operation',
-            description: 'Cancel any running PCB layout or PCB router DSL operation.',
+            description: 'Request cooperative cancellation of a running operation. Cancellation is not rollback.',
             inputSchema: z.object({ operation_id: operationId }),
         },
         async ({ operation_id }) => textResult(await operationManager.cancel(operation_id)),
@@ -44,6 +50,6 @@ export function registerOperationTools(server: McpServer) {
             description: 'Retry applying a prepared in-memory operation result without running the operation again.',
             inputSchema: z.object({ operation_id: operationId }),
         },
-        async ({ operation_id }) => textResult(await operationManager.apply(operation_id)),
+        async ({ operation_id }) => textResult(await operationManager.apply(operation_id, TIMEOUT_POLICY.mutationWaitMs)),
     );
 }

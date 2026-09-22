@@ -189,6 +189,7 @@ export async function annotateDesignators(mode: DesignatorAnnotationMode, signal
             components: plan.assignments.length,
             units: units.length,
             renamed: plan.changed.length,
+            checkpoints: pages.filter(page => checkpoints.has(page.uuid)).map(page => ({ page: page.name, checkpointId: checkpoints.get(page.uuid)! })),
             changes: plan.changed.map(item => {
                 const previous = [...new Set(item.component.units.map(unit => (
                     componentBaseDesignator(unit.designator, unit.subPartName)

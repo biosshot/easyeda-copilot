@@ -8,6 +8,7 @@ export const TIMEOUT_POLICY = {
     proxyResponseGraceMs: 1_000,
     cliRequestMs: 10 * 60_000,
     operationWaitMs: 30_000,
+    mutationWaitMs: 50_000,
     operationWaitMaxMs: 55_000,
     routerExecutionMs: 60 * 60_000,
 } as const;
