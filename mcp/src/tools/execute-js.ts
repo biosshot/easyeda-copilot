@@ -10,6 +10,7 @@ import {
 import type { Bridge } from '../bridge';
 import { DOCS_DIR, TEMP_DIR } from '../utils/dirs';
 import { inlineTextResult as textResult, MAX_INLINE_RESPONSE_BYTES } from '../utils/tool-result';
+import { managedMutationHandler } from './handler';
 
 export const ExecuteJsInputSchema = z.object({
     code: z.string().min(1).max(EXECUTE_JS_MAX_CODE_BYTES).optional()
@@ -124,9 +125,11 @@ export function registerExecuteJsTools(server: McpServer, bridge: Bridge) {
         description: 'Execute JavaScript in the selected EasyEDA window using code OR an absolute file_path. '
             + 'Code limit: 64 MiB. Optional input_files supplies named UTF-8 strings as inputs[name], up to 512 MiB combined. '
             + 'Automatically checkpoints the current document before execution. Execution budget is 60 seconds; native actions may outlive cancellation or timeout. '
+            + 'Runs as a managed operation, waits up to 50 seconds, and always returns operation_id. '
             + 'Returns {checkpoint,result,artifacts}; binary and oversized results are saved as local files. '
             + `Read ${DOCS_DIR}/execution/instructions.md for the contract and API reference. `
             + `For local Python/Node.js computation with await eda.* proxies and native binary values, read ${DOCS_DIR}/execution/local-sdk.md.`,
         inputSchema: ExecuteJsInputSchema,
-    }, input => executeJs(bridge, input));
+        annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
+    }, managedMutationHandler(bridge, 'execute_js', input => executeJs(bridge, input)));
 }

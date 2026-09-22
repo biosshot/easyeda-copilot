@@ -1,8 +1,10 @@
 # Managed operation results
 
-MCP annotations describe effects on the connected EasyEDA project, checkpoint store and session selection. Read-only inspection/search/preview tools have `readOnlyHint: true`; document edits and arbitrary JavaScript have `readOnlyHint: false`. Annotations are hints, not permissions or guarantees of rollback.
+MCP annotations describe effects on the connected EasyEDA project and session selection. Read-only inspection/search/preview tools and checkpoint snapshots have `readOnlyHint: true`; document edits, checkpoint restoration and arbitrary JavaScript have `readOnlyHint: false`. Saving a checkpoint does not edit the document, but creates a snapshot and may prune older snapshots. Annotations are hints, not permissions or guarantees of rollback.
 
-Managed mutations are `extract_circuit_on_current_page`, `beautify_schematic_on_current_page`, `assemble_pcb_layout_on_current_pcbdoc`, `annotate_designators`, `save_checkpoint_for_current_page`, `restore_checkpoint_for_current_page`, and `execute_js`. They wait up to **50 seconds** initially. A quick result keeps its normal fields and adds `operation_id`; a slower call returns `status: "running"` and `operation_id`. Use `wait_operation` for the final result. The ID is returned even for quick successful completion. Input errors before registration have no operation ID.
+Managed mutations are `extract_circuit_on_current_page`, `beautify_schematic_on_current_page`, `assemble_pcb_layout_on_current_pcbdoc`, `annotate_designators`, and `execute_js`. They wait up to **50 seconds** initially. A quick result keeps its normal fields and adds `operation_id`; a slower call returns `status: "running"` and `operation_id`. Use `wait_operation` for the final result. The ID is returned even for quick successful completion. Input errors before registration have no operation ID.
+
+`save_checkpoint_for_current_page` and `restore_checkpoint_for_current_page` remain direct commands: they return their normal result without `operation_id`. Restoring changes the document, but its short, reversible action does not use Operation Manager. MCP request cancellation applies directly to these commands.
 
 `extract_circuit_on_current_page` changes only the current schematic page; it is not an extraction/read tool. `component_search` only searches the component catalog and has no current-page mutation. Beautify also operates on the current schematic page. `annotate_designators` retains its existing multi-page scope.
 

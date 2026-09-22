@@ -44,6 +44,7 @@ let heldSnapshot;
 let releaseSnapshot;
 async function editorRequest(event, body) {
   requests.push({ event, body });
+  if (event === 'get-command-target') return { documentUuid: 'backend-check-document' };
   if (event === 'get-schematic') return currentSchematic;
   if (event === 'get-multi-page-schematic') { await heldSnapshot; return pcbSchematic; }
   if (event === 'get-pcb-existing-placement') return undefined;
@@ -120,20 +121,27 @@ try {
   assert.ok((await call('component_search', { MPN: 'TEST-1K' })).components.length);
   assert.equal((await call('component_search', { part_uuid: PART_UUID })).bestComponent.part_uuid, PART_UUID);
   const extracted = await call('extract_circuit_on_current_page', schematicInput.circuit);
+  assert.ok(extracted.operation_id);
   assert.equal(extracted.sheetSpace.level, 'warning');
   assert.ok(requests.find(r => r.event === 'assemble-circuit').body.circuit.components.length);
   const circuitFile = join(directory, 'circuit.json');
   await writeFile(circuitFile, JSON.stringify(schematicInput.circuit));
-  assert.deepEqual(await call('extract_circuit_on_current_page', { file_path: circuitFile }), extracted);
+  const extractedFromFile = await call('extract_circuit_on_current_page', { file_path: circuitFile });
+  assert.deepEqual({ ...extractedFromFile, operation_id: undefined }, { ...extracted, operation_id: undefined });
   await assert.rejects(call('extract_circuit_on_current_page', {
     file_path: circuitFile, ...schematicInput.circuit,
   }), /either file_path or inline/);
   await writeFile(circuitFile, '{}');
   const requestCount = requests.length;
   await assert.rejects(call('extract_circuit_on_current_page', { file_path: circuitFile }));
-  assert.equal(requests.length, requestCount, 'Invalid file must fail before editor requests');
+  assert.deepEqual(
+    requests.slice(requestCount).map(request => request.event),
+    ['get-command-target'],
+    'Invalid file may resolve its operation target but must not dispatch document work',
+  );
   currentSchematic = { components: schematicInput.circuit.add_components };
   const beautified = await call('beautify_schematic_on_current_page', { blocks: { divider: ['R1', 'R2'] }, draw_block_box: true });
+  assert.ok(beautified.operation_id);
   assert.equal(beautified.checkpointId, 'before-beautify');
   const apply = requests.find(r => r.event === 'beautify-current-page');
   assert.equal(apply.body.checkpointId, 'before-beautify');

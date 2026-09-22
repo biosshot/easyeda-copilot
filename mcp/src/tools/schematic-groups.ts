@@ -3,6 +3,7 @@ import * as z from 'zod/v4';
 import type { Bridge } from '../bridge';
 import type { SchematicGroups } from '@copilot/shared/types/schematic-groups';
 import { textResult } from '../utils/tool-result';
+import { toolHandler } from './handler';
 
 export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
     server.registerTool(
@@ -19,9 +20,9 @@ export function registerSchematicGroupTools(server: McpServer, bridge: Bridge) {
             }),
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         },
-        async ({ get_full_schematic_groups }) => {
+        toolHandler(bridge, async ({ get_full_schematic_groups }) => {
             const result = await bridge.requestEasyEda('get-schematic-groups', { get_full_schematic_groups }) as SchematicGroups;
             return textResult(result);
-        },
+        }),
     );
 }

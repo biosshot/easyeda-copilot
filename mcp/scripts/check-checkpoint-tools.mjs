@@ -10,6 +10,9 @@ const outfile = join(await mkdtemp(join(testRoot, 'checkpoints-')), 'checkpoint.
 await build({
     entryPoints: [fileURLToPath(new URL('../src/tools/checkpoint.ts', import.meta.url))],
     bundle: true, outfile, platform: 'node', format: 'esm', packages: 'external',
+    alias: {
+        '@copilot/shared/timeout-policy': fileURLToPath(new URL('../../shared/timeout-policy.ts', import.meta.url)),
+    },
 });
 const { registerCheckpointTools } = await import(pathToFileURL(outfile));
 const registered = new Map();
@@ -21,10 +24,11 @@ registerCheckpointTools({
         requests.push({ event, body: JSON.parse(JSON.stringify(body)) });
         return { checkpointId: 'saved-id' };
     },
+    getVersionWarning: async () => undefined,
 });
 const call = async (name, input) => {
     const tool = registered.get(name);
-    return tool.handler(tool.inputSchema.parse(input));
+    return tool.handler(tool.inputSchema.parse(input), { signal: new AbortController().signal });
 };
 await call('save_checkpoint_for_current_page', {});
 assert.deepEqual(requests.pop(), { event: 'checkpoint-save', body: {} });

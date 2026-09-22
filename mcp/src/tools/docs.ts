@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
+import { toolHandler } from './handler';
 
 export const OpenDocumentInputSchema = z.object({
     document_uuid: z.string().trim().min(1).optional().describe('Document UUID from get_current_project_info.'),
@@ -83,9 +84,10 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Open EasyEDA Project or Document',
             description: 'Open either a project or a document by UUID. Before switching projects, every open EasyEDA schematic, PCB, and panel tab is saved; the switch is aborted if any save fails.',
+            annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: OpenDocumentInputSchema,
         },
-        async input => textResult(await openDocument(bridge, input)),
+        toolHandler(bridge, async input => textResult(await openDocument(bridge, input))),
     );
 
     server.registerTool(
@@ -93,9 +95,10 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Save Current EasyEDA Document',
             description: 'Save the currently active EasyEDA schematic, PCB, or panel document.',
+            annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({}),
         },
-        async () => textResult(await saveDoc(bridge)),
+        toolHandler(bridge, async () => textResult(await saveDoc(bridge))),
     );
 
     server.registerTool(
@@ -103,16 +106,17 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Sync Current EasyEDA Document',
             description: 'Force EasyEDA to synchronize the current schematic or PCB document by saving it, closing the current editor tab, waiting briefly, and reopening the same document.',
+            annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({
                 settle_ms: z.number().min(0).max(10000).default(500).describe('Delay in milliseconds between close and reopen.'),
             }),
         },
-        async ({ settle_ms }) => {
+        toolHandler(bridge, async ({ settle_ms }) => {
             const result = await bridge.requestEasyEda('sync-current-document', {
                 settleMs: settle_ms,
             });
             return textResult(result);
-        },
+        }),
     );
 
     const DOC_QUERY = z.object({
@@ -126,15 +130,16 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Rename EasyEDA: Schematic, Schematic page, PCB',
             description: 'Modify the name of an EasyEDA Schematic, Schematic page, PCB',
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({
                 doc: DOC_QUERY,
                 name: z.string().min(1).describe('New short name. Use UPPERCASE or PascalCase'),
             }),
         },
-        async ({ name, doc }) => {
+        toolHandler(bridge, async ({ name, doc }) => {
             const result = await bridge.requestEasyEda('modify-name', { name, ...doc });
             return textResult(result);
-        },
+        }),
     );
 
     server.registerTool(
@@ -142,9 +147,10 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Create EasyEDA Project or Document',
             description: 'Create a project, or create a document in the current EasyEDA project. Project creation uses an experimental EasyEDA beta API and does not open the new project.',
+            annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
             inputSchema: CreateDocInputSchema,
         },
-        async input => textResult(await createDoc(bridge, input)),
+        toolHandler(bridge, async input => textResult(await createDoc(bridge, input))),
     );
 
     server.registerTool(
@@ -152,14 +158,15 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Delete EasyEDA Doc',
             description: 'Delete a doc from the current EasyEDA project. This is destructive!',
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
             inputSchema: z.object({
                 doc: DOC_QUERY,
             }),
         },
-        async ({ doc }) => {
+        toolHandler(bridge, async ({ doc }) => {
             const result = await bridge.requestEasyEda('delete-doc', { ...doc });
             return textResult(result);
-        },
+        }),
     );
 
 
@@ -168,11 +175,12 @@ export function registerDocsTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Get Current EasyEDA Project Info',
             description: 'Read the current EasyEDA project tree and document metadata through the connected extension. BOARD items show the linked schematic and PCB document; use this before PCB assembly.',
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({}),
         },
-        async () => {
+        toolHandler(bridge, async () => {
             const result = await bridge.requestEasyEda('get-current-project-info');
             return textResult(result);
-        },
+        }),
     );
 }

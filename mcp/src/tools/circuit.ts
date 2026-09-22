@@ -7,6 +7,7 @@ import { extractCircuit } from "eda-copilot-backend/schematic";
 import { SKILL_DOC_PATH } from "../utils/dirs";
 import { readFile } from "node:fs/promises";
 import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit } from "@copilot/shared/types/circuit";
+import { managedMutationHandler, toolHandler } from './handler';
 
 type SchematicBlocks = Record<string, string[]>;
 
@@ -68,19 +69,20 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Search EasyEDA Component',
             description: 'Search components. Prefer an exact part_uuid or manufacturer MPN; use a short part description only to discover candidates when the exact MPN is unknown.',
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
                 part_uuid: z.string().nullable().optional(),
                 MPN: z.string().nullable().optional(),
             }),
         },
-        async ({ part_uuid, MPN }) => {
+        toolHandler(bridge, async ({ part_uuid, MPN }) => {
             if (!part_uuid && !MPN) {
                 return textResult('Fill one: part_uuid or MPN');
             }
 
             const result = await componentSearch({ part_uuid, MPN });
             return textResult(result);
-        },
+        }),
     );
 
     // server.registerTool(
@@ -105,13 +107,14 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'extract_circuit_on_current_page',
         {
             title: 'Extract Circuit',
-            description: `Apply circuit changes to the current EasyEDA page. Every added component must include part_uuid. The result reports remaining current-sheet space and warns below 10%. For circuit modification docs, read: ${SKILL_DOC_PATH}`,
+            description: `Apply circuit changes to the current EasyEDA page. Every added component must include part_uuid. The result reports remaining current-sheet space and warns below 10%. Runs as a managed operation, waits up to 50 seconds, and always returns operation_id. For circuit modification docs, read: ${SKILL_DOC_PATH}`,
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
             inputSchema: CircuitModStruct().partial().extend({
                 file_path: z.string().min(1).optional()
                     .describe('Path to a UTF-8 JSON file containing CircuitMod. Provide either file_path or inline circuit fields.'),
             }),
         },
-        async ({ file_path, ...inlineCircuit }) => {
+        managedMutationHandler(bridge, 'extract_circuit_on_current_page', async ({ file_path, ...inlineCircuit }) => {
             if (file_path !== undefined && Object.values(inlineCircuit).some(value => value !== undefined)) {
                 throw new Error('Provide either file_path or inline circuit fields, not both.');
             }
@@ -138,14 +141,15 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 checkpointId: (assembled as { checkpointId?: string }).checkpointId,
                 ...(sheetSpace ? { sheetSpace } : {}),
             });
-        },
+        }),
     );
 
     server.registerTool(
         'beautify_schematic_on_current_page',
         {
             title: 'Beautify EasyEDA Schematic',
-            description: `Reassemble every component on the current EasyEDA schematic page into named functional blocks. The blocks must cover the whole page. A checkpoint is saved before replacement, and failures restore it automatically. For circuit workflow docs, read: ${SKILL_DOC_PATH}`,
+            description: `Reassemble every component on the current EasyEDA schematic page into named functional blocks. The blocks must cover the whole page. A checkpoint is saved before replacement, and failures restore it automatically. Runs as a managed operation, waits up to 50 seconds, and always returns operation_id. For circuit workflow docs, read: ${SKILL_DOC_PATH}`,
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
             inputSchema: z.object({
                 blocks: z.record(
                     z.string().min(1).describe('Block name.'),
@@ -155,7 +159,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                     .describe('Draw Copilot-managed boxes and labels around functional blocks.'),
             }),
         },
-        async ({ blocks, draw_block_box }) => {
+        managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box }) => {
             const inputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
             if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
 
@@ -234,7 +238,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 message: 'Current EasyEDA schematic page beautified.',
                 checkpointId,
             });
-        },
+        }),
     );
 
     server.registerTool(
@@ -242,17 +246,18 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Get Schematic',
             description: 'Get the current EasyEDA schematic page, or all pages with get_full_schematic. Responses over 8 KiB are saved to a file.',
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({
                 get_full_schematic: z.boolean().default(false)
                     .describe('Get Full Schematic: retrieve the schematic from all pages.'),
             }),
         },
-        async ({ get_full_schematic }) => {
+        toolHandler(bridge, async ({ get_full_schematic }) => {
             const result = await bridge.requestEasyEda(get_full_schematic
                 ? 'get-multi-page-schematic' : 'get-schematic') as ExplainCircuit;
             const schematic = { ...result, components: result.components.map(c => ({ ...c, pos: undefined, })) };
 
             return textResult(schematic);
-        },
+        }),
     );
 }

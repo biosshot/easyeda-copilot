@@ -1,10 +1,3 @@
-import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
-import { TOOL_POLICIES } from './tools/policy';
-import { captureTarget } from './operations/target';
-import { operationManager } from './operations/manager';
-import { operationToolResult } from './operations/tool-result';
-import { abortable, withTarget, withExecutionSignal } from './operations/cancellation';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
 import type { Bridge } from './bridge/index';
 import { registerPcbTools } from './tools/pcb/index';
@@ -36,43 +29,6 @@ export function createServer(bridge: Bridge) {
         name: 'easyeda-copilot',
         version: MCP_VERSION,
     });
-
-    const registerTool = server.registerTool.bind(server);
-    server.registerTool = ((name: string, config: unknown, handler: (...args: unknown[]) => unknown) => {
-        const policy = TOOL_POLICIES[name];
-        if (!policy) throw new Error(`Missing MCP tool policy: ${name}`);
-        const { managed, ...annotations } = policy;
-        const toolConfig = config as { description?: string };
-        return registerTool(name, {
-            ...toolConfig,
-            annotations,
-            ...(managed ? { description: `${toolConfig.description ?? ''} Runs as a managed operation on the current document. Waits up to 50 seconds; always returns operation_id. If still running, use wait_operation. Discover interrupted initial waits with list_operations.` } : {}),
-        } as never, async (...args: unknown[]) => {
-            const extra = args[args.length - 1] as { signal: AbortSignal };
-            const invoke = async () => {
-                if (managed) {
-                    const target = await captureTarget(bridge);
-                    const id = operationManager.start('mutation', async context => {
-                        const callArgs = [...args];
-                        callArgs[callArgs.length - 1] = { ...extra, signal: context.signal };
-                        const result = await handler(...callArgs) as CallToolResult;
-                        return { operation_id: context.id, tool_result: result };
-                    }, { target, tool: name, initialStage: 'executing' });
-                    return operationToolResult(await operationManager.wait(id, TIMEOUT_POLICY.mutationWaitMs));
-                }
-                if (name === 'make_pcb_layout' || name === 'run_pcb_router_dsl') {
-                    const target = await captureTarget(bridge);
-                    return withTarget(target, () => handler(...args));
-                }
-                return handler(...args);
-            };
-            const result = await withExecutionSignal(extra.signal, () => abortable(invoke(), extra.signal)) as CallToolResult;
-            extra.signal.throwIfAborted();
-            const warning = await bridge.getVersionWarning(MCP_VERSION);
-            if (warning && Array.isArray(result?.content)) result.content.push({ type: 'text', text: warning });
-            return result;
-        });
-    }) as typeof server.registerTool;
 
     server.registerResource(
         'easyeda_copilot_mcp_skill',
@@ -117,7 +73,7 @@ export function createServer(bridge: Bridge) {
     registerDocsTools(server, bridge);
     registerDrcTools(server, bridge);
     registerEasyEdaInstancesTools(server, bridge);
-    registerOperationTools(server);
+    registerOperationTools(server, bridge);
     registerProjectTools(server, bridge);
     registerExecuteJsTools(server, bridge);
 

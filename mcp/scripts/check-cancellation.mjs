@@ -16,7 +16,6 @@ const temp = await mkdtemp(join(root, '.test-data/cancellation-'));
 await build({ stdin: { contents: `
 export { startBridge, ProxyBridge } from './bridge/index';
 export { createServer } from './server';
-export { TOOL_POLICIES } from './tools/policy';
 export { TIMEOUT_POLICY } from '../../shared/timeout-policy';
 export { OperationManager } from './operations/manager';
 export { withExecutionSignal, currentSignal, abortable, withTarget } from './operations/cancellation';
@@ -27,7 +26,7 @@ export { withExecutionSignal, currentSignal, abortable, withTarget } from './ope
         b.onResolve({ filter: /^@modelcontextprotocol\/sdk\/server\/mcp$/ }, a => ({ path: require.resolve(a.path + '.js') }));
     } }],
 });
-const { TOOL_POLICIES, TIMEOUT_POLICY, startBridge, ProxyBridge, createServer, OperationManager, withExecutionSignal, currentSignal, abortable, withTarget } =
+const { TIMEOUT_POLICY, startBridge, ProxyBridge, createServer, OperationManager, withExecutionSignal, currentSignal, abortable, withTarget } =
     await import(pathToFileURL(join(temp, 'runtime.mjs')));
 const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
 const tick = () => new Promise(r => setImmediate(r));
@@ -83,26 +82,80 @@ try {
     await tick(); assert.equal(arrivals.length, before);
     console.log('PASS pre-cancelled request is never sent');
     const catalog = (await client.listTools()).tools;
-    assert.deepEqual(catalog.map(t => t.name).sort(), Object.keys(TOOL_POLICIES).sort());
+    const expectedTools = [
+        'component_search', 'get_all_projects', 'get_current_project_info', 'get_schematic',
+        'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
+        'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
+        'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
+        'run_pcb_router_dsl', 'cancel_operation', 'apply_operation', 'select_easyeda_instance', 'open_document',
+        'save_doc', 'sync_current_document', 'modify_name', 'create_doc', 'delete_doc', 'import_pcb_changes',
+        'extract_circuit_on_current_page', 'beautify_schematic_on_current_page',
+        'assemble_pcb_layout_on_current_pcbdoc', 'annotate_designators', 'save_checkpoint_for_current_page',
+        'restore_checkpoint_for_current_page', 'execute_js',
+    ];
+    assert.deepEqual(catalog.map(t => t.name).sort(), expectedTools.sort());
+    const readOnly = new Set([
+        'component_search', 'get_all_projects', 'get_current_project_info', 'get_schematic',
+        'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
+        'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
+        'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
+        'save_checkpoint_for_current_page',
+    ]);
+    const nonDestructiveMutations = new Set([
+        'cancel_operation', 'select_easyeda_instance', 'open_document', 'save_doc',
+        'sync_current_document', 'create_doc',
+    ]);
+    const nonIdempotentReads = new Set(['make_pcb_layout', 'save_checkpoint_for_current_page']);
+    const idempotentMutations = new Set([
+        'cancel_operation', 'select_easyeda_instance', 'open_document', 'save_doc',
+        'sync_current_document', 'modify_name',
+    ]);
     for (const tool of catalog) {
-        const { managed, ...expected } = TOOL_POLICIES[tool.name];
-        assert.deepEqual(tool.annotations, expected, tool.name);
+        assert.deepEqual(tool.annotations, {
+            readOnlyHint: readOnly.has(tool.name),
+            destructiveHint: !readOnly.has(tool.name) && !nonDestructiveMutations.has(tool.name),
+            idempotentHint: readOnly.has(tool.name)
+                ? !nonIdempotentReads.has(tool.name)
+                : idempotentMutations.has(tool.name),
+            openWorldHint: tool.name === 'component_search' || tool.name === 'execute_js',
+        }, tool.name);
     }
     assert.equal(catalog.find(t => t.name === 'execute_js').annotations.openWorldHint, true);
+    assert.deepEqual(
+        catalog.filter(t => t.description.includes('Runs as a managed operation')).map(t => t.name).sort(),
+        [
+            'annotate_designators', 'assemble_pcb_layout_on_current_pcbdoc',
+            'beautify_schematic_on_current_page', 'execute_js', 'extract_circuit_on_current_page',
+        ].sort(),
+    );
     console.log('PASS every exposed tool has explicit effect annotations');
     const unpack = response => JSON.parse(response.content[0].text);
+    const operationsBeforeCheckpoints = unpack(await client.callTool({ name: 'list_operations', arguments: {} })).operations;
+    for (const [name, event] of [
+        ['save_checkpoint_for_current_page', 'checkpoint-save'],
+        ['restore_checkpoint_for_current_page', 'checkpoint-restore'],
+    ]) {
+        arrival = deferred();
+        assert.ok(!catalog.find(t => t.name === name).description.includes('Runs as a managed operation'));
+        const call = client.callTool({ name, arguments: {} });
+        const request = await arrival.promise;
+        editor.send(JSON.stringify({ event, body: JSON.stringify({ id: request.id, ok: true, result: { checkpointId: 'direct' } }) }));
+        assert.deepEqual(unpack(await call), { checkpointId: 'direct' });
+    }
+    assert.deepEqual(unpack(await client.callTool({ name: 'list_operations', arguments: {} })).operations, operationsBeforeCheckpoints);
+    console.log('PASS checkpoint save and restore return directly without creating operations');
     arrival = deferred();
     const initial = new AbortController();
-    const lost = client.callTool({ name: 'save_checkpoint_for_current_page', arguments: {} }, undefined, { signal: initial.signal });
+    const lost = client.callTool({ name: 'annotate_designators', arguments: {} }, undefined, { signal: initial.signal });
     const lostFailure = assert.rejects(lost);
     const checkpointRequest = await arrival.promise;
     initial.abort(new Error('initial wait cancelled')); await lostFailure;
     const listed = unpack(await client.callTool({ name: 'list_operations', arguments: {} })).operations;
-    const discovered = listed.find(op => op.tool === 'save_checkpoint_for_current_page' && op.status === 'running');
+    const discovered = listed.find(op => op.tool === 'annotate_designators' && op.status === 'running');
     assert.ok(discovered);
     assert.deepEqual(discovered.target, { instanceId: 'fixture', documentUuid: 'board-fixture' });
     assert.equal(checkpointRequest.__easyedaCopilotDocumentUuid, 'board-fixture');
-    editor.send(JSON.stringify({ event: 'checkpoint-save', body: JSON.stringify({ id: checkpointRequest.id, ok: true, result: { checkpointId: 'saved' } }) }));
+    editor.send(JSON.stringify({ event: 'annotate-designators', body: JSON.stringify({ id: checkpointRequest.id, ok: true, result: { checkpointId: 'saved' } }) }));
     const finished = unpack(await client.callTool({ name: 'wait_operation', arguments: { operation_id: discovered.operation_id, wait_ms: 1000 } }));
     assert.equal(finished.checkpointId, 'saved');
     assert.equal(finished.operation_id, discovered.operation_id);
@@ -111,11 +164,11 @@ try {
     TIMEOUT_POLICY.mutationWaitMs = 5;
     try {
         arrival = deferred();
-        const call = client.callTool({ name: 'save_checkpoint_for_current_page', arguments: {} });
+        const call = client.callTool({ name: 'annotate_designators', arguments: {} });
         const request = await arrival.promise;
         const pending = unpack(await call);
         assert.equal(pending.status, 'running');
-        editor.send(JSON.stringify({ event: 'checkpoint-save', body: JSON.stringify({ id: request.id, ok: true, result: { checkpointId: 'later' } }) }));
+        editor.send(JSON.stringify({ event: 'annotate-designators', body: JSON.stringify({ id: request.id, ok: true, result: { checkpointId: 'later' } }) }));
         const completed = unpack(await client.callTool({ name: 'wait_operation', arguments: { operation_id: pending.operation_id, wait_ms: 1000 } }));
         assert.equal(completed.checkpointId, 'later');
     } finally { TIMEOUT_POLICY.mutationWaitMs = originalWait; }

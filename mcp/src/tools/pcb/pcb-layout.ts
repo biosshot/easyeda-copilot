@@ -14,6 +14,7 @@ import sharp from 'sharp';
 import { SKILL_DOC_PATH } from "../../utils/dirs";
 import { operationManager, type OperationContext } from '../../operations/manager';
 import type { ExplainCircuit } from '@copilot/shared/types/circuit';
+import { managedMutationHandler, targetedToolHandler, toolHandler } from '../handler';
 
 type MakePcbLayoutResponse = {
     content?: string;
@@ -335,12 +336,13 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Get PCB Component Sizes',
             description: `Return resolved PCB footprint sizes in millimeters for selected current schematic components. Use before choosing compact board dimensions. For PCB layout docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({
                 designators: z.array(z.string()).nullable().optional(),
                 includeAll: z.boolean().nullable().optional(),
             }),
         },
-        async ({ designators, includeAll }) => {
+        toolHandler(bridge, async ({ designators, includeAll }) => {
             const circuit = await bridge.requestEasyEda('get-multi-page-schematic', {
                 extractFootprintUuid: true
             }) as ExplainCircuit;
@@ -351,7 +353,7 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
             }) as PcbComponentSizesResponse;
 
             return textResult(result.content ?? result.error ?? result);
-        },
+        }),
     );
 
     server.registerTool(
@@ -359,29 +361,31 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
         {
             title: 'Make PCB Layout',
             description: `Create PCB component placement from a JavaScript DSL file. Open the target PCB first so its outline and component positions are supplied as existingPlacement. Long work returns an operation_id for wait_operation. This tool does not assemble or route the board. For PCB layout docs, read: ${SKILL_DOC_PATH}`,
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
             inputSchema: z.object({
                 file: z.string().min(1).describe('Path to a JavaScript PCB layout DSL code file.'),
                 wait_ms: z.number().int().min(1_000).max(TIMEOUT_POLICY.operationWaitMaxMs).default(DEFAULT_PCB_LAYOUT_WAIT_MS)
                     .describe('Initial synchronous wait before returning a pcb-layout operation_id.'),
             }),
         },
-        async ({ file, wait_ms }) => textResult(await makePcbLayout(
+        targetedToolHandler(bridge, async ({ file, wait_ms }) => textResult(await makePcbLayout(
             bridge,
             file,
             wait_ms ?? DEFAULT_PCB_LAYOUT_WAIT_MS,
-        )),
+        ))),
     );
 
     server.registerTool(
         'assemble_pcb_layout_on_current_pcbdoc',
         {
             title: 'Assemble PCB Layout',
-            description: `Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid. For PCB assembly docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+            description: `Send a previously generated make_pcb_layout board assembly payload to the currently opened EasyEDA PCB document. Runs as a managed operation, waits up to 50 seconds, and always returns operation_id. Before using this tool, call get_current_project_info, verify the schematic belongs to a BOARD item with a PCB document, and call open_document for that PCB uuid. For PCB assembly docs, read the local docs folder: ${SKILL_DOC_PATH}`,
+            annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: false },
             inputSchema: z.object({
                 layoutId: z.string().min(1).describe('layoutId returned by make_pcb_layout.'),
             }),
         },
-        async ({ layoutId }) => {
+        managedMutationHandler(bridge, 'assemble_pcb_layout_on_current_pcbdoc', async ({ layoutId }) => {
             const layout = storedPcbLayouts.get(layoutId);
             if (!layout) {
                 return textResult({
@@ -399,6 +403,6 @@ export function registerPcbLayoutTools(server: McpServer, bridge: Bridge) {
                 checkpointId: (assembled as { checkpointId?: string }).checkpointId,
                 layoutId,
             });
-        },
+        }),
     );
 }

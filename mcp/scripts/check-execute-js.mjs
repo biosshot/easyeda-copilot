@@ -35,7 +35,12 @@ const runtime = (code, api = {}, checkpoint = save) => executeJavaScript(code, a
 const dispatches = [];
 const api = { state: { edits: 0 } };
 const bridge = {
+    getSelectedEasyEdaInstanceId: () => 'execute-js-fixture',
+    getSelectedEasyEdaInstance: async () => ({ instanceId: 'execute-js-fixture' }),
+    listEasyEdaInstances: async () => [{ instanceId: 'execute-js-fixture' }],
+    getVersionWarning: async () => undefined,
     async requestEasyEda(event, body, timeout) {
+        if (event === 'get-command-target') return { documentUuid: 'execute-js-document' };
         dispatches.push({ event, code: body.code, timeout });
         // Exercise the real executor and the JSON bridge boundary, not just a result fixture.
         return JSON.parse(JSON.stringify(await executeJavaScript(body.code, api, save, JSON.parse(JSON.stringify(body.inputs ?? {})))));
@@ -356,6 +361,7 @@ test('execute_js works through the ordinary MCP SDK transport', async () => {
         assert.ok(listed.tools.some(tool => tool.name === 'execute_js'));
         const small = await client.callTool({ name: 'execute_js', arguments: { code: 'return 42' } });
         assert.equal(payload(small).result, 42);
+        assert.ok(payload(small).operation_id);
         for (const code of ['return "x".repeat(50000)', 'return new Blob(["x"])', 'throw Error("x".repeat(50000))']) {
             const result = await client.callTool({ name: 'execute_js', arguments: { code } });
             bounded(result);
