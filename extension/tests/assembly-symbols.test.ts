@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { CircuitAssembly } from '@copilot/shared/types/circuit';
-import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey } from '../src/eda/assembly-symbols';
-import { GND_PORT_COMPONENT, VCC_PORT_COMPONENT } from '../src/eda/types';
+import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey, getNetPortStyle } from '../src/eda/assembly-symbols';
+import { GND_PORT_COMPONENT, NET_PORT_COMPONENT, VCC_PORT_COMPONENT } from '../src/eda/types';
 
 const component = (signal?: string, part_uuid = 'GND') => ({
     part_uuid, designator: 'GND1', pins: signal === undefined ? [] : [{ signal_name: signal }],
@@ -32,4 +32,26 @@ test('template caching separates ground shapes while reusing the same shape for 
     const keys = ['GND', 'AGND', 'PGND'].map(net => getComponentTemplateKey(component(net)));
     assert.equal(new Set(keys).size, 3);
     assert.equal(getComponentTemplateKey(component('AGND_1')), getComponentTemplateKey(component('AGND_2')));
+});
+
+test('styled net ports keep separate templates while power and ground ignore the hint', () => {
+    const previousEda = (globalThis as { eda?: unknown }).eda;
+    (globalThis as { eda?: unknown }).eda = { sys_Environment: { isOnlineMode: () => true } };
+    try {
+        const port = component('DATA', NET_PORT_COMPONENT.uuid);
+        port.designator = 'DATA|1';
+        const oldKey = getComponentTemplateKey(port);
+        port.pins[0].port_style = 'in';
+        assert.equal(getNetPortStyle(port), 'in');
+        const inKey = getComponentTemplateKey(port);
+        port.pins[0].port_style = 'out';
+        assert.notEqual(getComponentTemplateKey(port), inKey);
+        assert.notEqual(inKey, oldKey);
+        const ground = component('GND');
+        ground.pins[0].port_style = 'out';
+        assert.equal(getNetPortStyle(ground), undefined);
+        assert.equal(getNetFlagKind(ground), 'Ground');
+    } finally {
+        (globalThis as { eda?: unknown }).eda = previousEda;
+    }
 });

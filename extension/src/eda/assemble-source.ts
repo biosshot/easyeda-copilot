@@ -1,10 +1,10 @@
-import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey } from "./assembly-symbols";
+import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey, getNetPortStyle } from "./assembly-symbols";
 import { CircuitAssembly } from "@copilot/shared/types/circuit";
 import PQueue from "p-queue";
 import { searchFreePlaceV2 } from "./free-place-searcher";
 import { getLibraryUuidList, placeComponent } from "./place-component";
 import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
-import { AddedNet, ECHOSYS_LIB, NET_PORT_COMPONENT, Offset, shortSymbolsMap } from "./types";
+import { AddedNet, ECHOSYS_LIB, NET_PORT_COMPONENT, STYLED_NET_PORT_COMPONENTS, Offset, shortSymbolsMap } from "./types";
 import { getPartLibraryUuid, getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
 import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
@@ -206,7 +206,18 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             netFlagKind, getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
         );
     } else if (usesNativeNetPort(component)) {
-        primitive = await eda.sch_PrimitiveComponent.createNetPort(
+        const style = getNetPortStyle(component);
+        if (style) {
+            try {
+                primitive = await eda.sch_PrimitiveComponent.createNetPort(
+                    style.toUpperCase() as 'IN' | 'OUT' | 'BI',
+                    getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
+                );
+            } catch (error) {
+                eda.sys_Log.add(`[source-assemble] Styled native port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
+            }
+        }
+        primitive ??= await eda.sch_PrimitiveComponent.createNetPort(
             'BI', getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
         );
     } else if (component.value === 'unknown_shortsym') {
@@ -217,12 +228,19 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             mirror,
         });
     } else if (component.designator.includes('|')) {
-        primitive = await placeComponent({ libraryUuid: ECHOSYS_LIB, uuid: rawPartUuid }, {
-            x: plan.apiX,
-            y: plan.apiY,
-            rotate: rotation,
-            mirror,
-        });
+        const style = getNetPortStyle(component);
+        const placement = { x: plan.apiX, y: plan.apiY, rotate: rotation, mirror };
+        if (style) {
+            try {
+                primitive = await eda.sch_PrimitiveComponent.create(
+                    STYLED_NET_PORT_COMPONENTS[style],
+                    to2(plan.apiX), to2(plan.apiY), undefined, rotation, mirror,
+                );
+            } catch (error) {
+                eda.sys_Log.add(`[source-assemble] Styled library port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
+            }
+        }
+        primitive ??= await placeComponent({ libraryUuid: ECHOSYS_LIB, uuid: rawPartUuid }, placement);
     } else {
         primitive = await placeComponent({ libraryUuid: getPartLibraryUuid(partUuid), uuid: rawPartUuid }, {
             x: plan.apiX,
@@ -288,7 +306,8 @@ async function cacheTemplatesFromCurrentPage(
 ): Promise<number> {
     const missing = [...groups.entries()].filter(([key, group]) =>
         !componentTemplateCache.has(getTemplateCacheKey(projectUuid, key)) &&
-        getNetFlagKind(group[0].input) === undefined,
+        getNetFlagKind(group[0].input) === undefined &&
+        !getNetPortStyle(group[0].input),
     );
     if (!missing.length) return 0;
 

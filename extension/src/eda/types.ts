@@ -21,6 +21,12 @@ export const NET_PORT_COMPONENT = {
     rotateToIdle: 1
 };
 
+export const STYLED_NET_PORT_COMPONENTS = {
+    in: { ...NET_PORT_COMPONENT, uuid: '889333c0a5324763ac80b7ba72921b60' },
+    out: { ...NET_PORT_COMPONENT, uuid: '61f78a1485dc4d2298b7c72139ba0bd0' },
+    bi: { ...NET_PORT_COMPONENT, uuid: 'b4dd4008fe1a4942b81a1cc59f3de199' },
+} as const;
+
 export const shortSymbolsMap = {
     'VCC': {
         name: 'VCC',

@@ -30,6 +30,7 @@ Omitted change lists are treated as empty, so include only the changes the call 
 
 - Replace a component by removing it and adding the replacement with the same base designator.
 - Use identical `signal_name` values for pins on the same net.
+- Optionally set `port_style` to `in`, `out`, or `bi` on a pin when its generated net port needs that appearance. The style belongs to this connection, not to the whole block or net. Omit it when no direction is intended; power and ground symbols take priority.
 - For an intentionally unconnected pin, leave `signal_name` empty (`""`).
 - Using `NC` as a signal name or net label is forbidden. Never use it as a no-connect marker or placeholder.
 - Do not add unrelated protection, filtering, or future signals unless requested or required by the selected proven block.

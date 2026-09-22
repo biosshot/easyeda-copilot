@@ -6,6 +6,7 @@ export const PinSchema = () => z.object({
     pin_number: z.union([z.number(), z.string()]).describe('Pin number.'),
     name: z.string().describe('Pin name (e.g., "VCC").'),
     signal_name: z.string().describe('The name of the signal the pin is connected to. (Name only). The signal name assigned to the pin must be identical to the signal name of the target output.'),
+    port_style: z.enum(['in', 'out', 'bi']).optional().describe('Optional appearance of a generated net port at this connection. Ignored for power and ground.'),
 });
 
 export const BaseComponentSchema = () => z.object({
