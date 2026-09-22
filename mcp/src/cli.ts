@@ -105,7 +105,7 @@ async function serve(id: string) {
             clearTimeout(deadline);
         }
     };
-    async function dispatch(input: Request): Promise<Response> {
+    async function dispatch(input: Request, signal: AbortSignal): Promise<Response> {
         if (input.token !== meta.token) throw new Error('Invalid daemon token.');
         if (stopping) throw new Error('Daemon is stopping.');
         switch (input.command) {
@@ -138,7 +138,11 @@ async function serve(id: string) {
                 if (!input.name) throw new Error('Tool name is required.');
                 activeCalls++;
                 try {
-                    const result = await client.callTool({ name: input.name, arguments: input.args ?? {} }, undefined, { timeout: REQUEST_TIMEOUT });
+                    const result = await client.callTool(
+                        { name: input.name, arguments: input.args ?? {} },
+                        undefined,
+                        { timeout: REQUEST_TIMEOUT, signal },
+                    );
                     return { ok: true, result, toolError: Boolean(result.isError) };
                 } finally { activeCalls--; }
             }
@@ -147,7 +151,12 @@ async function serve(id: string) {
     }
     const listener = createSocketServer(socket => {
         sockets.add(socket);
-        socket.on('close', () => sockets.delete(socket));
+        const controller = new AbortController();
+        let completed = false;
+        socket.on('close', () => {
+            sockets.delete(socket);
+            if (!completed) controller.abort(new Error('CLI client disconnected.'));
+        });
         socket.on('error', () => undefined);
         socket.setEncoding('utf8');
         socket.setTimeout(10_000, () => socket.destroy());
@@ -168,9 +177,10 @@ async function serve(id: string) {
                 let input: Request | undefined;
                 try {
                     input = JSON.parse(buffer.slice(0, end));
-                    response = await dispatch(input!);
+                    response = await dispatch(input!, controller.signal);
                 } catch (error) { response = { ok: false, error: error instanceof Error ? error.message : String(error) }; }
                 const shouldStop = response.ok && input?.command === 'stop';
+                completed = true;
                 socket.end(JSON.stringify(response) + '\n');
                 if (shouldStop) void shutdown().catch(console.error);
             })();

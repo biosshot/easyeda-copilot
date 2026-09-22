@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
@@ -31,15 +31,17 @@ const input = (value) => ['--json', JSON.stringify(value)];
 const daemons = [];
 const editors = [];
 const assemblies = [];
+const cancelledRequests = new Set();
 let releaseSnapshot;
 let heldSnapshot;
 let holdProject;
 let releaseProject;
+let holdMutation;
+let releaseMutation;
 const client = new Client({ name: 'cli-regression', version: '1.0.0' });
 let connected = false;
 
 async function editor(instanceId) {
-    const cancelledRequests = new Set();
     const socket = new WebSocket(`ws://127.0.0.1:${port}`);
     editors.push(socket);
     await new Promise((ready, reject) => {
@@ -58,6 +60,7 @@ async function editor(instanceId) {
             let result;
             if (event === 'get-command-target') result = { documentUuid: `board-${instanceId}` };
             else if (event === 'get-current-project-info') { await holdProject; result = { project_name: instanceId }; }
+            else if (event === 'annotate-designators') { await holdMutation; result = { changed: 2, checkpoints: [] }; }
             else if (event === 'get-pcb-existing-placement') result = null;
             else if (event === 'get-multi-page-schematic') { await heldSnapshot; result = {
                 components: schematicInput.circuit.add_components.map(component => ({ ...component, footprint_uuid: FOOTPRINT_UUID })),
@@ -128,6 +131,56 @@ try {
     assert.equal(assembled.checkpointId, 'assembly-checkpoint');
     assert.deepEqual(assemblies[0].components.map(component => component.designator).sort(), ['R1', 'R2']);
 
+    holdMutation = new Promise(resolveMutation => { releaseMutation = resolveMutation; });
+    const abandonedMutation = spawn(process.execPath, [entry, b, 'call', 'annotate_designators'], {
+        env, cwd: directory, windowsHide: true, stdio: 'ignore',
+    });
+    let startedMutation;
+    for (let i = 0; i < 30; i++) {
+        const operations = (await json(b, 'call', 'list_operations')).operations;
+        startedMutation = operations.find(operation => operation.tool === 'annotate_designators' && operation.status === 'running');
+        if (startedMutation) break;
+        await new Promise(wait => setTimeout(wait, 50));
+    }
+    assert.ok(startedMutation?.operation_id, 'Managed mutation must register before its client disconnects');
+    abandonedMutation.kill();
+    await once(abandonedMutation, 'exit');
+    for (let i = 0; i < 30; i++) {
+        if (!(await json(b, 'status')).activeCalls) break;
+        await new Promise(wait => setTimeout(wait, 50));
+    }
+    const recoveredMutation = (await json(b, 'call', 'list_operations')).operations
+        .find(operation => operation.operation_id === startedMutation.operation_id);
+    assert.equal(recoveredMutation?.status, 'running', 'Registered mutation must survive cancellation of its initial wait');
+    assert.equal((await json(b, 'call', 'cancel_operation', ...input({ operation_id: startedMutation.operation_id }))).status, 'cancel_requested');
+    releaseMutation();
+    await assert.rejects(
+        run(b, 'call', 'wait_operation', ...input({ operation_id: startedMutation.operation_id, wait_ms: 1000 })),
+        error => /cancel/i.test(error.stdout),
+    );
+    holdMutation = undefined;
+
+    holdProject = new Promise(resolveProject => { releaseProject = resolveProject; });
+    const cancellationsBeforeDisconnect = cancelledRequests.size;
+    const abandoned = spawn(process.execPath, [entry, b, 'call', 'get_current_project_info'], {
+        env, cwd: directory, windowsHide: true, stdio: 'ignore',
+    });
+    for (let i = 0; i < 30; i++) {
+        if ((await json(b, 'status')).activeCalls) break;
+        await new Promise(wait => setTimeout(wait, 50));
+    }
+    assert.equal((await json(b, 'status')).activeCalls, 1);
+    abandoned.kill();
+    await once(abandoned, 'exit');
+    for (let i = 0; i < 30; i++) {
+        if (!(await json(b, 'status')).activeCalls && cancelledRequests.size > cancellationsBeforeDisconnect) break;
+        await new Promise(wait => setTimeout(wait, 50));
+    }
+    assert.equal((await json(b, 'status')).activeCalls, 0, 'Disconnected CLI client must release its active call');
+    assert.ok(cancelledRequests.size > cancellationsBeforeDisconnect, 'Disconnected CLI client must cancel the EasyEDA request');
+    releaseProject();
+    holdProject = undefined;
+
     holdProject = new Promise(resolveProject => { releaseProject = resolveProject; });
     const pending = run(b, 'call', 'get_current_project_info');
     const outcome = pending.then(() => null, error => error);
@@ -151,6 +204,7 @@ try {
 } finally {
     releaseSnapshot?.();
     releaseProject?.();
+    releaseMutation?.();
     for (const socket of editors) socket.terminate();
     if (connected) await client.close();
     for (const id of daemons) await run(id, 'stop', '--force').catch(() => undefined);
