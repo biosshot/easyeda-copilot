@@ -63,19 +63,42 @@ function sheetSpaceNotice(response: unknown) {
 }
 
 export function registerCircuitTools(server: McpServer, bridge: Bridge) {
+    const ComponentSearchKind = z.enum(['device', 'footprint', 'panel_library', 'all']);
+    const ComponentSearchLibrary = z.enum([
+        'system', 'recent', 'personal', 'project', 'public', 'std_edition_public', 'favorite', 'lcsc', 'all',
+    ]);
+
     server.registerTool(
         'component_search',
         {
             title: 'Search EasyEDA Component',
-            description: 'Search components. Prefer an exact part_uuid or manufacturer MPN; use a short part description only to discover candidates when the exact MPN is unknown.',
+            description: 'Search the LCSC catalog by exact UUID/MPN, or search EasyEDA editor libraries by query.',
             inputSchema: z.object({
                 part_uuid: z.string().nullable().optional(),
                 MPN: z.string().nullable().optional(),
+                query: z.string().nullable().optional()
+                    .describe('Keyword for searching EasyEDA editor libraries.'),
+                kind: z.union([ComponentSearchKind, z.array(ComponentSearchKind)]).optional()
+                    .describe('Editor-library item type. Defaults to device.'),
+                libraries: z.array(ComponentSearchLibrary).optional()
+                    .describe('Editor sections to search. Defaults to all sections.'),
+                limit: z.number().int().min(1).max(50).default(10)
+                    .describe('Maximum results per section.'),
+                page: z.number().int().min(1).max(100).default(1)
+                    .describe('Result page per section.'),
             }),
         },
-        async ({ part_uuid, MPN }) => {
+        async ({ part_uuid, MPN, query, kind, libraries, limit, page }) => {
+            const editorQuery = query?.trim();
+            if (editorQuery || kind || libraries?.length) {
+                if (!editorQuery) return textResult('Fill query when using kind or libraries.');
+                const result = await bridge.requestEasyEda('component-library-search', {
+                    query: editorQuery, kind, libraries, limit, page,
+                }, 120_000);
+                return textResult(result);
+            }
             if (!part_uuid && !MPN) {
-                return textResult('Fill one: part_uuid or MPN');
+                return textResult('Fill one: part_uuid, MPN, or query');
             }
 
             const result = await componentSearch({ part_uuid, MPN });

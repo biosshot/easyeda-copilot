@@ -8,7 +8,7 @@ For local context missing from the netlist, use [schematic groups](groups.md): `
 
 1. Resolve the target schematic and functional page.
 2. Open that page and read it with `get_schematic`. Set `get_full_schematic: true` to read all schematic pages instead.
-3. Search only unknown parts with `component_search` and use explicit, resolved components.
+3. Search only unknown parts with `component_search` and use explicit, resolved components. Use `part_uuid` or `MPN` for the LCSC catalog. Use `query` for editor libraries; `libraries` can select System, Recent, Personal, Project, Public, Std Edition Public, Favorite, or LCSC, and `kind` can select devices, footprints, or panel libraries. An empty section is distinct from a section-level access error.
 4. Apply related changes with `extract_circuit_on_current_page`. Prefer one coherent call per page; multiple calls are allowed when staged checking is safer.
    - Inspect the returned `sheetSpace`.
    - If less than `10%` remains, finish the current function and continue substantial independent work on another functional page.
