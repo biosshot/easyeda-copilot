@@ -6,6 +6,10 @@ Prefer the exact manufacturer MPN. A descriptive query such as `1k 1% 0805 resis
 
 Never invent an MPN or UUID. Confirm package, electrical ratings, tolerance, and relevant limits before selecting among candidates. Every added component requires a real non-null `part_uuid`.
 
+Keep `part_uuid` exactly as returned by `component_search`. LCSC devices use the legacy UUID string. Other EasyEDA Pro libraries use `{ "uuid": "...", "libraryUuid": "..." }`, so schematic placement and PCB footprint resolution use the same device and library. Search and exact resolution accept an alias returned by `library_list` or an explicit accessible public-library UUID; public aliases are canonicalized to the component owner's library UUID before assembly.
+
+Copilot stores the original reference in the component's `EasyEDA Copilot Part Ref` property for both LCSC and public devices. EasyEDA v3 assigns project-local device IDs after placement. Existing LCSC components retain supplier-code lookup as their first recovery path. Only remaining unresolved local IDs trigger recovery from the project's DEVICE `META.source`, waiting at most 20 seconds. Missing APIs, export failures and timeouts do not fail schematic readback: unresolved components retain `part_uuid: null`. Locally authored devices without an original public source still require a resolvable library reference.
+
 When several library results are electrically and mechanically equivalent, prefer the symbol whose returned `pin_name` values are meaningful, such as `VIN`, `EN`, or `GND`, over one whose names are only `1`, `2`, and `3`. Exact MPN, ratings, and footprint remain higher priority. Numeric pin names are normal for symmetric passives and are not a reason to reject them.
 
 ## Functional blocks

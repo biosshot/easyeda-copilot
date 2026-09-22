@@ -5,6 +5,7 @@ import { searchFreePlaceV2 } from "./free-place-searcher";
 import { getLibraryUuidList, placeComponent } from "./place-component";
 import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet, ECHOSYS_LIB, NET_PORT_COMPONENT, Offset, shortSymbolsMap } from "./types";
+import { getPartLibraryUuid, getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
 import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
 import {
@@ -18,6 +19,8 @@ import {
     SourceRecord,
 } from "./source-document";
 import { normalizeMultipartSourceDesignators } from "./multipart-source-designator";
+import { readPartUuidFromPrimitive, storePartUuidOnPrimitive } from './component-part-ref';
+import { samePartUuid } from '@copilot/shared/types/lcsc';
 
 type AssemblyComponent = CircuitAssembly['components'][number];
 type PrimitiveComponent = ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
@@ -121,7 +124,7 @@ const getComponentLayoutPosition = (component: AssemblyComponent) => ({
 });
 
 const usesNativeNetPort = (component: AssemblyComponent) =>
-    component.part_uuid === NET_PORT_COMPONENT.uuid &&
+    Boolean(component.part_uuid && getPartUuid(component.part_uuid) === NET_PORT_COMPONENT.uuid) &&
     !eda.sys_Environment.isOnlineMode();
 
 // After done(), BI needs +90 degrees to match the library port's pin orientation.
@@ -147,14 +150,17 @@ async function resolveMultipartSubPartNames(plans: PlannedComponent[]): Promise<
     const byPartUuid = new Map<string, PlannedComponent[]>();
     for (const plan of unresolved) {
         const partUuid = plan.input.part_uuid;
-        if (!partUuid || partUuid === 'GND' || partUuid === 'VCC') continue;
-        const group = byPartUuid.get(partUuid) ?? [];
+        if (!partUuid || getPartUuid(partUuid) === 'GND' || getPartUuid(partUuid) === 'VCC') continue;
+        const partKey = getPartUuidKey(partUuid);
+        const group = byPartUuid.get(partKey) ?? [];
         group.push(plan);
-        byPartUuid.set(partUuid, group);
+        byPartUuid.set(partKey, group);
     }
 
-    const libraryUuids = await getLibraryUuidList('lcsc');
-    for (const [partUuid, partPlans] of byPartUuid) {
+    for (const [partKey, partPlans] of byPartUuid) {
+        const partRef = partPlans[0].input.part_uuid!;
+        const partUuid = getPartUuid(partRef);
+        const libraryUuids = await getLibraryUuidList(getPartLibraryUuid(partRef));
         let subPartNames: string[] = [];
         for (const libraryUuid of libraryUuids) {
             const device = await eda.lib_Device.get(partUuid, libraryUuid).catch(() => undefined);
@@ -170,7 +176,7 @@ async function resolveMultipartSubPartNames(plans: PlannedComponent[]): Promise<
             const subPartName = subPartNames[index - 1];
             if (!subPartName) {
                 throw new Error(
-                    `Cannot resolve multi-part ${plan.input.designator} for ${partUuid}; ` +
+                    `Cannot resolve multi-part ${plan.input.designator} for ${partKey}; ` +
                     `library returned ${subPartNames.length} sub-parts`,
                 );
             }
@@ -188,6 +194,7 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
     const component = plan.input;
     const partUuid = component.part_uuid;
     if (!partUuid) throw new Error(`Missing part_uuid for ${component.designator}`);
+    const rawPartUuid = getPartUuid(partUuid);
 
     const rotation = getComponentRotation(component);
     const mirror = component.pos.mirror ?? false;
@@ -203,21 +210,21 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             'BI', getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
         );
     } else if (component.value === 'unknown_shortsym') {
-        primitive = await placeComponent({ libraryUuid: 'lcsc', uuid: partUuid }, {
+        primitive = await placeComponent({ libraryUuid: 'lcsc', uuid: rawPartUuid }, {
             x: plan.apiX,
             y: plan.apiY,
             rotate: rotation,
             mirror,
         });
     } else if (component.designator.includes('|')) {
-        primitive = await placeComponent({ libraryUuid: ECHOSYS_LIB, uuid: partUuid }, {
+        primitive = await placeComponent({ libraryUuid: ECHOSYS_LIB, uuid: rawPartUuid }, {
             x: plan.apiX,
             y: plan.apiY,
             rotate: rotation,
             mirror,
         });
     } else {
-        primitive = await placeComponent({ libraryUuid: 'lcsc', uuid: partUuid }, {
+        primitive = await placeComponent({ libraryUuid: getPartLibraryUuid(partUuid), uuid: rawPartUuid }, {
             x: plan.apiX,
             y: plan.apiY,
             rotate: rotation,
@@ -225,9 +232,10 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             subPartName: component.sub_part_name,
         });
         primitive = primitive.setState_Designator(rmPartFromDesignator(component.designator));
+        storePartUuidOnPrimitive(primitive, partUuid);
     }
 
-    if (!primitive) throw new Error(`Component creation failed for ${component.designator}: ${partUuid}`);
+    if (!primitive) throw new Error(`Component creation failed for ${component.designator}: ${JSON.stringify(partUuid)}`);
 
     if (isNamedNetSymbol(component)) {
         const signalName = getSpecialSignalName(component);
@@ -292,10 +300,8 @@ async function cacheTemplatesFromCurrentPage(
         const subPartName = primitive.getState_SubPartName?.() ?? '';
         const candidate = missing.find(([key, group]) =>
             !componentTemplateCache.has(getTemplateCacheKey(projectUuid, key)) &&
-            (
-                (Boolean(group[0].input.sub_part_name) && group[0].input.sub_part_name === subPartName) ||
-                (group[0].input.part_uuid === componentState.uuid && !group[0].input.sub_part_name)
-            ),
+            samePartUuid(group[0].input.part_uuid, readPartUuidFromPrimitive(primitive)) &&
+            (!group[0].input.sub_part_name || group[0].input.sub_part_name === subPartName),
         );
         if (!candidate) continue;
 

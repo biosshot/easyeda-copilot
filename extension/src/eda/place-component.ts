@@ -3,15 +3,14 @@ import { to2, withTimeout } from "./utils";
 
 const isOffline = eda.sys_Environment.isHalfOfflineMode() || eda.sys_Environment.isOfflineMode();
 
-const SYS_LIB_UUID = eda.lib_LibrariesList.getSystemLibraryUuid();
-
 export async function getLibraryUuidList(libraryUuid?: string) {
     const maybeLibUuid = [];
-    const sys_lib = await SYS_LIB_UUID;
 
     if (libraryUuid && libraryUuid?.toLowerCase() !== 'lcsc') {
-        maybeLibUuid.push(libraryUuid);
+        return [libraryUuid];
     }
+
+    const sys_lib = await Promise.resolve().then(() => eda.lib_LibrariesList.getSystemLibraryUuid()).catch(() => undefined);
 
     if (sys_lib) {
         maybeLibUuid.push(sys_lib);

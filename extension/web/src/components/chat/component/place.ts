@@ -1,4 +1,5 @@
 import '@copilot/shared/types/eda';
+import { getPartLibraryUuid, getPartUuid, type PartUuid } from '@copilot/shared/types/lcsc';
 
 function withTimeout<T>(
     promise: T,
@@ -26,8 +27,11 @@ function withTimeout<T>(
     return Promise.race([safePromise, timeoutPromise]);
 }
 
-export const placeComponent = async (part_uuid: string) => {
-    const maybeLibUuid = await eda.getLibraryUuidList?.() ?? [await eda.lib_LibrariesList.getSystemLibraryUuid() ?? 'lcsc'];
+export const placeComponent = async (part_uuid: PartUuid) => {
+    const library = getPartLibraryUuid(part_uuid);
+    const maybeLibUuid = library === 'lcsc'
+        ? await eda.getLibraryUuidList?.() ?? [await eda.lib_LibrariesList.getSystemLibraryUuid() ?? 'lcsc']
+        : [library];
 
     let comp;
 
@@ -35,7 +39,7 @@ export const placeComponent = async (part_uuid: string) => {
         try {
             const compPromise = eda.sch_PrimitiveComponent.placeComponentWithMouse({
                 libraryUuid: lib,
-                uuid: part_uuid
+                uuid: getPartUuid(part_uuid)
             });
 
             comp = await withTimeout(compPromise, 3000);

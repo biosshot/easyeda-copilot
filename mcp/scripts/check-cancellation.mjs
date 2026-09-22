@@ -83,7 +83,7 @@ try {
     console.log('PASS pre-cancelled request is never sent');
     const catalog = (await client.listTools()).tools;
     const expectedTools = [
-        'component_search', 'get_all_projects', 'get_current_project_info', 'get_schematic',
+        'component_search', 'library_list', 'get_all_projects', 'get_current_project_info', 'get_schematic',
         'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
         'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
         'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
@@ -95,7 +95,7 @@ try {
     ];
     assert.deepEqual(catalog.map(t => t.name).sort(), expectedTools.sort());
     const readOnly = new Set([
-        'component_search', 'get_all_projects', 'get_current_project_info', 'get_schematic',
+        'component_search', 'library_list', 'get_all_projects', 'get_current_project_info', 'get_schematic',
         'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
         'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
         'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',

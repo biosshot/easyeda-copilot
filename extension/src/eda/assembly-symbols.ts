@@ -1,17 +1,19 @@
 import type { CircuitAssembly } from "@copilot/shared/types/circuit";
 import { GND_PORT_COMPONENT, VCC_PORT_COMPONENT } from "./types";
+import { getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
 
 type AssemblyComponent = CircuitAssembly["components"][number];
 
 export const getNetFlagKind = (component: AssemblyComponent) => {
-    if (component.part_uuid === 'GND' || component.part_uuid === GND_PORT_COMPONENT.uuid) {
+    const partUuid = component.part_uuid ? getPartUuid(component.part_uuid) : '';
+    if (partUuid === 'GND' || partUuid === GND_PORT_COMPONENT.uuid) {
         const signal_name = component.pins?.[0]?.signal_name?.toUpperCase() ?? '';
 
         if (signal_name.includes('PGND')) return 'ProtectGround';
         else if (signal_name.includes('AGND')) return 'AnalogGround';
         return 'Ground';
     }
-    else if (component.part_uuid === 'VCC' || component.part_uuid === VCC_PORT_COMPONENT.uuid) {
+    else if (partUuid === 'VCC' || partUuid === VCC_PORT_COMPONENT.uuid) {
         return 'Power';
     }
 
@@ -22,12 +24,12 @@ export const getSpecialSignalName = (component: AssemblyComponent) =>
     component.pins?.[0]?.signal_name || (getNetFlagKind(component)?.includes('Ground') ? 'GND' : 'VCC');
 
 export const getComponentTemplateKey = (component: AssemblyComponent) => JSON.stringify({
-    partUuid: component.part_uuid,
+    partUuid: component.part_uuid ? getPartUuidKey(component.part_uuid) : null,
     netFlagKind: getNetFlagKind(component),
     subPartName: component.sub_part_name ?? '',
-    kind: component.part_uuid === 'GND'
+    kind: component.part_uuid && getPartUuid(component.part_uuid) === 'GND'
         ? 'GND'
-        : component.part_uuid === 'VCC'
+        : component.part_uuid && getPartUuid(component.part_uuid) === 'VCC'
             ? 'VCC'
             : component.value === 'unknown_shortsym'
                 ? 'UNKNOWN_SHORT'

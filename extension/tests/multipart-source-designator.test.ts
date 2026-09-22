@@ -8,6 +8,17 @@ const attribute = (id: string, parentId: string, key: string, value: string): So
     inner: { parentId, key, value },
 });
 
+test('multipart identity compares UUID and library rather than object identity', () => {
+    const records = [attribute('a', 'a', 'Designator', 'U1'), attribute('b', 'b', 'Designator', 'U2')];
+    const units = ['a', 'b'].map((primitiveId, i) => ({
+        primitiveId, designator: `U1.${i + 1}`, subPartName: `part${i}`,
+        partUuid: { uuid: 'same-device', libraryUuid: 'library-a' },
+    }));
+    assert.equal(normalizeMultipartSourceDesignators(records, units).normalizedComponents, 1);
+    units[1].partUuid.libraryUuid = 'library-b';
+    assert.throws(() => normalizeMultipartSourceDesignators(records, units), /different part UUIDs/);
+});
+
 test('multi-part sections share their base designator without changing Unique IDs', () => {
     const records = [
         attribute('d1', 'section-a', 'Designator', 'U1'),

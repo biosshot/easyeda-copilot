@@ -2,12 +2,13 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
 import * as z from 'zod/v4';
 import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
-import { componentSearch, searchReusedBlock } from "eda-copilot-backend/components";
+import { componentSearch, libraryList, searchReusedBlock } from "eda-copilot-backend/components";
 import { extractCircuit } from "eda-copilot-backend/schematic";
 import { SKILL_DOC_PATH } from "../utils/dirs";
 import { readFile } from "node:fs/promises";
 import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit } from "@copilot/shared/types/circuit";
 import { managedMutationHandler, toolHandler } from './handler';
+import { isMissingPartUuid, PartUuidStruct } from '@copilot/shared/types/lcsc';
 
 type SchematicBlocks = Record<string, string[]>;
 
@@ -65,22 +66,35 @@ function sheetSpaceNotice(response: unknown) {
 
 export function registerCircuitTools(server: McpServer, bridge: Bridge) {
     server.registerTool(
+        'library_list',
+        {
+            title: 'List EasyEDA Component Libraries',
+            description: 'List component libraries supported by the backend. Explicit public library UUIDs are also accepted by component_search.',
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+            inputSchema: z.object({}),
+        },
+        toolHandler(bridge, async () => textResult(libraryList())),
+    );
+
+    server.registerTool(
         'component_search',
         {
             title: 'Search EasyEDA Component',
-            description: 'Search components. Prefer an exact part_uuid or manufacturer MPN; use a short part description only to discover candidates when the exact MPN is unknown.',
+            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
-                part_uuid: z.string().nullable().optional(),
+                part_uuid: PartUuidStruct().nullable().optional(),
                 MPN: z.string().nullable().optional(),
+                library_uuid: z.string().min(1).default('lcsc')
+                    .describe('Library alias or explicit public library UUID. Defaults to lcsc.'),
             }),
         },
-        toolHandler(bridge, async ({ part_uuid, MPN }) => {
+        toolHandler(bridge, async ({ part_uuid, MPN, library_uuid }) => {
             if (!part_uuid && !MPN) {
                 return textResult('Fill one: part_uuid or MPN');
             }
 
-            const result = await componentSearch({ part_uuid, MPN });
+            const result = await componentSearch({ part_uuid, MPN, library_uuid });
             return textResult(result);
         }),
     );
@@ -127,7 +141,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 ? JSON.parse(await readFile(file_path, 'utf8'))
                 : inlineCircuit);
             const missingPartUuid = circuit.add_components
-                .filter(component => !component.part_uuid || /^0+$/.test(component.part_uuid))
+                .filter(component => isMissingPartUuid(component.part_uuid))
                 .map(component => component.designator);
 
             if (missingPartUuid.length) {
@@ -180,7 +194,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             if (missing.length) throw new Error(`Blocks do not cover the whole current page. Missing: ${missing.join(', ')}`);
 
             const missingPartUuid = [...components]
-                .filter(([, component]) => !component.part_uuid || /^0+$/.test(component.part_uuid))
+                .filter(([, component]) => isMissingPartUuid(component.part_uuid))
                 .map(([designator]) => designator);
             if (missingPartUuid.length) {
                 throw new Error(`Components have no part_uuid: ${missingPartUuid.join(', ')}`);

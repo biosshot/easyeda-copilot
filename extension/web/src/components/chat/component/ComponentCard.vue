@@ -28,6 +28,7 @@
 import "@copilot/shared/types/eda";
 import { isEasyEda, showToastMessage } from '../../../eda/utils'
 import { Component } from '@copilot/shared/types/component'
+import { getPartLibraryUuid, getPartUuid } from '@copilot/shared/types/lcsc';
 import IconButton from '../../shared/IconButton.vue'
 import { placeComponent } from './place';
 import ImageUrlView from '../img/ImageUrlView.vue';
@@ -38,7 +39,7 @@ const props = defineProps<{ component: Component }>();
 const imageUrl = ref<string | undefined>();
 
 if (isEasyEda()) {
-  eda.lib_Device.get(props.component.part_uuid).then((device) => {
+  eda.lib_Device.get(getPartUuid(props.component.part_uuid), getPartLibraryUuid(props.component.part_uuid)).then((device) => {
     if (device?.association.images?.length) {
       imageUrl.value = device?.association.images[0];
     }

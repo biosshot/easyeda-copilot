@@ -67,7 +67,7 @@ let editor;
 try {
   await client.connect(transport);
   const { tools } = await client.listTools();
-  for (const name of ['component_search', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
+  for (const name of ['library_list', 'component_search', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
     assert.ok(tools.some(tool => tool.name === name), 'Missing MCP tool: ' + name);
   }
   editor = new WebSocket('ws://127.0.0.1:' + port);
@@ -118,6 +118,7 @@ try {
   assert.deepEqual([...await readFile(defaultPreview.image_path)].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
   assert.equal(requests.filter(request => request.event === 'get-pcb-raw').length, 2);
   assert.ok(!tools.some(tool => tool.name === 'search_reused_block'), 'Reusable block search is intentionally disabled');
+  assert.deepEqual((await call('library_list', {})).libraries.map(library => library.libraryUuid), ['lcsc', 'user']);
   assert.ok((await call('component_search', { MPN: 'TEST-1K' })).components.length);
   assert.equal((await call('component_search', { part_uuid: PART_UUID })).bestComponent.part_uuid, PART_UUID);
   const extracted = await call('extract_circuit_on_current_page', schematicInput.circuit);

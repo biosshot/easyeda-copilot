@@ -228,12 +228,13 @@ import { onMounted } from 'vue'
 import { InlineButton } from '../../../types/inline-button'
 import { assembleCircuit } from '../../../eda/assemble-circuit'
 import { CircuitAssembly } from '@copilot/shared/types/circuit'
+import { getPartUuid } from '@copilot/shared/types/lcsc';
 
 const props = defineProps<{ result: { circuit: CircuitAssembly, blockDiagram?: string } }>()
 
 const emit = defineEmits<{ 'inline-buttons': [InlineButton[]] }>();
 
-const components = props.result?.circuit?.components?.filter?.((comp) => !['GND', 'VCC'].includes(comp.part_uuid!) && !comp.designator.includes('|')) || [];
+const components = props.result?.circuit?.components?.filter?.((comp) => !['GND', 'VCC'].includes(comp.part_uuid ? getPartUuid(comp.part_uuid) : '') && !comp.designator.includes('|')) || [];
 
 const assembleCircuitHandler = async () => {
     assembleCircuit(props.result.circuit);

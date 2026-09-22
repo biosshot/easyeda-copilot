@@ -31,6 +31,7 @@
 <script setup lang="ts">
 import { onMounted, watch, watchEffect } from 'vue';
 import { Component } from '@copilot/shared/types/component';
+import type { PartUuid } from '@copilot/shared/types/lcsc';
 import ComponentCard from './ComponentCard.vue';
 import { InlineButton } from '../../../types/inline-button';
 import { showToastMessage } from '../../../eda/utils';
@@ -45,7 +46,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{ 'inline-buttons': [InlineButton[]] }>();
 
-const place = async (part_uuid: string) => {
+const place = async (part_uuid: PartUuid) => {
     try {
         await placeComponent(part_uuid);
     } catch (error) {

@@ -4,6 +4,8 @@ import { getSchematic } from "./schematic";
 import { searchComponentInSCH } from "./search";
 import { getAllWiresByNet, normWireY, normalizeWireLine, to2 } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
+import { getPartLibraryUuid, getPartUuid } from '@copilot/shared/types/lcsc';
+import { storePartUuidOnPrimitive } from './component-part-ref';
 
 const rotatePoint = (p: { x: number, y: number }, rotate: number) => {
     const radians = -rotate * (Math.PI / 180);
@@ -62,8 +64,8 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
 
     try {
         newComp = await placeComponent({
-            libraryUuid: 'lcsc',
-            uuid: component.part_uuid!
+            libraryUuid: getPartLibraryUuid(component.part_uuid!),
+            uuid: getPartUuid(component.part_uuid!)
         }, {
             x: fakeX,
             y: 0,
@@ -75,6 +77,8 @@ export async function ComponentReplacer(primitiveId: string, primrive: ISCH_Prim
         if (!newComp) {
             throw new Error("Failed create new component in replace: " + component.part_uuid);
         }
+
+        storePartUuidOnPrimitive(newComp, component.part_uuid!);
 
         const newCompId = newComp.getState_PrimitiveId();
         const newPins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(newCompId).catch(e => undefined);

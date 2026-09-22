@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LCSC_uuid } from "./lcsc";
+import { PartUuidStruct } from "./lcsc";
 
 export const ComponentStruct = () => z.object({
     pins: z.array(
@@ -12,7 +12,7 @@ export const ComponentStruct = () => z.object({
     name: z.string(),
     manufacturer: z.string(),
     description: z.string(),
-    part_uuid: LCSC_uuid(),
+    part_uuid: PartUuidStruct(),
     datasheet: z.string().nullable(),
     designatorPattern: z.string().nullable().default(null).describe("example: R?, D?, U?, VT?, J? etc."),
     footprintName: z.string().nullable().default(null)

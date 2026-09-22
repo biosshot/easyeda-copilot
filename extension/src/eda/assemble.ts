@@ -12,6 +12,8 @@ import { sch_PrimitiveWireSnap } from "./wire-snap";
 import { assembleCircuitSourceTask } from "./assemble-source";
 import PQueue from 'p-queue';
 import { runAssemblyQueueTask } from './assembly-queue';
+import { getPartLibraryUuid, getPartUuid } from '@copilot/shared/types/lcsc';
+import { storePartUuidOnPrimitive } from './component-part-ref';
 
 const assembleQueue = new PQueue({ concurrency: 1 });
 const COPILOT_BLOCK_COLOR = "#808080";
@@ -36,7 +38,8 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     const mirror = component.pos.mirror ?? false;
     const rotate = pos.rotate;
 
-    if (partUuid === 'GND') {
+    const rawPartUuid = getPartUuid(partUuid);
+    if (rawPartUuid === 'GND') {
         comp = await placeComponent(GND_PORT_COMPONENT, { x, y, rotate });
 
         const s = component.pins[0]?.signal_name ?? 'GND';
@@ -45,7 +48,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
             "Global Net Name": s
         });
     }
-    else if (partUuid === 'VCC') {
+    else if (rawPartUuid === 'VCC') {
         comp = await placeComponent(VCC_PORT_COMPONENT, { x, y, rotate });
 
         const s = component.pins[0]?.signal_name ?? 'VCC';
@@ -57,7 +60,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     else if (component.value === 'unknown_shortsym') {
         comp = await placeComponent({
             libraryUuid: 'lcsc',
-            uuid: partUuid
+            uuid: rawPartUuid
         }, { x, y, rotate });
 
         const s = component.pins[0]?.signal_name ?? 'Unknown';
@@ -69,7 +72,7 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     else if (component.designator.includes('|')) {
         comp = await placeComponent({
             libraryUuid: ECHOSYS_LIB,
-            uuid: partUuid
+            uuid: rawPartUuid
         }, { x, y, rotate });
 
         const s = component.pins[0]?.signal_name ?? 'Unknown';
@@ -86,14 +89,15 @@ async function createComponent(component: CircuitAssembly['components'][0], offs
     }
     else {
         comp = await placeComponent({
-            libraryUuid: 'lcsc',
-            uuid: partUuid
+            libraryUuid: getPartLibraryUuid(partUuid),
+            uuid: rawPartUuid
         }, { x, y, rotate, subPartName: component.sub_part_name });
 
         comp = comp.setState_Designator(rmPartFromDesignator(designator));
+        storePartUuidOnPrimitive(comp, partUuid);
     }
 
-    eda.sys_Log.add(`Place component ${designator} ${partUuid} at ${x} ${y} rot: ${pos.rotate}`);
+    eda.sys_Log.add(`Place component ${designator} ${JSON.stringify(partUuid)} at ${x} ${y} rot: ${pos.rotate}`);
 
     if (mirror) {
         comp = comp.setState_Mirror(mirror);

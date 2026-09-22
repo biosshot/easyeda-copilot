@@ -1,9 +1,10 @@
 import type { SourceRecord } from './source-document';
+import { getPartUuidKey, type PartUuid } from '@copilot/shared/types/lcsc';
 
 export interface MultipartSourceUnit {
     designator: string;
     primitiveId?: string;
-    partUuid?: string | null;
+    partUuid?: PartUuid | null;
     subPartName?: string;
 }
 
@@ -46,7 +47,7 @@ export function normalizeMultipartSourceDesignators(
     for (const [baseDesignator, group] of groups) {
         if (group.length < 2) continue;
 
-        const partUuids = new Set(group.map(unit => unit.partUuid).filter(Boolean));
+        const partUuids = new Set(group.flatMap(unit => unit.partUuid ? [getPartUuidKey(unit.partUuid)] : []));
         if (partUuids.size > 1) {
             throw new Error(`Multi-part ${baseDesignator} contains different part UUIDs`);
         }

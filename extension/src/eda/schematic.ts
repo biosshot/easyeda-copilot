@@ -1,11 +1,13 @@
 import type { CircuitAssembly, ExplainCircuit } from '@copilot/shared/types/circuit';
+import { readComponentProperties, readPartUuidFromPrimitive, resolvedPartUuid } from './component-part-ref';
+import { readProjectDeviceRefs } from './project-device-refs';
+import { getPartUuid } from '@copilot/shared/types/lcsc';
 import { searchComponentInSCH } from './search';
 import { getBBox, getPrimitiveById, normalizeWireLine, to2, withTimeout } from './utils';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
 const SEARCH_BY_CODES_CHUNK_SIZE = 50;
-
 function getFootprintNameFromOtherProperty(otherProperty?: Record<string, unknown> | null) {
     const footprint = Object.entries(otherProperty ?? {}).find(([key, value]) => {
         return key.toLowerCase().includes('footprint') && value !== null && value !== undefined && value.toString().trim();
@@ -207,7 +209,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
         const name = primitiveComponent.getState_Name() ?? '';
 
-        const otherProperty = primitiveComponent.getState_OtherProperty();
+        const otherProperty = readComponentProperties(primitiveComponent);
 
         if (name.includes("Manufacturer Part")) {
             value = primitiveComponent.getState_ManufacturerId() ?? '';
@@ -249,7 +251,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
         const component_ = {
             designator,
-            part_uuid: null,
+            part_uuid: readPartUuidFromPrimitive(primitiveComponent),
             pins: [...(component?.pins ?? []), ...pins],
             value,
             pos: {
@@ -314,6 +316,22 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
         }
     }
 
+    // Keep the legacy LCSC path first for unmarked components. Export is only
+    // needed for local IDs that neither stored metadata nor supplier lookup resolves.
+    for (const component of componentsMap.values()) {
+        if (!resolvedPartUuid(component.part_uuid) && component.code) {
+            const original = resolvedPartUuid(deviceByLcscId.get(component.code)?.uuid);
+            if (original) component.part_uuid = original;
+        }
+    }
+    const needsProjectRefs = !options?.disableExtractPartUuid && [...componentsMap.values()]
+        .some(component => component.part_uuid && !resolvedPartUuid(component.part_uuid));
+    const projectRefs = needsProjectRefs ? await readProjectDeviceRefs() : new Map();
+    for (const component of componentsMap.values()) {
+        const original = component.part_uuid && projectRefs.get(getPartUuid(component.part_uuid));
+        if (original) component.part_uuid = original;
+    }
+
     const components: ExplainCircuit['components'] = [...componentsMap.values()].map(component => {
         const device = component.code ? deviceByLcscId.get(component.code) : null;
 
@@ -321,7 +339,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
             designator: component.designator,
             pins: component.pins,
             value: component.value,
-            part_uuid: device?.uuid ?? null,
+            part_uuid: options?.disableExtractPartUuid ? null : resolvedPartUuid(component.part_uuid),
         };
 
         if (component.footprint_uuid) {
@@ -386,7 +404,7 @@ export async function getAsmCircuit(primitiveIds?: string[]): Promise<CircuitAss
 
         circuit.components.push({
             designator,
-            part_uuid: shortSymbol.getState_Component()?.uuid ?? null,
+            part_uuid: readPartUuidFromPrimitive(shortSymbol),
             pins: [{
                 name: '',
                 pin_number: 1,

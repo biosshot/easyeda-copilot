@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { LCSC_uuid } from "./lcsc";
+import { PartUuidStruct } from "./lcsc";
 import { ReusedCategory, ReusedTags } from "./reused";
 
 export const PinSchema = () => z.object({
@@ -14,7 +14,7 @@ export const BaseComponentSchema = () => z.object({
     pins: z.array(PinSchema()).describe('Pin details.'),
     block_name: z.string().describe('Reference to the block.'),
     search_query: z.string().describe('A component search question. For example: "1k 1W smd resistor", "LM358", "2-pin power connector"'),
-    part_uuid: LCSC_uuid().nullable().describe("If you know the part_uuid of the lcsc component, be sure to fill in this field; otherwise, fill in null.")
+    part_uuid: PartUuidStruct().nullable().describe("Resolved EasyEDA device reference. A string means an LCSC device; other libraries use { uuid, libraryUuid }.")
 });
 
 export const CircuitReusedBlockSchema = () => z.object({
@@ -140,7 +140,7 @@ export const ExplainComponentSchema = () => z.object({
     designator: z.string().describe('Component identifier (e.g., "U1", "R5", "J1", "X1").'),
     value: z.string().describe('Minimum description: for simple components — only the nominal value; for microcircuits — only the name. Only ASCII symbols (e.g., "LM358", "10nF", "100k").'),
     pins: z.array(ExplainPinSchema()).describe('Pin details.'),
-    part_uuid: LCSC_uuid().nullable().describe('Unique component identifier.'),
+    part_uuid: PartUuidStruct().nullable().describe('Resolved EasyEDA device reference.'),
     pos: z.object({
         x: z.number(),
         y: z.number(),
@@ -157,7 +157,7 @@ export const ExplainCircuitStruct = () => z.object({
 
 export const CircuitModStruct = () => z.object({
     add_components: (z.array(BaseComponentSchema().omit({ part_uuid: true }).extend({
-        part_uuid: LCSC_uuid().describe("part_uuid of the lcsc component")
+        part_uuid: PartUuidStruct().describe("Resolved EasyEDA device reference")
     })).describe('Components to add').default([])),
     add_reused_blocks: (z.array(CircuitReusedBlockSchema()).describe('reused blocks to add').default([])),
     rm_components: ((z.array(z.string().describe('component designator')).nullable().describe('Components to remove from the circuit').default(null))),
