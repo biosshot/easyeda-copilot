@@ -19,6 +19,7 @@ import {
     SourceRecord,
 } from "./source-document";
 import { normalizeMultipartSourceDesignators } from "./multipart-source-designator";
+import { formatUnresolvedNetPortMessage, type UnresolvedNetPortSample } from './unresolved-net-port-message';
 import { readPartUuidFromPrimitive, storePartUuidOnPrimitive } from './component-part-ref';
 import { samePartUuid } from '@copilot/shared/types/lcsc';
 import { DRAWING_LIBRARY_UUID, DRAWING_SHEETS, selectDrawingSheet } from './schematic-page-geometry';
@@ -1382,8 +1383,8 @@ async function bulkAddNetAttachments(
     plans: PlannedComponent[],
     projectUuid: string,
     circuitWireSpecs: WireSpec[],
-): Promise<{ wireSpecs: WireSpec[]; portCount: number; unresolved: number; apiSeeds: number; portPlans: PlannedComponent[] }> {
-    if (!nets.length) return { wireSpecs: [], portCount: 0, unresolved: 0, apiSeeds: 0, portPlans: [] };
+): Promise<{ wireSpecs: WireSpec[]; portCount: number; unresolved: number; unresolvedSamples: UnresolvedNetPortSample[]; apiSeeds: number; portPlans: PlannedComponent[] }> {
+    if (!nets.length) return { wireSpecs: [], portCount: 0, unresolved: 0, unresolvedSamples: [], apiSeeds: 0, portPlans: [] };
     const occupied = await getOccupiedWireSegments(circuitWireSpecs);
     const portPlans: PlannedComponent[] = [];
     const portWires: WireSpec[] = [];
@@ -1393,11 +1394,16 @@ async function bulkAddNetAttachments(
         netCountByDesignator.set(net.designator, (netCountByDesignator.get(net.designator) ?? 0) + 1);
     }
     let unresolved = 0;
+    const unresolvedSamples: UnresolvedNetPortSample[] = [];
+    const recordUnresolved = (net: AddedNet, reason: UnresolvedNetPortSample['reason']) => {
+        unresolved++;
+        if (unresolvedSamples.length < 3) unresolvedSamples.push({ net, reason });
+    };
 
     for (const net of nets) {
         const resolved = await resolveNetPin(net, plans);
         if (!resolved) {
-            unresolved++;
+            recordUnresolved(net, 'pin not found');
             eda.sys_Log.add(
                 `[source-assemble] added_net pin not found: ${net.designator} ${net.pin_number}`,
                 ESYS_LogType.WARNING,
@@ -1415,7 +1421,7 @@ async function bulkAddNetAttachments(
             continue;
         }
         if (occupied.some(item => item.net !== net.net && pointOnWireSegment(pinX, pinY, item.segment))) {
-            unresolved++;
+            recordUnresolved(net, 'wire conflict');
             eda.sys_Log.add(
                 `[source-assemble] added_net conflict at ${net.designator}.${net.pin_number}: ${net.net}`,
                 ESYS_LogType.WARNING,
@@ -1489,7 +1495,7 @@ async function bulkAddNetAttachments(
         }
 
         if (!selected) {
-            unresolved++;
+            recordUnresolved(net, 'no free route');
             eda.sys_Log.add(
                 `[source-assemble] No free bulk net-port route: ${net.net} at ${net.designator}.${net.pin_number}`,
                 ESYS_LogType.WARNING,
@@ -1537,7 +1543,7 @@ async function bulkAddNetAttachments(
         occupied.push(...selected.canonicalSegments.map(segment => ({ net: net.net, segment })));
     }
 
-    if (!portPlans.length) return { wireSpecs: portWires, portCount: 0, unresolved, apiSeeds: 0, portPlans };
+    if (!portPlans.length) return { wireSpecs: portWires, portCount: 0, unresolved, unresolvedSamples, apiSeeds: 0, portPlans };
     const groups = groupPlans(portPlans);
     let source = await eda.sys_FileManager.getDocumentSource();
     if (!source) throw new Error('Document source is empty before bulk net ports');
@@ -1555,6 +1561,7 @@ async function bulkAddNetAttachments(
         wireSpecs: portWires,
         portCount: portPlans.length,
         unresolved,
+        unresolvedSamples,
         apiSeeds: seededKeys.size,
         portPlans,
     };
@@ -2238,14 +2245,16 @@ export async function assembleCircuitSourceTask(
         eda.sys_Log.add('[source-assemble] Stage: component finalization', ESYS_LogType.INFO);
         await step(() => finalizeSourceComponents([...plans, ...attachmentResult.portPlans], signal));
         if (attachmentResult.unresolved) {
-            eda.sys_Message.showToastMessage(
-                `${attachmentResult.unresolved} net ports could not be placed; see source-assemble log.`,
-                ESYS_ToastMessageType.WARNING,
-            );
+            throw new Error(formatUnresolvedNetPortMessage(attachmentResult.unresolved, attachmentResult.unresolvedSamples));
         }
 
-        const saved = await step(() => eda.sch_Document.save());
-        if (!saved) throw new Error('Failed to save source-assembled schematic');
+        try {
+            const saved = await step(() => eda.sch_Document.save());
+            if (!saved) eda.sys_Log.add('[source-assemble] Document save returned false', ESYS_LogType.WARNING);
+        } catch (error) {
+            signal?.throwIfAborted();
+            eda.sys_Log.add(`[source-assemble] Document save failed: ${String(error)}`, ESYS_LogType.WARNING);
+        }
 
         const duration = Date.now() - startedAt;
         eda.sys_Log.add(
