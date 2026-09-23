@@ -13,7 +13,7 @@ import { WebSocket } from 'ws';
 const entry = process.argv[2] ?? fileURLToPath(new URL('../dist/index.js', import.meta.url));
 const fixtureFile = process.argv[3] ?? fileURLToPath(new URL('../tests/fixtures/api-fixtures.mjs', import.meta.url));
 const fixtureUrl = pathToFileURL(resolve(fixtureFile)).href;
-const { schematicInput, PART_UUID, FOOTPRINT_UUID } = await import(fixtureUrl);
+const { schematicInput, PART_UUID, FOOTPRINT_UUID, RELAY_UUID } = await import(fixtureUrl);
 const directory = await mkdtemp(join(tmpdir(), 'mcp-backend-tools-'));
 const preload = join(directory, 'provider.mjs');
 await writeFile(preload, 'import { installEasyEdaFixture } from ' + JSON.stringify(fixtureUrl) + '; installEasyEdaFixture();');
@@ -46,6 +46,7 @@ async function editorRequest(event, body) {
   requests.push({ event, body });
   if (event === 'get-command-target') return { documentUuid: 'backend-check-document' };
   if (event === 'get-schematic') return currentSchematic;
+  if (event === 'get-other-page-signals') return [];
   if (event === 'get-multi-page-schematic') { await heldSnapshot; return pcbSchematic; }
   if (event === 'get-pcb-existing-placement') return undefined;
   if (event === 'get-pcb') return { components: [], wires: [pcbSummary] };
@@ -67,7 +68,7 @@ let editor;
 try {
   await client.connect(transport);
   const { tools } = await client.listTools();
-  for (const name of ['library_list', 'component_search', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
+  for (const name of ['library_list', 'component_search', 'preview_component', 'extract_circuit_on_current_page', 'beautify_schematic_on_current_page', 'get_pcb_component_sizes', 'make_pcb_layout', 'assemble_pcb_layout_on_current_pcbdoc', 'wait_operation', 'cancel_operation']) {
     assert.ok(tools.some(tool => tool.name === name), 'Missing MCP tool: ' + name);
   }
   editor = new WebSocket('ws://127.0.0.1:' + port);
@@ -119,8 +120,23 @@ try {
   assert.equal(requests.filter(request => request.event === 'get-pcb-raw').length, 2);
   assert.ok(!tools.some(tool => tool.name === 'search_reused_block'), 'Reusable block search is intentionally disabled');
   assert.deepEqual((await call('library_list', {})).libraries.map(library => library.libraryUuid), ['lcsc', 'user']);
-  assert.ok((await call('component_search', { MPN: 'TEST-1K' })).components.length);
-  assert.equal((await call('component_search', { part_uuid: PART_UUID })).bestComponent.part_uuid, PART_UUID);
+  const search = await client.callTool({ name: 'component_search', arguments: { MPN: 'TEST-1K' } });
+  assert.equal(JSON.parse(search.content[0].text).components[0].preview_recommended, true);
+  assert.equal(search.content.find(item => item.type === 'image')?.mimeType, 'image/png', 'A single numeric-pin candidate gets a preview');
+  const multiple = await client.callTool({ name: 'component_search', arguments: { MPN: 'MULTI' } });
+  assert.equal(JSON.parse(multiple.content[0].text).components.length, 2);
+  assert.equal(multiple.content.some(item => item.type === 'image'), false, 'Multiple candidates remain a choice');
+  const resolved = await client.callTool({ name: 'component_search', arguments: { part_uuid: PART_UUID } });
+  assert.equal(JSON.parse(resolved.content[0].text).bestComponent.part_uuid, PART_UUID);
+  assert.equal(JSON.parse(resolved.content[0].text).bestComponent.preview_recommended, true);
+  assert.equal(resolved.content.find(item => item.type === 'image')?.mimeType, 'image/png');
+  const componentPreview = await client.callTool({ name: 'preview_component', arguments: { part_uuid: RELAY_UUID } });
+  const previewMetadata = JSON.parse(componentPreview.content[0].text);
+  assert.deepEqual(previewMetadata.sections.map(section => section.pins.map(pin => pin.pin_number)), [['1', '2'], ['3', '4']]);
+  assert.deepEqual([...await readFile(previewMetadata.image_path)].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
+  assert.match(await readFile(previewMetadata.svg_path, 'utf8'), /RELAY.CONTACT/);
+  assert.match(await readFile(previewMetadata.svg_path, 'utf8'), />4<\/text>/);
+  assert.equal(componentPreview.content.find(item => item.type === 'image')?.mimeType, 'image/png');
   const extracted = await call('extract_circuit_on_current_page', schematicInput.circuit);
   assert.ok(extracted.operation_id);
   assert.equal(extracted.sheetSpace.level, 'warning');

@@ -10,7 +10,7 @@ import { randomUUID } from "node:crypto";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import sharp from 'sharp';
+import { svgToPng } from '../../utils/svg-to-png';
 import { SKILL_DOC_PATH } from "../../utils/dirs";
 import { operationManager, type OperationContext } from '../../operations/manager';
 import type { ExplainCircuit } from '@copilot/shared/types/circuit';
@@ -135,7 +135,7 @@ async function renderPreviewImage(bytes: Buffer, mimeType: string | undefined) {
     }
 
     return {
-        bytes: await sharp(bytes).png().toBuffer(),
+        bytes: await svgToPng(bytes),
         extension: '.png',
     };
 }

@@ -1,5 +1,5 @@
 import { writeFile } from 'node:fs/promises';
-import sharp from 'sharp';
+import { svgToPng } from '../utils/svg-to-png.js';
 import type { PreviewOptions, PreviewResult } from './types.js';
 import { renderPcbToSvg } from './renderer.js';
 import { RawPcb } from '@copilot/shared/types/pcb/raw.js';
@@ -8,14 +8,7 @@ export * from './types.js';
 
 export async function renderPcbPreview(data: RawPcb, options: PreviewOptions): Promise<PreviewResult> {
     const svg = renderPcbToSvg(data, options);
-    const pngBuffer = await sharp(Buffer.from(svg.svg))
-        .resize({
-            width: options.widthPx,
-            height: 1600,
-            fit: 'inside'
-        })
-        .png()
-        .toBuffer();
+    const pngBuffer = await svgToPng(svg.svg, { width: options.widthPx, height: 1600 });
 
     return {
         svg: svg.svg,

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 export const PART_UUID = '11111111111111111111111111111111';
 export const SYMBOL_UUID = '22222222222222222222222222222222';
 export const FOOTPRINT_UUID = '33333333333333333333333333333333';
+export const RELAY_UUID = '44444444444444444444444444444444';
+export const RELAY_SYMBOL_UUID = '55555555555555555555555555555555';
 const footprintData = [
   ['DOCTYPE', 'FOOTPRINT'], ['ATTR', 0, 0, 'Name', 'R_0603'],
   ...[-27.56, 27.56].map((x, index) => ['PAD', 'pad' + index, 0, '', 1, String(index + 1), x, 0, 0, null, ['RECT', 23.62, 31.5, 0], [], 0, 0, 0, 1, 0, null, null, null, null, 0]),
@@ -14,6 +16,21 @@ export const symbolData = [
   ['ATTR', 'p1n', 'p1', 'NAME', '1'], ['ATTR', 'p1num', 'p1', 'NUMBER', '1'],
   ['PIN', 'p2', 1, null, 20, 0, 10, 180, null, 0, 0, 1],
   ['ATTR', 'p2n', 'p2', 'NAME', '2'], ['ATTR', 'p2num', 'p2', 'NUMBER', '2'],
+].map(line => JSON.stringify(line)).join('\n');
+export const relaySymbolData = [
+  ['DOCTYPE', 'SYMBOL', '1.1'],
+  ['PART', 'RELAY.COIL', { BBOX: [-12, -10, 12, 10] }],
+  ['RECT', 'coil-body', -12, -10, 12, 10],
+  ['PIN', 'coil-1', 1, null, -22, 0, 10, 0],
+  ['ATTR', 'coil-1-name', 'coil-1', 'NAME', '1'], ['ATTR', 'coil-1-number', 'coil-1', 'NUMBER', '1'],
+  ['PIN', 'coil-2', 1, null, 22, 0, 10, 180],
+  ['ATTR', 'coil-2-name', 'coil-2', 'NAME', '2'], ['ATTR', 'coil-2-number', 'coil-2', 'NUMBER', '2'],
+  ['PART', 'RELAY.CONTACT', { BBOX: [-15, -10, 15, 10] }],
+  ['POLY', 'switch', [-15, -10, 0, 0, 15, 10]],
+  ['PIN', 'contact-3', 1, null, -25, -10, 10, 0],
+  ['ATTR', 'contact-3-name', 'contact-3', 'NAME', '3'], ['ATTR', 'contact-3-number', 'contact-3', 'NUMBER', '3'],
+  ['PIN', 'contact-4', 1, null, 25, 10, 10, 180],
+  ['ATTR', 'contact-4-name', 'contact-4', 'NAME', '4'], ['ATTR', 'contact-4-number', 'contact-4', 'NUMBER', '4'],
 ].map(line => JSON.stringify(line)).join('\n');
 
 export const schematicInput = {
@@ -52,18 +69,31 @@ export function installEasyEdaFixture() {
     assert.equal(url.hostname, 'pro.easyeda.com', `Unexpected network dependency: ${url.hostname}`);
     requests.push({ path: url.pathname, body: String(init?.body ?? '') });
     if (url.pathname === '/api/v2/eda/product/search') {
-      return Response.json({ code: 200, result: { pageInfo: { totalPage: 1 }, productList: [{
+      const productList = [{
         manufacturer: 'Fixture', price: [[1, '0.01']],
         device_info: { uuid: PART_UUID, description: 'Fixture resistor',
           attributes: { 'Manufacturer Part': 'TEST-1K', Datasheet: 'https://example.invalid/resistor.pdf', Designator: 'R?' },
           footprint_info: { title: 'R_0603' }, symbol_info: { dataStr: symbolData } },
-      }] } });
+      }];
+      if (new URLSearchParams(init?.body).get('keyword') === 'MULTI') productList.push({
+        manufacturer: 'Fixture', price: [[1, '0.02']],
+        device_info: { uuid: RELAY_UUID, description: 'Fixture relay',
+          attributes: { 'Manufacturer Part': 'TEST-RELAY', Datasheet: 'https://example.invalid/relay.pdf', Designator: 'K?' },
+          footprint_info: { title: 'RELAY' }, symbol_info: { dataStr: relaySymbolData } },
+      });
+      return Response.json({ code: 200, result: { pageInfo: { totalPage: 1 }, productList } });
     }
     if (url.pathname === `/api/devices/${PART_UUID}`) {
       return Response.json({ success: true, result: { symbol: { uuid: SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C111', uuid: PART_UUID } });
     }
+    if (url.pathname === `/api/devices/${RELAY_UUID}`) {
+      return Response.json({ success: true, result: { symbol: { uuid: RELAY_SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C444', uuid: RELAY_UUID } });
+    }
     if (url.pathname === `/api/v2/components/${SYMBOL_UUID}`) {
       return Response.json({ success: true, result: { dataStr: symbolData } });
+    }
+    if (url.pathname === `/api/v2/components/${RELAY_SYMBOL_UUID}`) {
+      return Response.json({ success: true, result: { dataStr: relaySymbolData } });
     }
     if (url.pathname === `/api/v2/components/${FOOTPRINT_UUID}`) {
       return Response.json({ success: true, result: { uuid: FOOTPRINT_UUID, title: 'R_0603', dataStr: footprintData } });
