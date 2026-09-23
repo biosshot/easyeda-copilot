@@ -54,6 +54,14 @@ function sheetSpaceNotice(response: unknown) {
         : undefined;
     const freePercent = sheetSpace?.freePercent;
     if (typeof freePercent !== 'number' || !Number.isFinite(freePercent)) return undefined;
+    if (sheetSpace?.fitsWithinPage === false) {
+        return {
+            freePercent,
+            fitsWithinPage: false,
+            level: 'warning',
+            message: 'The schematic overlaps the drawing frame or title block; increase the sheet size or adjust the layout.',
+        };
+    }
     const low = freePercent < 10;
     return {
         freePercent,
@@ -176,9 +184,11 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 ).describe('All current-page components grouped by block name.'),
                 draw_block_box: z.boolean().default(false)
                     .describe('Draw Copilot-managed boxes and labels around functional blocks.'),
+                auto_resize_page: z.boolean().default(true)
+                    .describe('Grow the schematic drawing sheet when the layout does not fit inside its frame and title block.'),
             }),
         },
-        managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box }) => {
+        managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box, auto_resize_page }) => {
             const inputCircuit = await bridge.requestEasyEda('get-schematic', { includePortStyles: true }) as ExplainCircuit;
             if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
 
@@ -245,17 +255,20 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             assembly.assembly_options = {
                 ...assembly.assembly_options,
                 draw_blocks: draw_block_box,
+                auto_resize_page,
             };
 
-            await bridge.requestEasyEda('beautify-current-page', {
+            const assembled = await bridge.requestEasyEda('beautify-current-page', {
                 circuit: assembly,
                 checkpointId,
                 expectedDesignators: [...components.keys()],
             });
+            const sheetSpace = sheetSpaceNotice(assembled);
 
             return textResult({
                 message: 'Current EasyEDA schematic page beautified.',
                 checkpointId,
+                ...(sheetSpace ? { sheetSpace } : {}),
             });
         }),
     );

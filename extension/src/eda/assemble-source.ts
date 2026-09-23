@@ -21,6 +21,7 @@ import {
 import { normalizeMultipartSourceDesignators } from "./multipart-source-designator";
 import { readPartUuidFromPrimitive, storePartUuidOnPrimitive } from './component-part-ref';
 import { samePartUuid } from '@copilot/shared/types/lcsc';
+import { DRAWING_LIBRARY_UUID, DRAWING_SHEETS, selectDrawingSheet } from './schematic-page-geometry';
 
 type AssemblyComponent = CircuitAssembly['components'][number];
 type NetPortStyle = NonNullable<AssemblyComponent['pins'][number]['port_style']>;
@@ -2044,11 +2045,60 @@ async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
         );
         root = { name: '__v_root__', description: '', x: 0, y: 0, width: 10, height: 10 };
     }
-    const pageSize = await getPageSize();
-    const target = {
+    let pageSize = await getPageSize();
+    let target = {
         x: (pageSize.width - root.width) / 2,
         y: ((pageSize.height - root.height) / 2) + root.height,
     };
+    if (circuit.assembly_options?.auto_resize_page) {
+        const page = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+        const currentDrawing = DRAWING_SHEETS.find(sheet =>
+            page?.titleBlockData?.Symbol?.value === `Drawing-Symbol_${sheet.name}` &&
+            pageSize.width === sheet.width && pageSize.height === sheet.height &&
+            (page?.showTitleBlock === false || String(page?.titleBlockData?.['Title Block Position']?.value) === '3'),
+        );
+        const selection = currentDrawing ? selectDrawingSheet({
+            ...pageSize,
+            showTitleBlock: page?.showTitleBlock,
+        }, root.width, root.height) : undefined;
+        if (selection) {
+            let usePlacement = true;
+            if (selection.resized) {
+                const drawing = await eda.lib_Device.get(selection.sheet.deviceUuid, DRAWING_LIBRARY_UUID)
+                    .catch(() => undefined);
+                if (!drawing) {
+                    usePlacement = false;
+                    eda.sys_Log.add(`[source-assemble] Drawing symbol ${selection.sheet.name} is unavailable; keeping current page size`, ESYS_LogType.WARNING);
+                } else {
+                    // Drawing creation can refresh its editor context before the API promise resolves.
+                    // Observe the resulting sheet instead of waiting indefinitely for that promise.
+                    let createError: unknown;
+                    void eda.sch_PrimitiveComponent.create(drawing, 0, 0).catch(error => { createError = error; });
+                    let updated = false;
+                    for (let attempt = 0; attempt < 100; attempt++) {
+                        await yieldToEventLoop();
+                        const current = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+                        pageSize = await getPageSize();
+                        updated = pageSize.width === selection.sheet.width &&
+                            pageSize.height === selection.sheet.height &&
+                            current?.titleBlockData?.Symbol?.value === `Drawing-Symbol_${selection.sheet.name}`;
+                        if (updated) break;
+                        if (createError) throw createError;
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                    }
+                    if (!updated) {
+                        throw new Error(`Drawing symbol ${selection.sheet.name} did not resize the page`);
+                    }
+                    eda.sys_Log.add(`[source-assemble] Resized schematic page to ${selection.sheet.name}`);
+                }
+            }
+            if (usePlacement) target = { x: selection.placement.x, y: selection.placement.y + root.height };
+        } else if (!currentDrawing) {
+            eda.sys_Log.add('[source-assemble] Custom or inconsistent drawing symbol; keeping current page size', ESYS_LogType.WARNING);
+        } else {
+            eda.sys_Log.add('[source-assemble] No standard drawing sheet fits the layout; keeping current page size', ESYS_LogType.WARNING);
+        }
+    }
     if (target.x === 0) target.x = 10;
     if (target.y === 0) target.y = 10;
     return searchFreePlaceV2(target, { w: root.width, h: root.height });

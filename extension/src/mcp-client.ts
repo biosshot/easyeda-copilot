@@ -1906,7 +1906,15 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
                 await mcpCommandStep(signal, () => waitForBeautifyComponents(expectedDesignators));
                 await mcpCommandStep(signal, () => restoreBeautifyComponentIdentities(componentIdentities));
 
-                reply(true, { assembled: true, checkpointId });
+                const sheetSpace = await withTimeout(
+                    estimateSchematicSheetSpace(),
+                    5000,
+                    'Schematic sheet space estimate timeout',
+                ).catch(error => {
+                    eda.sys_Log.add(`Schematic sheet space estimate failed: ${(error as Error).message}`, ESYS_LogType.WARNING);
+                    return undefined;
+                });
+                reply(true, { assembled: true, checkpointId, ...(sheetSpace ? { sheetSpace } : {}) });
             } catch (error) {
                 if (mutationStarted && !signal?.aborted) {
                     const restored = await checkpointer.restore(checkpointId, true).catch(() => false);
