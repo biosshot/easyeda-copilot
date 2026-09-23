@@ -532,7 +532,9 @@ function cloneComponentsIntoSource(
 
         const sourceSeedX = Number(template.component.inner.x);
         const sourceSeedY = Number(template.component.inner.y);
-        const yFactor = Math.abs(sourceSeedY - template.originApiY) <= Math.abs(sourceSeedY + template.originApiY) ? 1 : -1;
+        // At Y=0 both conventions match. V3 source Y is opposite to API Y;
+        // prefer that convention on a tie instead of reflecting cached clones.
+        const yFactor = Math.abs(sourceSeedY - template.originApiY) < Math.abs(sourceSeedY + template.originApiY) ? 1 : -1;
         const seedRotation = Number(template.component.inner.rotation) || 0;
         const seedMirror = Boolean(template.component.inner.isMirror);
         const plansToClone = template.firstPlanSeeded ? group.slice(1) : group;
@@ -1376,7 +1378,7 @@ function applySourceReplacements(source: string, plans: PlannedComponent[]): str
         );
         if (!component?.inner) throw new Error(`New replacement source missing for ${plan.input.designator}`);
         const sourceY = Number(component.inner.y);
-        const yFactor: 1 | -1 = Math.abs(sourceY - plan.apiY) <= Math.abs(sourceY + plan.apiY) ? 1 : -1;
+        const yFactor: 1 | -1 = Math.abs(sourceY - plan.apiY) < Math.abs(sourceY + plan.apiY) ? 1 : -1;
         component.inner.x = to2(Number(component.inner.x) + replacement.shiftX);
         component.inner.y = to2(sourceY + replacement.shiftY * yFactor);
         for (const record of records) {
