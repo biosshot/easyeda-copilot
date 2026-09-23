@@ -19,6 +19,7 @@ import {
     SourceRecord,
 } from "./source-document";
 import { normalizeMultipartSourceDesignators } from "./multipart-source-designator";
+import { LEGACY_PORT_LENGTHS, matchingWirePort, wirePortLabel, wirePortLengths, wirePortMinLength } from './wire-port-layout';
 import { formatUnresolvedNetPortMessage, type UnresolvedNetPortSample } from './unresolved-net-port-message';
 import { readPartUuidFromPrimitive, storePartUuidOnPrimitive } from './component-part-ref';
 import { samePartUuid } from '@copilot/shared/types/lcsc';
@@ -70,6 +71,7 @@ interface WireSpec {
     segments: WireSegment[];
     net: string;
     description: string;
+    wirePortSegment?: WireSegment;
 }
 
 type WireSegment = [number, number, number, number];
@@ -881,10 +883,16 @@ function connectedSegmentGroups(segments: WireSegment[]): WireSegment[][] {
 
 function normalizeWireSpecs(specs: WireSpec[]): WireSpec[] {
     const byNet = new Map<string, WireSegment[]>();
+    const portSegments = new Map<string, WireSegment[]>();
     for (const spec of specs) {
         const segments = byNet.get(spec.net) ?? [];
         segments.push(...spec.segments);
         byNet.set(spec.net, segments);
+        if (spec.wirePortSegment) {
+            const ports = portSegments.get(spec.net) ?? [];
+            ports.push(spec.wirePortSegment);
+            portSegments.set(spec.net, ports);
+        }
     }
 
     const normalized: WireSpec[] = [];
@@ -895,6 +903,7 @@ function normalizeWireSpecs(specs: WireSpec[]): WireSpec[] {
                 net,
                 segments: connected,
                 description: `${net} normalized group ${index + 1}`,
+                wirePortSegment: matchingWirePort(connected, portSegments.get(net) ?? []),
             });
         }
     }
@@ -1018,6 +1027,13 @@ async function bulkAddWires(specs: WireSpec[]): Promise<number> {
             attribute.inner.parentId = wireId;
             if (attribute.inner.key === 'NET') {
                 normalizeWireNetAttribute(attribute.inner, spec.net, sourceLastSegment);
+                if (spec.wirePortSegment) {
+                    try {
+                        const [x1, y1, x2, y2] = spec.wirePortSegment;
+                        const label = wirePortLabel(spec.net, [x1, y1 * yFactor, x2, y2 * yFactor]);
+                        if (label) Object.assign(attribute.inner, label);
+                    } catch { /* Retain the ordinary wire label if cosmetic placement fails. */ }
+                }
             }
             appended.push(attribute);
         }
@@ -1072,6 +1088,7 @@ function getUnusedPinNets(circuit: CircuitAssembly, plans: PlannedComponent[]) {
 interface ResolvedNetPin {
     pin: ISCH_PrimitiveComponentPin;
     pins: ISCH_PrimitiveComponentPin[];
+    componentId?: string;
 }
 
 interface OccupiedWireSegment {
@@ -1090,7 +1107,7 @@ async function resolveNetPin(net: AddedNet, plans: PlannedComponent[]): Promise<
     if (plan?.pins?.length) {
         const pin = plan.pins.find(item => item.getState_PinNumber() == net.pin_number) ??
             plan.pins.find(item => net.pin_name && item.getState_PinName() === net.pin_name);
-        if (pin) return { pin, pins: plan.pins };
+        if (pin) return { pin, pins: plan.pins, componentId: plan.primitiveId };
     }
 
     const components = await searchComponentInSCH(net.designator).catch(() => undefined);
@@ -1098,7 +1115,7 @@ async function resolveNetPin(net: AddedNet, plans: PlannedComponent[]): Promise<
         const pins = await getPrimitiveComponentPins(component.primitiveId).catch(() => []);
         const pin = pins.find(item => item.getState_PinNumber() == net.pin_number) ??
             pins.find(item => net.pin_name && item.getState_PinName() === net.pin_name);
-        if (pin) return { pin, pins };
+        if (pin) return { pin, pins, componentId: component.primitiveId };
     }
     return undefined;
 }
@@ -1383,6 +1400,7 @@ async function bulkAddNetAttachments(
     plans: PlannedComponent[],
     projectUuid: string,
     circuitWireSpecs: WireSpec[],
+    preferReadableLengths = true,
 ): Promise<{ wireSpecs: WireSpec[]; portCount: number; unresolved: number; unresolvedSamples: UnresolvedNetPortSample[]; apiSeeds: number; portPlans: PlannedComponent[] }> {
     if (!nets.length) return { wireSpecs: [], portCount: 0, unresolved: 0, unresolvedSamples: [], apiSeeds: 0, portPlans: [] };
     const occupied = await getOccupiedWireSegments(circuitWireSpecs);
@@ -1394,14 +1412,28 @@ async function bulkAddNetAttachments(
         netCountByDesignator.set(net.designator, (netCountByDesignator.get(net.designator) ?? 0) + 1);
     }
     let unresolved = 0;
+    let routeFailed = false;
     const unresolvedSamples: UnresolvedNetPortSample[] = [];
     const recordUnresolved = (net: AddedNet, reason: UnresolvedNetPortSample['reason']) => {
         unresolved++;
         if (unresolvedSamples.length < 3) unresolvedSamples.push({ net, reason });
     };
 
+    const resolvedNets: Array<{ net: AddedNet; resolved: ResolvedNetPin | undefined; group?: string }> = [];
+    const preferredLengths = new Map<string, number>();
     for (const net of nets) {
         const resolved = await resolveNetPin(net, plans);
+        let group: string | undefined;
+        if (resolved) {
+            try {
+                group = `${resolved.componentId ?? net.designator}:${normalizeRotation(resolved.pin.getState_Rotation())}`;
+                preferredLengths.set(group, Math.max(preferredLengths.get(group) ?? 0, wirePortMinLength(net.net)));
+            } catch { /* Cosmetic sizing must not prevent the legacy placement fallback. */ }
+        }
+        resolvedNets.push({ net, resolved, group });
+    }
+
+    for (const { net, resolved, group } of resolvedNets) {
         if (!resolved) {
             recordUnresolved(net, 'pin not found');
             eda.sys_Log.add(
@@ -1421,11 +1453,14 @@ async function bulkAddNetAttachments(
             continue;
         }
         if (occupied.some(item => item.net !== net.net && pointOnWireSegment(pinX, pinY, item.segment))) {
+            routeFailed = true;
             recordUnresolved(net, 'wire conflict');
-            eda.sys_Log.add(
-                `[source-assemble] added_net conflict at ${net.designator}.${net.pin_number}: ${net.net}`,
-                ESYS_LogType.WARNING,
-            );
+            if (!preferReadableLengths) {
+                eda.sys_Log.add(
+                    `[source-assemble] added_net conflict at ${net.designator}.${net.pin_number}: ${net.net}`,
+                    ESYS_LogType.WARNING,
+                );
+            }
             continue;
         }
 
@@ -1444,7 +1479,10 @@ async function bulkAddNetAttachments(
             : [primaryDirection, ...[0, 1, 2, 3].filter(index =>
                 index !== primaryDirection && index !== forbiddenDirection,
             )];
-        const lengths = [20, 30, ...Array.from({ length: 39 }, (_, index) => 40 + index * 20), 15, 10, 5];
+        let bareLengths = LEGACY_PORT_LENGTHS;
+        try {
+            if (preferReadableLengths) bareLengths = wirePortLengths(net.net, group ? preferredLengths.get(group) : undefined);
+        } catch { /* Keep every legacy length, including 15, 10 and 5. */ }
         const portOffsetLengths = Array.from({ length: 80 }, (_, index) => (index + 1) * 10);
         let selected: {
             segments: WireSegment[];
@@ -1458,6 +1496,7 @@ async function bulkAddNetAttachments(
         for (const directionIndex of directionOrder) {
             const direction = directions[directionIndex];
             for (const makePort of requestedPort ? [true, false] : [false]) {
+                const lengths = makePort ? LEGACY_PORT_LENGTHS : bareLengths;
                 for (const length of lengths) {
                     const middleX = pinX + direction.dx * length;
                     const middleY = pinY + direction.dy * length;
@@ -1495,11 +1534,14 @@ async function bulkAddNetAttachments(
         }
 
         if (!selected) {
+            routeFailed = true;
             recordUnresolved(net, 'no free route');
-            eda.sys_Log.add(
-                `[source-assemble] No free bulk net-port route: ${net.net} at ${net.designator}.${net.pin_number}`,
-                ESYS_LogType.WARNING,
-            );
+            if (!preferReadableLengths) {
+                eda.sys_Log.add(
+                    `[source-assemble] No free bulk net-port route: ${net.net} at ${net.designator}.${net.pin_number}`,
+                    ESYS_LogType.WARNING,
+                );
+            }
             continue;
         }
 
@@ -1534,15 +1576,20 @@ async function bulkAddNetAttachments(
                 templateKey: getComponentTemplateKey(input),
             });
         }
-        const wireSpec = {
+        const wireSpec: WireSpec = {
             segments: selected.segments,
             net: net.net,
             description: `bulk port ${net.designator}.${net.pin_number}`,
+            wirePortSegment: !selected.makePort ? selected.segments[0] : undefined,
         };
         portWires.push(wireSpec);
         occupied.push(...selected.canonicalSegments.map(segment => ({ net: net.net, segment })));
     }
 
+    // Planning above has no writes. A longer stub must not prevent a neighbour's old route.
+    if (preferReadableLengths && routeFailed) {
+        return bulkAddNetAttachments(nets, plans, projectUuid, circuitWireSpecs, false);
+    }
     if (!portPlans.length) return { wireSpecs: portWires, portCount: 0, unresolved, unresolvedSamples, apiSeeds: 0, portPlans };
     const groups = groupPlans(portPlans);
     let source = await eda.sys_FileManager.getDocumentSource();
