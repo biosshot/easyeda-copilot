@@ -1149,6 +1149,13 @@ function createSourceWorkingCircuit(circuit: CircuitAssembly): CircuitAssembly {
         return (incoming && replacements.has(rmPartFromDesignator(incoming.designator))) ||
             (outgoing && replacements.has(rmPartFromDesignator(outgoing.designator)));
     }));
+    const referenced = new Set(working.edges.flatMap(edge => (edge.sections ?? []).flatMap(section => [
+        splitPinShape(section.incomingShape)?.designator,
+        splitPinShape(section.outgoingShape)?.designator,
+    ])));
+    working.components = working.components.filter(component =>
+        !component.designator.includes('|') || referenced.has(component.designator),
+    );
     return working;
 }
 
