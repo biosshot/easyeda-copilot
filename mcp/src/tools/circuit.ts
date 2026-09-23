@@ -1,14 +1,17 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
+import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import * as z from 'zod/v4';
 import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
 import { componentSearch, libraryList, searchReusedBlock } from "eda-copilot-backend/components";
+import type { Component } from "eda-copilot-backend/components";
 import { extractCircuit } from "eda-copilot-backend/schematic";
 import { SKILL_DOC_PATH } from "../utils/dirs";
 import { readFile } from "node:fs/promises";
 import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit } from "@copilot/shared/types/circuit";
 import { managedMutationHandler, toolHandler } from './handler';
 import { isMissingPartUuid, PartUuidStruct } from '@copilot/shared/types/lcsc';
+import { createComponentPreview, needsSymbolPreview } from '../utils/component-preview';
 
 type SchematicBlocks = Record<string, string[]>;
 
@@ -88,7 +91,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'component_search',
         {
             title: 'Search EasyEDA Component',
-            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid.',
+            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid. Candidates with only numeric or blank pin names are marked preview_recommended. Exact part_uuid lookup and a single matching candidate automatically include a PNG symbol preview.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
                 part_uuid: PartUuidStruct().nullable().optional(),
@@ -103,7 +106,47 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }
 
             const result = await componentSearch({ part_uuid, MPN, library_uuid });
-            return textResult(result);
+            const bestComponent = result.bestComponent;
+            const components = 'components' in result ? result.components as Component[] : undefined;
+            const selectedComponent = bestComponent ?? (components?.length === 1 ? components[0] : undefined);
+            const annotated = {
+                ...result,
+                ...(components ? { components: components.map(component => ({
+                    ...component,
+                    preview_recommended: needsSymbolPreview(component),
+                })) } : {}),
+                ...(bestComponent ? { bestComponent: {
+                    ...bestComponent,
+                    preview_recommended: needsSymbolPreview(bestComponent),
+                } } : {}),
+            };
+            if (!selectedComponent || !needsSymbolPreview(selectedComponent)) return textResult(annotated);
+            try {
+                const preview = await createComponentPreview(selectedComponent.part_uuid);
+                const response: CallToolResult = await textResult({ ...annotated, preview: preview.metadata });
+                response.content.push({ type: 'image', data: preview.png.toString('base64'), mimeType: 'image/png' });
+                return response;
+            } catch (error) {
+                return textResult({ ...annotated, preview_error: error instanceof Error ? error.message : String(error) });
+            }
+        }),
+    );
+
+    server.registerTool(
+        'preview_component',
+        {
+            title: 'Preview EasyEDA Component Symbol',
+            description: 'Render every section of an EasyEDA library schematic symbol with visible pin numbers. Returns a PNG image for visual inspection, SVG/PNG file paths, and pin metadata. The drawing alone does not verify physical pin functions or relay contact state.',
+            annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
+            inputSchema: z.object({
+                part_uuid: PartUuidStruct().describe('Ready-to-use part_uuid from component_search.'),
+            }),
+        },
+        toolHandler(bridge, async ({ part_uuid }) => {
+            const preview = await createComponentPreview(part_uuid);
+            const response: CallToolResult = await textResult(preview.metadata);
+            response.content.push({ type: 'image', data: preview.png.toString('base64'), mimeType: 'image/png' });
+            return response;
         }),
     );
 
@@ -160,7 +203,9 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }
 
             const resolvedInputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
-            const result = await extractCircuit({ circuit, inputCircuit: resolvedInputCircuit });
+            const otherPageSignals = await bridge.requestEasyEda('get-other-page-signals') as string[];
+            const result = await extractCircuit({ circuit, inputCircuit: resolvedInputCircuit,
+                assemblyOptions: { otherPageSignals } });
             const assembled = await bridge.requestEasyEda('assemble-circuit', result as Record<string, unknown>);
             const sheetSpace = sheetSpaceNotice(assembled);
             return textResult({
@@ -190,6 +235,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         },
         managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box, auto_resize_page }) => {
             const inputCircuit = await bridge.requestEasyEda('get-schematic', { includePortStyles: true }) as ExplainCircuit;
+            const otherPageSignals = await bridge.requestEasyEda('get-other-page-signals') as string[];
             if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
 
             const requested = selectedBlocks(blocks);
@@ -237,6 +283,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             const response = await extractCircuit({
                 circuit,
                 inputCircuit: { components: [] },
+                assemblyOptions: { otherPageSignals },
             });
             const assembly = serverAssembly(response);
             if (!assembly || !Array.isArray(assembly.components)) {

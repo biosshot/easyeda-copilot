@@ -18,7 +18,7 @@ import {
     inspectComponent,
     inspectNet,
 } from './eda/pcb';
-import { getSchematic } from './eda/schematic';
+import { getOtherPageSignals, getSchematic } from './eda/schematic';
 import { getSchematicGroups, mergeSchematicGroups } from './eda/schematic-groups';
 import { assertMcpDocumentContext } from './eda/mcp-document-context';
 import { serializeProjectInfo } from './eda/project-info';
@@ -1398,6 +1398,11 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
             const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true, includePortStyles: body.includePortStyles === true });
             reply(true, schematic);
+            return;
+        }
+
+        if (message.event === 'get-other-page-signals') {
+            reply(true, await getOtherPageSignals());
             return;
         }
 

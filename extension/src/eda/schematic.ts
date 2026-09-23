@@ -131,6 +131,36 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
     return pinToSignal;
 }
 
+export function signalsOnOtherPages(netlistText: string, currentPagePinRefs: ReadonlySet<string>) {
+    const signals = new Set<string>();
+    for (const [pinRef, signal] of parseAllegroNetlist(netlistText)) {
+        if (!currentPagePinRefs.has(pinRef) && signal && !signal.startsWith('$') && !/^nc$/i.test(signal)) {
+            signals.add(signal);
+        }
+    }
+    return [...signals];
+}
+
+export async function getOtherPageSignals() {
+    let netlistText = await eda.sch_ManufactureData.getNetlistFile(undefined, ESYS_NetlistType.ALLEGRO)
+        .then(file => file?.text()).catch(() => undefined);
+    if (!netlistText && typeof eda?.sch_Netlist?.getNetlist === 'function') {
+        netlistText = await eda.sch_Netlist.getNetlist(ESYS_NetlistType.ALLEGRO).catch(() => undefined);
+    }
+    if (!netlistText) throw new Error('Failed export netlist');
+
+    const currentPagePinRefs = new Set<string>();
+    for (const component of await eda.sch_PrimitiveComponent.getAll()) {
+        if (component.getState_PrimitiveType() !== ESCH_PrimitiveType.COMPONENT) continue;
+        const designator = component.getState_Designator();
+        if (!designator || (designator.includes('|') && designator.length > 4)) continue;
+        const pins = await eda.sch_PrimitiveComponent.getAllPinsByPrimitiveId(component.getState_PrimitiveId());
+        if (!pins) throw new Error(`Failed to read pins of ${designator}`);
+        for (const pin of pins) currentPagePinRefs.add(`${designator}.${pin.getState_PinNumber()}`);
+    }
+    return signalsOnOtherPages(netlistText, currentPagePinRefs);
+}
+
 export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean, disableExtractPos?: boolean, includePortStyles?: boolean }) {
     const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
 

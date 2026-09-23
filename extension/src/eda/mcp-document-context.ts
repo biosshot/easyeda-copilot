@@ -18,6 +18,7 @@ const PCB_EVENTS = new Set([
 
 const SCHEMATIC_EVENTS = new Set([
     'get-schematic',
+    'get-other-page-signals',
     'assemble-circuit',
     'beautify-current-page',
 ]);
