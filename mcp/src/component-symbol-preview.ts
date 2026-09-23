@@ -142,8 +142,12 @@ export function renderComponentSymbol(dataStr: string) {
                 const [nx, ny] = point(pin.x - 10 * vx, pin.y - 10 * vy);
                 labels.push(`<text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="middle" fill="#a32617">${xml(pin.number)}</text>`);
                 if (pin.name && pin.name !== pin.number) {
-                    const [tx, ty] = point(pin.x + (pin.length + 9) * vx, pin.y + (pin.length + 9) * vy);
-                    labels.push(`<text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle">${xml(pin.name)}</text>`);
+                    // Names belong beside the external connection end, away from
+                    // symbol graphics and the pin lead itself.
+                    const horizontal = Math.abs(vx) >= Math.abs(vy);
+                    const tx = horizontal ? nx : nx + 20;
+                    const ty = horizontal ? ny - 20 : ny;
+                    labels.push(`<text x="${tx}" y="${ty}" text-anchor="${horizontal ? 'middle' : 'start'}" dominant-baseline="middle" font-size="12" fill="#35536f">${xml(pin.name)}</text>`);
                 }
             } else if (typeof tag === 'string' && !['ATTR', 'DOCTYPE', 'HEAD', 'LINESTYLE', 'FONTSTYLE', 'PART'].includes(tag)) {
                 warnings.add(`Unsupported symbol primitive: ${tag}.`);

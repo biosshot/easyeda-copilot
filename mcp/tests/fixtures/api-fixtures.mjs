@@ -5,6 +5,9 @@ export const SYMBOL_UUID = '22222222222222222222222222222222';
 export const FOOTPRINT_UUID = '33333333333333333333333333333333';
 export const RELAY_UUID = '44444444444444444444444444444444';
 export const RELAY_SYMBOL_UUID = '55555555555555555555555555555555';
+export const PREVIEW_FAIL_UUID = '66666666666666666666666666666666';
+export const NAMED_UUID = '77777777777777777777777777777777';
+export const NAMED_SYMBOL_UUID = '88888888888888888888888888888888';
 const footprintData = [
   ['DOCTYPE', 'FOOTPRINT'], ['ATTR', 0, 0, 'Name', 'R_0603'],
   ...[-27.56, 27.56].map((x, index) => ['PAD', 'pad' + index, 0, '', 1, String(index + 1), x, 0, 0, null, ['RECT', 23.62, 31.5, 0], [], 0, 0, 0, 1, 0, null, null, null, null, 0]),
@@ -17,6 +20,11 @@ export const symbolData = [
   ['PIN', 'p2', 1, null, 20, 0, 10, 180, null, 0, 0, 1],
   ['ATTR', 'p2n', 'p2', 'NAME', '2'], ['ATTR', 'p2num', 'p2', 'NUMBER', '2'],
 ].map(line => JSON.stringify(line)).join('\n');
+const namedSymbolData = symbolData.split('\n').map(line => {
+  const row = JSON.parse(line);
+  if (row[0] === 'ATTR' && row[3] === 'NAME') row[4] = row[2] === 'p1' ? 'A' : 'B';
+  return JSON.stringify(row);
+}).join('\n');
 export const relaySymbolData = [
   ['DOCTYPE', 'SYMBOL', '1.1'],
   ['PART', 'RELAY.COIL', { BBOX: [-12, -10, 12, 10] }],
@@ -69,13 +77,19 @@ export function installEasyEdaFixture() {
     assert.equal(url.hostname, 'pro.easyeda.com', `Unexpected network dependency: ${url.hostname}`);
     requests.push({ path: url.pathname, body: String(init?.body ?? '') });
     if (url.pathname === '/api/v2/eda/product/search') {
+      const keyword = new URLSearchParams(init?.body).get('keyword');
       const productList = [{
         manufacturer: 'Fixture', price: [[1, '0.01']],
         device_info: { uuid: PART_UUID, description: 'Fixture resistor',
           attributes: { 'Manufacturer Part': 'TEST-1K', Datasheet: 'https://example.invalid/resistor.pdf', Designator: 'R?' },
           footprint_info: { title: 'R_0603' }, symbol_info: { dataStr: symbolData } },
       }];
-      if (new URLSearchParams(init?.body).get('keyword') === 'MULTI') productList.push({
+      if (keyword === 'NAMED') {
+        productList[0].device_info.uuid = NAMED_UUID;
+        productList[0].device_info.symbol_info.dataStr = namedSymbolData;
+      }
+      if (keyword === 'PREVIEW_FAIL') productList[0].device_info.uuid = PREVIEW_FAIL_UUID;
+      if (keyword === 'MULTI') productList.push({
         manufacturer: 'Fixture', price: [[1, '0.02']],
         device_info: { uuid: RELAY_UUID, description: 'Fixture relay',
           attributes: { 'Manufacturer Part': 'TEST-RELAY', Datasheet: 'https://example.invalid/relay.pdf', Designator: 'K?' },
@@ -89,11 +103,20 @@ export function installEasyEdaFixture() {
     if (url.pathname === `/api/devices/${RELAY_UUID}`) {
       return Response.json({ success: true, result: { symbol: { uuid: RELAY_SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C444', uuid: RELAY_UUID } });
     }
+    if (url.pathname === `/api/devices/${PREVIEW_FAIL_UUID}`) {
+      return Response.json({ success: true, result: { symbol: {}, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C666', uuid: PREVIEW_FAIL_UUID } });
+    }
+    if (url.pathname === `/api/devices/${NAMED_UUID}`) {
+      return Response.json({ success: true, result: { symbol: { uuid: NAMED_SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C777', uuid: NAMED_UUID } });
+    }
     if (url.pathname === `/api/v2/components/${SYMBOL_UUID}`) {
       return Response.json({ success: true, result: { dataStr: symbolData } });
     }
     if (url.pathname === `/api/v2/components/${RELAY_SYMBOL_UUID}`) {
       return Response.json({ success: true, result: { dataStr: relaySymbolData } });
+    }
+    if (url.pathname === `/api/v2/components/${NAMED_SYMBOL_UUID}`) {
+      return Response.json({ success: true, result: { dataStr: namedSymbolData } });
     }
     if (url.pathname === `/api/v2/components/${FOOTPRINT_UUID}`) {
       return Response.json({ success: true, result: { uuid: FOOTPRINT_UUID, title: 'R_0603', dataStr: footprintData } });
