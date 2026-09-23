@@ -12,6 +12,7 @@ import { CircuitAssembly, CircuitMod, CircuitModStruct, ExplainCircuit } from "@
 import { managedMutationHandler, toolHandler } from './handler';
 import { isMissingPartUuid, PartUuidStruct } from '@copilot/shared/types/lcsc';
 import { createComponentPreview, needsSymbolPreview } from '../utils/component-preview';
+import { readOtherPageSignals } from '../utils/other-page-signals';
 
 type SchematicBlocks = Record<string, string[]>;
 
@@ -203,7 +204,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }
 
             const resolvedInputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
-            const otherPageSignals = await bridge.requestEasyEda('get-other-page-signals') as string[];
+            const otherPageSignals = await readOtherPageSignals(() => bridge.requestEasyEda('get-other-page-signals'));
             const result = await extractCircuit({ circuit, inputCircuit: resolvedInputCircuit,
                 assemblyOptions: { otherPageSignals } });
             const assembled = await bridge.requestEasyEda('assemble-circuit', result as Record<string, unknown>);
@@ -235,7 +236,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         },
         managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box, auto_resize_page }) => {
             const inputCircuit = await bridge.requestEasyEda('get-schematic', { includePortStyles: true }) as ExplainCircuit;
-            const otherPageSignals = await bridge.requestEasyEda('get-other-page-signals') as string[];
+            const otherPageSignals = await readOtherPageSignals(() => bridge.requestEasyEda('get-other-page-signals'));
             if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
 
             const requested = selectedBlocks(blocks);
