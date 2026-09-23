@@ -123,7 +123,12 @@ try {
   const search = await client.callTool({ name: 'component_search', arguments: { MPN: 'TEST-1K' } });
   const searchedComponent = JSON.parse(search.content[0].text).components[0];
   assert.equal(searchedComponent.preview_recommended, true);
-  assert.deepEqual([...await readFile(searchedComponent.preview_image_path)].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
+  const componentPng = await readFile(searchedComponent.preview_image_path);
+  assert.deepEqual([...componentPng].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
+  const componentSvg = await readFile(searchedComponent.preview_image_path.replace(/\.png$/, '.svg'), 'utf8');
+  const [, svgWidth, svgHeight] = /<svg[^>]*width="(\d+)" height="(\d+)"/.exec(componentSvg);
+  assert.ok(componentPng.readUInt32BE(16) <= Math.min(Number(svgWidth), 1024), 'Component PNG is not enlarged beyond the SVG width');
+  assert.ok(componentPng.readUInt32BE(20) <= Math.min(Number(svgHeight), 1200), 'Component PNG is not enlarged beyond the SVG height');
   assert.equal(search.content.some(item => item.type === 'image'), false, 'Search returns a path without attaching an image');
   assert.equal('preview' in JSON.parse(search.content[0].text), false);
   const named = await call('component_search', { MPN: 'NAMED' });

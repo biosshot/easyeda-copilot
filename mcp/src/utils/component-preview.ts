@@ -16,7 +16,7 @@ export function needsSymbolPreview(component: Component) {
 export async function createComponentPreview(partUuid: Component['part_uuid']) {
     const { dataStr } = await componentSymbol(partUuid);
     const preview = renderComponentSymbol(dataStr);
-    const png = await svgToPng(preview.svg, { width: 1800, height: 3000 });
+    const png = await svgToPng(preview.svg, { width: 1024, height: 1200, withoutEnlargement: true });
     const directory = join(TEMP_DIR, 'component-previews');
     await mkdir(directory, { recursive: true });
     const base = join(directory, randomUUID());
