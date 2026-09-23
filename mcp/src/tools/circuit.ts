@@ -1,5 +1,4 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp";
-import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import * as z from 'zod/v4';
 import { Bridge } from "../bridge";
 import { textResult } from "../utils/tool-result";
@@ -92,7 +91,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'component_search',
         {
             title: 'Search EasyEDA Component',
-            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid. Candidates with only numeric or blank pin names are marked preview_recommended. Exact part_uuid lookup and a single matching candidate automatically include a PNG symbol preview.',
+            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid. Components with only numeric or blank pin names have preview_recommended and a preview_image_path to a locally rendered PNG. Rendering failures leave the component in the result with preview_error.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
                 part_uuid: PartUuidStruct().nullable().optional(),
@@ -107,29 +106,30 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }
 
             const result = await componentSearch({ part_uuid, MPN, library_uuid });
-            const bestComponent = result.bestComponent;
-            const components = 'components' in result ? result.components as Component[] : undefined;
-            const selectedComponent = bestComponent ?? (components?.length === 1 ? components[0] : undefined);
-            const annotated = {
-                ...result,
-                ...(components ? { components: components.map(component => ({
-                    ...component,
-                    preview_recommended: needsSymbolPreview(component),
-                })) } : {}),
-                ...(bestComponent ? { bestComponent: {
-                    ...bestComponent,
-                    preview_recommended: needsSymbolPreview(bestComponent),
-                } } : {}),
+            const annotate = async (component: Component) => {
+                const preview_recommended = needsSymbolPreview(component);
+                if (!preview_recommended) return { ...component, preview_recommended, preview_image_path: null };
+                try {
+                    const preview = await createComponentPreview(component.part_uuid);
+                    return { ...component, preview_recommended, preview_image_path: preview.image_path };
+                } catch (error) {
+                    return {
+                        ...component,
+                        preview_recommended,
+                        preview_image_path: null,
+                        preview_error: error instanceof Error ? error.message : String(error),
+                    };
+                }
             };
-            if (!selectedComponent || !needsSymbolPreview(selectedComponent)) return textResult(annotated);
-            try {
-                const preview = await createComponentPreview(selectedComponent.part_uuid);
-                const response: CallToolResult = await textResult({ ...annotated, preview: preview.metadata });
-                response.content.push({ type: 'image', data: preview.png.toString('base64'), mimeType: 'image/png' });
-                return response;
-            } catch (error) {
-                return textResult({ ...annotated, preview_error: error instanceof Error ? error.message : String(error) });
-            }
+            const components = 'components' in result
+                ? await Promise.all((result.components as Component[]).map(annotate))
+                : undefined;
+            const bestComponent = result.bestComponent ? await annotate(result.bestComponent) : result.bestComponent;
+            return textResult({
+                ...result,
+                ...(components ? { components } : {}),
+                bestComponent,
+            });
         }),
     );
 
@@ -137,7 +137,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'preview_component',
         {
             title: 'Preview EasyEDA Component Symbol',
-            description: 'Render every section of an EasyEDA library schematic symbol with visible pin numbers. Returns a PNG image for visual inspection, SVG/PNG file paths, and pin metadata. The drawing alone does not verify physical pin functions or relay contact state.',
+            description: 'Render every section of an EasyEDA library schematic symbol with visible pin numbers. Returns the PNG image path, SVG path, and pin metadata without attaching the image. The drawing alone does not verify physical pin functions or relay contact state.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
                 part_uuid: PartUuidStruct().describe('Ready-to-use part_uuid from component_search.'),
@@ -145,9 +145,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         },
         toolHandler(bridge, async ({ part_uuid }) => {
             const preview = await createComponentPreview(part_uuid);
-            const response: CallToolResult = await textResult(preview.metadata);
-            response.content.push({ type: 'image', data: preview.png.toString('base64'), mimeType: 'image/png' });
-            return response;
+            return textResult(preview);
         }),
     );
 

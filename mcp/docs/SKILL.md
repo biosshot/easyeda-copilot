@@ -42,7 +42,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 
 - New or substantially expanded schematics must use functional EasyEDA schematic pages.
 - Use explicit, resolved components with real part UUIDs.
-- Inspect `preview_component` for library symbols with ambiguous pin names. Exact `component_search` results and single candidates with numeric or blank pin names include a PNG preview; the SVG is saved as a separate artifact. A symbol drawing is not proof of physical pin function or relay contact state, so check the exact datasheet when these matter.
+- Inspect `preview_component` for library symbols with ambiguous pin names. `component_search` returns a local `preview_image_path` on each candidate with numeric or blank pin names; open that PNG when needed. Images are not attached to tool responses. A symbol drawing is not proof of physical pin function or relay contact state, so check the exact datasheet when these matter.
 - `beautify_schematic_on_current_page` rebuilds the entire current page. Every current-page component must appear in exactly one functional block.
 - After `import_pcb_changes`, stop and ask the user to confirm the EasyEDA import dialog. Do not continue until the user says it is complete.
 - Open the target PCB before `make_pcb_layout`; this supplies its outline and component positions to `preserve(...)`.

@@ -27,14 +27,11 @@ export async function createComponentPreview(partUuid: Component['part_uuid']) {
         writeFile(pngPath, png),
     ]);
     return {
-        png,
-        metadata: {
-            part_uuid: partUuid,
-            image_path: pngPath,
-            svg_path: svgPath,
-            sections: preview.sections,
-            warnings: preview.warnings,
-            note: 'This is the library schematic symbol. Confirm physical pin functions and relay contact state against the exact part datasheet before wiring.',
-        },
+        part_uuid: partUuid,
+        image_path: pngPath,
+        svg_path: svgPath,
+        sections: preview.sections,
+        warnings: preview.warnings,
+        note: 'This is the library schematic symbol. Confirm physical pin functions and relay contact state against the exact part datasheet before wiring.',
     };
 }
