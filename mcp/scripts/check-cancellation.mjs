@@ -85,7 +85,7 @@ try {
     const expectedTools = [
         'component_search', 'library_list', 'get_all_projects', 'get_current_project_info', 'get_schematic',
         'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
-        'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
+        'check_pcb_drc', 'preview_component', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
         'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
         'run_pcb_router_dsl', 'cancel_operation', 'apply_operation', 'select_easyeda_instance', 'open_document',
         'save_doc', 'sync_current_document', 'modify_name', 'create_doc', 'delete_doc', 'import_pcb_changes',
@@ -97,7 +97,7 @@ try {
     const readOnly = new Set([
         'component_search', 'library_list', 'get_all_projects', 'get_current_project_info', 'get_schematic',
         'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
-        'check_pcb_drc', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
+        'check_pcb_drc', 'preview_component', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
         'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
         'save_checkpoint_for_current_page',
     ]);
@@ -117,7 +117,7 @@ try {
             idempotentHint: readOnly.has(tool.name)
                 ? !nonIdempotentReads.has(tool.name)
                 : idempotentMutations.has(tool.name),
-            openWorldHint: tool.name === 'component_search' || tool.name === 'execute_js',
+            openWorldHint: tool.name === 'component_search' || tool.name === 'preview_component' || tool.name === 'execute_js',
         }, tool.name);
     }
     assert.equal(catalog.find(t => t.name === 'execute_js').annotations.openWorldHint, true);
