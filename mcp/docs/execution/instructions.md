@@ -125,6 +125,8 @@ This is inspection only. Use the returned IDs and native poses to prepare a spec
 
 For specific DRC objects, copy [examples/inspect-pcb-primitives.js](examples/inspect-pcb-primitives.js), set the target UUID and `primitive_ids`, then execute it by absolute `file_path`. It returns common native fields, per-field read errors and unresolved IDs without editing objects. Component pads may need resolution through their owning component's `getAllPins()` if the generic lookup cannot resolve a footprint-local ID. For complex polygon/pad shapes, consult the specific primitive API rather than treating this compact example as a full serializer.
 
+To select a schematic drawing sheet by a custom library device UUID or exact device name, use [examples/replace-drawing-sheet.js](examples/replace-drawing-sheet.js). Set the current page UUID, library UUID (or use an empty string for the system library), expected Width and Height, and keep `apply: false` for the lookup/readback pass. For a name search, clear `deviceUuid` and set `deviceName`. Then set `apply: true` to place the verified DRAWING device at `(0, 0)` and check the resulting page. Width and Height are validation values, not instructions to reshape an existing frame: a genuinely custom-sized frame must already exist as a library drawing symbol/device. If the creation call times out, inspect the current page before retrying because EasyEDA can change the frame before its API promise resolves.
+
 `preview_pcb` uses the Copilot renderer directly, including native poured-fill geometry when readable; it does not rebuild fills or certify their freshness. It does not attempt native layer switching. For a current-viewport native capture through JavaScript (without a guarantee about visible layers):
 
 ```js
