@@ -1,5 +1,5 @@
 import type { CircuitAssembly } from "@copilot/shared/types/circuit";
-import { GND_PORT_COMPONENT, NET_PORT_COMPONENT, VCC_PORT_COMPONENT } from "./types";
+import { GND_PORT_COMPONENT, isNetPortUuid, VCC_PORT_COMPONENT } from "./types";
 import { getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
 
 type AssemblyComponent = CircuitAssembly["components"][number];
@@ -24,7 +24,7 @@ export const getSpecialSignalName = (component: AssemblyComponent) =>
     component.pins?.[0]?.signal_name || (getNetFlagKind(component)?.includes('Ground') ? 'GND' : 'VCC');
 
 export const getNetPortStyle = (component: AssemblyComponent) =>
-    component.part_uuid && getPartUuid(component.part_uuid) === NET_PORT_COMPONENT.uuid
+    component.part_uuid && isNetPortUuid(getPartUuid(component.part_uuid))
         ? component.pins?.[0]?.port_style
         : undefined;
 

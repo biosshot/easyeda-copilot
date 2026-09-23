@@ -4,6 +4,7 @@ import { readProjectDeviceRefs } from './project-device-refs';
 import { getPartUuid } from '@copilot/shared/types/lcsc';
 import { searchComponentInSCH } from './search';
 import { getBBox, getPrimitiveById, normalizeWireLine, to2, withTimeout } from './utils';
+import { readPortStyles, type PinContact } from './port-styles';
 
 let lastToastTime = 0;
 const TOAST_THROTTLE_MS = 8000;
@@ -130,7 +131,7 @@ function parseAllegroNetlist(netlistText: string, allowedSignalNames?: Set<strin
     return pinToSignal;
 }
 
-export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean, disableExtractPos?: boolean, }) {
+export async function getSchematic(primitiveIds?: string[], options?: { disableExtractPartUuid?: boolean, extractFootprintUuid?: boolean, disableExtractPos?: boolean, includePortStyles?: boolean }) {
     const docType = await eda.dmt_SelectControl.getCurrentDocumentInfo().then(d => d?.documentType).catch(_ => undefined);
 
     if (docType !== EDMT_EditorDocumentType.SCHEMATIC_PAGE) {
@@ -177,6 +178,7 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
     }
 
     const componentsMap: Map<string, ExplainCircuit['components'][0] & { code?: string }> = new Map();
+    const pinContacts: PinContact[] = [];
 
     for (const id of primitiveIds) {
         const primitiveComponent: ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1 | undefined = await getPrimitiveById(id).then(r => Array.isArray(r) ? r[0] : r).catch(err => null);
@@ -246,6 +248,14 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
                     name: pinName,
                     signal_name: signalName,
                 });
+                if (options?.includePortStyles && signalName) {
+                    try {
+                        pinContacts.push({
+                            designator, pin_number: pinNumber, signal_name: signalName,
+                            x: p.getState_X(), y: p.getState_Y(),
+                        });
+                    } catch { /* Optional style lookup must not affect schematic extraction. */ }
+                }
             }
         }
 
@@ -359,6 +369,14 @@ export async function getSchematic(primitiveIds?: string[], options?: { disableE
 
         return comp;
     });
+
+    if (options?.includePortStyles && pinContacts.length) {
+        const styles = await readPortStyles(pinContacts);
+        for (const component of components) for (const pin of component.pins) {
+            const style = styles.get(`${component.designator}.${pin.pin_number}`);
+            if (style) pin.port_style = style;
+        }
+    }
 
     const explainCircuit: ExplainCircuit = { components };
 

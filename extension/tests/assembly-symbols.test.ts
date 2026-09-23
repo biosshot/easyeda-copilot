@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import type { CircuitAssembly } from '@copilot/shared/types/circuit';
 import { getNetFlagKind, getSpecialSignalName, getComponentTemplateKey, getNetPortStyle } from '../src/eda/assembly-symbols';
-import { GND_PORT_COMPONENT, NET_PORT_COMPONENT, VCC_PORT_COMPONENT } from '../src/eda/types';
+import { GND_PORT_COMPONENT, LEGACY_NET_PORT_UUID, NET_PORT_COMPONENT, STYLED_NET_PORT_COMPONENTS, VCC_PORT_COMPONENT } from '../src/eda/types';
 
 const component = (signal?: string, part_uuid = 'GND') => ({
     part_uuid, designator: 'GND1', pins: signal === undefined ? [] : [{ signal_name: signal }],
@@ -38,11 +38,16 @@ test('styled net ports keep separate templates while power and ground ignore the
     const previousEda = (globalThis as { eda?: unknown }).eda;
     (globalThis as { eda?: unknown }).eda = { sys_Environment: { isOnlineMode: () => true } };
     try {
+        assert.equal(NET_PORT_COMPONENT.uuid, STYLED_NET_PORT_COMPONENTS.bi.uuid);
         const port = component('DATA', NET_PORT_COMPONENT.uuid);
         port.designator = 'DATA|1';
         const oldKey = getComponentTemplateKey(port);
         port.pins[0].port_style = 'in';
         assert.equal(getNetPortStyle(port), 'in');
+        assert.equal(getNetPortStyle(component('DATA', LEGACY_NET_PORT_UUID)), undefined);
+        const legacy = component('DATA', LEGACY_NET_PORT_UUID);
+        legacy.pins[0].port_style = 'out';
+        assert.equal(getNetPortStyle(legacy), 'out');
         const inKey = getComponentTemplateKey(port);
         port.pins[0].port_style = 'out';
         assert.notEqual(getComponentTemplateKey(port), inKey);

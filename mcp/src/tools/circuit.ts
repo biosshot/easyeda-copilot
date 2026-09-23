@@ -179,7 +179,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
             }),
         },
         managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box }) => {
-            const inputCircuit = await bridge.requestEasyEda('get-schematic') as ExplainCircuit;
+            const inputCircuit = await bridge.requestEasyEda('get-schematic', { includePortStyles: true }) as ExplainCircuit;
             if (!inputCircuit.components.length) throw new Error('The current schematic page has no components.');
 
             const requested = selectedBlocks(blocks);

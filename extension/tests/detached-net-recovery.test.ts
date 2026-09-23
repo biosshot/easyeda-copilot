@@ -8,7 +8,7 @@ import ts from 'typescript';
 // Exercise the real recovery function without loading the editor-dependent imports.
 const file = resolve(__dirname, '../src/eda/assemble-source.ts');
 const code = ts.transpileModule(
-    readFileSync(file, 'utf8') + '\nexport const recoverForTest = resolveDetachedNets; export const workingCircuitForTest = createSourceWorkingCircuit;',
+    readFileSync(file, 'utf8') + '\nexport const recoverForTest = resolveDetachedNets; export const workingCircuitForTest = createSourceWorkingCircuit; export const seedForTest = createSeedComponent; export const nativePortForTest = createNativeNetPort;',
     { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS }, fileName: file },
 ).outputText;
 
@@ -81,4 +81,76 @@ test('replacement drops generated short symbols whose only edges belonged to the
         ['R3', 'U1', 'VCC|keep', 'AMP_OUT|shared']);
     assert.equal(result.edges.length, 2);
     assert.deepEqual(result.rm_components, []);
+});
+
+test('missing library BI port falls back to the native BI port at its contact rotation', async () => {
+    const calls: Array<{ direction: string; rotation: number }> = [];
+    const primitive = {
+        setState_Name() { return this; },
+        setState_OtherProperty() { return this; },
+        async done() { return this; },
+    };
+    const exports: Record<string, any> = {};
+    runInNewContext(code, {
+        exports,
+        ESYS_LogType: { WARNING: 'warning' },
+        eda: {
+            sys_Environment: { isOnlineMode: () => true },
+            sys_Log: { add() {} },
+            sch_PrimitiveComponent: {
+                async create() { throw new Error('library unavailable'); },
+                async createNetPort(direction: string, _net: string, _x: number, _y: number, rotation: number) {
+                    calls.push({ direction, rotation });
+                    return primitive;
+                },
+            },
+        },
+        require(name: string) {
+            if (name === './assembly-symbols') return {
+                getNetFlagKind: () => undefined, getNetPortStyle: () => undefined,
+                getSpecialSignalName: () => 'DATA',
+            };
+            if (name === './types') return {
+                isNetPortUuid: (uuid: string) => uuid === 'new-bi',
+                STYLED_NET_PORT_COMPONENTS: { bi: { uuid: 'new-bi', libraryUuid: 'lib' } },
+            };
+            if (name === '@copilot/shared/types/lcsc') return { getPartUuid: (value: string) => value };
+            if (name === './utils') return { to2: (value: number) => value };
+            return {};
+        },
+    });
+    const result = await exports.seedForTest({
+        input: { designator: 'DATA|port', part_uuid: 'new-bi', pins: [{ signal_name: 'DATA' }], pos: { rotate: 0 } },
+        apiX: 100, apiY: 200,
+    });
+    assert.equal(result, primitive);
+    assert.deepEqual(calls, [{ direction: 'BI', rotation: 90 }]);
+});
+
+test('unsupported native direction falls back to BI without failing the placement', async () => {
+    const directions: string[] = [];
+    const exports: Record<string, any> = {};
+    runInNewContext(code, {
+        exports,
+        ESYS_LogType: { WARNING: 'warning' },
+        eda: {
+            sys_Log: { add() {} },
+            sch_PrimitiveComponent: { async createNetPort(direction: string) {
+                directions.push(direction);
+                if (direction === 'OUT') throw new Error('OUT unavailable');
+                return { done: async () => undefined };
+            } },
+        },
+        require(name: string) {
+            if (name === './assembly-symbols') return { getSpecialSignalName: () => 'DATA' };
+            if (name === './utils') return { to2: (value: number) => value };
+            return {};
+        },
+    });
+    const result = await exports.nativePortForTest(
+        { designator: 'DATA|port', pins: [{ signal_name: 'DATA' }] },
+        { apiX: 0, apiY: 0 }, 'out', 90, false,
+    );
+    assert.ok(result);
+    assert.deepEqual(directions, ['OUT', 'BI']);
 });

@@ -1396,7 +1396,7 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
 
         if (message.event === 'get-schematic') {
             const primitiveIds = await eda.sch_PrimitiveComponent.getAllPrimitiveId().catch(() => []);
-            const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true });
+            const schematic = await getSchematic([...primitiveIds], { disableExtractPos: true, includePortStyles: body.includePortStyles === true });
             reply(true, schematic);
             return;
         }

@@ -4,7 +4,7 @@ import PQueue from "p-queue";
 import { searchFreePlaceV2 } from "./free-place-searcher";
 import { getLibraryUuidList, placeComponent } from "./place-component";
 import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
-import { AddedNet, ECHOSYS_LIB, NET_PORT_COMPONENT, STYLED_NET_PORT_COMPONENTS, Offset, shortSymbolsMap } from "./types";
+import { AddedNet, isNetPortUuid, NET_PORT_COMPONENT, STYLED_NET_PORT_COMPONENTS, Offset, shortSymbolsMap } from "./types";
 import { getPartLibraryUuid, getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
 import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
@@ -23,6 +23,7 @@ import { readPartUuidFromPrimitive, storePartUuidOnPrimitive } from './component
 import { samePartUuid } from '@copilot/shared/types/lcsc';
 
 type AssemblyComponent = CircuitAssembly['components'][number];
+type NetPortStyle = NonNullable<AssemblyComponent['pins'][number]['port_style']>;
 type PrimitiveComponent = ISCH_PrimitiveComponent | ISCH_PrimitiveComponent$1;
 type LegacyAssembler = (circuit: CircuitAssembly, signal?: AbortSignal) => Promise<void>;
 type LegacyBlockDrawer = (blocks: CircuitAssembly['blocks_rect'], offset: Offset, signal?: AbortSignal) => Promise<void>;
@@ -124,7 +125,7 @@ const getComponentLayoutPosition = (component: AssemblyComponent) => ({
 });
 
 const usesNativeNetPort = (component: AssemblyComponent) =>
-    Boolean(component.part_uuid && getPartUuid(component.part_uuid) === NET_PORT_COMPONENT.uuid) &&
+    Boolean(component.part_uuid && isNetPortUuid(getPartUuid(component.part_uuid))) &&
     !eda.sys_Environment.isOnlineMode();
 
 // After done(), BI needs +90 degrees to match the library port's pin orientation.
@@ -190,6 +191,24 @@ async function resolveMultipartSubPartNames(plans: PlannedComponent[]): Promise<
     }
 }
 
+async function createNativeNetPort(
+    component: AssemblyComponent, plan: PlannedComponent, style: NetPortStyle, rotation: number, mirror: boolean,
+): Promise<PrimitiveComponent | undefined> {
+    const requested = style.toUpperCase() as 'IN' | 'OUT' | 'BI';
+    const directions: Array<'IN' | 'OUT' | 'BI'> = requested === 'BI' ? ['BI'] : [requested, 'BI'];
+    for (const direction of directions) {
+        try {
+            const primitive = await eda.sch_PrimitiveComponent.createNetPort(
+                direction, getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
+            );
+            if (primitive) return primitive;
+        } catch (error) {
+            eda.sys_Log.add(`[source-assemble] Native ${direction} port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
+        }
+    }
+    return undefined;
+}
+
 async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveComponent> {
     const component = plan.input;
     const partUuid = component.part_uuid;
@@ -206,20 +225,7 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             netFlagKind, getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
         );
     } else if (usesNativeNetPort(component)) {
-        const style = getNetPortStyle(component);
-        if (style) {
-            try {
-                primitive = await eda.sch_PrimitiveComponent.createNetPort(
-                    style.toUpperCase() as 'IN' | 'OUT' | 'BI',
-                    getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
-                );
-            } catch (error) {
-                eda.sys_Log.add(`[source-assemble] Styled native port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
-            }
-        }
-        primitive ??= await eda.sch_PrimitiveComponent.createNetPort(
-            'BI', getSpecialSignalName(component), to2(plan.apiX), to2(plan.apiY), rotation, mirror,
-        );
+        primitive = await createNativeNetPort(component, plan, getNetPortStyle(component) ?? 'bi', rotation, mirror);
     } else if (component.value === 'unknown_shortsym') {
         primitive = await placeComponent({ libraryUuid: 'lcsc', uuid: rawPartUuid }, {
             x: plan.apiX,
@@ -227,20 +233,21 @@ async function createSeedComponent(plan: PlannedComponent): Promise<PrimitiveCom
             rotate: rotation,
             mirror,
         });
-    } else if (component.designator.includes('|')) {
-        const style = getNetPortStyle(component);
-        const placement = { x: plan.apiX, y: plan.apiY, rotate: rotation, mirror };
-        if (style) {
-            try {
-                primitive = await eda.sch_PrimitiveComponent.create(
-                    STYLED_NET_PORT_COMPONENTS[style],
-                    to2(plan.apiX), to2(plan.apiY), undefined, rotation, mirror,
-                );
-            } catch (error) {
-                eda.sys_Log.add(`[source-assemble] Styled library port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
-            }
+    } else if (component.designator.includes('|') && isNetPortUuid(rawPartUuid)) {
+        const style = getNetPortStyle(component) ?? 'bi';
+        try {
+            primitive = await eda.sch_PrimitiveComponent.create(
+                STYLED_NET_PORT_COMPONENTS[style],
+                to2(plan.apiX), to2(plan.apiY), undefined, rotation, mirror,
+            );
+        } catch (error) {
+            eda.sys_Log.add(`[source-assemble] Library port failed for ${component.designator}: ${String(error)}`, ESYS_LogType.WARNING);
         }
-        primitive ??= await placeComponent({ libraryUuid: ECHOSYS_LIB, uuid: rawPartUuid }, placement);
+        primitive ??= await createNativeNetPort(component, plan, style, normalizeRotation(rotation + 90), mirror);
+    } else if (component.designator.includes('|')) {
+        primitive = await placeComponent({ libraryUuid: getPartLibraryUuid(partUuid), uuid: rawPartUuid }, {
+            x: plan.apiX, y: plan.apiY, rotate: rotation, mirror,
+        });
     } else {
         primitive = await placeComponent({ libraryUuid: getPartLibraryUuid(partUuid), uuid: rawPartUuid }, {
             x: plan.apiX,
