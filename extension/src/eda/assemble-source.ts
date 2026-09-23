@@ -6,7 +6,7 @@ import { getLibraryUuidList, placeComponent } from "./place-component";
 import { getAllPrimitivePins, getPrimitiveComponentPins, searchComponentInSCH } from "./search";
 import { AddedNet, isNetPortUuid, NET_PORT_COMPONENT, STYLED_NET_PORT_COMPONENTS, Offset, shortSymbolsMap } from "./types";
 import { getPartLibraryUuid, getPartUuid, getPartUuidKey } from '@copilot/shared/types/lcsc';
-import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, yieldToEventLoop } from "./utils";
+import { getPageSize, normalizeWireLine, normWireY, rmPartFromDesignator, to2, VERSION_EDASYEDA, withTimeout, yieldToEventLoop } from "./utils";
 import { sch_PrimitiveWireSnap } from "./wire-snap";
 import {
     appendDocumentSource,
@@ -1381,8 +1381,8 @@ async function bulkAddNetAttachments(
     plans: PlannedComponent[],
     projectUuid: string,
     circuitWireSpecs: WireSpec[],
-): Promise<{ wireSpecs: WireSpec[]; portCount: number; unresolved: number; apiSeeds: number }> {
-    if (!nets.length) return { wireSpecs: [], portCount: 0, unresolved: 0, apiSeeds: 0 };
+): Promise<{ wireSpecs: WireSpec[]; portCount: number; unresolved: number; apiSeeds: number; portPlans: PlannedComponent[] }> {
+    if (!nets.length) return { wireSpecs: [], portCount: 0, unresolved: 0, apiSeeds: 0, portPlans: [] };
     const occupied = await getOccupiedWireSegments(circuitWireSpecs);
     const portPlans: PlannedComponent[] = [];
     const portWires: WireSpec[] = [];
@@ -1536,7 +1536,7 @@ async function bulkAddNetAttachments(
         occupied.push(...selected.canonicalSegments.map(segment => ({ net: net.net, segment })));
     }
 
-    if (!portPlans.length) return { wireSpecs: portWires, portCount: 0, unresolved, apiSeeds: 0 };
+    if (!portPlans.length) return { wireSpecs: portWires, portCount: 0, unresolved, apiSeeds: 0, portPlans };
     const groups = groupPlans(portPlans);
     let source = await eda.sys_FileManager.getDocumentSource();
     if (!source) throw new Error('Document source is empty before bulk net ports');
@@ -1555,6 +1555,7 @@ async function bulkAddNetAttachments(
         portCount: portPlans.length,
         unresolved,
         apiSeeds: seededKeys.size,
+        portPlans,
     };
 }
 
@@ -1918,6 +1919,68 @@ async function setSourceAndRefresh(source: string, label: string): Promise<void>
     await refreshSchematicIndexes();
 }
 
+async function finalizeSourceComponents(plans: PlannedComponent[], signal?: AbortSignal): Promise<void> {
+    const named = new Map<string, string>();
+    const ids = new Set<string>();
+    for (const plan of plans) {
+        if (!plan.primitiveId) continue;
+        ids.add(plan.primitiveId);
+        if (isNamedNetSymbol(plan.input)) named.set(plan.primitiveId, getSpecialSignalName(plan.input));
+    }
+
+    let completed = 0;
+    let failed = 0;
+    for (const id of ids) {
+        signal?.throwIfAborted();
+        try {
+            const primitive = await withTimeout(
+                eda.sch_PrimitiveComponent.get(id), 10_000, `Timed out reading component ${id}`, signal,
+            );
+            if (!primitive) continue; // An unused short symbol may have been removed.
+
+            const editable = primitive.toAsync();
+            const net = named.get(id);
+            if (net) {
+                editable.setState_Name(net);
+                editable.setState_Net(net);
+                editable.setState_OtherProperty({
+                    ...editable.getState_OtherProperty(),
+                    'Global Net Name': net,
+                });
+            }
+            await withTimeout(editable.done(), 10_000, `Timed out finalizing component ${id}`, signal);
+            completed++;
+        } catch (error) {
+            signal?.throwIfAborted();
+            failed++;
+            eda.sys_Log.add(`[source-assemble] Component finalization failed for ${id}: ${String(error)}`, ESYS_LogType.WARNING);
+        }
+    }
+
+    if (named.size) {
+        try {
+            const source = await eda.sys_FileManager.getDocumentSource();
+            if (source) {
+                const records = parseDocumentSource(source);
+                let restored = 0;
+                for (const record of records) {
+                    if (record.outer.type !== 'ATTR' || !record.inner) continue;
+                    if (record.inner.key !== 'Name' && record.inner.key !== 'Global Net Name') continue;
+                    const net = named.get(String(record.inner.parentId ?? ''));
+                    if (!net || record.inner.value === net) continue;
+                    record.inner.value = net;
+                    restored++;
+                }
+                if (restored) await setSourceAndRefresh(serializeDocumentSource(records), 'net name preservation');
+            }
+        } catch (error) {
+            signal?.throwIfAborted();
+            eda.sys_Log.add(`[source-assemble] Net name preservation failed: ${String(error)}`, ESYS_LogType.WARNING);
+        }
+    }
+    eda.sys_Log.add(`[source-assemble] Finalized ${completed} components; ${failed} failed`);
+}
+
 async function removeUnusedShortSymbols(): Promise<number> {
     const primitives = await eda.sch_PrimitiveComponent.getAll().catch(() => []);
     const shortSymbols = primitives.filter(primitive => {
@@ -2122,6 +2185,8 @@ export async function assembleCircuitSourceTask(
         }
         eda.sys_Log.add('[source-assemble] Stage: short-symbol cleanup', ESYS_LogType.INFO);
         const removedShortSymbols = await step(() => removeUnusedShortSymbols());
+        eda.sys_Log.add('[source-assemble] Stage: component finalization', ESYS_LogType.INFO);
+        await step(() => finalizeSourceComponents([...plans, ...attachmentResult.portPlans], signal));
         if (attachmentResult.unresolved) {
             eda.sys_Message.showToastMessage(
                 `${attachmentResult.unresolved} net ports could not be placed; see source-assemble log.`,
