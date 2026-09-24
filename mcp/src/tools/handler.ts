@@ -9,6 +9,22 @@ import { MCP_VERSION } from '../utils/dirs';
 
 type ToolHandler = (...args: any[]) => CallToolResult | Promise<CallToolResult>;
 
+export const VERSION_WARNING_TIMEOUT_MS = 10_000;
+
+/** Version metadata is advisory; it must not delay or fail a completed tool call. */
+export async function optionalVersionWarning(
+    bridge: Bridge,
+    signal: AbortSignal,
+    timeoutMs = VERSION_WARNING_TIMEOUT_MS,
+): Promise<string | undefined> {
+    const diagnosticSignal = AbortSignal.any([signal, AbortSignal.timeout(timeoutMs)]);
+    try {
+        return await abortable(Promise.resolve().then(() => bridge.getVersionWarning(MCP_VERSION)), diagnosticSignal);
+    } catch {
+        return undefined;
+    }
+}
+
 /** Add the MCP request signal and the extension-version warning to one explicit tool handler. */
 export function toolHandler(bridge: Bridge, handler: ToolHandler): ToolHandler {
     return async (...args: any[]) => {
@@ -18,7 +34,7 @@ export function toolHandler(bridge: Bridge, handler: ToolHandler): ToolHandler {
             () => abortable(Promise.resolve(handler(...args)), extra.signal),
         );
         extra.signal.throwIfAborted();
-        const warning = await bridge.getVersionWarning(MCP_VERSION);
+        const warning = await optionalVersionWarning(bridge, extra.signal);
         if (warning && Array.isArray(result.content)) result.content.push({ type: 'text', text: warning });
         return result;
     };
