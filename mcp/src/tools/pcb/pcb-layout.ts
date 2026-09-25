@@ -286,6 +286,8 @@ async function runPcbLayout(
     context.signal.throwIfAborted();
 
     context.setStage('placing');
+    // The published backend reads this setting when it creates its subtree pool.
+    process.env.PCB_LAYOUT_SUBTREE_WORKERS ??= '4';
     const result = await generatePcbLayout({
         code, circuit, ...(existingPlacement ? { existingPlacement } : {}),
     }, {
