@@ -2092,7 +2092,8 @@ function requiresLegacyAssembler(circuit: CircuitAssembly): string | undefined {
     return undefined;
 }
 
-async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
+async function getAssemblyOffset(circuit: CircuitAssembly, signal?: AbortSignal): Promise<Offset> {
+    signal?.throwIfAborted();
     let root = circuit.blocks_rect?.find(block => block.name.includes('__v_root__'));
     if (!root) {
         eda.sys_Log.add(
@@ -2102,12 +2103,14 @@ async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
         root = { name: '__v_root__', description: '', x: 0, y: 0, width: 10, height: 10 };
     }
     let pageSize = await getPageSize();
+    signal?.throwIfAborted();
     let target = {
         x: (pageSize.width - root.width) / 2,
         y: ((pageSize.height - root.height) / 2) + root.height,
     };
     if (circuit.assembly_options?.auto_resize_page) {
         const page = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+        signal?.throwIfAborted();
         const currentDrawing = DRAWING_SHEETS.find(sheet =>
             page?.titleBlockData?.Symbol?.value === `Drawing-Symbol_${sheet.name}` &&
             pageSize.width === sheet.width && pageSize.height === sheet.height &&
@@ -2122,6 +2125,7 @@ async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
             if (selection.resized) {
                 const drawing = await eda.lib_Device.get(selection.sheet.deviceUuid, DRAWING_LIBRARY_UUID)
                     .catch(() => undefined);
+                signal?.throwIfAborted();
                 if (!drawing) {
                     usePlacement = false;
                     eda.sys_Log.add(`[source-assemble] Drawing symbol ${selection.sheet.name} is unavailable; keeping current page size`, ESYS_LogType.WARNING);
@@ -2129,23 +2133,42 @@ async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
                     // Drawing creation can refresh its editor context before the API promise resolves.
                     // Observe the resulting sheet instead of waiting indefinitely for that promise.
                     let createError: unknown;
-                    void eda.sch_PrimitiveComponent.create(drawing, 0, 0).catch(error => { createError = error; });
+                    let createFailed = false;
+                    void Promise.resolve().then(() => {
+                        signal?.throwIfAborted();
+                        return eda.sch_PrimitiveComponent.create(drawing, 0, 0);
+                    }).catch(error => { createError = error; createFailed = true; });
                     let updated = false;
                     for (let attempt = 0; attempt < 100; attempt++) {
+                        signal?.throwIfAborted();
                         await yieldToEventLoop();
+                        signal?.throwIfAborted();
                         const current = await eda.dmt_Schematic.getCurrentSchematicPageInfo().catch(() => undefined);
+                        signal?.throwIfAborted();
                         pageSize = await getPageSize();
+                        signal?.throwIfAborted();
                         updated = pageSize.width === selection.sheet.width &&
                             pageSize.height === selection.sheet.height &&
                             current?.titleBlockData?.Symbol?.value === `Drawing-Symbol_${selection.sheet.name}`;
                         if (updated) break;
-                        if (createError) throw createError;
+                        if (createFailed) break;
                         await new Promise(resolve => setTimeout(resolve, 100));
                     }
                     if (!updated) {
-                        throw new Error(`Drawing symbol ${selection.sheet.name} did not resize the page`);
+                        if (!createFailed) {
+                            throw new Error(`Drawing symbol ${selection.sheet.name} did not resize the page`);
+                        }
+                        usePlacement = false;
+                        // A completed failure may still have changed the page partially.
+                        // Place for the last observed size, not the requested one.
+                        target = {
+                            x: (pageSize.width - root.width) / 2,
+                            y: ((pageSize.height - root.height) / 2) + root.height,
+                        };
+                        eda.sys_Log.add(`[source-assemble] Drawing symbol ${selection.sheet.name} did not resize the page; keeping the observed page size: ${String(createError)}`, ESYS_LogType.WARNING);
+                    } else {
+                        eda.sys_Log.add(`[source-assemble] Resized schematic page to ${selection.sheet.name}`);
                     }
-                    eda.sys_Log.add(`[source-assemble] Resized schematic page to ${selection.sheet.name}`);
                 }
             }
             if (usePlacement) target = { x: selection.placement.x, y: selection.placement.y + root.height };
@@ -2157,6 +2180,7 @@ async function getAssemblyOffset(circuit: CircuitAssembly): Promise<Offset> {
     }
     if (target.x === 0) target.x = 10;
     if (target.y === 0) target.y = 10;
+    signal?.throwIfAborted();
     return searchFreePlaceV2(target, { w: root.width, h: root.height });
 }
 
@@ -2204,7 +2228,7 @@ export async function assembleCircuitSourceTask(
             }
         }
 
-        const offset = await step(() => getAssemblyOffset(workingCircuit));
+        const offset = await step(() => getAssemblyOffset(workingCircuit, signal));
         const plans = planComponents(workingCircuit, offset);
         await step(() => resolveMultipartSubPartNames(plans));
         let source = await step(() => eda.sys_FileManager.getDocumentSource());
