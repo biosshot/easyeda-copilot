@@ -287,7 +287,11 @@ async function runPcbLayout(
 
     context.setStage('placing');
     // The published backend reads this setting when it creates its subtree pool.
-    process.env.PCB_LAYOUT_SUBTREE_WORKERS ??= String(availableParallelism());
+    const workerLimit = Math.max(1, Math.min(8, Math.floor(availableParallelism() / 2)));
+    for (const name of ['PCB_LAYOUT_SUBTREE_WORKERS', 'PCB_BOARD_PACKER_THREADS', 'PCB_POST_PLACE_THREADS']) {
+        const configured = Number(process.env[name] ?? workerLimit);
+        process.env[name] = String(Number.isFinite(configured) ? Math.min(workerLimit, Math.max(0, Math.floor(configured))) : workerLimit);
+    }
     const result = await generatePcbLayout({
         code, circuit, ...(existingPlacement ? { existingPlacement } : {}),
     }, {
