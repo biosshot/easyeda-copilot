@@ -7,7 +7,7 @@ import { makePcbLayout as generatePcbLayout, getPcbComponentSizes } from "eda-co
 import type { BoardAssemble as BackendBoardAssemble } from "eda-copilot-backend/types";
 import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import { randomUUID } from "node:crypto";
-import { tmpdir } from "node:os";
+import { availableParallelism, tmpdir } from "node:os";
 import { join } from "node:path";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { svgToPng } from '../../utils/svg-to-png';
@@ -287,7 +287,7 @@ async function runPcbLayout(
 
     context.setStage('placing');
     // The published backend reads this setting when it creates its subtree pool.
-    process.env.PCB_LAYOUT_SUBTREE_WORKERS ??= '4';
+    process.env.PCB_LAYOUT_SUBTREE_WORKERS ??= String(availableParallelism());
     const result = await generatePcbLayout({
         code, circuit, ...(existingPlacement ? { existingPlacement } : {}),
     }, {
