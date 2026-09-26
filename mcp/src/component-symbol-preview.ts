@@ -89,17 +89,32 @@ export function renderComponentSymbol(dataStr: string) {
             const rad = pin.rotation * Math.PI / 180;
             const endX = pin.x + pin.length * Math.cos(rad);
             const endY = pin.y + pin.length * Math.sin(rad);
-            bounds[0] = Math.min(bounds[0], pin.x, endX);
-            bounds[1] = Math.min(bounds[1], pin.y, endY);
-            bounds[2] = Math.max(bounds[2], pin.x, endX);
-            bounds[3] = Math.max(bounds[3], pin.y, endY);
+            const labelX = pin.x - 10 * Math.cos(rad), labelY = pin.y - 10 * Math.sin(rad);
+            bounds[0] = Math.min(bounds[0], pin.x, endX, labelX);
+            bounds[1] = Math.min(bounds[1], pin.y, endY, labelY);
+            bounds[2] = Math.max(bounds[2], pin.x, endX, labelX);
+            bounds[3] = Math.max(bounds[3], pin.y, endY, labelY);
         }
-        const scale = Math.min(4, 1600 / Math.max(1, bounds[2] - bounds[0]));
-        const width = Math.ceil((bounds[2] - bounds[0]) * scale + 200);
-        const height = Math.ceil((bounds[3] - bounds[1]) * scale + 130);
+        let preferredScale = 4;
+        // Make room for adjacent label columns, including bottom/top pin rows.
+        for (const a of section.pins) for (const b of section.pins) {
+            if (a === b) continue;
+            const ax = a.x - 10 * Math.cos(a.rotation * Math.PI / 180);
+            const ay = a.y - 10 * Math.sin(a.rotation * Math.PI / 180);
+            const bx = b.x - 10 * Math.cos(b.rotation * Math.PI / 180);
+            const by = b.y - 10 * Math.sin(b.rotation * Math.PI / 180);
+            if (Math.abs(ay - by) < 1 && Math.abs(ax - bx) > 0) {
+                const labelWidth = (pin: Pin) => Math.max(pin.name.length * 7, pin.number.length * 8);
+                preferredScale = Math.max(preferredScale, ((labelWidth(a) + labelWidth(b)) / 2 + 12) / Math.abs(ax - bx));
+            }
+        }
+        const scale = Math.min(preferredScale, 1600 / Math.max(1, bounds[2] - bounds[0]), 1800 / Math.max(1, bounds[3] - bounds[1]));
+        const paddingX = Math.max(100, ...section.pins.map(pin => Math.max(pin.name.length * 7, pin.number.length * 8) / 2 + 20));
+        const width = Math.ceil((bounds[2] - bounds[0]) * scale + paddingX * 2);
+        const height = Math.ceil((bounds[3] - bounds[1]) * scale + 180);
         if (width > 2400 || height > 2400 || top + height > 6000) throw new Error('Symbol is too large to preview.');
         const point = (x: number, y: number): [number, number] =>
-            [Math.round((x - bounds[0]) * scale + 100), Math.round((bounds[3] - y) * scale + 80)];
+            [Math.round((x - bounds[0]) * scale + paddingX), Math.round((bounds[3] - y) * scale + 80)];
         const graphics: string[] = [];
         const labels: string[] = [];
         for (const row of section.rows) {
@@ -140,14 +155,10 @@ export function renderComponentSymbol(dataStr: string) {
                 const [x2, y2] = point(pin.x + pin.length * vx, pin.y + pin.length * vy);
                 graphics.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`);
                 const [nx, ny] = point(pin.x - 10 * vx, pin.y - 10 * vy);
-                labels.push(`<text x="${nx}" y="${ny}" text-anchor="middle" dominant-baseline="middle" fill="#a32617">${xml(pin.number)}</text>`);
+                labels.push(`<text x="${nx}" y="${ny + 10}" text-anchor="middle" dominant-baseline="middle" fill="#a32617">${xml(pin.number)}</text>`);
                 if (pin.name && pin.name !== pin.number) {
-                    // Names belong beside the external connection end, away from
-                    // symbol graphics and the pin lead itself.
-                    const horizontal = Math.abs(vx) >= Math.abs(vy);
-                    const tx = horizontal ? nx : nx + 20;
-                    const ty = horizontal ? ny - 20 : ny;
-                    labels.push(`<text x="${tx}" y="${ty}" text-anchor="${horizontal ? 'middle' : 'start'}" dominant-baseline="middle" font-size="12" fill="#35536f">${xml(pin.name)}</text>`);
+                    // Use the same two-line label for every pin orientation.
+                    labels.push(`<text x="${nx}" y="${ny - 10}" text-anchor="middle" dominant-baseline="middle" font-size="12" fill="#35536f">${xml(pin.name)}</text>`);
                 }
             } else if (typeof tag === 'string' && !['ATTR', 'DOCTYPE', 'HEAD', 'LINESTYLE', 'FONTSTYLE', 'PART'].includes(tag)) {
                 warnings.add(`Unsupported symbol primitive: ${tag}.`);

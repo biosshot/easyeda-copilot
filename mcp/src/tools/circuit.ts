@@ -91,7 +91,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
         'component_search',
         {
             title: 'Search EasyEDA Component',
-            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid. Components with only numeric or blank pin names have preview_recommended and a preview_image_path to a locally rendered PNG. Rendering failures leave the component in the result with preview_error.',
+            description: 'Search EasyEDA devices. library_uuid defaults to lcsc; use library_list to discover aliases. Search results include a ready-to-use part_uuid. Components with any ambiguous pin name may have preview_recommended and a local preview_image_path. Skip preview for one-pin parts, ordinary two-pin resistors, simple inductors and fuses, and parts with clear pin names. Capacitors are not exempt. Inspect only the selected uncertain candidate; do not review every result or repeat a completed review. Rendering failures leave the component in the result with preview_error.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true },
             inputSchema: z.object({
                 part_uuid: PartUuidStruct().nullable().optional(),

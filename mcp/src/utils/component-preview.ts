@@ -8,9 +8,15 @@ import { TEMP_DIR } from './dirs';
 import { svgToPng } from './svg-to-png';
 
 export function needsSymbolPreview(component: Component) {
-    return component.pins.length > 0 && component.pins.every(pin =>
-        !pin.name.trim() || /^\d+$/.test(pin.name.trim()),
-    );
+    if (component.pins.length <= 1) return false;
+    // Only ordinary two-terminal parts have interchangeable connections.
+    // Never exempt capacitors: their polarity is not reliably available here.
+    if (component.pins.length === 2 && /^(?:R|L|FB|F|FU)\?$/i.test(component.designatorPattern ?? '')
+        && !/potentiometer|variable|array|network|coupled|transformer/i.test(component.description)) return false;
+    return component.pins.some(pin => {
+        const name = pin.name.trim();
+        return !name || name === String(pin.pin_number).trim() || /^\d+$/.test(name);
+    });
 }
 
 export async function createComponentPreview(partUuid: Component['part_uuid']) {
