@@ -1,6 +1,6 @@
-English | [简体中文](README.zh-CN.md) | [Русский](README.ru.md)
+English | [简体中文](https://github.com/biosshot/easyeda-copilot/blob/main/README.zh-CN.md) | [Русский](https://github.com/biosshot/easyeda-copilot/blob/main/README.ru.md)
 
-# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
 
 MCP-based engineering automation for native EasyEDA Pro and JLCEDA documents.
 
@@ -25,7 +25,7 @@ EasyEDA Copilot connects MCP-capable AI agents to real schematic and PCB data. I
 </p>
 
 <p align="center">
-  <img src="docs/media/banner.gif" alt="EasyEDA Copilot creating and assembling an LDO schematic from a text specification">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/banner.gif" alt="EasyEDA Copilot creating and assembling an LDO schematic from a text specification">
 </p>
 <p align="center">
   <sub>Creating and assembling an LDO schematic from a text specification.</sub>
@@ -37,7 +37,12 @@ A complete RF design workflow inside EasyEDA Pro: schematic organization, pin-le
 
 The RF ports are positioned on opposite board edges, the amplifier chain is kept ordered, and the bias network is placed close to the MMIC. The resulting components, tracks, vias, and copper zones remain editable as native EasyEDA objects.
 
-https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735">Watch this video</a>
+</video>
+
+[Open video separately](https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735)
 
 ## More demonstrations
 
@@ -52,7 +57,12 @@ The workflow demonstrates multi-page schematic generation, functional placement,
 <details open>
 <summary><strong>Watch the ESP32-C3 workflow (69 seconds)</strong></summary>
 
-https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41">Watch this video</a>
+</video>
+
+[Open video separately](https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41)
 
 </details>
 
@@ -63,7 +73,12 @@ A dense four-layer microcontroller design demonstrating placement and routing ar
 <details open>
 <summary><strong>Watch the MIMXRT1011 workflow (128 seconds)</strong></summary>
 
-https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010">Watch this video</a>
+</video>
+
+[Open video separately](https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010)
 
 </details>
 
@@ -74,7 +89,12 @@ EasyEDA Copilot reads an existing schematic, identifies functional groups, saves
 <details open>
 <summary><strong>Watch schematic beautification (13 seconds)</strong></summary>
 
-https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3">Watch this video</a>
+</video>
+
+[Open video separately](https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3)
 
 </details>
 
@@ -100,8 +120,8 @@ In EasyEDA Pro:
 4. Enable `External Interactions`.
 
 <p align="center">
-  <a href="docs/media/params.png">
-    <img src="docs/media/params.png" alt="Enable External Interactions for EasyEDA Copilot" width="560">
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png">
+    <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png" alt="Enable External Interactions for EasyEDA Copilot" width="560">
   </a>
 </p>
 
@@ -119,7 +139,7 @@ Claude Code:
 claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-For generic MCP configuration and local builds, see the [MCP package documentation](mcp/README.md).
+For generic MCP configuration and local builds, see the [MCP package documentation](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.md).
 
 To use the standalone skill instead of MCP client configuration, build it from this repository. Skill archives are not published in Releases:
 
@@ -130,7 +150,7 @@ cd skill/scripts/runtime
 npm install --omit=dev
 ```
 
-Then install the generated `skill/` directory as described in the [skill installation guide](mcp/docs/install-guide.md).
+Then install the generated `skill/` directory as described in the [skill installation guide](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/install-guide.md).
 
 ### 3. Open a project
 
@@ -205,12 +225,12 @@ Long placement and routing operations return an operation ID. The MCP client can
 
 Detailed placement and routing references:
 
-- [PCB placement instructions](mcp/docs/pcb-layout/instructions.md)
-- [PCB placement DSL](mcp/docs/pcb-layout/dsl.ts)
-- [Mechanical validation](mcp/docs/pcb-layout/mechanical-validation.md)
-- [PCB routing instructions](mcp/docs/pcb-routing/instructions.md)
-- [PCB routing DSL](mcp/docs/pcb-routing/dsl.ts)
-- [Verification and recovery](mcp/docs/verification.md)
+- [PCB placement instructions](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/instructions.md)
+- [PCB placement DSL](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/dsl.ts)
+- [Mechanical validation](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/mechanical-validation.md)
+- [PCB routing instructions](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/instructions.md)
+- [PCB routing DSL](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/dsl.ts)
+- [Verification and recovery](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/verification.md)
 
 <details>
 <summary><strong>PCB comparison gallery: EasyEDA Copilot and Quilter</strong></summary>
@@ -220,34 +240,34 @@ Earlier side-by-side examples show the PCB results produced for the same RP2040,
 #### RP2040 board
 
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_top.png"><img src="docs/media/pcb-examples/rp2040_copilot_top.png" alt="RP2040 PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="docs/media/pcb-examples/rp2040_quiliter_top.png" alt="RP2040 PCB produced with Quilter, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png" alt="RP2040 PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png" alt="RP2040 PCB produced with Quilter, top layer" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="docs/media/pcb-examples/rp2040_copilot_bot.png" alt="RP2040 PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="RP2040 PCB produced with Quilter, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png" alt="RP2040 PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="RP2040 PCB produced with Quilter, bottom layer" width="48%"></a>
 </p>
 
 #### PICO Duck compact board
 
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="docs/media/pcb-examples/pico_duck_copilot_top.png" alt="PICO Duck PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="docs/media/pcb-examples/pico_duck_quilter_top.png" alt="PICO Duck PCB produced with Quilter, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png" alt="PICO Duck PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png" alt="PICO Duck PCB produced with Quilter, top layer" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="PICO Duck PCB produced with Quilter, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="PICO Duck PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="PICO Duck PCB produced with Quilter, bottom layer" width="48%"></a>
 </p>
 
 #### ESPower board
 
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_top.png"><img src="docs/media/pcb-examples/espower_copilot_top.png" alt="ESPower PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_top.png"><img src="docs/media/pcb-examples/espower_quiliter_top.png" alt="ESPower PCB produced with Quilter, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png" alt="ESPower PCB produced with EasyEDA Copilot, top layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png" alt="ESPower PCB produced with Quilter, top layer" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_bot.png"><img src="docs/media/pcb-examples/espower_copilot_bot.png" alt="ESPower PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_bot.png"><img src="docs/media/pcb-examples/espower_quiliter_bot.png" alt="ESPower PCB produced with Quilter, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png" alt="ESPower PCB produced with EasyEDA Copilot, bottom layer" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png" alt="ESPower PCB produced with Quilter, bottom layer" width="48%"></a>
 </p>
 
 </details>
@@ -286,7 +306,7 @@ New workflows and bug reports should use MCP unless the issue is specific to the
 The original interface provides an integrated chat workflow for schematic generation, circuit completion, component selection, and SPICE simulation. These demonstrations use the legacy interface; MCP remains the recommended integration for new agent workflows.
 
 <p align="center">
-  <img src="docs/media/main.png" alt="EasyEDA Copilot legacy built-in interface">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/main.png" alt="EasyEDA Copilot legacy built-in interface">
 </p>
 
 #### Circuit completion
@@ -294,8 +314,8 @@ The original interface provides an integrated chat workflow for schematic genera
 Read an existing schematic fragment, add the missing components, and complete its electrical connections.
 
 <p align="center">
-  <img src="docs/media/circuit-compl-ex1.gif" alt="Completing an existing EasyEDA schematic, example one" width="48%">
-  <img src="docs/media/circuit-compl-ex2.gif" alt="Completing an existing EasyEDA schematic, example two" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex1.gif" alt="Completing an existing EasyEDA schematic, example one" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex2.gif" alt="Completing an existing EasyEDA schematic, example two" width="48%">
 </p>
 
 #### Component selection
@@ -303,9 +323,9 @@ Read an existing schematic fragment, add the missing components, and complete it
 Search the LCSC catalog from engineering requirements and compare candidate parts without leaving the design workflow.
 
 <p align="center">
-  <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="Component selection from an engineering request" width="32%"></a>
-  <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="LCSC component search results in EasyEDA Copilot" width="32%"></a>
-  <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="Selecting a component candidate in EasyEDA Copilot" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png" alt="Component selection from an engineering request" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png" alt="LCSC component search results in EasyEDA Copilot" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png" alt="Selecting a component candidate in EasyEDA Copilot" width="32%"></a>
 </p>
 
 #### SPICE simulation
@@ -313,7 +333,7 @@ Search the LCSC catalog from engineering requirements and compare candidate part
 Run a SPICE simulation from the built-in interface and inspect the selected component models together with the resulting plots.
 
 <p align="center">
-  <img src="docs/media/spice.gif" alt="Running a SPICE simulation in the EasyEDA Copilot built-in interface">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/spice.gif" alt="Running a SPICE simulation in the EasyEDA Copilot built-in interface">
 </p>
 
 </details>
@@ -341,18 +361,18 @@ The standalone [`eda-copilot-backend`](https://github.com/biosshot/eda-copilot-b
 
 ## Documentation
 
-- [MCP package and client configuration](mcp/README.md)
-- [Complete MCP workflow](mcp/docs/workflow.md)
-- [Schematic workflow](mcp/docs/schematic/workflow.md)
-- [Schematic circuit modifications](mcp/docs/schematic/circuit-mod.md)
-- [Project and page management](mcp/docs/schematic/project-and-pages.md)
-- [Settings and permissions](docs/settings.md)
-- [Attaching circuits to an AI agent](docs/attaching-circuits.md)
-- [Assembling circuits from an AI agent](docs/assembling-circuits.md)
+- [MCP package and client configuration](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.md)
+- [Complete MCP workflow](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/workflow.md)
+- [Schematic workflow](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/workflow.md)
+- [Schematic circuit modifications](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/circuit-mod.md)
+- [Project and page management](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/project-and-pages.md)
+- [Settings and permissions](https://github.com/biosshot/easyeda-copilot/blob/main/docs/settings.md)
+- [Attaching circuits to an AI agent](https://github.com/biosshot/easyeda-copilot/blob/main/docs/attaching-circuits.md)
+- [Assembling circuits from an AI agent](https://github.com/biosshot/easyeda-copilot/blob/main/docs/assembling-circuits.md)
 
 ## Development
 
-Extension sources, UI, resources and build configuration live in `extension/`; `mcp/` and `shared/` are sibling workspaces. Root build and development commands remain the entry point. The `.eext` output is written to `build/dist/`. See [extension development](extension/README.md).
+Extension sources, UI, resources and build configuration live in `extension/`; `mcp/` and `shared/` are sibling workspaces. Root build and development commands remain the entry point. The `.eext` output is written to `build/dist/`. See [extension development](https://github.com/biosshot/easyeda-copilot/blob/main/extension/README.md).
 
 Build the extension and MCP package from source:
 
@@ -364,7 +384,7 @@ npm run build
 npm run check --workspace=mcp
 ```
 
-Published backend/router packages are installed by default. For joint development, dependency switching, and platform limits, see [local development](docs/local-development.md). Building the extension requires Node ^20.19.0 or >=22.12.0.
+Published backend/router packages are installed by default. For joint development, dependency switching, and platform limits, see [local development](https://github.com/biosshot/easyeda-copilot/blob/main/docs/local-development.md). Building the extension requires Node ^20.19.0 or >=22.12.0.
 
 The standalone PCB routing package is developed in [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 
@@ -378,4 +398,4 @@ Questions, bug reports, design examples, and contributions are welcome through [
 
 ## License
 
-EasyEDA Copilot is distributed under the [MIT License](LICENSE).
+EasyEDA Copilot is distributed under the [MIT License](https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE).

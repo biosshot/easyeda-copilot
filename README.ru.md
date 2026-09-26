@@ -1,6 +1,6 @@
-[English](README.md) | [简体中文](README.zh-CN.md) | Русский
+[English](https://github.com/biosshot/easyeda-copilot/blob/main/README.md) | [简体中文](https://github.com/biosshot/easyeda-copilot/blob/main/README.zh-CN.md) | Русский
 
-# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
 
 Инженерная автоматизация на базе MCP для нативных документов EasyEDA Pro и JLCEDA.
 
@@ -25,7 +25,7 @@ EasyEDA Copilot подключает ИИ-агентов с поддержкой
 </p>
 
 <p align="center">
-  <img src="docs/media/banner.gif" alt="EasyEDA Copilot создаёт и собирает схему LDO по текстовому техническому заданию">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/banner.gif" alt="EasyEDA Copilot создаёт и собирает схему LDO по текстовому техническому заданию">
 </p>
 <p align="center">
   <sub>Создание и сборка схемы LDO по текстовому техническому заданию.</sub>
@@ -37,7 +37,12 @@ EasyEDA Copilot подключает ИИ-агентов с поддержкой
 
 ВЧ-порты расположены на противоположных краях платы, каскад усилителя сохраняет заданный порядок, а цепь смещения размещена рядом с MMIC. Полученные компоненты, дорожки, переходные отверстия и медные зоны остаются редактируемыми нативными объектами EasyEDA.
 
-https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735">Посмотреть видео</a>
+</video>
+
+[Открыть видео отдельно](https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735)
 
 ## Другие демонстрации
 
@@ -52,7 +57,12 @@ https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
 <details open>
 <summary><strong>Смотреть цикл ESP32-C3 (69 секунд)</strong></summary>
 
-https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41">Посмотреть видео</a>
+</video>
+
+[Открыть видео отдельно](https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41)
 
 </details>
 
@@ -63,7 +73,12 @@ https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
 <details open>
 <summary><strong>Смотреть цикл MIMXRT1011 (128 секунд)</strong></summary>
 
-https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010">Посмотреть видео</a>
+</video>
+
+[Открыть видео отдельно](https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010)
 
 </details>
 
@@ -74,7 +89,12 @@ EasyEDA Copilot считывает существующую схему, опре
 <details open>
 <summary><strong>Смотреть реорганизацию схемы (13 секунд)</strong></summary>
 
-https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3">Посмотреть видео</a>
+</video>
+
+[Открыть видео отдельно](https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3)
 
 </details>
 
@@ -100,8 +120,8 @@ https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
 4. Включите `External Interactions`.
 
 <p align="center">
-  <a href="docs/media/params.png">
-    <img src="docs/media/params.png" alt="Включение External Interactions для EasyEDA Copilot" width="560">
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png">
+    <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png" alt="Включение External Interactions для EasyEDA Copilot" width="560">
   </a>
 </p>
 
@@ -119,7 +139,7 @@ Claude Code:
 claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-Общая конфигурация MCP и локальная сборка описаны в [документации пакета MCP](mcp/README.ru.md).
+Общая конфигурация MCP и локальная сборка описаны в [документации пакета MCP](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.ru.md).
 
 Чтобы использовать отдельный скилл вместо настройки MCP-клиента, соберите его из этого репозитория. Архивы скилла не публикуются в Releases:
 
@@ -130,7 +150,7 @@ cd skill/scripts/runtime
 npm install --omit=dev
 ```
 
-Затем установите сгенерированную папку `skill/` по [руководству по установке скилла](mcp/docs/install-guide.md).
+Затем установите сгенерированную папку `skill/` по [руководству по установке скилла](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/install-guide.md).
 
 ### 3. Откройте проект
 
@@ -205,12 +225,12 @@ EasyEDA Copilot использует полные контрольные точ�
 
 Подробные справочники по размещению и трассировке:
 
-- [Инструкции по размещению PCB](mcp/docs/pcb-layout/instructions.md)
-- [DSL размещения PCB](mcp/docs/pcb-layout/dsl.ts)
-- [Механическая проверка](mcp/docs/pcb-layout/mechanical-validation.md)
-- [Инструкции по трассировке PCB](mcp/docs/pcb-routing/instructions.md)
-- [DSL трассировки PCB](mcp/docs/pcb-routing/dsl.ts)
-- [Проверка и восстановление](mcp/docs/verification.md)
+- [Инструкции по размещению PCB](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/instructions.md)
+- [DSL размещения PCB](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/dsl.ts)
+- [Механическая проверка](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/mechanical-validation.md)
+- [Инструкции по трассировке PCB](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/instructions.md)
+- [DSL трассировки PCB](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/dsl.ts)
+- [Проверка и восстановление](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/verification.md)
 
 <details>
 <summary><strong>Сравнение PCB: EasyEDA Copilot и Quilter</strong></summary>
@@ -220,34 +240,34 @@ EasyEDA Copilot использует полные контрольные точ�
 #### Плата RP2040
 
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_top.png"><img src="docs/media/pcb-examples/rp2040_copilot_top.png" alt="Верхний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="docs/media/pcb-examples/rp2040_quiliter_top.png" alt="Верхний слой PCB RP2040, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png" alt="Верхний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png" alt="Верхний слой PCB RP2040, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="docs/media/pcb-examples/rp2040_copilot_bot.png" alt="Нижний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="Нижний слой PCB RP2040, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png" alt="Нижний слой PCB RP2040, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="Нижний слой PCB RP2040, созданной с Quilter" width="48%"></a>
 </p>
 
 #### Компактная плата PICO Duck
 
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="docs/media/pcb-examples/pico_duck_copilot_top.png" alt="Верхний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="docs/media/pcb-examples/pico_duck_quilter_top.png" alt="Верхний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png" alt="Верхний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png" alt="Верхний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="Нижний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="Нижний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="Нижний слой PCB PICO Duck, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="Нижний слой PCB PICO Duck, созданной с Quilter" width="48%"></a>
 </p>
 
 #### Плата ESPower
 
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_top.png"><img src="docs/media/pcb-examples/espower_copilot_top.png" alt="Верхний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_top.png"><img src="docs/media/pcb-examples/espower_quiliter_top.png" alt="Верхний слой PCB ESPower, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png" alt="Верхний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png" alt="Верхний слой PCB ESPower, созданной с Quilter" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_bot.png"><img src="docs/media/pcb-examples/espower_copilot_bot.png" alt="Нижний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_bot.png"><img src="docs/media/pcb-examples/espower_quiliter_bot.png" alt="Нижний слой PCB ESPower, созданной с Quilter" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png" alt="Нижний слой PCB ESPower, созданной с EasyEDA Copilot" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png" alt="Нижний слой PCB ESPower, созданной с Quilter" width="48%"></a>
 </p>
 
 </details>
@@ -286,7 +306,7 @@ MCP — основной и активно развиваемый интерфе
 Исходный интерфейс предоставляет встроенный чат для генерации схем, завершения цепей, подбора компонентов и SPICE-моделирования. В этих демонстрациях используется устаревший интерфейс; для новых процессов с ИИ-агентами рекомендуется MCP.
 
 <p align="center">
-  <img src="docs/media/main.png" alt="Устаревший встроенный интерфейс EasyEDA Copilot">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/main.png" alt="Устаревший встроенный интерфейс EasyEDA Copilot">
 </p>
 
 #### Завершение цепей
@@ -294,8 +314,8 @@ MCP — основной и активно развиваемый интерфе
 Чтение существующего фрагмента схемы, добавление недостающих компонентов и завершение электрических соединений.
 
 <p align="center">
-  <img src="docs/media/circuit-compl-ex1.gif" alt="Завершение существующей схемы EasyEDA, пример один" width="48%">
-  <img src="docs/media/circuit-compl-ex2.gif" alt="Завершение существующей схемы EasyEDA, пример два" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex1.gif" alt="Завершение существующей схемы EasyEDA, пример один" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex2.gif" alt="Завершение существующей схемы EasyEDA, пример два" width="48%">
 </p>
 
 #### Подбор компонентов
@@ -303,9 +323,9 @@ MCP — основной и активно развиваемый интерфе
 Поиск в каталоге LCSC по инженерным требованиям и сравнение подходящих деталей без выхода из процесса разработки.
 
 <p align="center">
-  <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="Подбор компонента по инженерному запросу" width="32%"></a>
-  <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="Результаты поиска компонентов LCSC в EasyEDA Copilot" width="32%"></a>
-  <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="Выбор подходящего компонента в EasyEDA Copilot" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png" alt="Подбор компонента по инженерному запросу" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png" alt="Результаты поиска компонентов LCSC в EasyEDA Copilot" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png" alt="Выбор подходящего компонента в EasyEDA Copilot" width="32%"></a>
 </p>
 
 #### SPICE-моделирование
@@ -313,7 +333,7 @@ MCP — основной и активно развиваемый интерфе
 Запуск SPICE-моделирования из встроенного интерфейса и анализ выбранных моделей компонентов вместе с полученными графиками.
 
 <p align="center">
-  <img src="docs/media/spice.gif" alt="Запуск SPICE-моделирования во встроенном интерфейсе EasyEDA Copilot">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/spice.gif" alt="Запуск SPICE-моделирования во встроенном интерфейсе EasyEDA Copilot">
 </p>
 
 </details>
@@ -341,18 +361,18 @@ Codex / Claude Code / другой MCP-клиент
 
 ## Документация
 
-- [Пакет MCP и настройка клиентов](mcp/README.ru.md)
-- [Полный рабочий процесс MCP](mcp/docs/workflow.md)
-- [Работа со схемами](mcp/docs/schematic/workflow.md)
-- [Изменение схемных цепей](mcp/docs/schematic/circuit-mod.md)
-- [Управление проектами и страницами](mcp/docs/schematic/project-and-pages.md)
-- [Настройки и разрешения](docs/settings.md)
-- [Передача цепей ИИ-агенту](docs/attaching-circuits.md)
-- [Сборка цепей из ИИ-агента](docs/assembling-circuits.md)
+- [Пакет MCP и настройка клиентов](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.ru.md)
+- [Полный рабочий процесс MCP](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/workflow.md)
+- [Работа со схемами](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/workflow.md)
+- [Изменение схемных цепей](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/circuit-mod.md)
+- [Управление проектами и страницами](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/project-and-pages.md)
+- [Настройки и разрешения](https://github.com/biosshot/easyeda-copilot/blob/main/docs/settings.md)
+- [Передача цепей ИИ-агенту](https://github.com/biosshot/easyeda-copilot/blob/main/docs/attaching-circuits.md)
+- [Сборка цепей из ИИ-агента](https://github.com/biosshot/easyeda-copilot/blob/main/docs/assembling-circuits.md)
 
 ## Разработка
 
-Код расширения, UI, ресурсы и сборочные настройки находятся в `extension/`; `mcp/` и `shared/` — соседние workspace. Команды сборки и разработки запускаются из корня, `.eext` записывается в `build/dist/`. Подробнее: [разработка расширения](extension/README.md).
+Код расширения, UI, ресурсы и сборочные настройки находятся в `extension/`; `mcp/` и `shared/` — соседние workspace. Команды сборки и разработки запускаются из корня, `.eext` записывается в `build/dist/`. Подробнее: [разработка расширения](https://github.com/biosshot/easyeda-copilot/blob/main/extension/README.md).
 
 Сборка расширения и пакета MCP из исходного кода:
 
@@ -364,7 +384,7 @@ npm run build
 npm run check --workspace=mcp
 ```
 
-По умолчанию устанавливаются опубликованные backend/router. Совместная разработка, переключение зависимостей и границы поддержки платформ описаны в [руководстве](docs/local-development.md). Для сборки расширения нужен Node ^20.19.0 или >=22.12.0.
+По умолчанию устанавливаются опубликованные backend/router. Совместная разработка, переключение зависимостей и границы поддержки платформ описаны в [руководстве](https://github.com/biosshot/easyeda-copilot/blob/main/docs/local-development.md). Для сборки расширения нужен Node ^20.19.0 или >=22.12.0.
 
 Отдельный пакет трассировки PCB разрабатывается в репозитории [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router).
 
@@ -378,4 +398,4 @@ npm run check --workspace=mcp
 
 ## Лицензия
 
-EasyEDA Copilot распространяется по [лицензии MIT](LICENSE).
+EasyEDA Copilot распространяется по [лицензии MIT](https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE).

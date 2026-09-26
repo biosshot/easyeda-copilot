@@ -1,6 +1,6 @@
-[English](README.md) | 简体中文 | [Русский](README.ru.md)
+[English](https://github.com/biosshot/easyeda-copilot/blob/main/README.md) | 简体中文 | [Русский](https://github.com/biosshot/easyeda-copilot/blob/main/README.ru.md)
 
-# <img src="extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
+# <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/extension/images/logo.png" alt="" width="42"> EasyEDA Copilot
 
 基于 MCP 的工程自动化工具，直接操作 EasyEDA Pro 和嘉立创 EDA 原生文档。
 
@@ -25,7 +25,7 @@ EasyEDA Copilot 将支持 MCP 的 AI 智能体连接到真实的原理图和 PCB
 </p>
 
 <p align="center">
-  <img src="docs/media/banner.gif" alt="EasyEDA Copilot 根据文本规格创建并组装 LDO 原理图">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/banner.gif" alt="EasyEDA Copilot 根据文本规格创建并组装 LDO 原理图">
 </p>
 <p align="center">
   <sub>根据文本规格创建并组装 LDO 原理图。</sub>
@@ -37,7 +37,12 @@ EasyEDA Copilot 将支持 MCP 的 AI 智能体连接到真实的原理图和 PCB
 
 射频端口布置在电路板相对的两侧边缘，放大器链路保持有序，偏置网络靠近 MMIC 放置。生成的元器件、走线、过孔和覆铜区域均保留为可编辑的 EasyEDA 原生对象。
 
-https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735">观看视频</a>
+</video>
+
+[单独打开视频](https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735)
 
 ## 更多演示
 
@@ -52,7 +57,12 @@ https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735
 <details open>
 <summary><strong>观看 ESP32-C3 工作流（69 秒）</strong></summary>
 
-https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41">观看视频</a>
+</video>
+
+[单独打开视频](https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41)
 
 </details>
 
@@ -63,7 +73,12 @@ https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41
 <details open>
 <summary><strong>观看 MIMXRT1011 工作流（128 秒）</strong></summary>
 
-https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010">观看视频</a>
+</video>
+
+[单独打开视频](https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010)
 
 </details>
 
@@ -74,7 +89,12 @@ EasyEDA Copilot 读取现有原理图，识别功能分组，保存文档检查�
 <details open>
 <summary><strong>观看原理图整理过程（13 秒）</strong></summary>
 
-https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
+<video controls preload="metadata" width="100%">
+  <source src="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3" type="video/mp4">
+  <a href="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3">观看视频</a>
+</video>
+
+[单独打开视频](https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3)
 
 </details>
 
@@ -100,8 +120,8 @@ https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3
 4. 启用 `External Interactions`。
 
 <p align="center">
-  <a href="docs/media/params.png">
-    <img src="docs/media/params.png" alt="为 EasyEDA Copilot 启用 External Interactions" width="560">
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png">
+    <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/params.png" alt="为 EasyEDA Copilot 启用 External Interactions" width="560">
   </a>
 </p>
 
@@ -119,7 +139,7 @@ Claude Code：
 claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp
 ```
 
-通用 MCP 配置和本地构建说明请参阅 [MCP 软件包文档](mcp/README.zh-CN.md)。
+通用 MCP 配置和本地构建说明请参阅 [MCP 软件包文档](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.zh-CN.md)。
 
 若要使用独立技能而不是配置 MCP 客户端，请从此仓库构建。Releases 不发布技能压缩包：
 
@@ -130,7 +150,7 @@ cd skill/scripts/runtime
 npm install --omit=dev
 ```
 
-然后按照[技能安装指南](mcp/docs/install-guide.md)安装生成的 `skill/` 目录。
+然后按照[技能安装指南](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/install-guide.md)安装生成的 `skill/` 目录。
 
 ### 3. 打开项目
 
@@ -205,12 +225,12 @@ PCB 布局、布线、检查和 DRC 通过 MCP 接口提供。
 
 布局和布线的详细参考资料：
 
-- [PCB 布局说明](mcp/docs/pcb-layout/instructions.md)
-- [PCB 布局 DSL](mcp/docs/pcb-layout/dsl.ts)
-- [机械验证](mcp/docs/pcb-layout/mechanical-validation.md)
-- [PCB 布线说明](mcp/docs/pcb-routing/instructions.md)
-- [PCB 布线 DSL](mcp/docs/pcb-routing/dsl.ts)
-- [验证与恢复](mcp/docs/verification.md)
+- [PCB 布局说明](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/instructions.md)
+- [PCB 布局 DSL](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/dsl.ts)
+- [机械验证](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/mechanical-validation.md)
+- [PCB 布线说明](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/instructions.md)
+- [PCB 布线 DSL](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/dsl.ts)
+- [验证与恢复](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/verification.md)
 
 <details>
 <summary><strong>PCB 对比图库：EasyEDA Copilot 与 Quilter</strong></summary>
@@ -220,34 +240,34 @@ PCB 布局、布线、检查和 DRC 通过 MCP 接口提供。
 #### RP2040 电路板
 
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_top.png"><img src="docs/media/pcb-examples/rp2040_copilot_top.png" alt="由 EasyEDA Copilot 生成的 RP2040 PCB 顶层" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="docs/media/pcb-examples/rp2040_quiliter_top.png" alt="由 Quilter 生成的 RP2040 PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_top.png" alt="由 EasyEDA Copilot 生成的 RP2040 PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_top.png" alt="由 Quilter 生成的 RP2040 PCB 顶层" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="docs/media/pcb-examples/rp2040_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 RP2040 PCB 底层" width="48%"></a>
-  <a href="docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="由 Quilter 生成的 RP2040 PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 RP2040 PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/rp2040_quiliter_bot.png" alt="由 Quilter 生成的 RP2040 PCB 底层" width="48%"></a>
 </p>
 
 #### PICO Duck 紧凑型电路板
 
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="docs/media/pcb-examples/pico_duck_copilot_top.png" alt="由 EasyEDA Copilot 生成的 PICO Duck PCB 顶层" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="docs/media/pcb-examples/pico_duck_quilter_top.png" alt="由 Quilter 生成的 PICO Duck PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_top.png" alt="由 EasyEDA Copilot 生成的 PICO Duck PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_top.png" alt="由 Quilter 生成的 PICO Duck PCB 顶层" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 PICO Duck PCB 底层" width="48%"></a>
-  <a href="docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="由 Quilter 生成的 PICO Duck PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 PICO Duck PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/pico_duck_quilter_bot.png" alt="由 Quilter 生成的 PICO Duck PCB 底层" width="48%"></a>
 </p>
 
 #### ESPower 电路板
 
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_top.png"><img src="docs/media/pcb-examples/espower_copilot_top.png" alt="由 EasyEDA Copilot 生成的 ESPower PCB 顶层" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_top.png"><img src="docs/media/pcb-examples/espower_quiliter_top.png" alt="由 Quilter 生成的 ESPower PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_top.png" alt="由 EasyEDA Copilot 生成的 ESPower PCB 顶层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_top.png" alt="由 Quilter 生成的 ESPower PCB 顶层" width="48%"></a>
 </p>
 <p align="center">
-  <a href="docs/media/pcb-examples/espower_copilot_bot.png"><img src="docs/media/pcb-examples/espower_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 ESPower PCB 底层" width="48%"></a>
-  <a href="docs/media/pcb-examples/espower_quiliter_bot.png"><img src="docs/media/pcb-examples/espower_quiliter_bot.png" alt="由 Quilter 生成的 ESPower PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_copilot_bot.png" alt="由 EasyEDA Copilot 生成的 ESPower PCB 底层" width="48%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/pcb-examples/espower_quiliter_bot.png" alt="由 Quilter 生成的 ESPower PCB 底层" width="48%"></a>
 </p>
 
 </details>
@@ -286,7 +306,7 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 原有界面提供集成聊天工作流，可用于原理图生成、电路补全、元器件选择和 SPICE 仿真。以下演示使用旧版界面；对于新的智能体工作流，MCP 仍是推荐的集成方式。
 
 <p align="center">
-  <img src="docs/media/main.png" alt="EasyEDA Copilot 旧版内置界面">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/main.png" alt="EasyEDA Copilot 旧版内置界面">
 </p>
 
 #### 电路补全
@@ -294,8 +314,8 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 读取现有原理图片段，添加缺少的元器件，并完成其电气连接。
 
 <p align="center">
-  <img src="docs/media/circuit-compl-ex1.gif" alt="补全现有 EasyEDA 原理图，示例一" width="48%">
-  <img src="docs/media/circuit-compl-ex2.gif" alt="补全现有 EasyEDA 原理图，示例二" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex1.gif" alt="补全现有 EasyEDA 原理图，示例一" width="48%">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/circuit-compl-ex2.gif" alt="补全现有 EasyEDA 原理图，示例二" width="48%">
 </p>
 
 #### 元器件选择
@@ -303,9 +323,9 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 根据工程要求搜索 LCSC 目录并比较候选元器件，无需离开设计工作流。
 
 <p align="center">
-  <a href="docs/media/comp-search-ex1.png"><img src="docs/media/comp-search-ex1.png" alt="根据工程要求选择元器件" width="32%"></a>
-  <a href="docs/media/comp-search-ex2.png"><img src="docs/media/comp-search-ex2.png" alt="EasyEDA Copilot 中的 LCSC 元器件搜索结果" width="32%"></a>
-  <a href="docs/media/comp-search-ex3.png"><img src="docs/media/comp-search-ex3.png" alt="在 EasyEDA Copilot 中选择候选元器件" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex1.png" alt="根据工程要求选择元器件" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex2.png" alt="EasyEDA Copilot 中的 LCSC 元器件搜索结果" width="32%"></a>
+  <a href="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png"><img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/comp-search-ex3.png" alt="在 EasyEDA Copilot 中选择候选元器件" width="32%"></a>
 </p>
 
 #### SPICE 仿真
@@ -313,7 +333,7 @@ MCP 是 EasyEDA Copilot 的主要界面，也是当前积极开发的方向。�
 从内置界面运行 SPICE 仿真，并结合生成的曲线检查所选元器件模型。
 
 <p align="center">
-  <img src="docs/media/spice.gif" alt="在 EasyEDA Copilot 内置界面中运行 SPICE 仿真">
+  <img src="https://raw.githubusercontent.com/biosshot/easyeda-copilot/main/docs/media/spice.gif" alt="在 EasyEDA Copilot 内置界面中运行 SPICE 仿真">
 </p>
 
 </details>
@@ -341,18 +361,18 @@ EasyEDA 扩展、MCP 桥接服务、文档应用逻辑、检查点系统、设�
 
 ## 文档
 
-- [MCP 软件包与客户端配置](mcp/README.zh-CN.md)
-- [完整 MCP 工作流](mcp/docs/workflow.md)
-- [原理图工作流](mcp/docs/schematic/workflow.md)
-- [原理图电路修改](mcp/docs/schematic/circuit-mod.md)
-- [项目和页面管理](mcp/docs/schematic/project-and-pages.md)
-- [设置与权限](docs/settings.md)
-- [将电路附加到 AI 智能体](docs/attaching-circuits.md)
-- [从 AI 智能体组装电路](docs/assembling-circuits.md)
+- [MCP 软件包与客户端配置](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.zh-CN.md)
+- [完整 MCP 工作流](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/workflow.md)
+- [原理图工作流](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/workflow.md)
+- [原理图电路修改](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/circuit-mod.md)
+- [项目和页面管理](https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/project-and-pages.md)
+- [设置与权限](https://github.com/biosshot/easyeda-copilot/blob/main/docs/settings.md)
+- [将电路附加到 AI 智能体](https://github.com/biosshot/easyeda-copilot/blob/main/docs/attaching-circuits.md)
+- [从 AI 智能体组装电路](https://github.com/biosshot/easyeda-copilot/blob/main/docs/assembling-circuits.md)
 
 ## 开发
 
-扩展代码、界面、资源和构建配置位于 `extension/`，与 `mcp/`、`shared/` 工作区并列。开发和构建命令从仓库根目录运行，`.eext` 输出到 `build/dist/`。参见[扩展开发](extension/README.md)。
+扩展代码、界面、资源和构建配置位于 `extension/`，与 `mcp/`、`shared/` 工作区并列。开发和构建命令从仓库根目录运行，`.eext` 输出到 `build/dist/`。参见[扩展开发](https://github.com/biosshot/easyeda-copilot/blob/main/extension/README.md)。
 
 从源代码构建扩展和 MCP 软件包：
 
@@ -364,7 +384,7 @@ npm run build
 npm run check --workspace=mcp
 ```
 
-默认安装已发布的 backend/router 软件包。联合开发、依赖切换及平台支持范围见[开发指南](docs/local-development.md)。构建扩展需要 Node ^20.19.0 或 >=22.12.0。
+默认安装已发布的 backend/router 软件包。联合开发、依赖切换及平台支持范围见[开发指南](https://github.com/biosshot/easyeda-copilot/blob/main/docs/local-development.md)。构建扩展需要 Node ^20.19.0 或 >=22.12.0。
 
 独立的 PCB 布线软件包在 [`biosshot/eda-copilot-router`](https://github.com/biosshot/eda-copilot-router) 中开发。
 
@@ -378,4 +398,4 @@ npm run check --workspace=mcp
 
 ## 许可证
 
-EasyEDA Copilot 根据 [MIT 许可证](LICENSE)发布。
+EasyEDA Copilot 根据 [MIT 许可证](https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE)发布。
