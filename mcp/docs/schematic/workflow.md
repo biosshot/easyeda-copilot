@@ -17,7 +17,7 @@ For local context missing from the netlist, use [schematic groups](groups.md): `
    - recommended after completing a new AI-generated page;
    - requires every component on the current page, grouped exactly once.
    - Keep `draw_block_box: false` unless the user wants Copilot-managed functional boxes and labels.
-   - `auto_resize_page` defaults to `true`: retain the current drawing sheet when the layout clears its border and title block, or grow to the smallest fitting standard sheet. Set it to `false` to keep the current sheet size.
+   - `auto_resize_page` defaults to `true`: shrink or grow a standard drawing sheet to the smallest fitting format (A4–A0), leaving room for its border and title block. Custom or inconsistent drawing sheets retain their size. Set it to `false` to keep the current sheet size.
 6. Follow [schematic verification](verification.md); reread the page when exact connectivity readback is needed.
 7. Report the affected page and stop at the schematic boundary.
 

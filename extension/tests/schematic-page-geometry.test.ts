@@ -39,8 +39,20 @@ test('uses an already large sheet and respects hidden title blocks', () => {
 
 test('never shrinks a custom sheet and reports an impossible layout', () => {
     const custom = { width: 2000, height: 1400 };
+    assert.equal(selectDrawingSheet(custom, 400, 300)?.resized, false);
     assert.equal(selectDrawingSheet(custom, 2100, 1200)?.sheet.width, DRAWING_SHEETS[2].width);
     assert.equal(selectDrawingSheet(a4, 5000, 3500), undefined);
+});
+
+test('shrinks a large standard sheet to the smallest fitting format', () => {
+    const selected = selectDrawingSheet(DRAWING_SHEETS[4], 400, 300);
+    assert.equal(selected?.resized, true);
+    assert.equal(selected?.sheet.width, a4.width);
+    assert.equal(selectDrawingSheet(DRAWING_SHEETS[4], 1030, 685)?.sheet.width, a3.width);
+    const hidden = selectDrawingSheet({ ...a3, showTitleBlock: false }, 1030, 685);
+    assert.equal(hidden?.resized, true);
+    assert.equal(hidden?.sheet.width, a4.width);
+    assert.equal(selectDrawingSheet(a4, 400, 300)?.resized, false);
 });
 
 test('free-space estimate uses the enclosing circuit rectangle and rejects title-block collisions', () => {

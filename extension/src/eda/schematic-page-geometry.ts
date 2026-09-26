@@ -109,13 +109,21 @@ type SelectedSheet =
     | { sheet: (typeof DRAWING_SHEETS)[number]; placement: { x: number; y: number }; resized: true };
 
 export function selectDrawingSheet(current: SheetSize, width: number, height: number): SelectedSheet | undefined {
-    const placement = findSheetPlacement(current, width, height);
-    if (placement) return { sheet: current, placement, resized: false };
+    const standard = DRAWING_SHEETS.some(sheet => sheet.width === current.width && sheet.height === current.height);
+    if (!standard) {
+        const placement = findSheetPlacement(current, width, height);
+        if (placement) return { sheet: current, placement, resized: false };
+    }
     for (const sheet of DRAWING_SHEETS) {
-        if (sheet.width < current.width || sheet.height < current.height) continue;
+        if (!standard && (sheet.width < current.width || sheet.height < current.height)) continue;
         const candidate = { ...sheet, showTitleBlock: current.showTitleBlock };
         const nextPlacement = findSheetPlacement(candidate, width, height);
-        if (nextPlacement) return { sheet, placement: nextPlacement, resized: true };
+        if (nextPlacement) {
+            if (sheet.width === current.width && sheet.height === current.height) {
+                return { sheet: current, placement: nextPlacement, resized: false };
+            }
+            return { sheet, placement: nextPlacement, resized: true };
+        }
     }
     return undefined;
 }

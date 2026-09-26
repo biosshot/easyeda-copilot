@@ -228,7 +228,7 @@ export function registerCircuitTools(server: McpServer, bridge: Bridge) {
                 draw_block_box: z.boolean().default(false)
                     .describe('Draw Copilot-managed boxes and labels around functional blocks.'),
                 auto_resize_page: z.boolean().default(true)
-                    .describe('Grow the schematic drawing sheet when the layout does not fit inside its frame and title block.'),
+                    .describe('Shrink or grow the schematic drawing sheet to the smallest standard format that fits the layout inside its frame and title block.'),
             }),
         },
         managedMutationHandler(bridge, 'beautify_schematic_on_current_page', async ({ blocks, draw_block_box, auto_resize_page }) => {

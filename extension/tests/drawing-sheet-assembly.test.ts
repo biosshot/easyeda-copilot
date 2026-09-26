@@ -40,11 +40,39 @@ function fixture() {
     });
     const circuit = { blocks_rect: [{ name: '__v_root__', width: 1030, height: 685 }], assembly_options: { auto_resize_page: true } };
     return {
-        controller, eda, events, warnings,
+        controller, eda, events, warnings, circuit,
         getOffset: () => exports.assemblyOffsetForTest(circuit, controller.signal),
         changeSheet: (width: number, height: number, name: string) => { size = { width, height }; symbol = name; },
     };
 }
+
+test('assembly replaces a large drawing sheet with the smallest fitting format', async () => {
+    const f = fixture();
+    const a0 = DRAWING_SHEETS[4];
+    const a3 = DRAWING_SHEETS[1];
+    f.changeSheet(a0.width, a0.height, a0.name);
+    f.eda.sch_PrimitiveComponent.create = async () => {
+        f.events.push('create');
+        f.changeSheet(a3.width, a3.height, a3.name);
+    };
+    const result = await f.getOffset();
+    const selected = selectDrawingSheet(a0, 1030, 685)!;
+    assert.deepEqual(f.events, ['create']);
+    assert.equal(result.x, selected.placement.x);
+    assert.equal(result.y, selected.placement.y + 685);
+    assert.ok(f.warnings.some(message => message.includes('Resized schematic page to A3')));
+});
+
+test('disabled automatic resizing keeps a large sheet', async () => {
+    const f = fixture();
+    const a0 = DRAWING_SHEETS[4];
+    f.changeSheet(a0.width, a0.height, a0.name);
+    f.circuit.assembly_options.auto_resize_page = false;
+    const result = await f.getOffset();
+    assert.deepEqual(f.events, []);
+    assert.equal(result.x, (a0.width - 1030) / 2);
+    assert.equal(result.y, (a0.height - 685) / 2 + 685);
+});
 
 test('completed drawing creation failure continues using the observed sheet dimensions', async () => {
     const f = fixture();
