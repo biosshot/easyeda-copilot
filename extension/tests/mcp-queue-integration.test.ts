@@ -8,6 +8,7 @@ import { CheckpointScopes } from '../src/eda/checkpoint-scopes';
 import { withTimeout } from '../src/timeout';
 
 const src = join(__dirname, '../src');
+const extensionVersion = JSON.parse(readFileSync(join(__dirname, '../extension.json'), 'utf8')).version;
 const runtime = buildSync({
     stdin: {
         contents: readFileSync(join(src, 'mcp-client.ts'), 'utf8')
@@ -65,7 +66,7 @@ test('heartbeat metadata refresh updates the project name only when it changes',
     await f.refreshMetadata(f.state.connectionEpoch);
     assert.equal(f.events.at(-1).event, 'easyeda:hello');
     assert.equal(f.events.at(-1).body.projectName, 'Project A');
-    assert.equal(f.events.at(-1).body.extensionVersion, '1.2.0');
+    assert.equal(f.events.at(-1).body.extensionVersion, extensionVersion);
 
     const sent = f.events.length;
     await f.refreshMetadata(f.state.connectionEpoch);

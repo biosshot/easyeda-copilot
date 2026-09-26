@@ -122,10 +122,13 @@ try {
   assert.deepEqual((await call('library_list', {})).libraries.map(library => library.libraryUuid), ['lcsc', 'user']);
   const search = await client.callTool({ name: 'component_search', arguments: { MPN: 'TEST-1K' } });
   const searchedComponent = JSON.parse(search.content[0].text).components[0];
-  assert.equal(searchedComponent.preview_recommended, true);
-  const componentPng = await readFile(searchedComponent.preview_image_path);
+  assert.equal('preview_recommended' in searchedComponent, false, 'Ordinary resistors do not need automatic pin review');
+  assert.equal('preview_image_path' in searchedComponent, false);
+  const capacitor = await call('component_search', { MPN: 'CAPACITOR' });
+  assert.equal(capacitor.components[0].preview_recommended, true, 'Ambiguous capacitors still require review');
+  const componentPng = await readFile(capacitor.components[0].preview_image_path);
   assert.deepEqual([...componentPng].slice(0, 8), [137, 80, 78, 71, 13, 10, 26, 10]);
-  const componentSvg = await readFile(searchedComponent.preview_image_path.replace(/\.png$/, '.svg'), 'utf8');
+  const componentSvg = await readFile(capacitor.components[0].preview_image_path.replace(/\.png$/, '.svg'), 'utf8');
   const [, svgWidth, svgHeight] = /<svg[^>]*width="(\d+)" height="(\d+)"/.exec(componentSvg);
   assert.ok(componentPng.readUInt32BE(16) <= Math.min(Number(svgWidth), 1024), 'Component PNG is not enlarged beyond the SVG width');
   assert.ok(componentPng.readUInt32BE(20) <= Math.min(Number(svgHeight), 1200), 'Component PNG is not enlarged beyond the SVG height');
@@ -151,7 +154,9 @@ try {
   const multiple = await client.callTool({ name: 'component_search', arguments: { MPN: 'MULTI' } });
   const multipleComponents = JSON.parse(multiple.content[0].text).components;
   assert.equal(multipleComponents.length, 2);
-  assert.ok(multipleComponents.every(component => component.preview_recommended && component.preview_image_path));
+  assert.equal('preview_recommended' in multipleComponents[0], false, 'Mixed search still skips ordinary resistors');
+  assert.equal(multipleComponents[1].preview_recommended, true);
+  assert.ok(multipleComponents[1].preview_image_path, 'Ambiguous relay in the same search gets a preview');
   assert.equal(multiple.content.some(item => item.type === 'image'), false);
   const resolved = await client.callTool({ name: 'component_search', arguments: { part_uuid: PART_UUID } });
   assert.equal(JSON.parse(resolved.content[0].text).bestComponent.part_uuid, PART_UUID);

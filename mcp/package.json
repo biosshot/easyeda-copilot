@@ -1,6 +1,6 @@
 {
   "name": "easyeda-copilot-mcp",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "mcpName": "io.github.biosshot/easyeda-copilot",
   "description": "MCP server for EasyEDA Copilot",
   "type": "module",
@@ -46,14 +46,16 @@
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
     "inspect": "npm run build && npx @modelcontextprotocol/inspector node dist/index.js",
-    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && npm run test:tool-results && npm run test:tool-handler && npm run test:api-docs && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && npm run test:cancellation && node scripts/check-project-tools.mjs && npm run test:cli && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-sdk.mjs && node scripts/check-sdk-broker.mjs && node scripts/check-sdk-geometry.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
+    "check": "npm run build && npm run typecheck && npm run test:docs && npm run test:checkpoints && npm run test:spice && npm run test:datasheets && npm run test:tool-results && npm run test:tool-handler && npm run test:api-docs && npm run test:component-preview && npm run test:other-page-signals && node scripts/check-routing-adapter.mjs && node scripts/check-operation-manager.mjs && npm run test:cancellation && node scripts/check-project-tools.mjs && npm run test:cli && node scripts/check-local-backend.mjs && node scripts/check-execute-js.mjs && node scripts/check-sdk.mjs && node scripts/check-sdk-broker.mjs && node scripts/check-sdk-geometry.mjs && node scripts/check-pcb-inspection.mjs && node scripts/check-pcb-refill-example.mjs && node scripts/check-pcb-preview.mjs",
     "prepack": "node ../scripts/check-release.mjs && npm run build",
     "start": "node dist/index.js",
-    "test:package": "node scripts/check-package.mjs"
+    "test:package": "node scripts/check-package.mjs",
+    "test:component-preview": "node --import tsx --test tests/component-preview.test.ts",
+    "test:other-page-signals": "node --import tsx --test tests/other-page-signals.test.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "eda-copilot-backend": "0.3.4",
+    "eda-copilot-backend": "0.3.5",
     "eda-copilot-router": "0.3.2",
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",

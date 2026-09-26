@@ -8,6 +8,7 @@ export const RELAY_SYMBOL_UUID = '55555555555555555555555555555555';
 export const PREVIEW_FAIL_UUID = '66666666666666666666666666666666';
 export const NAMED_UUID = '77777777777777777777777777777777';
 export const NAMED_SYMBOL_UUID = '88888888888888888888888888888888';
+export const CAPACITOR_UUID = '99999999999999999999999999999999';
 const footprintData = [
   ['DOCTYPE', 'FOOTPRINT'], ['ATTR', 0, 0, 'Name', 'R_0603'],
   ...[-27.56, 27.56].map((x, index) => ['PAD', 'pad' + index, 0, '', 1, String(index + 1), x, 0, 0, null, ['RECT', 23.62, 31.5, 0], [], 0, 0, 0, 1, 0, null, null, null, null, 0]),
@@ -86,9 +87,14 @@ export function installEasyEdaFixture() {
       }];
       if (keyword === 'NAMED') {
         productList[0].device_info.uuid = NAMED_UUID;
+        productList[0].device_info.attributes.Designator = 'C?';
         productList[0].device_info.symbol_info.dataStr = namedSymbolData;
       }
-      if (keyword === 'PREVIEW_FAIL') productList[0].device_info.uuid = PREVIEW_FAIL_UUID;
+      if (keyword === 'CAPACITOR' || keyword === 'PREVIEW_FAIL') {
+        productList[0].device_info.uuid = keyword === 'CAPACITOR' ? CAPACITOR_UUID : PREVIEW_FAIL_UUID;
+        productList[0].device_info.description = 'Fixture capacitor';
+        productList[0].device_info.attributes.Designator = 'C?';
+      }
       if (keyword === 'MULTI') productList.push({
         manufacturer: 'Fixture', price: [[1, '0.02']],
         device_info: { uuid: RELAY_UUID, description: 'Fixture relay',
@@ -99,6 +105,9 @@ export function installEasyEdaFixture() {
     }
     if (url.pathname === `/api/devices/${PART_UUID}`) {
       return Response.json({ success: true, result: { symbol: { uuid: SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C111', uuid: PART_UUID } });
+    }
+    if (url.pathname === `/api/devices/${CAPACITOR_UUID}`) {
+      return Response.json({ success: true, result: { symbol: { uuid: SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C999', uuid: CAPACITOR_UUID, attributes: { Designator: 'C?' } } });
     }
     if (url.pathname === `/api/devices/${RELAY_UUID}`) {
       return Response.json({ success: true, result: { symbol: { uuid: RELAY_SYMBOL_UUID }, footprint: { uuid: FOOTPRINT_UUID }, product_code: 'C444', uuid: RELAY_UUID } });
