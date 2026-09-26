@@ -5,58 +5,78 @@ on:
     branches: [main]
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Recover a release from its original tested artifacts (e.g. v1.3.0)'
+        type: string
+      artifact_run_id:
+        description: 'Original tag Build run ID; all eight integration jobs must have passed'
+        type: string
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  group: build-${{ inputs.release_tag || github.ref_name }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') && !inputs.release_tag }}
 permissions:
   contents: read
 jobs:
   integration:
+    if: ${{ !inputs.release_tag && !inputs.artifact_run_id }}
     uses: ./.github/workflows/integration.yml
   publish:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: ${{ always() && !cancelled() && ((startsWith(github.ref, 'refs/tags/v') && needs.integration.result == 'success') || (github.event_name == 'workflow_dispatch' && (inputs.release_tag || inputs.artifact_run_id))) }}
     needs: integration
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
+      actions: read
       id-token: write
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+      ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
     steps:
       - uses: actions/checkout@v7
+      - name: Validate recovery inputs
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          INPUT_TAG: ${{ inputs.release_tag }}
+          INPUT_RUN: ${{ inputs.artifact_run_id }}
+        run: node -e "if (!/^v\d+\.\d+\.\d+(-[\w.-]+)?$/.test(process.env.INPUT_TAG) || !/^\d+$/.test(process.env.INPUT_RUN)) throw Error('Recovery requires both release_tag and artifact_run_id')"
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          path: release-source
       - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
+      - name: Test publication recovery logic
+        run: node --test scripts/release-registry.test.mjs
+      - name: Verify release source and original integration gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/prepare-release.mjs release-source
       - uses: actions/download-artifact@v8
         with:
           name: mcp-release
           path: artifacts
-      - name: Publish tested MCP archive
-        run: node scripts/publish-release.mjs artifacts
-
+          run-id: ${{ inputs.artifact_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Publish tested MCP archive and wait for npm availability
+        run: node scripts/publish-release.mjs artifacts release-source
       - name: Install MCP Registry publisher
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz" | tar xz mcp-publisher
-
-      - name: Publish to Official MCP Registry
-        if: startsWith(github.ref, 'refs/tags/v')
-        working-directory: mcp
         run: |
-          for attempt in 1 2 3 4; do
-            if ../mcp-publisher login github-oidc; then
-              break
-            fi
-            if [ "$attempt" -eq 4 ]; then
-              echo "MCP Registry OIDC login failed after $attempt attempts" >&2
-              exit 1
-            fi
-            sleep $((attempt * 15))
-          done
-          ../mcp-publisher publish
-
+          curl --fail --show-error --location --retry 5 --retry-all-errors --connect-timeout 15 --max-time 120 \
+            https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_linux_amd64.tar.gz \
+            --output mcp-publisher.tar.gz
+          tar xzf mcp-publisher.tar.gz mcp-publisher
+          ./mcp-publisher --version
+      - name: Publish and verify Official MCP Registry entry
+        run: node scripts/publish-mcp-registry.mjs mcp-publisher release-source/mcp
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v3
         with:
-          generate_release_notes: true
+          tag_name: ${{ env.RELEASE_TAG }}
+          body_path: .artifacts/release-notes.md
           files: artifacts/*
+          fail_on_unmatched_files: true

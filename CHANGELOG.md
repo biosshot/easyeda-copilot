@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Release automation
+
+- Wait for the tested npm version and SHA-512 integrity to become visible before publishing its MCP Registry entry.
+- Retry temporary registry/network failures and npm propagation delays, verify the active published manifest, and reconcile already accepted writes without duplicating publication.
+- Recover partially published releases from the original tag's CI archives after verifying all eight integration gates; preserve the tag and publish the full changelog as GitHub release notes.
+
 ## 1.3.0 - 2026-09-26
 
 ### CLI and local SDK

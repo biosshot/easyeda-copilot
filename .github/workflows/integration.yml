@@ -64,6 +64,8 @@ jobs:
       - name: Test dependency switching
         if: matrix.os == 'ubuntu-22.04' && matrix.node == 24
         run: npm run test:dependencies
+      - name: Test release registry propagation and recovery
+        run: node --test scripts/release-registry.test.mjs
       - run: npm run test:extension
       - run: npm run check --workspace=mcp
       - run: npm run test:package --workspace=mcp
