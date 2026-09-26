@@ -56,6 +56,7 @@
 - Adapt native refinement to component/pad complexity with a 3–16-pass limit and a cooperative 30-second budget, retaining the best completed placement.
 - Hide Windows console windows for placement workers through backend 0.3.5.
 - Align installed-package preview regressions with the selective-preview policy; run component preview and optional cross-page lookup tests in the mandatory MCP check.
+- Keep the timeout regression fixture alive on Node 20 while its deliberately unresponsive version check waits for an unreferenced abort timer.
 - Synchronize root, extension, MCP and registry metadata at 1.3.0 and verify published dependency versions, extension builds and isolated MCP installation before publication.
 
 ## 1.2.0 - 2026-09-19

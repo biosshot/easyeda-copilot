@@ -9,7 +9,11 @@ test('version warning has a 10-second default budget', () => {
     assert.equal(VERSION_WARNING_TIMEOUT_MS, 10_000);
 });
 
-test('unresponsive version check is ignored without losing the completed tool result', async () => {
+test('unresponsive version check is ignored without losing the completed tool result', { timeout: 2000 }, async t => {
+    // AbortSignal.timeout() is unref'd; Node 20 needs a referenced handle while
+    // this fixture deliberately has no sockets or other active application work.
+    const keepAlive = setInterval(() => {}, 1000);
+    t.after(() => clearInterval(keepAlive));
     let diagnosticStarted!: () => void;
     const bridge = bridgeWithWarning(() => {
         diagnosticStarted?.();
