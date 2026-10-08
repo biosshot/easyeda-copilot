@@ -36,7 +36,7 @@ const circuit = { components: [component('U1')] };
 const board = 'board.rect(40,30);';
 const hole = 'boardHole("mount",{at:anchor("board.top_left"),drill:3.2});';
 const base = { code: board + 'block("main",["U1"]);', circuit };
-const diagnostics = input => JSON.parse(JSON.stringify(validatePcbLayoutIntent(input)));
+const diagnostics = (input, groups) => JSON.parse(JSON.stringify(validatePcbLayoutIntent(input, groups)));
 const existingPlacement = {
     board: { polygon: [{ x: -20, y: -15 }, { x: 20, y: -15 }, { x: 20, y: 15 }, { x: -20, y: 15 }] },
     components: [{ designator: 'J1', x: 20, y: 0, rotate: 0, layer: 'top' }],
@@ -48,8 +48,60 @@ const cases = [
     { name: 'DSL error', input: { ...base, code: 'board.rect(' }, severity: 'error' },
     { name: 'preserved placement', input: { code: 'preserve({board:true,components:"all"});' + hole,
         circuit: { components: [component('J1')] }, existingPlacement }, noConnectorWarning: true },
+    { name: 'schematic group info', input: { code: board + 'block("main",["U1"]); block("second",["U2"]);',
+        circuit: { components: [component('U1'), component('U2')] } },
+        groups: { maybe_blocks: ['U1 U2'], wires: [] }, backendGroups: { groups: [{ components: ['U1', 'U2'] }] },
+        finding: 'PCB_SCHEMATIC_GROUP_MISMATCH', severity: 'info' },
+    { name: 'partial grouping', input: base, groups: { maybe_blocks: [], wires: [], errors: ['Partial page read'] },
+        backendGroups: { groups: [], incomplete: true }, finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'grouping unavailable', input: base, groupReadFails: true,
+        finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'multipart and whitespace parsed by EasyEDA adapter',
+        input: { code: board + 'block("main",["U1"]); block("second",["U2"]);', circuit: { components: [component('U1'), component('U2')] } },
+        groups: { maybe_blocks: ['  U2.2\tU1.1  U1.2  '], wires: [{ net: 'SIG', pins: ' U2.1\tU1.1 U1.1 ' }] },
+        backendGroups: { groups: [{ components: ['U1', 'U2'] }], wireIslands: [{ net: 'SIG',
+            pins: [{ designator: 'U1', pin_number: '1' }, { designator: 'U2', pin_number: '1' }] }] },
+        finding: 'PCB_SCHEMATIC_GROUP_MISMATCH', severity: 'info' },
+    { name: 'exact dotted designator takes precedence over multipart reference',
+        input: { code: board + 'block("base",["U1"]); block("main",["U1.1"]); block("second",["U2"]);',
+            circuit: { components: [component('U1'), component('U1.1'), component('U2')] } },
+        groups: { maybe_blocks: ['U1.1 U2'], wires: [{ net: 'SIG', pins: 'U1.1.1 U2.1' }] },
+        backendGroups: { groups: [{ components: ['U1.1', 'U2'] }], wireIslands: [{ net: 'SIG',
+            pins: [{ designator: 'U1.1', pin_number: '1' }, { designator: 'U2', pin_number: '1' }] }] },
+        finding: 'PCB_SCHEMATIC_GROUP_MISMATCH', severity: 'info' },
+    { name: 'unresolved group is dropped without shrinking it', input: base,
+        groups: { maybe_blocks: ['U1 UNKNOWN.1'], wires: [] }, backendGroups: { groups: [], incomplete: true },
+        finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'unexpected editor contract stays on EasyEDA side', input: base,
+        groups: { changed_field: ['U1'] }, backendGroups: { groups: [], incomplete: true },
+        finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'unknown wire pin drops the island and marks incomplete evidence', input: base,
+        groups: { maybe_blocks: [], wires: [{ net: 'SIG', pins: 'U1.1 U1.99' }] }, backendGroups: { groups: [], incomplete: true },
+        finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'ambiguous wire reference is not split heuristically',
+        input: { code: board + 'block("main",["U1","U1.1"]);', circuit: { components: [
+            { ...component('U1'), pins: [{ pin_number: '1.1', name: 'SIG', signal_name: 'SIG' }] }, component('U1.1'),
+        ] } },
+        groups: { maybe_blocks: [], wires: [{ net: 'SIG', pins: 'U1.1.1 U1.1.1' }] }, backendGroups: { groups: [], incomplete: true },
+        finding: 'PCB_SCHEMATIC_GROUP_COVERAGE', severity: 'info' },
+    { name: 'wire ownership discrepancy',
+        input: { code: board + 'block("one",["U1","C1"]); block("two",["U2"]); bypass(["C1"],pin("U2",1));',
+            circuit: { components: [
+                { ...component('U1'), pins: [{ pin_number: 1, name: 'VDD', signal_name: 'v' }, { pin_number: 2, name: 'GND', signal_name: 'g' }] },
+                { ...component('U2'), pins: [{ pin_number: 1, name: 'VDD', signal_name: 'v' }, { pin_number: 2, name: 'GND', signal_name: 'g' }] },
+                { ...component('C1'), pins: [{ pin_number: 1, name: '1', signal_name: 'v' }, { pin_number: 2, name: '2', signal_name: 'g' }] },
+            ] } },
+        groups: { maybe_blocks: [], wires: [{ net: 'v', pins: 'U1.1 C1.1' }] },
+        backendGroups: { groups: [], wireIslands: [{ net: 'v', pins: [{ designator: 'C1', pin_number: 1 }, { designator: 'U1', pin_number: 1 }] }] },
+        finding: 'PCB_SCHEMATIC_WIRE_OWNER_MISMATCH', severity: 'info' },
 ];
-let activeInput = base, requests = [], editor, daemon;
+let activeInput = base, activeGroups = { maybe_blocks: [], wires: [] }, groupReadFails = false, requests = [], editor, daemon;
+const selectCase = item => {
+    activeInput = item.input; activeGroups = item.groups ?? { maybe_blocks: [], wires: [] };
+    groupReadFails = !!item.groupReadFails; requests = [];
+};
+const expectedCase = item => diagnostics(item.input, item.groupReadFails
+    ? { groups: [], incomplete: true } : item.backendGroups);
 async function connectEditor() {
     editor = new WebSocket(`ws://127.0.0.1:${port}`);
     await new Promise((ready, reject) => {
@@ -80,6 +132,14 @@ async function connectEditor() {
                         assert.equal(requests.at(-2), 'get-pcb-existing-placement', 'Capture PCB before extracting schematic');
                         assert.equal(body.extractFootprintUuid, true, 'Use the same full schematic extraction as placement');
                         result = activeInput.circuit;
+                    } else if (event === 'get-schematic-groups') {
+                        assert.equal(requests.at(-2), 'get-multi-page-schematic', 'Read group context after circuit extraction');
+                        assert.equal(body.get_full_schematic_groups, true, 'Always read every schematic page without an LLM flag');
+                        if (groupReadFails) {
+                            editor.send(JSON.stringify({ event, body: JSON.stringify({ id: body.id, ok: false, error: 'Group extraction failed' }) }));
+                            return;
+                        }
+                        result = activeGroups;
                     } else throw new Error(`Unexpected editor event: ${event}`);
                 }
                 editor.send(JSON.stringify({ event, body: JSON.stringify({ id: body.id, ok: true, result }) }));
@@ -88,7 +148,7 @@ async function connectEditor() {
     });
 }
 function assertReads() {
-    assert.deepEqual(requests, ['get-command-target', 'get-pcb-existing-placement', 'get-multi-page-schematic'],
+    assert.deepEqual(requests, ['get-command-target', 'get-pcb-existing-placement', 'get-multi-page-schematic', 'get-schematic-groups'],
         'Validation only reads target/PCB/schematic; no placement or mutation commands');
 }
 try {
@@ -100,10 +160,11 @@ try {
     assert.deepEqual(Object.keys(tool.inputSchema.properties), ['file'], 'LLM supplies only a DSL path');
     await connectEditor();
     const file = join(directory, 'layout.js');
-    for (const { name, input, finding, severity, noConnectorWarning } of cases) {
-        activeInput = input; requests = [];
+    for (const item of cases) {
+        const { name, input, finding, severity, noConnectorWarning } = item;
+        selectCase(item);
         await writeFile(file, input.code);
-        const expected = diagnostics(input);
+        const expected = expectedCase(item);
         if (severity) assert.ok(expected.some(item => item.severity === severity && (!finding || item.code === finding)), name);
         if (noConnectorWarning) assert.ok(!expected.some(item => item.severity === 'error' || item.code === 'PCB_INTENT_CONNECTOR_PLACEMENT'), name);
         const response = await client.callTool({ name: tool.name, arguments: { file } });
@@ -126,10 +187,11 @@ try {
     assert.deepEqual(cliTool.inputSchema, tool.inputSchema, 'CLI and stdio expose the same small schema');
     const inputFile = join(directory, 'validation.json');
     await writeFile(inputFile, JSON.stringify({ file }));
-    for (const { name, input } of cases) {
-        activeInput = input; requests = [];
+    for (const item of cases) {
+        const { name, input } = item;
+        selectCase(item);
         await writeFile(file, input.code);
-        assert.deepEqual(await json(daemon, 'call', tool.name, '--input', inputFile), diagnostics(input), `${name}: CLI parity`);
+        assert.deepEqual(await json(daemon, 'call', tool.name, '--input', inputFile), expectedCase(item), `${name}: CLI parity`);
         assertReads();
     }
     const docPath = cliTool.description.match(/For guidance, read (.+)\.$/)[1];

@@ -6,6 +6,7 @@
 
 - Add read-only `validate_pcb_dsl({ file })` to MCP and CLI, calling backend `validatePcbLayoutIntent` with the DSL file and the current schematic/PCB context read automatically from EasyEDA. Share input capture with `make_pcb_layout` and return English error/warning/info diagnostics without running placement.
 - Include validation guidance and a pre-placement validation step in the generated skill.
+- Always read full suggested schematic groups and direct-wire islands for PCB DSL validation, keeping the file-only LLM schema. Parse symbol-section and actual pin references locally into the backend's shared `PcbSchematicGroups` contract; do not forward the editor transport shape. Group/ownership differences and incomplete reads remain info; placement tools and schematic grouping itself are unchanged.
 
 ### JLCEDA compatibility
 
