@@ -9,6 +9,8 @@ easyeda-copilot-cli start
 # prints a four-character ID, for example a7k2
 easyeda-copilot-cli a7k2 tools list
 easyeda-copilot-cli a7k2 tools help make_pcb_layout
+easyeda-copilot-cli a7k2 tools help validate_pcb_dsl
+easyeda-copilot-cli a7k2 call validate_pcb_dsl --input validation.json
 easyeda-copilot-cli a7k2 call get_current_project_info
 easyeda-copilot-cli a7k2 call make_pcb_layout --input layout.json
 easyeda-copilot-cli a7k2 call wait_operation --input operation.json

@@ -28,6 +28,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 | Create or organize schematic pages | `schematic/project-and-pages.md` | functional pages exist and are named |
 | Create, modify, or beautify a schematic | `schematic/workflow.md`, `schematic/circuit-mod.md`; finish with `schematic/verification.md` | current-page readback is checked |
 | Place or update PCB components | `pcb-layout/instructions.md`, `pcb-layout/dsl.ts`; finish with `pcb-layout/verification.md` | approved placement is assembled and checked; do not route |
+| Validate PCB placement DSL intent | `pcb-layout/intent-validation.md`, `pcb-layout/dsl.ts` | `validate_pcb_dsl` findings are reviewed; no placement is run |
 | Change connectors, outline, holes, controls, displays, or antennas | placement docs plus `pcb-layout/mechanical-validation.md` | LLM and user approve mechanics |
 | Apply layer count, rules, zones, copper, or routing | `pcb-routing/instructions.md`, `pcb-routing/dsl.ts`; finish with `pcb-routing/verification.md` | requested PCB operation is checked |
 | Wait, cancel, or recover a long operation | `operations.md` | terminal result and current document state are checked |
@@ -46,6 +47,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 - `beautify_schematic_on_current_page` rebuilds the entire current page. Every current-page component must appear in exactly one functional block.
 - After `import_pcb_changes`, stop and ask the user to confirm the EasyEDA import dialog. Do not continue until the user says it is complete.
 - Open the target PCB before `make_pcb_layout`; this supplies its outline and component positions to `preserve(...)`.
+- Before placement and after intent changes, open the target PCB and call `validate_pcb_dsl({ file })` with the same DSL file used by `make_pcb_layout`. Schematic and PCB context are read automatically. Fix errors and review warnings/info using [intent validation](pcb-layout/intent-validation.md).
 - Treat placement and routing as one coupled physical problem: plan plausible signal, power, return, escape, and thermal paths before placement, then verify placement feasibility before routing. High density is valid when the intended layer and via strategy supports it.
 - Placement preview is not applied. Assemble only a reviewed, completed final `layoutId` within the user's authorization; follow the placement guide's approval rules.
 - Validate placement with [geometry and connectivity checks](pcb-layout/verification.md). Correct clear in-scope defects autonomously and continue [local refinement](pcb-layout/instructions.md#iterative-local-corrections) while it provides measurable improvement.

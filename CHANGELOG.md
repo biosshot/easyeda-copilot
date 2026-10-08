@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### PCB intent validation
+
+- Add read-only `validate_pcb_dsl({ file })` to MCP and CLI, calling backend `validatePcbLayoutIntent` with the DSL file and the current schematic/PCB context read automatically from EasyEDA. Share input capture with `make_pcb_layout` and return English error/warning/info diagnostics without running placement.
+- Include validation guidance and a pre-placement validation step in the generated skill.
+
 ### JLCEDA compatibility
 
 - Detect the connected edition with guarded `isJLCEDAProEdition()` and pass it explicitly to backend component, schematic and PCB resolution. Default missing metadata to international EasyEDA; keep concurrent instances separate.

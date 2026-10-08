@@ -6,6 +6,7 @@ import { SKILL_DOC_PATH } from "../../utils/dirs";
 import { registerPcbLayoutTools } from "./pcb-layout";
 import { registerPcbPreviewTools } from "./pcb-preview";
 import { registerPcbRoutingTools } from "./pcb-routing";
+import { registerPcbValidationTools } from "./pcb-validation";
 import { toolHandler } from '../handler';
 
 export function registerPcbTools(server: McpServer, bridge: Bridge) {
@@ -42,6 +43,7 @@ export function registerPcbTools(server: McpServer, bridge: Bridge) {
     );
 
     registerPcbLayoutTools(server, bridge);
+    registerPcbValidationTools(server, bridge);
     registerPcbPreviewTools(server, bridge);
     registerPcbRoutingTools(server, bridge);
 }

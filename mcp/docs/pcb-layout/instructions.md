@@ -43,6 +43,7 @@ Use the topology analysis selectively. Any known ordered path that is substantia
 ## Run
 
 1. Define the board, holes, blocks, components, and only preflight-justified constraints in one complete placement DSL file.
+   With the target PCB open, call `validate_pcb_dsl({ file })` before placement. It reads the linked schematic and PCB context automatically. Fix errors and review warnings/info as described in [intent validation](intent-validation.md). Rerun after changing intent.
 2. If mechanics changed, read `mechanical-validation.md` and run a focused mechanical preview with `solver({ preview: true, placeOnlyComponents: [...] })`.
 3. Call `make_pcb_layout({ file })`. If it returns `status: "running"`, follow [operations.md](../operations.md) and wait until terminal.
 4. If this is a mechanical preview, inspect it with `mechanical-validation.md`, correct obvious in-scope defects, and obtain mechanical approval. Then remove the preview filters and run the complete DSL. A mechanical preview is never assembled.

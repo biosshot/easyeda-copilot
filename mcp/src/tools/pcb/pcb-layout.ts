@@ -9,13 +9,14 @@ import { BoardAssemble } from "@copilot/shared/types/pcb/board-assemble";
 import { randomUUID } from "node:crypto";
 import { availableParallelism, tmpdir } from "node:os";
 import { join } from "node:path";
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { svgToPng } from '../../utils/svg-to-png';
 import { SKILL_DOC_PATH } from "../../utils/dirs";
 import { operationManager, type OperationContext } from '../../operations/manager';
 import type { ExplainCircuit } from '@copilot/shared/types/circuit';
 import { managedMutationHandler, targetedToolHandler, toolHandler } from '../handler';
 import { getEdaApiOptions } from '../../utils/eda-api-options';
+import { readPcbLayoutInput } from './pcb-layout-input';
 
 type MakePcbLayoutResponse = {
     content?: string;
@@ -74,45 +75,6 @@ const DEFAULT_PCB_LAYOUT_WAIT_MS = TIMEOUT_POLICY.operationWaitMs;
 const PCB_DOCUMENT_RESOURCE = 'current-pcb-document';
 
 const storedPcbLayouts = new Map<string, StoredPcbLayout>();
-
-const ExistingPlacementSchema = z.object({
-    board: z.object({
-        polygon: z.array(z.object({
-            x: z.number(),
-            y: z.number(),
-        }).strict()).min(3),
-    }).strict(),
-    components: z.array(z.object({
-        designator: z.string().min(1),
-        x: z.number(),
-        y: z.number(),
-        rotate: z.number(),
-        layer: z.enum(['top', 'bottom']),
-    }).strict()),
-}).strict();
-
-type ExistingPlacement = z.infer<typeof ExistingPlacementSchema>;
-
-function placementForCircuit(value: unknown, circuit: ExplainCircuit): ExistingPlacement | undefined {
-    if (value === undefined || value === null) return undefined;
-    const placement = ExistingPlacementSchema.parse(value);
-    const circuitDesignators = new Map(circuit.components.map(component => [
-        component.designator.trim().toUpperCase(),
-        component.designator,
-    ]));
-    const seen = new Set<string>();
-    const components = placement.components.flatMap(component => {
-        const key = component.designator.trim().toUpperCase();
-        const designator = circuitDesignators.get(key);
-        if (!designator) return [];
-        if (seen.has(key)) throw new Error(`Ambiguous EasyEDA PCB designator: ${designator}`);
-        seen.add(key);
-        return [{ ...component, designator }];
-    });
-
-    return { board: placement.board, components };
-}
-
 
 function previewImageExtension(mimeType: string | undefined) {
     if (mimeType === 'image/svg+xml') return '.png';
@@ -275,16 +237,7 @@ async function runPcbLayout(
 ) {
     context.setStage('preparing');
     const apiOptions = await getEdaApiOptions(bridge);
-    // Capture placement before schematic extraction changes the active EasyEDA document.
-    const [code, rawExistingPlacement] = await Promise.all([
-        readFile(file, 'utf8'),
-        bridge.requestEasyEda('get-pcb-existing-placement'),
-    ]);
-    const circuit = await bridge.requestEasyEda(
-        'get-multi-page-schematic',
-        { extractFootprintUuid: true },
-    ) as ExplainCircuit;
-    const existingPlacement = placementForCircuit(rawExistingPlacement, circuit);
+    const input = await readPcbLayoutInput(bridge, file);
     context.signal.throwIfAborted();
 
     context.setStage('placing');
@@ -294,9 +247,7 @@ async function runPcbLayout(
         const configured = Number(process.env[name] ?? workerLimit);
         process.env[name] = String(Number.isFinite(configured) ? Math.min(workerLimit, Math.max(0, Math.floor(configured))) : workerLimit);
     }
-    const result = await generatePcbLayout({
-        code, circuit, ...(existingPlacement ? { existingPlacement } : {}),
-    }, {
+    const result = await generatePcbLayout(input, {
         ...apiOptions,
         signal: context.signal,
         onProgress: progress => context.setProgress({
