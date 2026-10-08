@@ -195,20 +195,20 @@ interface BoardPadHoleOptions {
 
 type BoardPadCell =
   | {
-      name: string;
-      net: string;
-      shape: "round";
-      diameter: number;
-      hole?: BoardPadHoleOptions;
-    }
+    name: string;
+    net: string;
+    shape: "round";
+    diameter: number;
+    hole?: BoardPadHoleOptions;
+  }
   | {
-      name: string;
-      net: string;
-      shape: "rect" | "oval";
-      width: number;
-      height: number;
-      hole?: BoardPadHoleOptions;
-    };
+    name: string;
+    net: string;
+    shape: "rect" | "oval";
+    width: number;
+    height: number;
+    hole?: BoardPadHoleOptions;
+  };
 
 interface BoardPadOptions {
   /** Fixed board anchor for the synthetic pad group. */
@@ -356,6 +356,8 @@ interface ComponentBuilder {
   block(name: string): ComponentBuilder;
   /** Set placement role; affects ordering and default aesthetics. */
   role(role: ComponentRole): ComponentBuilder;
+  /** Override inferred occupied body areas in footprint-local millimeters. Pads remain occupied; sides swap when mounted on bottom. An empty array clears inferred body on that side. */
+  occupancy(areas: { top?: Array<{ left: number; right: number; top: number; bottom: number }>; bottom?: Array<{ left: number; right: number; top: number; bottom: number }> }): ComponentBuilder;
   /** Allow component on specific layers. */
   layers(...layers: Layer[]): ComponentBuilder;
   /** Restrict component to top side. */
@@ -522,7 +524,8 @@ declare function criticalPair(source: PinTargetRef, target: PinTargetRef, option
 /**
  * Self-contained placement constraint for any known ordered electrical path whose physical implementation is much more important than ordinary connectivity.
  * This includes RF, analog measurement/trigger chains, clocks, each ordered differential leg, long board-spanning priority signals, and series matching/filtering/termination paths.
- * Each tuple is one pad-to-pad segment; adjacent tuples meet on the same pass-through component using different entry/exit pins.
+ * Each tuple is one pad-to-pad segment; adjacent tuples meet on the same component. Different entry/exit pins describe
+ * a pass-through component; repeating the same pin describes a waypoint on one net (for example a protection pad).
  * Explicit signal-path segments receive priority in bounded route-aware candidate reranking. The estimator may account for obstacles, detours, bends,
  * layer changes, and temporary congestion from earlier higher-priority route jobs, but it remains a placement estimator.
  * Use only when physical path order matters. Do not duplicate its segments with criticalPair() or corePairs(). This does not create copper or guarantee impedance.
