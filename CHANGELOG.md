@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### PCB layout
+
+- Honor explicit `PCB_LAYOUT_SUBTREE_WORKERS`, `PCB_BOARD_PACKER_THREADS` and `PCB_POST_PLACE_THREADS` values up to the number of logical cores instead of clamping them to the default. The default stays at half the logical cores, at most 8. Requires a backend that applies the same rule.
+
 ## 1.3.2 - 2026-10-16
 
 ### Schematic fixes

@@ -243,10 +243,12 @@ async function runPcbLayout(
 
     context.setStage('placing');
     // The published backend reads this setting when it creates its subtree pool.
-    const workerLimit = Math.max(1, Math.min(8, Math.floor(availableParallelism() / 2)));
+    // Default to half the logical cores (at most 8); an explicit override may use every core.
+    const cores = availableParallelism();
+    const workerLimit = Math.max(1, Math.min(8, Math.floor(cores / 2)));
     for (const name of ['PCB_LAYOUT_SUBTREE_WORKERS', 'PCB_BOARD_PACKER_THREADS', 'PCB_POST_PLACE_THREADS']) {
         const configured = Number(process.env[name] ?? workerLimit);
-        process.env[name] = String(Number.isFinite(configured) ? Math.min(workerLimit, Math.max(0, Math.floor(configured))) : workerLimit);
+        process.env[name] = String(Number.isFinite(configured) ? Math.min(cores, Math.max(0, Math.floor(configured))) : workerLimit);
     }
     const result = await generatePcbLayout(input, {
         ...apiOptions,
