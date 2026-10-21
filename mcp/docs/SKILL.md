@@ -37,6 +37,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 | Inspect or verify without mutation | `verification.md` | requested evidence is reported |
 | Read component datasheets during creation/review, substitutions or component-specific layout | `datasheets/SKILL.md` (standalone Node.js skill); reuse the `datasheet` URL from `component_search` | relevant facts, conditions and PDF pages are checked; preserve useful review notes |
 | Simulate a circuit or verify analog behavior | `spice/SKILL.md` (standalone Node.js skill); obtain the actual schematic connections with existing read tools | numerical results, PNGs and model assumptions are reviewed |
+| Check a stage against lessons from real boards (part swaps, footprints, zones, power, routing, ordering) | `design-lessons/SKILL.md` | the stage's checklist items are applied or reported as limits |
 | Execute JavaScript or make a focused API edit | `execution/instructions.md`, then the needed API reference | returned data or artifacts and the affected objects are checked |
 | Use local Python/Node.js libraries with the native EDA API | `execution/local-sdk.md`, `execution/instructions.md`, then the needed API reference | local script results and affected objects are checked; SDK session is closed |
 | Inspect or edit document File Source | `execution/instructions.md`, `execution/file-source.md` | intended records and the affected stage are verified; standard workflows remain the starting point |

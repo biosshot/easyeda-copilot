@@ -1,0 +1,26 @@
+# Datasheet numbers, power and protection
+
+## Numbers
+
+- **Re-derive every number with all components included, at worst case.** A hysteresis resistor moved a comparator trip point by about 2 % and tripled the hysteresis. An NTC with a different B-value than the charger expects shifted the charge-temperature window by about 7 °C. A UVLO divider started at 8.1 V worst case on a 9 V minimum input. Show the formula with values, use reference and resistor tolerances, and check which resistor the formula calls "top".
+- **Simulate the worst case, not the nominal one**: full battery, regulation off, a stuck input, an open sense path. A sense filter that looked fine nominally let a hardware cutoff act too late. See [spice/SKILL.md](../../spice/SKILL.md).
+- **Cross-check pin tables between sections.** A module manual swapped two SIM pins in one table; the main pin table and the compatibility guide agreed with each other.
+- **Capacitors: at most 80 % of rated voltage, plus DC-bias loss.** Seen: a 10 V part on a 9 V rail; a 6.3 V X5R bulk capacitor on a 4.2 V battery keeping little capacitance; a 25 V input part at 97 % of its rating at cold open-circuit panel voltage.
+- **Interface limits in module manuals are hard limits**: SIM ESD arrays of 60–80 pF where the manual allows 15–50 pF; capacitors fitted where the reference design says NC.
+- **Variants in the same package can need a different circuit.** A successor modem had no power key and starts on a fast VBAT rise (so its regulator needs output discharge), had a boot pin that must not be low at power-up, and a different VBAT range. A memory variant of an MCU module occupies or frees pins.
+
+## Standby current and power paths
+
+- **Write the standby budget before the schematic.** A "low-power" node drew 5–25 mA asleep (a fixed power LED, an active GNSS antenna, an RS485 transceiver with DE and RE# tied, an always-powered SD card) and 30–50 µA after the fix. Other hidden consumers: a pull-down fighting a translator, a comparator output pull-up, a blinking network LED, regulator quiescent current. List every always-on item; flag anything above 10 % of the total.
+- **High-side P-MOS load switches**: a gate driven straight from a GPIO below the source voltage stays half on; a high-Vgs(th) part barely conducts at 3.3 V; switching on ~120 µF can dip the rail and reset the MCU. Use an NPN or digital-transistor driver, a gate pull-up (default off), a low-Vgs(th) part and a series R plus gate-drain C for a ~1 ms ramp.
+- **Disabling a boost converter through EN does not disconnect its output**: the battery still feeds the load through the inductor and diode. Switch the input instead.
+- **Look for back-powering and signals above a domain's rail.** A charge LED fed from VBUS into a GPIO injected current into 3V3. A USB ESD array's VBUS pin was tied to a rail that could exceed its rating. A level translator powered from a module's I/O rail dropped out when the module slept. Auto-direction (TXB-type) translators fight push-pull drivers. Firmware must tri-state lines before cutting a switched rail.
+- **Check the charger with the real load in parallel.** Without a power path, the board load stopped charge termination and the current-sense resistor measured the load. Input DPM and safety timers behave differently from what a quick read suggests.
+- **Every field input needs a fuse or PTC, reverse-polarity protection and a TVS that clamps below the downstream absolute maximum.** Seen: a TVS clamping at 38.9 V on a 30 V charger; a regulator EN pin above its maximum during a transient; a PTC derated at temperature tripping at minimum input; a reversed battery pulling the rail below −0.3 V while the fuse blew.
+- **Never expose internal rails on field connectors or jumpers.** Document every jumper combination, including forbidden ones: one position could put the battery on the 3.3 V rail.
+- **Define every control line's state in reset and deep sleep with resistors**, and tell firmware what to hold. An MCU reset left a modem enable floating, and its pull-down cut the modem supply without the power-down command.
+- **Know the minimum useful supply**: battery resistance plus regulator dropout at peak radio current sets the voltage below which firmware must stop transmitting. Slowly rising rails need a supervisor on the MCU enable; an RC delay is not enough.
+- **Cellular modules: follow the manual's supply figure exactly** (bulk low-ESR capacitance, small capacitors at the pins, a short trace), cut the supply only after the power-down command and the status pin going low, and leave unused module GPIOs unconnected, not grounded.
+- **RS485: check idle bias with the termination fitted.** 4.7 k bias with 120 Ω termination gave about 42 mV idle differential, below the receiver threshold. Use a fail-safe receiver, stronger bias or switchable termination, and put series resistance with the TVS on field lines.
+- **ESP32 ADC**: use ADC1 (ADC2 is unusable with the radio); a high-impedance battery divider needs settling time and has leakage error.
+- **Give firmware a pin map with active levels and the reset, run and sleep state of every switch**, and compare it with the schematic before debugging hardware.
