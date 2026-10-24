@@ -8,8 +8,12 @@ import { registerPcbPreviewTools } from "./pcb-preview";
 import { registerPcbRoutingTools } from "./pcb-routing";
 import { registerPcbValidationTools } from "./pcb-validation";
 import { toolHandler } from '../handler';
+import { registerOfflinePcbTools } from './pcb-offline';
+import { registerPcb3dExportTools } from './pcb-3d-export';
 
 export function registerPcbTools(server: McpServer, bridge: Bridge) {
+    registerOfflinePcbTools(server);
+    registerPcb3dExportTools(server, bridge);
     server.registerTool(
         'get_pcb_stack_layers',
         {

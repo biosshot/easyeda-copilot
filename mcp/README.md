@@ -43,6 +43,7 @@ The MCP integration can:
 - create requested planes and stitching vias from the same routing DSL;
 - replace selected existing copper only when the DSL explicitly calls `clearRouting(...)`;
 - preview and inspect PCB objects, nets, and components;
+- [export populated PCB STEP or OBJ/material ZIP](docs/pcb-3d-export.md) for mechanical assemblies and renders;
 - run EasyEDA PCB DRC and manage the copper-layer count.
 
 Typical workflow: synchronize schematic changes, stop while the user confirms the EasyEDA import dialog, open the target PCB, review mechanical and final placement previews, assemble the approved placement, then run `run_pcb_router_dsl` and review native DRC. Existing placement can be retained with the placement DSL `preserve(...)`; existing copper is preserved by default and is replaced only when the routing DSL explicitly calls `clearRouting(...)`. Continue long placement and routing work with `wait_operation`.

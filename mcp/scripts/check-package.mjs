@@ -68,7 +68,7 @@ console.log('Packaged SDK imports without source checkout or editor types.');`);
 process.stdout.write(run([sdkSmoke], consumer, cleanEnv));
 for (const file of ['node/index.d.mts', 'node/api.d.mts', 'node/worker.mjs', 'node/API-LICENSE',
   'node/units.mjs','node/units.d.mts', 'python/easyeda_copilot/units.py',
-  'python/easyeda_copilot/__init__.py', 'python/easyeda_copilot/constants.py']) {
+  'python/easyeda_copilot/__init__.py', 'python/easyeda_copilot/constants.py', 'python/easyeda_copilot/pcb_offline.py']) {
   assert.ok(readFileSync(join(installedSdk, file)).length > 0, 'Missing packaged SDK file: ' + file);
 }
 for (const helper of ['download', 'pdf-outline']) {

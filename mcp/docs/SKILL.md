@@ -17,6 +17,10 @@ For overall schematic organization, PCB placement and routing, start with Copilo
 
 ## Start
 
+For offline ground escape planning, fabrication preview, or mechanical handoff,
+use the [offline PCB tools](pcb-offline.md). They take saved files and do not
+require selecting or opening an EasyEDA document.
+
 1. If multiple EasyEDA windows may be connected, call `list_easyeda_instances` and select the intended instance.
 2. Call `get_all_projects` when the project is unknown and switch with `open_document({ project_uuid })`; it saves all open design tabs before switching. Then call `get_current_project_info` once when the document tree or exact document is unknown.
 3. Select one task mode below and read only its references.

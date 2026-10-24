@@ -1,0 +1,4 @@
+# Optional offline PCB tools only; the core SDK does not require these.
+# Versions exercised by the saved neuro_IR regression.
+numpy==2.4.4
+gerbonara==1.6.3

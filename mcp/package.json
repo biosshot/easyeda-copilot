@@ -20,6 +20,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "test:pcb-offline": "node --import tsx --test tests/pcb-offline.test.ts && python tests/pcb_offline_test.py",
     "test:docs": "node scripts/check-docs.mjs",
     "test:checkpoints": "node scripts/check-checkpoint-tools.mjs",
     "test:spice": "node --test tests/spice.test.mjs",

@@ -27,6 +27,7 @@ export const ExecuteJsInputSchema = z.object({
 
 const ARTIFACT_DIR = join(TEMP_DIR, 'responses');
 const extensions: Record<string, string> = {
+    'model/step': 'step', 'application/zip': 'zip',
     'application/json': 'json', 'text/plain': 'txt', 'image/png': 'png',
     'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/svg+xml': 'svg', 'application/pdf': 'pdf',
 };
