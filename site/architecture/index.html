@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How the local MCP bridge, constraint DSLs, layout engines, checkpoints and native DRC work together.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/architecture/">
+  <link rel="icon" href="../assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../assets/site.css">
+  <title>Architecture | EasyEDA Copilot</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../"><img src="../assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="../architecture/" aria-current="page">Architecture</a>
+        <a href="../examples/">Examples</a>
+        <a href="../local-models/">Local models</a>
+        <a href="../simulation/">Simulation</a>
+        <a href="../getting-started/" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="page-head"><div class="wrap">
+      <h1>Architecture</h1>
+      <p class="lead">Tell the agent which parts belong together, what must stay put, and which connections matter most. EasyEDA Copilot turns those decisions into a placement you can inspect and a board you can keep editing.</p>
+    </div></section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-header"><h2>From agent to editor</h2><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.md">MCP setup ↗</a></div>
+        <ol class="workline">
+          <li><strong>AI client</strong><span>Reads the design and calls engineering tools over MCP stdio.</span></li>
+          <li><strong>MCP bridge</strong><span>Coordinates the tools and talks to the extension over a local WebSocket at <code>127.0.0.1:8787</code>.</span></li>
+          <li><strong>Engineering engines</strong><span>Use the board, footprints and rules to compute placement and routing.</span></li>
+          <li><strong>EasyEDA extension</strong><span>Applies native components, tracks, vias and copper zones to the open document.</span></li>
+        </ol>
+        <p class="section-note">The bridge and placement computations run locally. Part resolution can use EasyEDA’s public APIs, and the configured model provider determines where inference runs.</p>
+      </div>
+    </section>
+
+    <section class="section" id="placement">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Give the placer a few meaningful rules</h2>
+          <p>For a decoupling capacitor, the instruction that matters is which supply pin it serves. The model names the pins. The placement engine resolves their positions within the two footprints and searches for an arrangement. Pad proximity is a preference the solver balances with other goals. A fixed position is a requirement.</p>
+          <p>The domain-specific language (DSL) uses familiar function calls and named options. It was designed so models trained on code could work from short examples and produce rules an engineer can read, check and revise. The model still needs the correct parts, pins and electrical priorities.</p>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/dsl.ts">Placement DSL reference ↗</a>
+        </div>
+        <figure class="codebox">
+          <figcaption class="code-label">Illustrative placement fragment</figcaption>
+          <pre tabindex="0"><code>board.auto();
+block("mcu", ["U1", "C1"], "mcu");
+veryNear(pin("C1", 1), pin("U1", 5));</code></pre>
+          <p class="code-note">Size a rectangular board from the footprints, group the MCU and capacitor, and strongly prefer keeping their specified pads close.</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="placement-control">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Specify exact positions where they matter</h2>
+          <p>A small model can give AutoPlace a few groups and pin relationships and let it search the geometry. A larger model can describe more of the intended layout, from rough local arrangements to exact coordinates. Both use the same engine.</p>
+          <p>A position lock is useful when a connector must line up with a case opening. Locking ordinary support parts limits the solver’s ability to shorten loops or leave room for routing. Give the engine room wherever the design allows it.</p>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/instructions.md">Placement workflow and constraints ↗</a>
+        </div>
+        <dl class="explain-list">
+          <div><dt><code>fixed("J1", { x: -15, y: 0, rotate: 90 })</code></dt><dd>Set a component’s exact position and angle. The board centre is the coordinate origin. Use <code>edgeMount()</code> when the connector must face an edge and its footprint should determine how it sits there.</dd></div>
+          <div><dt><code>preserve({ board: true, components: ["J1"] })</code></dt><dd>Keep the outline and J1’s current pose from the open PCB while placing other parts.</dd></div>
+          <div><dt><code>localLayout</code> in a block</dt><dd>Suggest approximate positions for selected parts relative to their block. The solver fits the parts around this arrangement, and the completed block can move and rotate as a unit.</dd></div>
+          <div><dt><code>fixed</code> in a block</dt><dd>Solve the group internally, then lock the resulting arrangement to the board using one member’s exact position and angle.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" id="routing">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Give the router a plan for copper</h2>
+          <p>The routing DSL selects widths, clearances, layers and special cases such as differential pairs or ground planes. The MCP bridge sends the board and these rules to the open-source <code>eda-copilot-router</code> package, then converts the result into EasyEDA tracks and vias.</p>
+          <p>Existing copper is treated as fixed by default. A repair can explicitly select copper to replace. If parts leave no usable path around a dense pin field, revising the placement can open a route that the current geometry prevents.</p>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/instructions.md">Routing instructions ↗</a>
+        </div>
+        <figure class="codebox">
+          <figcaption class="code-label">Illustrative routing fragment</figcaption>
+          <pre tabindex="0"><code>drc({ trackWidthMm: 0.2, clearanceMm: 0.15 });
+powerNet("+5V", { trackWidthMm: 0.6, allowedLayers: "OUTER" });
+plane({ net: "GND", layers: "BOTTOM" });
+runAll();</code></pre>
+          <p class="code-note">Set baseline rules, request wider tracks for the 5 V supply on outer layers, and add a bottom ground plane. Real values depend on the board’s current, stackup and fabrication limits.</p>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="verification">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Check the rules, the preview and the board</h2>
+          <p>Each check answers a different question. A valid pin reference, for example, can still lead to a capacitor that sits too far from its supply pin once the whole board is packed.</p>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/workflow.md">Read the complete workflow ↗</a>
+        </div>
+        <ol class="explain-list checkpoints">
+          <li><strong>Validate the intent.</strong> <code>validate_pcb_dsl</code> evaluates the placement program, checks rule structure and references against the linked schematic and PCB, and reports conflicts and possible omissions. Engineering requirements outside the supplied design data still need to be stated.</li>
+          <li><strong>Solve and inspect.</strong> <code>make_pcb_layout</code> resolves footprints, arranges parts within blocks and packs them on the board. Review clearance, connector access, pad-to-pad distance and space for copper. A focused mechanical or block preview is for review. The full placement provides an assembly ID.</li>
+          <li><strong>Apply with recovery.</strong> Send the selected placement to the open PCB in a separate step. The extension saves a full-document checkpoint before changing the placement. Routing gets its own checkpoint before applying copper. An application exception triggers restoration. An applied partial route can stay in the editor for focused repair.</li>
+          <li><strong>Inspect the native result.</strong> Review tracks, filled copper and critical nets, and read EasyEDA’s design-rule check (DRC) on the current board. Use the findings to keep, repair or restore it. A clean DRC still leaves questions like current capacity, return paths and impedance to engineering review.</li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Changes stay editable</h2>
+          <p>Native objects let you continue in the same document after an automated step. For unusual operations, the agent can also use the EasyEDA editor API directly. This gives precise control and calls for explicit object selection, checkpointing and verification.</p>
+          <a class="text-link" href="../examples/">See these decisions in real projects →</a>
+        </div>
+        <ul class="resources">
+          <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/intent-validation.md">Placement intent validation ↗</a></li>
+          <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/verification.md">Placement preview and verification ↗</a></li>
+          <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/verification.md">Routing and copper verification ↗</a></li>
+          <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/recovery.md">Checkpoint recovery ↗</a></li>
+          <li><a href="https://github.com/biosshot/easyeda-copilot/tree/main/mcp/src/tools/pcb">MCP implementation ↗</a> · <a href="https://github.com/biosshot/eda-copilot-backend">Placement backend ↗</a> · <a href="https://github.com/biosshot/eda-copilot-router">Router ↗</a></li>
+          <li><a href="https://dev.to/biosshot/i-built-an-open-source-ai-agent-for-easyeda-that-can-design-schematics-and-pcbs-1ko2">Author’s architecture walkthrough ↗</a></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="../">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="../#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>

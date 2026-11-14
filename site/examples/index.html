@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Watch EasyEDA Pro workflows for an RF amplifier, ESP32-C3 controller, four-layer MIMXRT1011 board and schematic reorganization. Open editable projects.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/examples/">
+  <link rel="icon" href="../assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../assets/site.css">
+  <title>Schematics and PCB examples | EasyEDA Copilot</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../"><img src="../assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="../architecture/">Architecture</a>
+        <a href="../examples/" aria-current="page">Examples</a>
+        <a href="../local-models/">Local models</a>
+        <a href="../simulation/">Simulation</a>
+        <a href="../getting-started/" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="page-head"><div class="wrap">
+      <h1>Schematics and boards</h1>
+      <p class="lead">Follow three PCB workflows and a schematic reorganization. Each example shows an engineering decision that carries through into an editable EasyEDA document.</p>
+      <nav class="case-nav" aria-label="On this page">
+        <a href="#rf-amplifier">RF amplifier</a>
+        <a href="#esp32">ESP32-C3 controller</a>
+        <a href="#mimxrt">MIMXRT1011 controller</a>
+        <a href="#schematic">Schematic reorganization</a>
+      </nav>
+    </div></section>
+
+    <section class="section" id="rf-amplifier">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>BGA2869 2 GHz RF amplifier</h2>
+          <p>The schematic includes an amplifier, two RF ports and its bias network. The ports need to sit on opposite board edges so the RF chain can cross the small PCB in order.</p>
+          <p>Watch how the placement specifies the signal path at pin level and groups the bias parts near the amplifier. Those instructions give the placement engine a preferred order and a local grouping. Routing then adds the RF traces, ground copper and stitching vias.</p>
+          <p>In the final 3D view, follow the path from RF1 through the amplifier to RF2. In the editable board, trace length, width and the continuity of the ground return are the next things to inspect.</p>
+          <a class="text-link" href="../architecture/#placement">How pin-level placement rules work →</a>
+        </div>
+        <figure class="frame feature-demo">
+          <video controls playsinline preload="none" poster="../assets/bga2869-2ghz.webp" aria-label="BGA2869 RF amplifier workflow"><source src="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735" type="video/mp4"></video>
+          <figcaption class="caption-bar"><span>EasyEDA workflow · 57 s</span><a href="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735">Open video ↗</a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="esp32">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>ESP32-C3 field controller</h2>
+          <p>This controller brings together power conversion, USB, CAN, RS-485 and protected field I/O. The demo starts with multi-page schematic generation and carries that connectivity into a single PCB.</p>
+          <p>Watch for two types of placement decisions. Functional groups keep related parts near one another. Connector and antenna constraints determine how those groups fit around the edges of the board.</p>
+          <p>After placement, the demo shows power and signal routing, ground planes, stitching vias and a repair pass informed by DRC. The schematic pages and routed board remain editable in EasyEDA.</p>
+          <a class="text-link" href="../architecture/#verification">How checks inform a repair →</a>
+        </div>
+        <figure class="frame feature-demo">
+          <video controls playsinline preload="none" poster="../assets/esp32c3-controller.webp" aria-label="ESP32-C3 controller workflow"><source src="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41" type="video/mp4"></video>
+          <figcaption class="caption-bar"><span>EasyEDA workflow · 69 s</span><a href="https://github.com/user-attachments/assets/df1dd4e2-ee48-492c-badb-de2dc220ae41">Open video ↗</a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="mimxrt">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Four-layer MIMXRT1011 controller</h2>
+          <p>A high-pin-count microcontroller connects to multiple interfaces. Its decoupling capacitors need to fit close to their supply pins while board-edge connectors and mounting holes limit the available space.</p>
+          <p>Watch how the mechanical positions shape the available placement area and how the four-layer design makes more routing space available. Packing the parts more tightly can restrict the paths that tracks need to leave a dense package.</p>
+          <p>The demo gives you a routed board to inspect in the native editor. Useful inspection points include the space around mounting holes, access to connectors, and how tracks fan out from the MCU pads.</p>
+          <a class="text-link" href="../architecture/#placement-control">How the solver handles exact positions →</a>
+        </div>
+        <figure class="frame feature-demo">
+          <video controls playsinline preload="none" poster="../assets/mimxrt1011-controller.webp" aria-label="MIMXRT1011 controller workflow"><source src="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010" type="video/mp4"></video>
+          <figcaption class="caption-bar"><span>EasyEDA workflow · 128 s</span><a href="https://github.com/user-attachments/assets/757690b8-83cd-42c7-b88f-4db9ba2df010">Open video ↗</a></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="schematic">
+      <div class="wrap">
+        <div class="section-header">
+          <div class="prose">
+            <h2>Reorganize an existing schematic</h2>
+            <p class="lead">The input is an existing wired page. The agent reads the parts and their electrical connections, identifies functional groups, and saves a checkpoint before reassembling the page into named blocks.</p>
+          </div>
+          <a href="https://github.com/user-attachments/assets/d77218e5-4f6f-42b8-bea4-7f7240f8f7f3">Watch the 13-second edit ↗</a>
+        </div>
+        <div class="grid-2">
+          <figure class="frame"><img src="../assets/schematic-before.webp" loading="lazy" alt="Original EasyEDA schematic with circuit elements spread across the page"><figcaption class="caption-bar">Original schematic</figcaption></figure>
+          <figure class="frame"><img src="../assets/schematic-after.webp" loading="lazy" alt="Reassembled EasyEDA schematic with organized functional blocks"><figcaption class="caption-bar">Reassembled schematic</figcaption></figure>
+        </div>
+        <p class="section-note">Compare where components are grouped in the two views. The reassembly preserves component identities and electrical connections. The result is still a native schematic that you can rearrange or extend.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap panel"><h2>Open a design in EasyEDA</h2><p>Browse the editable example collection on OSHWLab or download the EasyEDA Pro example project from the repository.</p>
+        <div class="actions"><a class="button button-primary" href="https://oshwlab.com/biosshot/edacopilotexamples">Browse OSHWLab ↗</a><a class="button" href="https://github.com/biosshot/easyeda-copilot/blob/main/examples/examples.epro">View examples.epro on GitHub ↗</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="../">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="../#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>

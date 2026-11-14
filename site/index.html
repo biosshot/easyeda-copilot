@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connect an AI agent to EasyEDA Pro. Build native schematics and PCBs with constraint-driven placement, routing, checkpoints and design-rule checks.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/">
+  <link rel="icon" href="./assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="./assets/site.css">
+  <title>EasyEDA Copilot | AI-assisted schematics and PCB design</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="./" aria-current="page"><img src="./assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="./architecture/">Architecture</a>
+        <a href="./examples/">Examples</a>
+        <a href="./local-models/">Local models</a>
+        <a href="./simulation/">Simulation</a>
+        <a href="./getting-started/" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Open-source MCP for EasyEDA Pro</p>
+          <h1>From design intent to <span>editable boards.</span></h1>
+          <p class="lead">Connect your AI agent to EasyEDA Pro to build schematics, place and route PCBs, and review changes in the editor.</p>
+          <div class="actions">
+            <a class="button button-primary" href="./getting-started/">Get started <span aria-hidden="true">→</span></a>
+            <a class="button" href="#demo">Watch the demo <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <figure class="frame hero-board">
+          <img src="./assets/bga2869-2ghz.webp" width="704" height="704" alt="EasyEDA 3D view of the blue BGA2869 amplifier PCB with RF ports at opposite edges">
+          <figcaption class="caption-bar"><span><span class="live-dot"></span>BGA2869 RF amplifier</span><span>EasyEDA Pro · 3D view</span></figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="section" id="demo">
+      <div class="wrap split">
+        <div class="prose">
+          <p class="eyebrow">Featured workflow</p>
+          <h2>Routing the RF signal path</h2>
+          <p>Follow the BGA2869 2 GHz amplifier from schematic organization through pin-level placement constraints, routing, ground planes and via stitching.</p>
+          <p>Look for the RF ports at opposite board edges and the bias network grouped around the amplifier. The resulting tracks, vias and copper zones are native EasyEDA objects.</p>
+          <a class="text-link" href="./examples/#rf-amplifier">Explore the design decisions →</a>
+        </div>
+        <figure class="frame feature-demo">
+          <video controls playsinline preload="none" poster="./assets/bga2869-2ghz.webp" aria-label="BGA2869 RF amplifier design workflow">
+            <source src="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735" type="video/mp4">
+          </video>
+          <figcaption class="caption-bar"><span>RF amplifier · 57 s</span><a href="https://github.com/user-attachments/assets/b3b3b25a-bc27-4654-8802-23775ff71735">Open video ↗</a></figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap">
+        <div class="section-header"><h2>How a board comes together</h2><a href="./architecture/">Explore the architecture →</a></div>
+        <ol class="workline">
+          <li><strong>Inspect</strong><span>Read the active document, connectivity and design rules.</span></li>
+          <li><strong>Constrain</strong><span>Describe functional groups, pin proximity, routing rules and exceptions.</span></li>
+          <li><strong>Apply</strong><span>Preview placement and apply the result with a document checkpoint.</span></li>
+          <li><strong>Verify</strong><span>Inspect critical nets, unrouted connections and native DRC results.</span></li>
+        </ol>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap grid-2">
+        <article class="card card-body">
+          <h3>Small local models</h3>
+          <p>Purpose-built tools keep geometry calculations in the placement and routing engines. See what a local model needs to drive the workflow and how to evaluate a run.</p>
+          <a class="text-link" href="./local-models/">Working with local models →</a>
+        </article>
+        <article class="card card-body">
+          <h3>Simulation and PCB analysis</h3>
+          <p>Run circuit simulations with ngspice and see where PCB parameter extraction fits on the roadmap.</p>
+          <a class="text-link" href="./simulation/">Explore simulation and analysis →</a>
+        </article>
+      </div>
+    </section>
+    <section class="section" id="support">
+      <div class="wrap panel">
+        <h2>Support EasyEDA Copilot</h2>
+        <p>Star the repository to help people find it, or donate through Tribute to support development.</p>
+        <div class="actions"><a class="button button-primary" href="https://github.com/biosshot/easyeda-copilot">Star on GitHub ↗</a><a class="button" href="https://web.tribute.tg/d/PTf">Support on Tribute ↗</a></div>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="./">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="./#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>
