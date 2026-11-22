@@ -8,6 +8,7 @@ import { registerPcbPreviewTools } from "./pcb-preview";
 import { registerPcbRoutingTools } from "./pcb-routing";
 import { registerPcbValidationTools } from "./pcb-validation";
 import { toolHandler } from '../handler';
+import { registerPcbAnalysisTools } from './pcb-analysis';
 
 export function registerPcbTools(server: McpServer, bridge: Bridge) {
     server.registerTool(
@@ -46,4 +47,5 @@ export function registerPcbTools(server: McpServer, bridge: Bridge) {
     registerPcbValidationTools(server, bridge);
     registerPcbPreviewTools(server, bridge);
     registerPcbRoutingTools(server, bridge);
+    registerPcbAnalysisTools(server, bridge);
 }

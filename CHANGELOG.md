@@ -6,6 +6,10 @@
 
 - Preserve native rounded-outline rotation and precision, and render centered, offset and polygon-pad drills. Correct preview rectangle/Bezier/arc parsing, retain small and nested copper cutouts, include through pads/vias on inner-layer previews and preserve polygon stroke widths.
 
+### PCB analysis
+
+- Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews. Add `get_pcb_analysis_docs` for the installed backend's DSL reference.
+
 ### PCB analysis export
 
 - Ignore the EasyEDA API phantom hole on TOP/BOTTOM `POLYGON` pads in V2, with a pad-specific diagnostic. Preserve raw capture evidence, multilayer pad drills and vias.

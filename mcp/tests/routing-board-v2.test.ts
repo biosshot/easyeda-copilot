@@ -5,9 +5,13 @@ import { importEasyEdaBoardV2, nativeCopperPolygons } from '../src/routing/easye
 import { parsePolygonSource } from '../src/pcb-preview/parser';
 import { readEasyEdaBlindViaSpan, readEasyEdaPourRefillRules } from '../src/routing/easyeda-drc-adapter';
 import { registerPcbRoutingTools } from '../src/tools/pcb/pcb-routing';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { registerPcbAnalysisTools } from '../src/tools/pcb/pcb-analysis';
+import { operationManager } from '../src/operations/manager';
+import { operationToolResult } from '../src/operations/tool-result';
+import { TEMP_DIR } from '../src/utils/dirs';
 
 const source = {
     boardOutline: { path: [[0, 0], [20, 0], [20, 10], [0, 10], [0, 0]] },
@@ -279,3 +283,110 @@ test('independent drills are not duplicated as copper pads; copper circles remai
     assert.equal(circle.id, 'circle');
     assert.deepEqual(circle.points[0], circle.points.at(-1));
 });
+
+test('analysis tools save the scenario, summary and PNGs and return a backend refusal', async () => {
+    const { handlers, requests } = analysisToolFixture();
+    const input = await mkdtemp(join(tmpdir(), 'analysis-tool-input-'));
+    const output: string[] = [];
+    try {
+        const file = join(input, 'scenario.js');
+        await writeFile(file, "const a=analysis({board}); a.plot({title:'V2 capture',kind:'bar',data:[board.components.length,board.pads.length,board.layers.length,board.copper.fixed.tracks.length]});");
+        const run = handlers.get('run_pcb_analysis')!;
+        const extra = { signal: new AbortController().signal };
+        const settled = await analysisToolTerminal(await run({ file, wait_ms: 1_000 }, extra));
+        assert.equal(settled.result.isError, undefined);
+        assert.equal(settled.body.status, 'complete');
+        assert.match(settled.body.operation_id, /^pcb-analysis:[0-9a-f]{8}$/);
+        output.push(settled.body.artifacts_directory);
+        assert.deepEqual(requests, ['get-command-target', 'export-routing-input']);
+        assert.ok(settled.body.images.some((image: { kind: string }) => image.kind === 'bar'));
+        const result = JSON.parse(await readFile(settled.body.result_path, 'utf8'));
+        assert.deepEqual(result.reports[0].plots[0].data, [1, 2, 2, 2]);
+        const summary = JSON.parse(await readFile(settled.body.summary_path, 'utf8'));
+        assert.equal(summary.physicalAccuracy, 'unverified');
+        assert.deepEqual(summary.images, settled.body.images);
+        assert.equal((await readFile(summary.images[0].image_path)).subarray(1, 4).toString(), 'PNG');
+
+        await writeFile(file, "analysis({board}); throw new Error('fixture refusal');");
+        const failed = await analysisToolTerminal(await run({ file, wait_ms: 1_000 }, extra));
+        output.push(failed.body.artifacts_directory);
+        assert.equal(failed.result.isError, true);
+        assert.equal(failed.body.status, 'failed');
+        assert.ok(failed.body.diagnostic_codes.includes('RUNTIME_ERROR'));
+        assert.equal(JSON.parse(await readFile(failed.body.result_path, 'utf8')).error.code, 'RUNTIME_ERROR');
+
+        const docs = await handlers.get('get_pcb_analysis_docs')!({}, extra);
+        const docsText = docs.content[0].text;
+        const docsArtifact = docsText.startsWith('{') ? JSON.parse(docsText).path : undefined;
+        assert.match(docsArtifact ? await readFile(docsArtifact, 'utf8') : docsText, /targetImpedanceOhm/);
+        if (docsArtifact) await rm(docsArtifact);
+    } finally {
+        for (const directory of output) {
+            assert.ok(directory.startsWith(join(TEMP_DIR, 'pcb-analysis-')));
+            await rm(directory, { recursive: true, force: true });
+        }
+        await rm(input, { recursive: true, force: true });
+    }
+});
+
+test('analysis cancellation exits the worker and releases a process-wide slot', async () => {
+    const { handlers, changeDocument } = analysisToolFixture();
+    const directory = await mkdtemp(join(tmpdir(), 'analysis-tool-input-'));
+    const file = join(directory, 'loop.js');
+    let id: string | undefined;
+    let output: string | undefined;
+    try {
+        const extra = { signal: new AbortController().signal };
+        const run = handlers.get('run_pcb_analysis')!;
+        await writeFile(file, 'analysis({board}); while (true) {}');
+        const first = JSON.parse((await run({ file, wait_ms: 1_000 }, extra)).content[0].text);
+        id = first.operation_id;
+        assert.equal(first.status, 'running');
+        assert.equal(first.stage, 'analyzing');
+        changeDocument('another-pcb');
+        await assert.rejects(run({ file, wait_ms: 1_000 }, extra), /PCB analysis is already running/);
+        await operationManager.cancel(id!);
+        await assert.rejects(operationManager.wait(id!, 10_000), /cancelled/i);
+        await writeFile(file, 'analysis({board});');
+        const second = await analysisToolTerminal(await run({ file, wait_ms: 1_000 }, extra));
+        output = second.body.artifacts_directory;
+        assert.equal(second.body.status, 'complete');
+    } finally {
+        if (id) await operationManager.cancel(id);
+        if (output) {
+            assert.ok(output.startsWith(join(TEMP_DIR, 'pcb-analysis-')));
+            await rm(output, { recursive: true, force: true });
+        }
+        await rm(directory, { recursive: true, force: true });
+    }
+});
+
+function analysisToolFixture() {
+    const handlers = new Map<string, (...args: any[]) => Promise<any>>();
+    const requests: string[] = [];
+    let document = 'test-pcb';
+    const bridge = {
+        getSelectedEasyEdaInstance: async () => ({ instanceId: 'analysis-test-instance' }),
+        getVersionWarning: async () => undefined,
+        requestEasyEda: async (event: string, body?: Record<string, unknown>) => {
+            requests.push(event);
+            if (event === 'get-command-target') return { documentUuid: document };
+            assert.equal(event, 'export-routing-input');
+            assert.deepEqual(body, { version: 2 });
+            return { text: JSON.stringify(source), pcb: raw(), drc };
+        },
+    };
+    registerPcbAnalysisTools({ registerTool: (name: string, _spec: unknown, handler: (...args: any[]) => Promise<any>) => handlers.set(name, handler) } as never, bridge as never);
+    return { handlers, requests, changeDocument: (value: string) => { document = value; } };
+}
+
+async function analysisToolTerminal(initial: { content: { text: string }[]; isError?: boolean }) {
+    let result = initial;
+    let body = JSON.parse(result.content[0].text);
+    if (body.status === 'running') {
+        result = await operationToolResult(await operationManager.wait(body.operation_id, 15_000)) as typeof result;
+        body = JSON.parse(result.content[0].text);
+    }
+    assert.notEqual(body.status, 'running');
+    return { result, body };
+}

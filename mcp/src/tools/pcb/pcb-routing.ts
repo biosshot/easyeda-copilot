@@ -8,9 +8,7 @@ import { textResult } from '../../utils/tool-result';
 import { targetedToolHandler } from '../handler';
 import { writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { RawPcbSchema } from '@copilot/shared/types/pcb/raw';
-import { PcbDrcBundleSchema } from '@copilot/shared/types/pcb/drc';
-import { importEasyEdaBoardV2 } from '../../routing/easyeda-board-v2';
+import { requestRoutingBoardV2, parseRoutingBoardV2 } from '../../routing/board-v2-capture';
 
 const DEFAULT_ROUTING_WAIT_MS = TIMEOUT_POLICY.mutationWaitMs;
 
@@ -21,13 +19,11 @@ export function registerPcbRoutingTools(server: McpServer, bridge: Bridge) {
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
         inputSchema: z.object({ file: z.string().min(1).describe('Output JSON path; its parent directory must exist.') }),
     }, targetedToolHandler(bridge, async ({ file }) => {
-        const capture = await bridge.requestEasyEda('export-routing-input', { version: 2 }) as Record<string, unknown>;
-        if (typeof capture?.text !== 'string') throw new Error('EasyEDA returned no autoroute JSON');
+        const capture = await requestRoutingBoardV2(bridge);
         const path = resolve(file);
         // Retain the native evidence even when conversion finds an unsupported structure.
         await writeFile(path, `${JSON.stringify({ capture })}\n`, 'utf8');
-        if (!capture.pcb) throw new Error(`RoutingBoard V2 native capture is unavailable. Reload the extension. Native response saved to ${path}`);
-        const { board, diagnostics } = importEasyEdaBoardV2(JSON.parse(capture.text), RawPcbSchema().parse(capture.pcb), PcbDrcBundleSchema().parse(capture.drc));
+        const { board, diagnostics } = parseRoutingBoardV2(capture, path);
         await writeFile(path, `${JSON.stringify({ board, diagnostics, capture })}\n`, 'utf8');
         return textResult({ file: path, components: board.components.length, pads: board.pads.length,
             tracks: board.copper.fixed.tracks.length, vias: board.copper.fixed.vias.length, zones: board.copper.fixed.zones.length, diagnostics });
