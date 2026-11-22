@@ -10,6 +10,8 @@
 
 - Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews. Add `get_pcb_analysis_docs` for the installed backend's DSL reference.
 
+- Ship the `pcb-analysis` skill with example DC-to-thermal, channel and PI scenarios, status guidance and measured runtime and memory ranges.
+
 ### PCB analysis export
 
 - Ignore the EasyEDA API phantom hole on TOP/BOTTOM `POLYGON` pads in V2, with a pad-specific diagnostic. Preserve raw capture evidence, multilayer pad drills and vias.

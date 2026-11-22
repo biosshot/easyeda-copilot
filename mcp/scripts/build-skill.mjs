@@ -130,7 +130,7 @@ try {
         const backend = join(runtime, 'node_modules', 'eda-copilot-backend');
         // Loading a .node file here locks it until this process exits on Windows.
         // Verify it in a child so the staging directory can be replaced or cleaned.
-        execFileSync(process.execPath, ['-e', `require(${JSON.stringify(join(backend, 'native', 'pcb-board-packer', 'index.cjs'))})`], {
+        execFileSync(process.execPath, ['-e', `require(${JSON.stringify(join(backend, 'native', 'node-addon', 'index.cjs'))})`], {
             cwd: staging, stdio: 'pipe', windowsHide: true,
         });
         execFileSync(process.execPath, [join(staging, 'scripts', 'easyeda-copilot-cli.js'), '--help'], { cwd: staging, stdio: 'pipe', windowsHide: true });
