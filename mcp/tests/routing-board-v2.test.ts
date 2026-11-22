@@ -314,12 +314,6 @@ test('analysis tools save the scenario, summary and PNGs and return a backend re
         assert.equal(failed.body.status, 'failed');
         assert.ok(failed.body.diagnostic_codes.includes('RUNTIME_ERROR'));
         assert.equal(JSON.parse(await readFile(failed.body.result_path, 'utf8')).error.code, 'RUNTIME_ERROR');
-
-        const docs = await handlers.get('get_pcb_analysis_docs')!({}, extra);
-        const docsText = docs.content[0].text;
-        const docsArtifact = docsText.startsWith('{') ? JSON.parse(docsText).path : undefined;
-        assert.match(docsArtifact ? await readFile(docsArtifact, 'utf8') : docsText, /targetImpedanceOhm/);
-        if (docsArtifact) await rm(docsArtifact);
     } finally {
         for (const directory of output) {
             assert.ok(directory.startsWith(join(TEMP_DIR, 'pcb-analysis-')));

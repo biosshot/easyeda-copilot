@@ -8,7 +8,7 @@
 
 ### PCB analysis
 
-- Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews. Add `get_pcb_analysis_docs` for the installed backend's DSL reference.
+- Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews.
 
 - Ship the `pcb-analysis` skill with example DC-to-thermal, channel and PI scenarios, status guidance and measured runtime and memory ranges.
 

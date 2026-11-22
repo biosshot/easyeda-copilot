@@ -2,13 +2,13 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { TIMEOUT_POLICY } from '@copilot/shared/timeout-policy';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp';
-import { analysisDslDocumentation, renderAnalysisReport, runAnalysisDsl, type AnalysisImage } from 'eda-copilot-backend/analyze';
+import { renderAnalysisReport, runAnalysisDsl, type AnalysisImage } from 'eda-copilot-backend/analyze';
 import * as z from 'zod/v4';
 import type { Bridge } from '../../bridge';
 import { operationManager } from '../../operations/manager';
 import { operationToolResult } from '../../operations/tool-result';
 import { requestRoutingBoardV2, parseRoutingBoardV2 } from '../../routing/board-v2-capture';
-import { TEMP_DIR } from '../../utils/dirs';
+import { DOCS_DIR, TEMP_DIR } from '../../utils/dirs';
 import { svgToPng } from '../../utils/svg-to-png';
 import { textResult } from '../../utils/tool-result';
 import { targetedToolHandler } from '../handler';
@@ -17,16 +17,9 @@ const ANALYSIS_TIMEOUT_MS = 75 * 60_000;
 const MAX_ANALYSIS_OUTPUT_BYTES = 128 * 1024 * 1024;
 
 export function registerPcbAnalysisTools(server: McpServer, bridge: Bridge) {
-    server.registerTool('get_pcb_analysis_docs', {
-        title: 'Get PCB Analysis DSL Reference',
-        description: 'Return the analysis DSL declarations from the installed backend. Large text is saved to a local file.',
-        annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
-        inputSchema: z.object({}),
-    }, async () => textResult(analysisDslDocumentation()));
-
     server.registerTool('run_pcb_analysis', {
         title: 'Run PCB Analysis',
-        description: 'Analyze the current PCB from a local JavaScript analysis DSL file. Captures a read-only RoutingBoardV2 snapshot of the selected PCB. Returns operation_id for wait_operation or cancel_operation. The completed result contains analysis status and paths to JSON and PNG artifacts. Use get_pcb_analysis_docs for the DSL.',
+        description: `Analyze the current PCB from a local JavaScript analysis DSL file. Captures a read-only RoutingBoardV2 snapshot of the selected PCB. Returns operation_id for wait_operation or cancel_operation. The completed result contains analysis status and paths to JSON and PNG artifacts. Instructions and DSL declarations: ${join(DOCS_DIR, 'pcb-analysis')}.`,
         annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: false },
         inputSchema: z.object({
             file: z.string().min(1).describe('Path to a trusted local JavaScript analysis DSL file.'),
