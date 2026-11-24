@@ -33,6 +33,6 @@ for (const [name, target] of Object.entries(config)) {
 }
 const backend = dirname(require.resolve('eda-copilot-backend/package.json'));
 for (const platform of ['win32-x64-msvc', 'linux-x64-gnu', 'darwin-x64', 'darwin-arm64']) {
-  assert.ok(statSync(join(backend, 'native/pcb-board-packer', 'pcb-board-packer.' + platform + '.node')).size > 0, 'Missing backend binary: ' + platform);
+  assert.ok(statSync(join(backend, 'native/node-addon', 'eda-copilot-node.' + platform + '.node')).size > 0, 'Missing backend binary: ' + platform);
 }
 console.log('Release versions, registry dependency specs, lockfile and installed backend native coverage verified.');

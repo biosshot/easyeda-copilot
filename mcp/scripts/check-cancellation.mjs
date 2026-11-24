@@ -91,7 +91,7 @@ try {
         'save_doc', 'sync_current_document', 'modify_name', 'create_doc', 'delete_doc', 'import_pcb_changes',
         'extract_circuit_on_current_page', 'beautify_schematic_on_current_page',
         'assemble_pcb_layout_on_current_pcbdoc', 'annotate_designators', 'save_checkpoint_for_current_page',
-        'restore_checkpoint_for_current_page', 'execute_js', 'validate_pcb_dsl',
+        'restore_checkpoint_for_current_page', 'execute_js', 'validate_pcb_dsl', 'export_pcb_routing_board', 'run_pcb_analysis',
     ];
     assert.deepEqual(catalog.map(t => t.name).sort(), expectedTools.sort());
     const readOnly = new Set([
@@ -99,13 +99,13 @@ try {
         'get_schematic_groups', 'get_pcb_component_sizes', 'get_pcb_stack_layers', 'get_pcb_drc_rules',
         'check_pcb_drc', 'preview_component', 'preview_pcb', 'inspect_net', 'inspect_component', 'get_current_pcb',
         'list_checkpoints', 'list_easyeda_instances', 'list_operations', 'wait_operation', 'make_pcb_layout',
-        'save_checkpoint_for_current_page', 'validate_pcb_dsl',
+        'save_checkpoint_for_current_page', 'validate_pcb_dsl', 'export_pcb_routing_board', 'run_pcb_analysis',
     ]);
     const nonDestructiveMutations = new Set([
         'cancel_operation', 'select_easyeda_instance', 'open_document', 'save_doc',
         'sync_current_document', 'create_doc',
     ]);
-    const nonIdempotentReads = new Set(['make_pcb_layout', 'save_checkpoint_for_current_page']);
+    const nonIdempotentReads = new Set(['make_pcb_layout', 'save_checkpoint_for_current_page', 'run_pcb_analysis']);
     const idempotentMutations = new Set([
         'cancel_operation', 'select_easyeda_instance', 'open_document', 'save_doc',
         'sync_current_document', 'modify_name',

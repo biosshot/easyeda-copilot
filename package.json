@@ -1,6 +1,6 @@
 {
 	"name": "easyeda-copilot",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"description": "AI-powered electronics design in EasyEDA Pro: schematic creation and editing, component search, PCB placement and routing, SPICE simulation, and design rule checks.",
 	"author": "echosystem",
 	"license": "MIT",

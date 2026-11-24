@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.3 - 2026-11-24
 
 ### PCB preview
 
@@ -8,7 +8,7 @@
 
 ### PCB analysis
 
-- Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews.
+- Add `run_pcb_analysis` as a beta for simple boards with supported geometry and explicit inputs. Physical accuracy has not been independently verified. The tool captures a read-only RoutingBoardV2 snapshot, runs as a cancellable background operation, and saves local JSON reports and PNG previews.
 
 - Ship the `pcb-analysis` skill with example DC-to-thermal, channel and PI scenarios, status guidance and measured runtime and memory ranges.
 
@@ -16,7 +16,7 @@
 
 - Ignore the EasyEDA API phantom hole on TOP/BOTTOM `POLYGON` pads in V2, with a pad-specific diagnostic. Preserve raw capture evidence, multilayer pad drills and vias.
 - Export native stitching vias (`SUTURE`) and resolve blind/buried via spans from the selected EasyEDA rule's start/end layers in V2. Preserve physical layer order and reject unresolved ranges without assuming a through connection; V1 is unchanged.
-- Add opt-in RoutingBoard V2 export with native pads, holes, copper IDs and Pour/Poured/Fill evidence. `export_pcb_routing_board` saves the board, native capture and diagnostics for auditing. Existing V1 routing requests and preview reads retain their defaults; no routing or refill runs during V2 export. The backend contract is consumed from the local backend package.
+- Add opt-in RoutingBoard V2 export with native pads, holes, copper IDs and Pour/Poured/Fill evidence. `export_pcb_routing_board` saves the board, native capture and diagnostics for auditing. Existing V1 routing requests and preview reads retain their defaults; no routing or refill runs during V2 export. The release pins `eda-copilot-backend@0.5.0` and `eda-copilot-router@0.3.2`.
 
 ### Schematic groups
 

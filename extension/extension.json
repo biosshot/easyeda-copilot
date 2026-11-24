@@ -3,7 +3,7 @@
 	"uuid": "64651de62a944308a56e3b42eb2cb248",
 	"displayName": "EasyEda Copilot",
 	"description": "AI-powered electronics design in EasyEDA Pro: schematic creation and editing, component search, PCB placement and routing, SPICE simulation, and design rule checks.",
-	"version": "1.3.2",
+	"version": "1.3.3",
 	"publisher": "biosshot",
 	"engines": {
 		"eda": "^3.2.149"

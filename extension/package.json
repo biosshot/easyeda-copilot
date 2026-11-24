@@ -1,6 +1,6 @@
 {
   "name": "@copilot/extension",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "private": true,
   "description": "EasyEDA Pro extension connecting AI agents to native schematic and PCB editing, inspection, and design rule checks.",
   "license": "MIT",
