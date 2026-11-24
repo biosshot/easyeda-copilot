@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Find local device models, run circuit simulations with ngspice, and follow the PCB analysis roadmap.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/simulation/">
+  <link rel="icon" href="../assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../assets/site.css">
+  <title>SPICE simulation and PCB analysis | EasyEDA Copilot</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../"><img src="../assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="../architecture/">Architecture</a>
+        <a href="../examples/">Examples</a>
+        <a href="../local-models/">Local models</a>
+        <a href="../simulation/" aria-current="page">Simulation</a>
+        <a href="../getting-started/" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="page-head"><div class="wrap"><h1>Simulation and PCB analysis</h1><p class="lead">Start with circuit behavior in ngspice. PCB parameter extraction targets a separate engineering question: how copper geometry and stackup affect the real board.</p></div></section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <p class="status">Available · standalone skill</p>
+          <h2>From component model to waveform</h2>
+          <ol>
+            <li>Search the curated library by manufacturer part number.</li>
+            <li>Copy the selected model by ID. Verify subcircuit ports before including it in a netlist.</li>
+            <li>Run the netlist with ngspice and inspect numerical results, logs and plots.</li>
+          </ol>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/spice/SKILL.md">SPICE skill and commands ↗</a>
+        </div>
+        <div class="stack">
+          <div class="codebox"><div class="code-label">Run from the SPICE skill directory</div><pre tabindex="0"><code>node scripts/search.mjs "LM358" --limit 3
+node scripts/copy-model.mjs "&lt;modelId&gt;" --out ./models
+node scripts/simulate.mjs circuit.cir --out results/run-01</code></pre></div>
+          <p class="lead">The result directory captures the rewritten netlist and included model files for review.</p>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Try an RC low-pass filter</h2>
+          <p>The included fixture uses a 1 kΩ resistor and a 100 nF capacitor. The expected −3 dB cutoff is about 1.59 kHz from <code>1 / (2πRC)</code>. Use the generated AC plot or CSV to check that result.</p>
+          <div class="codebox"><div class="code-label">Runnable example</div><pre tabindex="0"><code>node scripts/simulate.mjs examples/rc-filter.cir --out results/rc-low-pass</code></pre></div>
+          <a class="text-link" href="../assets/rc-filter.cir" download>Download the RC netlist</a>
+        </div>
+        <figure class="frame">
+          <video controls playsinline preload="none" poster="../assets/spice.webp" aria-label="Original built-in SPICE workflow in EasyEDA Copilot"><source src="../assets/spice.mp4" type="video/mp4"></video>
+          <figcaption class="caption-bar">SPICE demo · original built-in interface</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap panel">
+        <p class="status research">Roadmap · under development</p>
+        <h2>Extract PCB parameters up to 1 GHz</h2>
+        <p>The roadmap targets frequency-dependent extraction from layout geometry and stackup for signal and power integrity analysis. The backend documents implemented solvers and limited acceptance cases. Physical reference acceptance and full case coverage remain open.</p>
+        <p>Thermal analysis is another area of backend research.</p>
+        <a class="text-link" href="https://github.com/biosshot/eda-copilot-backend">Backend source ↗</a>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="../">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="../#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>

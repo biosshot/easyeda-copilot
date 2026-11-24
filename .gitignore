@@ -17,4 +17,5 @@
 /extension/*.tsbuildinfo
 __pycache__/
 *.pyc
-/docs/release-acceptance-reports
+
+/docs/release-acceptance-reports/*/evidence

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Install the EasyEDA Pro extension, connect the MCP bridge to Codex or Claude Code, and inspect your first project.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/getting-started/">
+  <link rel="icon" href="../assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../assets/site.css">
+  <title>Get started with EasyEDA Copilot</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../"><img src="../assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="../architecture/">Architecture</a>
+        <a href="../examples/">Examples</a>
+        <a href="../local-models/">Local models</a>
+        <a href="../simulation/">Simulation</a>
+        <a href="../getting-started/" aria-current="page" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="page-head"><div class="wrap"><h1>Get started</h1><p class="lead">Use EasyEDA Pro Desktop, Node.js 20.19 or newer, and an MCP-capable client such as Codex or Claude Code.</p></div></section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Install the extension</h2>
+          <p>Download the latest <code>.eext</code> package. In EasyEDA Pro Desktop, open <strong>Settings → Extensions → Extensions Manager</strong>, choose <strong>Import Extensions</strong>, and enable <strong>External Interactions</strong> for EasyEDA Copilot.</p>
+          <div class="actions"><a class="button button-primary" href="https://github.com/biosshot/easyeda-copilot/releases/latest">Download from GitHub Releases ↗</a></div>
+        </div>
+        <figure class="frame"><img src="../assets/extension-settings.webp" alt="EasyEDA Pro Extensions Manager with External Interactions enabled for EasyEDA Copilot"><figcaption class="caption-bar">EasyEDA Pro extension settings</figcaption></figure>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Connect an MCP client</h2>
+          <p>Add the server using the command for your client, then start the client with the server enabled. The extension discovers the local bridge automatically. In EasyEDA, <strong>Copilot → MCP</strong> pauses or resumes the connection.</p>
+          <a class="text-link" href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/README.md">Other MCP clients and local builds ↗</a>
+          <p><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/install-guide.md">Build and install the standalone skill ↗</a></p>
+        </div>
+        <div class="stack">
+          <div class="codebox"><div class="code-label">Codex</div><pre tabindex="0"><code>codex mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp</code></pre></div>
+          <div class="codebox"><div class="code-label">Claude Code</div><pre tabindex="0"><code>claude mcp add easyeda-copilot -- npx -y easyeda-copilot-mcp</code></pre></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>Inspect a project</h2>
+          <p>Open a schematic or PCB in EasyEDA Pro. Ask your agent to inspect the current project, identify the active document, and report the design rules before proposing edits.</p>
+          <a class="text-link" href="../examples/">Find an editable example →</a>
+        </div>
+        <div>
+          <h3>Workflow documentation</h3>
+          <ul class="resources">
+            <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/workflow.md">Complete MCP workflow ↗</a></li>
+            <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/schematic/workflow.md">Schematic design ↗</a></li>
+            <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-layout/instructions.md">PCB placement ↗</a></li>
+            <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/pcb-routing/instructions.md">PCB routing ↗</a></li>
+            <li><a href="https://github.com/biosshot/easyeda-copilot/blob/main/mcp/docs/verification.md">Checkpoints, DRC and recovery ↗</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="../">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="../#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>
+

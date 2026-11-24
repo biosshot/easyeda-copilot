@@ -19,6 +19,12 @@ The agent entry point links to schematic, placement and routing guides. Read the
 - [Separate backend, local development and release checks](local-development.md)
 - [Backend extraction record](backend-integration-plan.md) — historical implementation scope
 
+## Releases
+
+- [Pre-release acceptance checklist](release-acceptance.md)
+- [Acceptance report template](release-acceptance-reports/TEMPLATE.md)
+- [Release publication and recovery](releasing.md)
+
 ## Legacy built-in interface
 
 These guides describe the integrated chat and its settings. They do not configure the external MCP client's model, keys, or tools.

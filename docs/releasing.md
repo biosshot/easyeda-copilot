@@ -1,5 +1,7 @@
 # Release publication and recovery
 
+Complete the [pre-release acceptance checklist](release-acceptance.md) and archive the candidate's report before publication.
+
 ## Prepare 1.3.1
 
 The release targets `eda-copilot-backend` 0.4.0 and the published

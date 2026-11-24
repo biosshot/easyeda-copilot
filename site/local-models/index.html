@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How EasyEDA Copilot delegates PCB geometry to layout engines, and how to evaluate an MCP-capable local model on a real EasyEDA project.">
+  <meta name="theme-color" content="#101514">
+  <link rel="canonical" href="https://biosshot.github.io/easyeda-copilot/local-models/">
+  <link rel="icon" href="../assets/logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../assets/site.css">
+  <title>Small local models | EasyEDA Copilot</title>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="../"><img src="../assets/logo.webp" width="30" height="30" alt="">EasyEDA Copilot</a>
+      <nav class="nav" aria-label="Main">
+        <a href="../architecture/">Architecture</a>
+        <a href="../examples/">Examples</a>
+        <a href="../local-models/" aria-current="page">Local models</a>
+        <a href="../simulation/">Simulation</a>
+        <a href="../getting-started/" class="nav-start">Get started</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="page-head"><div class="wrap"><h1>Small local models</h1><p class="lead">A model running locally can drive the same workflows through an MCP-capable client. The engineering tools handle coordinate-intensive work, leaving the model to express intent and review the results.</p></div></section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose">
+          <h2>What the model needs to do</h2>
+          <p>Read structured project and board data, follow the tool workflow, translate requirements into a placement or routing program, and respond to preview or DRC findings. The placement engine evaluates geometry and pin proximity. The router computes tracks and vias under the supplied design rules.</p>
+          <p>Tool-call reliability, context size and adherence to engineering constraints matter when choosing a model. A local model still needs a client that exposes the MCP tools or can run the standalone skill.</p>
+          <a class="text-link" href="../architecture/#placement-control">See how the placement engine uses rules →</a>
+        </div>
+        <div class="panel">
+          <h3>Start with an existing board</h3>
+          <p>Use a copy of an editable example so the starting document stays reproducible. Ask the model to inspect the project and report the board rules, then give it a single placement task with a clear mechanical constraint.</p>
+          <p>Review the preview before applying it, and record the native DRC result afterward.</p>
+          <div class="actions"><a class="button" href="../examples/">Choose a project →</a></div>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap split">
+        <div class="prose"><h2>Record a reproducible run</h2><p>Test the same project snapshot and task across configurations so you can see which part of the workflow changes. Published project demos document the workflow and resulting boards. Specific model configurations need their own recorded runs.</p></div>
+        <ul class="resources">
+          <li><strong>Model and runtime</strong><p>Model name, quantization, inference runtime, client, context limit and hardware.</p></li>
+          <li><strong>Inputs and intervention</strong><p>Project revision, task prompt, Copilot version, tool retries and manual changes.</p></li>
+          <li><strong>Engineering results</strong><p>Unrouted connections, native DRC findings and the saved project. Include elapsed time if comparing runs.</p></li>
+        </ul>
+      </div>
+    </section>
+    <section class="section"><div class="wrap"><a class="button button-primary" href="../getting-started/">Configure EasyEDA Copilot →</a></div></section>
+  </main>
+  <footer class="wrap footer">
+    <div><a class="brand" href="../">EasyEDA Copilot</a><p>Open source under the <a href="https://github.com/biosshot/easyeda-copilot/blob/main/LICENSE">MIT License</a>.</p></div>
+    <nav aria-label="Project links" class="footer-links">
+      <a href="https://github.com/biosshot/easyeda-copilot">GitHub</a>
+      <a href="https://github.com/biosshot/easyeda-copilot/issues">Issues</a>
+      <a href="https://discord.gg/AXCGjTDYkq">Discord</a>
+      <a href="../#support">Support</a>
+    </nav>
+  </footer>
+</body>
+</html>
