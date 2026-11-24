@@ -18,6 +18,10 @@
 - Export native stitching vias (`SUTURE`) and resolve blind/buried via spans from the selected EasyEDA rule's start/end layers in V2. Preserve physical layer order and reject unresolved ranges without assuming a through connection; V1 is unchanged.
 - Add opt-in RoutingBoard V2 export with native pads, holes, copper IDs and Pour/Poured/Fill evidence. `export_pcb_routing_board` saves the board, native capture and diagnostics for auditing. Existing V1 routing requests and preview reads retain their defaults; no routing or refill runs during V2 export. The release pins `eda-copilot-backend@0.5.0` and `eda-copilot-router@0.3.2`.
 
+### Agent docs
+
+- Add the `design-lessons` skill: checklists from real boards built with Copilot, by stage (schematic and library parts, datasheet numbers and power, RF/high voltage/zones, placement, routing and API behaviour, JLCPCB ordering), plus two general references: the floorplan order with plane plan and thermal budget, and electrical layout rules with sizing data. Linked from the main skill's task table.
+
 ### Schematic groups
 
 - Keep the designer's `PCB Block`, `PCB Module`, `PCB Attach` and `PCB Role` when `beautify_schematic_on_current_page` or source-path `replace_components` rebuilds a component; `block_name` only fills a missing `PCB Block`. `declaration_errors` entries now carry a stable `code` (with `component`, `block` or `property`), a conflicting block attribute stays omitted across pages and is listed in `conflicts`, and declaration read errors reach PCB validation even when no declared block remains.
