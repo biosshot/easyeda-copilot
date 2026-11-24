@@ -122,13 +122,10 @@ export function buildIslands(rings: PcbPoint[][]): Island[] {
                 island.cutouts.push(sorted[i]);
             } else {
                 const orphan: Island = { outer: sorted[i], cutouts: [] };
+                indexToIsland.set(i, orphan);
                 islands.push(orphan);
             }
         }
-    }
-
-    for (const island of islands) {
-        island.cutouts = island.cutouts.filter(c => !isSliverCutout(c));
     }
 
     return islands;

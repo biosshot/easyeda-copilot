@@ -118,7 +118,7 @@ const ARC_TOLERANCE_MM = 0.001;
 const MAX_ARC_SEGMENTS = 1024;
 const MAX_PATH_POINTS = 16_384;
 
-function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number, circumscribe = false): readonly PointMm[] | undefined {
+export function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number, circumscribe = false, toleranceMm = ARC_TOLERANCE_MM): readonly PointMm[] | undefined {
     const sweep = sweepDegrees * Math.PI / 180;
     const absoluteSweep = Math.abs(sweep);
     const chord = Math.hypot(end.x - start.x, end.y - start.y);
@@ -138,7 +138,7 @@ function tessellateArc(start: PointMm, end: PointMm, sweepDegrees: number, circu
         y: midpoint.y + normal.y * centerDistance,
     };
     const startAngle = Math.atan2(start.y - center.y, start.x - center.x);
-    const boundedTolerance = Math.min(ARC_TOLERANCE_MM, radius);
+    const boundedTolerance = Math.min(toleranceMm, radius);
     const maxStep = 2 * Math.acos(Math.max(-1, Math.min(1, circumscribe
         ? radius / (radius + boundedTolerance)
         : 1 - boundedTolerance / radius)));

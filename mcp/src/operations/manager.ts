@@ -73,6 +73,10 @@ export class OperationManager {
         currentSignal()?.throwIfAborted();
         const target = options.target ?? currentTarget();
         if (target) options = { ...options, resource: `document:${target.instanceId}:${target.documentUuid ?? ''}` };
+        if (kind === 'pcb-analysis') {
+            const activeAnalysis = [...this.#operations.values()].find(operation => operation.kind === kind && operation.status === 'running');
+            if (activeAnalysis) throw new Error(`PCB analysis is already running: ${activeAnalysis.id}`);
+        }
         if (options.resource) {
             const active = [...this.#operations.values()].find(operation => (
                 operation.resource === options.resource && (operation.status === 'running' || operation.applyStatus === 'applying')

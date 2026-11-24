@@ -8,6 +8,7 @@ import type {
     PcbDrcNetRule,
     PcbDrcNetRuleEntry,
 } from '@copilot/shared/types/pcb/drc';
+import type { PourZoneV2 } from 'eda-copilot-backend/types';
 
 type JsonRecord = Record<string, unknown>;
 type RelationRule = PcbDrcNetClassRule | PcbDrcEqualLengthGroupRule;
@@ -449,11 +450,65 @@ export function diffRoutingRules(source: RoutingRules, target: RoutingRules): Ro
     };
 }
 
-function preset(configuration: JsonRecord, category: string, family: string, name: unknown) {
+function preset(configuration: JsonRecord, category: string, family: string, name: unknown, strict = false) {
     const presets = presetFamily(configuration, category, family);
     if (typeof name === 'string' && record(presets[name])) return record(presets[name]);
+    if (strict && typeof name === 'string' && name) return undefined;
     return Object.values(presets).map(record).find(item => item?.isSetDefault === true)
-        ?? Object.values(presets).map(record).find(Boolean);
+        ?? (strict ? undefined : Object.values(presets).map(record).find(Boolean));
+}
+
+/** Resolve the native blind/buried item name (or key) in its selected preset. */
+export function readEasyEdaBlindViaSpan(source: PcbDrcBundle, name: string, net?: string) {
+    if (!record(record(source.ruleConfiguration.Physics)?.['Blind/Buried Via'])) return undefined;
+    const rule = sourceNetRule(source.netRules, net ?? '');
+    const netClass = source.netRules.find(item => item.type === 'netClass' && item.sub.some(member => member.name === net));
+    const assigned = rule['Blind/Buried Via'] === undefined ? netClass?.['Blind/Buried Via'] : rule['Blind/Buried Via'];
+    const selected = preset(source.ruleConfiguration, 'Physics', 'Blind/Buried Via', assigned, true);
+    const rows = Array.isArray(selected?.table) ? selected.table.map(record).filter(item => !!item) : [];
+    const byName = rows.filter(item => item.name === name);
+    const matches = byName.length ? byName : rows.filter(item => item.key === name);
+    if (matches.length !== 1) return undefined;
+    const { startLayer, endLayer } = matches[0];
+    if (typeof startLayer !== 'number' || !Number.isInteger(startLayer)
+        || typeof endLayer !== 'number' || !Number.isInteger(endLayer)) return undefined;
+    return { startLayer, endLayer };
+}
+
+/** Only materialize verified scalar values; retain nonuniform/unresolved tables as limitations. */
+export function readEasyEdaPourRefillRules(source: PcbDrcBundle, net?: string): PourZoneV2['refillRules'] {
+    const unresolved: string[] = [];
+    const result: PourZoneV2['refillRules'] = { status: 'unknown', unresolved };
+    try {
+        const rule = sourceNetRule(source.netRules, net ?? '');
+        const spacing = preset(source.ruleConfiguration, 'Spacing', 'Copper Safe Spacing', rule['Copper Safe Spacing'], true);
+        const zone = preset(source.ruleConfiguration, 'Plane', 'Copper Zone', rule['Copper Zone'], true);
+        // The spacing table may express different clearances for different object pairs.
+        const values: number[] = [];
+        const collect = (value: unknown, content = false) => {
+            if (typeof value === 'number' && content && Number.isFinite(value)) values.push(value);
+            else if (Array.isArray(value)) value.forEach(v => collect(v, content));
+            else if (record(value)) Object.entries(value as JsonRecord).forEach(([key, v]) => collect(v, content || key === 'content'));
+        };
+        collect(spacing);
+        if (values.length && values.every(v => Math.abs(v - values[0]) < PRESET_NUMBER_EPSILON)) result.clearanceMm = values[0];
+        else unresolved.push('Copper Safe Spacing is absent or nonuniform; no scalar clearance inferred.');
+        const connection: NonNullable<PourZoneV2['refillRules']['padConnection']> = {};
+        for (const [native, target] of [['singleLayerPadModel', 'singleLayer'], ['multiLayerPadModel', 'multiLayer']] as const) {
+            const model = record(zone?.[native]);
+            const mode = typeof model?.connectMode === 'number' ? (['thermal', 'solid', 'none'] as const)[model.connectMode] : undefined;
+            if (!mode) { unresolved.push(`${native} is unresolved.`); continue; }
+            const fields: { thermalGapMm?: number; spokeWidthMm?: number; spokeAngleDeg?: number } = {};
+            for (const [input, output] of [['lineClearance', 'thermalGapMm'], ['lineWidth', 'spokeWidthMm'], ['lineAngle', 'spokeAngleDeg']] as const) {
+                if (typeof model?.[input] === 'number' && Number.isFinite(model[input])) fields[output] = model[input];
+            }
+            connection[target] = { mode, ...fields };
+        }
+        if (Object.keys(connection).length) result.padConnection = connection;
+        if (result.clearanceMm !== undefined || result.padConnection) result.status = 'partial';
+    } catch (error) { unresolved.push(String(error)); }
+    unresolved.push('Complete CAD refill policy is not represented by this contract.');
+    return result;
 }
 
 function nestedNumber(value: unknown, key: string): number | undefined {

@@ -8,6 +8,8 @@ Managed mutations are `extract_circuit_on_current_page`, `beautify_schematic_on_
 
 `extract_circuit_on_current_page` changes only the current schematic page; it is not an extraction/read tool. `component_search` only searches the component catalog and has no current-page mutation. Beautify also operates on the current schematic page. `annotate_designators` retains its existing multi-page scope.
 
+`run_pcb_analysis` uses the `pcb-analysis:` operation kind. It captures and analyzes the selected PCB without modifying it. Only one PCB analysis can run per MCP process. Terminal results include scenario status, diagnostics and local JSON and PNG paths.
+
 `run_pcb_router_dsl` is already managed and defaults to a 50-second initial wait; read-only `make_pcb_layout` keeps its configurable initial wait. Document management (`open_document`, `save_doc`, `sync_current_document`, `modify_name`, `create_doc`, `delete_doc`), instance selection and the native import dialog (`import_pcb_changes`) remain direct commands. `apply_operation` reuses an existing operation and waits up to 50 seconds rather than creating another job.
 
 Cancelling an initial MCP request or `wait_operation` stops only that wait after the operation has registered. Use `list_operations` to recover IDs after an interrupted initial wait; it returns tool/kind, status, stage and target metadata for active and retained operations. Use `cancel_operation` to request cancellation of the operation itself. Cancellation remains cooperative at every stage, including application; it is not deferred until assembly finishes. Native actions may outlive cancellation. Do not retry or restore while the outcome is unknown.

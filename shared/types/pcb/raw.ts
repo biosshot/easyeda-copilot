@@ -1,12 +1,17 @@
 import * as z from "zod";
 import { ExplainPcbBoardSchema, ExplainPcbBoxSchema, ExplainPcbViaSchema } from "./explain";
 import { PcbLayerNameSchema } from "./shared";
+import { PartUuidStruct } from "../lcsc";
 
 export const RawPcbBoardSchema = ExplainPcbBoardSchema;
 export const RawPcbViaSchema = ExplainPcbViaSchema;
 export const RawPcbBoxSchema = ExplainPcbBoxSchema;
 
 export const RawPcbComponentSchema = () => z.object({
+    id: z.string().optional(),
+    value: z.string().optional(),
+    partUuid: PartUuidStruct().optional(),
+    footprintName: z.string().optional(),
     designator: z.string(),
     x: z.number(),
     y: z.number(),
@@ -16,6 +21,8 @@ export const RawPcbComponentSchema = () => z.object({
 });
 
 export const RawPcbPadSchema = () => z.object({
+    plated: z.boolean().optional(),
+    specialPad: z.array(z.tuple([z.number(), z.number(), z.array(z.unknown())])).optional(),
     /** Stable editor primitive id when the source format exposes one. */
     id: z.string().optional(),
     /** Owning component designator, e.g. U1. Optional for backwards compatibility. */
@@ -44,6 +51,7 @@ export const RawPcbPadSchema = () => z.object({
 });
 
 export const RawPcbTrackSchema = () => z.object({
+    id: z.string().optional(),
     x1: z.number(),
     y1: z.number(),
     x2: z.number(),
@@ -54,6 +62,7 @@ export const RawPcbTrackSchema = () => z.object({
 });
 
 export const RawPcbArcSchema = () => z.object({
+    id: z.string().optional(),
     x1: z.number(),
     y1: z.number(),
     x2: z.number(),
@@ -65,6 +74,9 @@ export const RawPcbArcSchema = () => z.object({
 });
 
 export const RawPcbPolygonSchema = () => z.object({
+    id: z.string().optional(),
+    pourId: z.string().optional(),
+    fillMode: z.number().optional(),
     net: z.string(),
     layer: PcbLayerNameSchema(),
     fill: z.boolean(),
@@ -78,8 +90,24 @@ export const RawPcbSchema = () => z.object({
     pads: z.array(RawPcbPadSchema()),
     tracks: z.array(RawPcbTrackSchema()),
     arcs: z.array(RawPcbArcSchema()),
-    vias: z.array(RawPcbViaSchema()),
+    vias: z.array(RawPcbViaSchema().extend({
+        id: z.string().optional(),
+        viaType: z.number().optional(),
+        blindViaRule: z.string().nullable().optional(),
+    })),
     polygons: z.array(RawPcbPolygonSchema()),
+    /** Additional native evidence requested only by RoutingBoard V2 export. */
+    routing: z.object({
+        layers: z.array(z.string()),
+        planeLayers: z.array(z.string()),
+        polylines: z.array(RawPcbPolygonSchema()),
+        outlines: z.array(z.array(z.union([z.number(), z.string()]))),
+        pours: z.array(RawPcbPolygonSchema().extend({
+            priority: z.number(),
+            preserveIslands: z.boolean(),
+            pouredIds: z.array(z.string()),
+        })),
+    }).optional(),
 });
 
 export type RawPcb = z.infer<ReturnType<typeof RawPcbSchema>>;

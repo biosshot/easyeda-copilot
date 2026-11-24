@@ -24,7 +24,7 @@ export function registerOperationTools(server: McpServer, bridge: Bridge) {
         'wait_operation',
         {
             title: 'Wait Operation',
-            description: 'Wait for a running mutation, PCB layout or PCB router DSL operation. Running router responses include up to 10 recent log lines and their update time when available.',
+            description: 'Wait for a running mutation, PCB layout, PCB router DSL, or PCB analysis operation. Running router responses include up to 10 recent log lines and their update time when available.',
             annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
             inputSchema: z.object({
                 operation_id: operationId,

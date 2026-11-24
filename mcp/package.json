@@ -36,13 +36,14 @@
     "test:cli": "node scripts/check-cli.mjs",
     "router:info": "node scripts/router-info.mjs",
     "test:routing-adapter": "npm run build && node scripts/check-routing-adapter.mjs",
+    "test:routing-board-v2": "node --import tsx --test tests/routing-board-v2.test.ts",
     "test:cancellation": "node scripts/check-cancellation.mjs",
     "test:operations": "npm run build && node scripts/check-operation-manager.mjs",
     "test:projects": "npm run build && node scripts/check-project-tools.mjs",
     "test:execute-js": "npm run build && node scripts/check-execute-js.mjs",
     "test:pcb-inspection": "node scripts/check-pcb-inspection.mjs",
     "test:pcb-refill-example": "node scripts/check-pcb-refill-example.mjs",
-    "test:pcb-preview": "node scripts/check-pcb-preview.mjs",
+    "test:pcb-preview": "node scripts/check-pcb-preview.mjs && node --import tsx --test tests/pcb-preview.test.ts",
     "test:pcb-validation": "node scripts/check-pcb-validation.mjs",
     "clean": "rimraf dist",
     "typecheck": "tsc --noEmit",
@@ -57,7 +58,8 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "eda-copilot-backend": "0.4.0",
+    "clipper-lib": "^6.4.2",
+    "eda-copilot-backend": "file:../../eda-copilot-backend",
     "eda-copilot-router": "0.3.2",
     "find-up": "^5.0.0",
     "sharp": "^0.35.0",
@@ -66,14 +68,15 @@
   },
   "devDependencies": {
     "@copilot/shared": "1.0.0",
+    "@types/clipper-lib": "^6.4.0",
     "@types/node": "^25.9.1",
     "@types/sharp": "^0.31.1",
     "@types/ws": "^8.18.1",
+    "esbuild": "^0.24.2",
     "rimraf": "^6.1.2",
     "tsup": "^8.5.1",
     "tsx": "^4.23.13",
-    "typescript": "^5.9.3",
-    "esbuild": "^0.24.2"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=20.19"

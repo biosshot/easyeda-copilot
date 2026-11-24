@@ -14,6 +14,7 @@ import { milToMm, mmToMil, round, safeString, VERSION_EDASYEDA } from "./utils";
 import { easyEdaPointToPlacement, easyEdaRotationToPlacement } from "./pcb-existing-placement";
 import { previewRotationRadians } from "./pcb-preview-rotation";
 import { arcPoints } from "./polygon-arc";
+import { readPartUuidFromPrimitive } from "./component-part-ref";
 
 const MIL_TO_MM = 25.4 / 1000;
 const SNAP_TOLERANCE_MIL = mmToMil(0.05);
@@ -158,12 +159,20 @@ function polygonSourceToPoints(source: TPCB_PolygonSourceArray) {
             const width = readNumber(source, index + 2);
             const height = readNumber(source, index + 3);
             if (x !== undefined && y !== undefined && width !== undefined && height !== undefined) {
-                points.push(
-                    { x, y },
-                    { x: x + width, y },
-                    { x: x + width, y: y - height },
-                    { x, y: y - height },
-                );
+                const rotation = (readNumber(source, index + 4) ?? 0) * Math.PI / 180;
+                const radius = Math.min(Math.max(0, readNumber(source, index + 5) ?? 0), width / 2, height / 2);
+                const corners = [{ x: x + width - radius, y: y - radius },
+                    { x: x + width - radius, y: y - height + radius },
+                    { x: x + radius, y: y - height + radius }, { x: x + radius, y: y - radius }];
+                for (let i = 0; i < corners.length; i++) {
+                    const center = corners[i], angle = (90 - i * 90) * Math.PI / 180;
+                    const start = { x: center.x + radius * Math.cos(angle), y: center.y + radius * Math.sin(angle) };
+                    const end = { x: center.x + radius * Math.cos(angle - Math.PI / 2), y: center.y + radius * Math.sin(angle - Math.PI / 2) };
+                    for (const p of [start, ...(radius ? arcPoints(start, end, -90, 3) : [])]) {
+                        points.push({ x: x + (p.x - x) * Math.cos(rotation) - (p.y - y) * Math.sin(rotation),
+                            y: y + (p.x - x) * Math.sin(rotation) + (p.y - y) * Math.cos(rotation) });
+                    }
+                }
             }
             index += 6;
             continue;
@@ -191,7 +200,7 @@ function polygonSourceToPoints(source: TPCB_PolygonSourceArray) {
             while (isNumberToken(source[index]) && isNumberToken(source[index + 1]) && isNumberToken(source[index + 2])) {
                 const end = { x: source[index + 1] as number, y: source[index + 2] as number };
                 const start = points[points.length - 1];
-                points.push(...(start ? arcPoints(start, end, source[index] as number) : [end]));
+                points.push(...(start ? arcPoints(start, end, source[index] as number, 3) : [end]));
                 index += 3;
             }
             continue;
@@ -293,8 +302,8 @@ async function readComponents() {
     return { rawComponents, standalonePads };
 }
 
-async function readBoardPolygon() {
-    const polylines = await eda.pcb_PrimitivePolyline.getAll().catch(() => []);
+async function readBoardPolygon(polylines?: IPCB_PrimitivePolyline[]) {
+    polylines ??= await eda.pcb_PrimitivePolyline.getAll().catch(() => []);
 
     const polylinePolygons = polylines
         .filter(poly => poly.getState_Layer() === EPCB_LayerId.BOARD_OUTLINE)
@@ -302,7 +311,7 @@ async function readBoardPolygon() {
         .filter(points => points.length >= 3)
         .sort((a, b) => polygonArea(b) - polygonArea(a));
 
-    if (polylinePolygons[0]) return polylinePolygons[0].map(p => toExplainPoint(p));
+    if (polylinePolygons[0]) return polylinePolygons[0].map(p => ({ x: milToMm(p.x), y: milToMm(p.y) }));
     return undefined;
 }
 
@@ -395,14 +404,16 @@ async function readTrackSegments() {
     return measures;
 }
 
-async function readVias() {
-    const vias: ExplainPcbVia[] = [];
+async function readVias(routing = false) {
+    const vias: RawPcb['vias'] = [];
     const measures: CopperMeasure[] = [];
     for (const via of await eda.pcb_PrimitiveVia.getAll()) {
         const net = safeString(via.getState_Net());
         const point = { x: via.getState_X(), y: via.getState_Y() };
         const diameter = via.getState_Diameter();
-        vias.push({ net, x: milToMm(point.x), y: milToMm(point.y), diameter: milToMm(diameter), drill: milToMm(via.getState_HoleDiameter()) });
+        vias.push({ net, x: milToMm(point.x), y: milToMm(point.y), diameter: milToMm(diameter), drill: milToMm(via.getState_HoleDiameter()),
+            ...(routing ? { id: via.getState_PrimitiveId(), viaType: via.getState_ViaType(), blindViaRule: via.getState_DesignRuleBlindViaName() } : {}),
+        });
         if (net) measures.push({ net, layer: 'MULTI', kind: 'via', length: 0, bounds: boxFromPoints([point], diameter / 2) });
     }
     return { vias, measures };
@@ -660,9 +671,10 @@ function convertSourceArray(source: TPCB_PolygonSourceArray, coordConv: (v: numb
             );
             i += 3;
         } else if (cmd === 'ARC' || cmd === 'CARC') {
-            const angle = source[i], ex = source[i + 1], ey = source[i + 2];
-            out.push(angle, typeof ex === 'number' ? coordConv(ex) : ex, typeof ey === 'number' ? coordConv(ey) : ey);
-            i += 3;
+            while (isNumberToken(source[i]) && isNumberToken(source[i + 1]) && isNumberToken(source[i + 2])) {
+                out.push(source[i], coordConv(source[i + 1] as number), coordConv(source[i + 2] as number));
+                i += 3;
+            }
         } else {
             while (i < source.length && typeof source[i] === 'number') {
                 out.push(source[i]);
@@ -685,26 +697,35 @@ function rawSourcesFromComplex(
     return [convertSourceArray(complex as TPCB_PolygonSourceArray, coordConv)];
 }
 
-export async function getPcbRaw(): Promise<RawPcb> {
+export async function getPcbRaw(routing = false): Promise<RawPcb> {
     if (VERSION_EDASYEDA[0] < 3) throw new Error(`EasyEda version required >= 3, current ${VERSION_EDASYEDA[0]}`);
-    const boardPolygon = await readBoardPolygon();
+    // V1 keeps its best-effort preview reads. V2 must never mistake an API error for empty copper.
+    const read = <T>(promise: Promise<T[]>): Promise<T[]> => routing ? promise : promise.catch(() => []);
+    const polylines = await read(eda.pcb_PrimitivePolyline.getAll());
+    const boardPolygon = await readBoardPolygon(polylines);
     if (!boardPolygon) throw new Error('Board outline is missing.')
 
     const components: RawPcbComponent[] = []
     const padOwnerByPrimitiveId = new Map<string, string>();
-    for (const c of await eda.pcb_PrimitiveComponent.getAll().catch(() => [])) {
+    for (const c of await read(eda.pcb_PrimitiveComponent.getAll())) {
         const designator = c.getState_Designator() || '';
         for (const statePad of c.getState_Pads() ?? []) {
             const primitiveId = safeString(statePad.primitiveId);
             if (primitiveId) padOwnerByPrimitiveId.set(primitiveId, designator);
         }
+        if (routing) for (const pin of await c.getAllPins()) padOwnerByPrimitiveId.set(pin.getState_PrimitiveId(), designator);
         components.push({
+            ...(routing ? {
+                id: c.getState_PrimitiveId(), value: getComponentValue(c),
+                partUuid: readPartUuidFromPrimitive(c) ?? undefined,
+                footprintName: c.getState_Footprint()?.name,
+            } : {}),
             designator,
             x: milToMm(c.getState_X()),
             y: milToMm(c.getState_Y()),
             rotate: c.getState_Rotation(),
             layer: rawLayerName(c.getState_Layer()),
-            bbox: await eda.pcb_Primitive.getPrimitivesBBox([c.getState_PrimitiveId()]).then(box => box ? ({
+            bbox: routing ? undefined : await eda.pcb_Primitive.getPrimitivesBBox([c.getState_PrimitiveId()]).then(box => box ? ({
                 left: milToMm(box.minX),
                 right: milToMm(box.maxX),
                 top: milToMm(box.maxY),
@@ -714,9 +735,18 @@ export async function getPcbRaw(): Promise<RawPcb> {
     }
 
     const pads: RawPcbPad[] = []
-    for (const p of await eda.pcb_PrimitivePad.getAll().catch(() => [])) {
+    const padShape = (shape: TPCB_PrimitivePadShape | null | undefined) => shape?.map((v, i) => {
+        if (typeof v === 'number') return shape[0] === EPCB_PrimitivePadShapeType.REGULAR_POLYGON && i === 2 ? v : milToMm(v);
+        if (Array.isArray(v)) return rawSourcesFromComplex(v, milToMm);
+        return v;
+    });
+    for (const p of await read(eda.pcb_PrimitivePad.getAll())) {
         const primitiveId = p.getState_PrimitiveId();
         pads.push({
+            ...(routing ? {
+                plated: p.getState_Metallization(),
+                specialPad: (p.getState_SpecialPad() ?? []).map(([start, end, shape]) => [start, end, padShape(shape)!] as [number, number, unknown[]]),
+            } : {}),
             id: primitiveId,
             component: padOwnerByPrimitiveId.get(primitiveId),
             x: milToMm(p.getState_X()),
@@ -724,11 +754,7 @@ export async function getPcbRaw(): Promise<RawPcb> {
             net: safeString(p.getState_Net()) ?? '',
             padNumber: p.getState_PadNumber(),
             layer: rawLayerName(p.getState_Layer()),
-            shape: p.getState_Pad()?.map(v => {
-                if (typeof v === 'number') return milToMm(v);
-                else if (Array.isArray(v)) return rawSourcesFromComplex(v, milToMm);
-                return v;
-            }),
+            shape: padShape(p.getState_Pad()),
             rotation: previewRotationRadians(p.getState_Rotation(), VERSION_EDASYEDA),
             hole: p.getState_Hole() ? {
                 data: p.getState_Hole()!.map(v => typeof v === 'number' ? milToMm(v) : v),
@@ -740,8 +766,9 @@ export async function getPcbRaw(): Promise<RawPcb> {
     }
 
     const tracks: RawPcbTrack[] = [];
-    for (const l of await eda.pcb_PrimitiveLine.getAll().catch(() => [])) {
+    for (const l of await read(eda.pcb_PrimitiveLine.getAll())) {
         tracks.push({
+            ...(routing ? { id: l.getState_PrimitiveId() } : {}),
             x1: milToMm(l.getState_StartX()),
             y1: milToMm(l.getState_StartY()),
             x2: milToMm(l.getState_EndX()),
@@ -753,8 +780,9 @@ export async function getPcbRaw(): Promise<RawPcb> {
     }
 
     const arcs: RawPcbArc[] = [];
-    for (const a of await eda.pcb_PrimitiveArc.getAll().catch(() => [])) {
+    for (const a of await read(eda.pcb_PrimitiveArc.getAll())) {
         arcs.push({
+            ...(routing ? { id: a.getState_PrimitiveId() } : {}),
             x1: milToMm(a.getState_StartX()),
             y1: milToMm(a.getState_StartY()),
             x2: milToMm(a.getState_EndX()),
@@ -766,17 +794,18 @@ export async function getPcbRaw(): Promise<RawPcb> {
         });
     }
 
-    const vias = await readVias().then(r => r.vias);
+    const vias = await readVias(routing).then(r => r.vias);
 
-    const pours = await eda.pcb_PrimitivePour.getAll().catch(() => []);
+    const pours = await read(eda.pcb_PrimitivePour.getAll());
     const pourById = new Map(pours.map(p => [p.getState_PrimitiveId(), p]));
 
-    const poureds = await eda.pcb_PrimitivePoured.getAll().catch(() => []);
+    const poureds = await read(eda.pcb_PrimitivePoured.getAll());
 
     const polygons: RawPcbPolygon[] = []
 
     for (const poured of poureds) {
         const pour = pourById.get(poured.getState_PourPrimitiveId());
+        if (routing && !pour) throw new Error(`Orphan Poured ${poured.getState_PrimitiveId()}: parent Pour is missing.`);
         const net = pour ? safeString(pour.getState_Net()) ?? '' : '';
         const layer = pour ? rawLayerName(pour.getState_Layer()) : 'TOP';
 
@@ -788,6 +817,7 @@ export async function getPcbRaw(): Promise<RawPcb> {
             const sources = rawSourcesFromComplex(src, toMmCopperGrid);
             if (sources.length) {
                 polygons.push({
+                    ...(routing ? { id: fill.id, pourId: poured.getState_PourPrimitiveId() } : {}),
                     net,
                     layer,
                     fill: fill.fill,
@@ -798,22 +828,44 @@ export async function getPcbRaw(): Promise<RawPcb> {
         }
     }
 
-    const fills = await eda.pcb_PrimitiveFill.getAll().catch(() => []);
+    const fills = await read(eda.pcb_PrimitiveFill.getAll());
     for (const f of fills) {
         const src = f.getState_ComplexPolygon().getSource();
         const sources = rawSourcesFromComplex(src, milToMm);
         if (sources.length) {
             polygons.push({
+                ...(routing ? { id: f.getState_PrimitiveId(), fillMode: f.getState_FillMode() } : {}),
                 net: safeString(f.getState_Net()) ?? '',
                 layer: rawLayerName(f.getState_Layer()),
                 fill: true,
-                lineWidth: 0,
+                lineWidth: routing ? milToMm(f.getState_LineWidth()) : 0,
                 sources,
             });
         }
     }
 
+    const layers = routing ? (await eda.pcb_Layer.getAllLayers()).filter(l => l.layerStatus && (l.id === 1 || l.id === 2 || l.id >= 15 && l.id <= 44)) : [];
     return {
+        ...(routing ? { routing: {
+            layers: layers
+                .map(l => rawLayerName(l.id)).sort((a, b) => {
+                    const rank = (name: string) => name === 'TOP' ? 0 : name === 'BOTTOM' ? 100 : Number(name.replace('INNER_', ''));
+                    return rank(a) - rank(b);
+                }),
+            planeLayers: layers.filter(l => l.type === EPCB_LayerType.INTERNAL_ELECTRICAL).map(l => rawLayerName(l.id)),
+            polylines: polylines.filter(p => isCopperLayer(rawLayerName(p.getState_Layer()))).map(p => ({
+                id: p.getState_PrimitiveId(), net: safeString(p.getState_Net()) ?? '', layer: rawLayerName(p.getState_Layer()),
+                sources: [convertSourceArray(p.getState_Polygon().getSource(), milToMm)], fill: false, lineWidth: milToMm(p.getState_LineWidth()),
+            })),
+            outlines: polylines.filter(p => p.getState_Layer() === EPCB_LayerId.BOARD_OUTLINE)
+                .map(p => convertSourceArray(p.getState_Polygon().getSource(), milToMm)),
+            pours: pours.map(p => ({
+                id: p.getState_PrimitiveId(), net: safeString(p.getState_Net()) ?? '', layer: rawLayerName(p.getState_Layer()),
+                sources: rawSourcesFromComplex(p.getState_ComplexPolygon().getSource(), milToMm), fill: true, lineWidth: milToMm(p.getState_LineWidth()),
+                priority: p.getState_PourPriority(), preserveIslands: p.getState_PreserveSilos(),
+                pouredIds: poureds.filter(f => f.getState_PourPrimitiveId() === p.getState_PrimitiveId()).map(f => f.getState_PrimitiveId()),
+            })),
+        } } : {}),
         board: boardPolygon?.length
             ? { polygon: boardPolygon }
             : undefined,

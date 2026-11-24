@@ -32,7 +32,7 @@ function isLayerSelected(layer: PcbLayerName, selected: string[]): boolean {
 }
 
 function isCopperLayer(layer: PcbLayerName | 'all'): boolean {
-    return layer === 'TOP' || layer === 'BOTTOM' || layer === 'MULTI';
+    return layer === 'TOP' || layer === 'BOTTOM' || layer === 'MULTI' || layer.startsWith('INNER_');
 }
 
 function normalizeRenderOrder(options: PreviewOptions): PcbLayerName[] {
@@ -317,16 +317,16 @@ function renderVia(via: RawPcbVia, options: PreviewOptions): string {
 
 function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
     if (options.show.pads === false) return '';
-    if (!pad.shape) return '';
+    if (!pad.shape && !pad.hole) return '';
 
     const highlightColor = netHighlightColor(pad.net, options);
     const color = highlightColor || (LAYER_COLORS[pad.layer] || LAYER_COLORS.MULTI);
 
     // EasyEDA pad rotation is stored in radians; convert to degrees for SVG.
     let rot = -(pad.rotation || 0) * (180 / Math.PI);
-    const shapeType = pad.shape[0];
-    const w = Number(pad.shape[1]);
-    const h = Number(pad.shape[2]);
+    const shapeType = pad.shape?.[0];
+    const w = Number(pad.shape?.[1]);
+    const h = Number(pad.shape?.[2]);
 
     let x = pad.x;
     let y = pad.y;
@@ -338,11 +338,12 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
         const r = Math.min(w, h) / 2;
         shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${r}" ry="${r}" fill="${color}" ${stroke} />`;
     } else if (shapeType === 'RECT') {
-        shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" fill="${color}" ${stroke} />`;
+        const r = Math.min(Math.max(0, Number(pad.shape?.[3]) || 0), w / 2, h / 2);
+        shapeSvg = `<rect x="${-w / 2}" y="${-h / 2}" width="${w}" height="${h}" rx="${r}" ry="${r}" fill="${color}" ${stroke} />`;
     } else if (shapeType === 'ELLIPSE') {
         shapeSvg = `<ellipse cx="0" cy="0" rx="${w / 2}" ry="${h / 2}" fill="${color}" ${stroke} />`;
     }
-    else if (shapeType === 'POLYGON' && Array.isArray(pad.shape[1])) {
+    else if (shapeType === 'POLYGON' && Array.isArray(pad.shape?.[1])) {
         const poly = pad.shape[1];
         const sources = Array.isArray(poly[0]) ? poly : [poly];
         shapeSvg = renderPolygon({
@@ -351,13 +352,17 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
             lineWidth: 0.127,
             net: pad.net,
             sources: sources as never
-        }, options);
+        }, { ...options, layers: ['all'], show: { ...options.show, polygons: true } });
 
         rot = 0;
         x = 0;
         y = 0;
     }
-    else {
+    else if (shapeType === 'NGON' && Number.isInteger(h) && h >= 3 && h <= 16384) {
+        const points = Array.from({ length: h }, (_, i) => ({ x: w / 2 * Math.cos(i * 2 * Math.PI / h), y: w / 2 * Math.sin(i * 2 * Math.PI / h) }));
+        shapeSvg = `<path d="${pointsToPath(points)}" fill="${color}" ${stroke} />`;
+    }
+    else if (pad.shape) {
         shapeSvg = `<ellipse cx="0" cy="0" rx="${w / 2}" ry="${h / 2}" fill="${color}" ${stroke} />`;
     }
 
@@ -368,31 +373,29 @@ function renderPad(pad: RawPcbPad, options: PreviewOptions): string {
         const oy = pad.hole.offsetY || 0;
         const holeRot = -(pad.hole.rotation || 0) * (180 / Math.PI);
 
-        if (ox || oy || holeRot) {
+        let holeShape = '';
+        const holeFill = LAYER_COLORS.DRILL_DRAWING;
 
-            let holeShape = '';
+        if (holeType === 'ROUND') {
+            const d = Number(pad.hole.data[1]) || 0;
+            holeShape = `<circle cx="0" cy="0" r="${d / 2}" fill="${holeFill}" />`;
+        }
+        else if (holeType === 'SLOT') {
+            const d = Number(pad.hole.data[1]) || 0;
+            let l = Number(pad.hole.data[2]) || d;
+            if (l < d) l = d;
+            const r = d / 2;
+            holeShape = `<rect x="${-l / 2}" y="${-d / 2}" width="${l}" height="${d}" rx="${r}" ry="${r}" fill="${holeFill}" />`;
+        }
 
-            const holeFill = LAYER_COLORS.DRILL_DRAWING;
-
-            if (holeType === 'ROUND') {
-                const d = Number(pad.hole.data[1]) || 0;
-                holeShape = `<circle cx="0" cy="0" r="${d / 2}" fill="${holeFill}" />`;
-            }
-            else if (holeType === 'SLOT') {
-                const d = Number(pad.hole.data[1]) || 0;
-                let l = Number(pad.hole.data[2]) || d;
-                if (l < d) l = d;
-                const r = d / 2;
-                holeShape = `<rect x="${-l / 2}" y="${-d / 2}" width="${l}" height="${d}" rx="${r}" ry="${r}" fill="${holeFill}" />`;
-            }
-
-            if (holeShape) {
-                holeSvg = `<g transform="translate(${ox} ${-oy}) rotate(${holeRot})">${holeShape}</g>`;
-            }
+        if (holeShape) {
+            holeSvg = `<g transform="translate(${ox} ${-oy}) rotate(${holeRot})">${holeShape}</g>`;
         }
     }
 
-    return `<g transform="translate(${x} ${svgY(y)}) rotate(${rot})">${shapeSvg}${holeSvg}</g>`;
+    // Polygon copper is already absolute; drills always use the pad-local frame.
+    return `<g transform="translate(${x} ${svgY(y)}) rotate(${rot})">${shapeSvg}</g>`
+        + (holeSvg ? `<g transform="translate(${pad.x} ${svgY(pad.y)}) rotate(${-(pad.rotation || 0) * 180 / Math.PI})">${holeSvg}</g>` : '');
 }
 
 function renderComponent(comp: RawPcbComponent, options: PreviewOptions, data: RawPcb): string {
@@ -569,7 +572,7 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
 
         for (const poly of data.polygons || []) {
             if (poly.layer === layer) {
-                layerGroup.push(renderPolygon({ ...poly, lineWidth: 0.254 }, options, diagnostics));
+                layerGroup.push(renderPolygon(poly, options, diagnostics));
                 layerGroup.push(renderPolygonLabels(poly, options));
             }
         }
@@ -591,13 +594,6 @@ export function renderPcbToSvg(data: RawPcb, options: PreviewOptions) {
         }
 
         if (layer === 'MULTI') {
-            if (shouldRenderMultiPads(options)) {
-                for (const pad of data.pads || []) {
-                    if (pad.layer === 'MULTI') {
-                        layerGroup.push(renderPad(pad, options));
-                    }
-                }
-            }
             if (shouldRenderVias(options)) {
                 for (const via of data.vias || []) {
                     layerGroup.push(renderVia(via, options));

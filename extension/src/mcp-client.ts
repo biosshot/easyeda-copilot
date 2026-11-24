@@ -1483,18 +1483,22 @@ async function handleMessage(message: McpMessage, connectionEpoch: number, signa
         }
 
         if (message.event === 'export-routing-input') {
+            if (body.version !== undefined && body.version !== 1 && body.version !== 2) throw new Error('Unsupported routing export version');
             const { file, text } = await exportRoutingInput();
             // Autoroute JSON is authoritative for board geometry, copper
             // layers, pads, and effective physical rules. Native DRC remains
             // separate because EasyEDA omits named net classes and equal-
             // length groups from this file on otherwise valid boards.
             const drc = await exportPcbDrcRules();
+            const pcb = body.version === 2 ? await getPcbRaw(true) : undefined;
+            if (pcb) await assertMcpDocumentContext(message.event, body);
             reply(true, {
                 name: file.name,
                 size: file.size,
                 type: file.type,
                 text,
                 drc,
+                ...(pcb ? { pcb } : {}),
             });
             return;
         }

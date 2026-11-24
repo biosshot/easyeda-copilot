@@ -1,5 +1,6 @@
 import { RawPcbPolygon } from "@copilot/shared/types/pcb/raw";
 import { PcbPoint } from "@copilot/shared/types/pcb/shared";
+import { tessellateArc } from '../routing/easyeda-autoroute-adapter';
 
 export interface PolygonDiagnostics {
     net?: string;
@@ -17,7 +18,25 @@ function trimClosingPoint(points: PcbPoint[]): PcbPoint[] {
     return points;
 }
 
-function flattenCubicBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, p3: PcbPoint, steps = 12): PcbPoint[] {
+function flattenBezier(points: PcbPoint[], tolerance: number, depth = 0): PcbPoint[] {
+    const a = points[0], b = points.at(-1)!;
+    const dx = b.x - a.x, dy = b.y - a.y, length2 = dx * dx + dy * dy;
+    const distance = (p: PcbPoint) => {
+        const t = length2 ? Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / length2)) : 0;
+        return Math.hypot(p.x - a.x - t * dx, p.y - a.y - t * dy);
+    };
+    if (points.slice(1, -1).every(p => distance(p) <= tolerance)) return [b];
+    if (depth >= 16) throw new Error('Bezier exceeds the geometry limit');
+    const left = [a], right = [b];
+    for (let row = points; row.length > 1;) {
+        row = row.slice(1).map((p, i) => ({ x: (p.x + row[i].x) / 2, y: (p.y + row[i].y) / 2 }));
+        left.push(row[0]); right.unshift(row.at(-1)!);
+    }
+    return [...flattenBezier(left, tolerance, depth + 1), ...flattenBezier(right, tolerance, depth + 1)];
+}
+
+function flattenCubicBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, p3: PcbPoint, steps = 12, tolerance?: number): PcbPoint[] {
+    if (tolerance !== undefined) return flattenBezier([p0, p1, p2, p3], tolerance);
     const pts: PcbPoint[] = [];
     for (let i = 1; i <= steps; i++) {
         const t = i / steps;
@@ -31,12 +50,13 @@ function flattenCubicBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, p3: PcbPoi
     return pts;
 }
 
-function flattenQuadraticBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, steps = 12): PcbPoint[] {
+function flattenQuadraticBezier(p0: PcbPoint, p1: PcbPoint, p2: PcbPoint, steps = 12, tolerance?: number): PcbPoint[] {
+    if (tolerance !== undefined) return flattenBezier([p0, p1, p2], tolerance);
     const pts: PcbPoint[] = [];
     for (let i = 1; i <= steps; i++) {
         const t = i / steps;
         const u = 1 - t;
-        const x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.y;
+        const x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x;
         const y = u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y;
         pts.push({ x, y });
     }
@@ -91,18 +111,26 @@ function rotatePoint(p: PcbPoint, cx: number, cy: number, angleDeg: number): Pcb
     return { x: cx + dx * cos - dy * sin, y: cy + dx * sin + dy * cos };
 }
 
-function roundedRectPoints(x: number, y: number, w: number, h: number, rot: number, round: number): PcbPoint[] {
-    const corners: PcbPoint[] = [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
-    const rotated = corners.map(p => rotatePoint(p, x, y, rot || 0));
-    if (!round || round <= 1e-6) return rotated;
-    return rotated;
+function roundedRectPoints(x: number, y: number, w: number, h: number, rot: number, round: number, tolerance = 0.01): PcbPoint[] {
+    // Native R has a top-left anchor, positive width, and descends in Y-up coordinates.
+    const r = Math.min(Math.max(0, round), w / 2, h / 2);
+    const points: PcbPoint[] = [];
+    const corners = [{ x: x + w - r, y: y - r }, { x: x + w - r, y: y - h + r },
+        { x: x + r, y: y - h + r }, { x: x + r, y: y - r }];
+    for (let i = 0; i < 4; i++) {
+        const c = corners[i], angle = (90 - i * 90) * Math.PI / 180;
+        const start = { x: c.x + r * Math.cos(angle), y: c.y + r * Math.sin(angle) };
+        const end = { x: c.x + r * Math.cos(angle - Math.PI / 2), y: c.y + r * Math.sin(angle - Math.PI / 2) };
+        points.push(start, ...(r ? tessellateArc(start, end, -90, false, tolerance) ?? [] : []));
+    }
+    return points.map(p => rotatePoint(p, x, y, rot || 0));
 }
 
 function samePoint(a: PcbPoint, b: PcbPoint): boolean {
     return Math.abs(a.x - b.x) < 1e-9 && Math.abs(a.y - b.y) < 1e-9;
 }
 
-export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnostics?: PolygonDiagnostics): PcbPoint[][] {
+export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnostics?: PolygonDiagnostics, toleranceMm?: number): PcbPoint[][] {
     const rings: PcbPoint[][] = [];
     let current: PcbPoint[] = [];
     let i = 0;
@@ -125,7 +153,10 @@ export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnost
 
     while (i < source.length) {
         const cmd = source[i++];
-        if (typeof cmd !== 'string') continue;
+        if (typeof cmd !== 'string') {
+            if (toleranceMm !== undefined) throw new Error(`Unexpected native polygon token at ${i - 1}`);
+            continue;
+        }
         commandsSeen.add(cmd);
 
         if (cmd === 'M') {
@@ -144,15 +175,17 @@ export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnost
         } else if (cmd === 'R') {
             const x = source[i], y = source[i + 1], w = source[i + 2], h = source[i + 3], rot = source[i + 4], round = source[i + 5];
             if (typeof x === 'number' && typeof y === 'number' && typeof w === 'number' && typeof h === 'number') {
-                current.push(...roundedRectPoints(x, y, w, h, (rot as number) || 0, (round as number) || 0));
+                current.push(...roundedRectPoints(x, y, w, h, (rot as number) || 0, (round as number) || 0, toleranceMm));
             }
             i += 6;
         } else if (cmd === 'CIRCLE') {
             const cx = source[i], cy = source[i + 1], r = source[i + 2];
             if (typeof cx === 'number' && typeof cy === 'number' && typeof r === 'number') {
                 const circle: PcbPoint[] = [];
-                for (let a = 0; a < 24; a++) {
-                    const ang = (2 * Math.PI * a) / 24;
+                const count = toleranceMm === undefined ? 24 : Math.max(4, Math.ceil(Math.PI / Math.acos(1 - Math.min(toleranceMm / r, 1))));
+                if (count > 16384) throw new Error('Circle exceeds the geometry limit');
+                for (let a = 0; a < count; a++) {
+                    const ang = (2 * Math.PI * a) / count;
                     circle.push({ x: cx + Math.cos(ang) * r, y: cy + Math.sin(ang) * r });
                 }
                 rings.push(trimClosingPoint(circle));
@@ -167,7 +200,7 @@ export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnost
                 const p1: PcbPoint = { x: source[i] as number, y: source[i + 1] as number };
                 const p2: PcbPoint = { x: source[i + 2] as number, y: source[i + 3] as number };
                 const p3: PcbPoint = { x: source[i + 4] as number, y: source[i + 5] as number };
-                current.push(...flattenCubicBezier(p0, p1, p2, p3));
+                current.push(...flattenCubicBezier(p0, p1, p2, p3, 12, toleranceMm));
                 i += 6;
             }
         } else if (cmd === 'Q') {
@@ -177,18 +210,21 @@ export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnost
                 const p0 = current.length ? current[current.length - 1] : { x: source[i] as number, y: source[i + 1] as number };
                 const p1: PcbPoint = { x: source[i] as number, y: source[i + 1] as number };
                 const p2: PcbPoint = { x: source[i + 2] as number, y: source[i + 3] as number };
-                current.push(...flattenQuadraticBezier(p0, p1, p2));
+                current.push(...flattenQuadraticBezier(p0, p1, p2, 12, toleranceMm));
                 i += 4;
             }
         } else if (cmd === 'ARC' || cmd === 'CARC') {
-            if (i + 2 < source.length &&
+            while (i + 2 < source.length &&
                 typeof source[i] === 'number' &&
                 typeof source[i + 1] === 'number' &&
                 typeof source[i + 2] === 'number') {
                 const start = current.length ? current[current.length - 1] : { x: 0, y: 0 };
                 const angleDeg = source[i] as number;
                 const end: PcbPoint = { x: source[i + 1] as number, y: source[i + 2] as number };
-                current.push(...arcPoints(start, end, angleDeg));
+                const points = toleranceMm === undefined ? arcPoints(start, end, angleDeg)
+                    : tessellateArc(start, end, angleDeg, false, toleranceMm);
+                if (!points) throw new Error('Arc exceeds the geometry limit');
+                current.push(...points);
                 i += 3;
             }
         } else {
@@ -197,6 +233,7 @@ export function parsePolygonSource(source: RawPcbPolygon['sources'][0], diagnost
             }
             if (typeof source[i] === 'number') i++;
         }
+        if (toleranceMm !== undefined && current.length > 16384) throw new Error('Path exceeds the geometry limit');
     }
 
     flush();

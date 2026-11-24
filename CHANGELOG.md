@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+### PCB preview
+
+- Preserve native rounded-outline rotation and precision, and render centered, offset and polygon-pad drills. Correct preview rectangle/Bezier/arc parsing, retain small and nested copper cutouts, include through pads/vias on inner-layer previews and preserve polygon stroke widths.
+
+### PCB analysis
+
+- Add `run_pcb_analysis` with read-only RoutingBoardV2 capture, cancellable background execution, and local JSON reports and PNG previews.
+
+- Ship the `pcb-analysis` skill with example DC-to-thermal, channel and PI scenarios, status guidance and measured runtime and memory ranges.
+
+### PCB analysis export
+
+- Ignore the EasyEDA API phantom hole on TOP/BOTTOM `POLYGON` pads in V2, with a pad-specific diagnostic. Preserve raw capture evidence, multilayer pad drills and vias.
+- Export native stitching vias (`SUTURE`) and resolve blind/buried via spans from the selected EasyEDA rule's start/end layers in V2. Preserve physical layer order and reject unresolved ranges without assuming a through connection; V1 is unchanged.
+- Add opt-in RoutingBoard V2 export with native pads, holes, copper IDs and Pour/Poured/Fill evidence. `export_pcb_routing_board` saves the board, native capture and diagnostics for auditing. Existing V1 routing requests and preview reads retain their defaults; no routing or refill runs during V2 export. The backend contract is consumed from the local backend package.
+
 ### Schematic groups
 
 - Keep the designer's `PCB Block`, `PCB Module`, `PCB Attach` and `PCB Role` when `beautify_schematic_on_current_page` or source-path `replace_components` rebuilds a component; `block_name` only fills a missing `PCB Block`. `declaration_errors` entries now carry a stable `code` (with `component`, `block` or `property`), a conflicting block attribute stays omitted across pages and is listed in `conflicts`, and declaration read errors reach PCB validation even when no declared block remains.

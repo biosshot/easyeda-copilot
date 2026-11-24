@@ -30,6 +30,7 @@ Keep a short working record: target instance/document UUID, requested stage, exa
 | Create or organize schematic pages | `schematic/project-and-pages.md` | functional pages exist and are named |
 | Create, modify, or beautify a schematic | `schematic/workflow.md`, `schematic/circuit-mod.md`; finish with `schematic/verification.md` | current-page readback is checked |
 | Place or update PCB components | `pcb-layout/instructions.md`, `pcb-layout/dsl.ts`; finish with `pcb-layout/verification.md` | approved placement is assembled and checked; do not route |
+| Analyze the open routed PCB | `pcb-analysis/SKILL.md`, `pcb-analysis/dsl.ts` | scenario coverage, statuses and rendered results are reviewed |
 | Validate PCB placement DSL intent | `pcb-layout/intent-validation.md`, `pcb-layout/dsl.ts` | `validate_pcb_dsl` findings are reviewed; no placement is run |
 | Change connectors, outline, holes, controls, displays, or antennas | placement docs plus `pcb-layout/mechanical-validation.md` | LLM and user approve mechanics |
 | Apply layer count, rules, zones, copper, or routing | `pcb-routing/instructions.md`, `pcb-routing/dsl.ts`; finish with `pcb-routing/verification.md` | requested PCB operation is checked |
